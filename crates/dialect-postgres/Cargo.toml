@@ -2,3 +2,12 @@
 name = "dialect-postgres"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+sqlfmt-ir = { path = "../sqlfmt-ir" }
+sqlfmt-core = { path = "../sqlfmt-core" }
+pg_query = "5"
+thiserror = "1"
+
+[dev-dependencies]
+sqlfmt-render = { path = "../sqlfmt-render" }
