@@ -2,3 +2,8 @@
 name = "sqlfmt-core"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+sqlfmt-ir = { path = "../sqlfmt-ir" }
+sqlfmt-render = { path = "../sqlfmt-render" }
+thiserror = "1"
