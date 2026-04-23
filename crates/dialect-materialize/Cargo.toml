@@ -2,3 +2,12 @@
 name = "dialect-materialize"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+sqlfmt-ir = { path = "../sqlfmt-ir" }
+sqlfmt-core = { path = "../sqlfmt-core" }
+mz-sql-parser = { git = "https://github.com/MaterializeInc/materialize.git", tag = "v26.20.2" }
+thiserror = "1"
+
+[dev-dependencies]
+sqlfmt-render = { path = "../sqlfmt-render" }
