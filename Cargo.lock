@@ -2535,7 +2535,10 @@ name = "sqlfmt"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "dialect-materialize",
+ "dialect-postgres",
  "sqlfmt-core",
+ "sqlfmt-render",
 ]
 
 [[package]]

@@ -19,6 +19,9 @@ edition = "2021"
 
 [dependencies]
 sqlfmt-core = { path = "crates/sqlfmt-core" }
+sqlfmt-render = { path = "crates/sqlfmt-render" }
+dialect-materialize = { path = "crates/dialect-materialize" }
+dialect-postgres = { path = "crates/dialect-postgres" }
 clap = { version = "4", features = ["derive"] }
 
 [profile.release]
