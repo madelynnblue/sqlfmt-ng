@@ -46,7 +46,26 @@ pub fn render(node: &Node, opts: &RenderOpts) -> String {
     let doc = to_rdoc(node, opts);
     let mut w = Vec::new();
     doc.render(opts.line_width, &mut w).unwrap();
-    String::from_utf8(w).unwrap()
+    let s = String::from_utf8(w).unwrap();
+    if opts.use_tabs {
+        // Replace each leading run of `tab_width` spaces on every line with a tab.
+        // This is a post-processing step because the `pretty` crate always emits spaces.
+        let indent = " ".repeat(opts.tab_width.max(1));
+        s.lines()
+            .map(|line| {
+                let mut rest = line;
+                let mut tabs = 0usize;
+                while let Some(stripped) = rest.strip_prefix(indent.as_str()) {
+                    tabs += 1;
+                    rest = stripped;
+                }
+                format!("{}{}", "\t".repeat(tabs), rest)
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    } else {
+        s
+    }
 }
 
 fn to_rdoc<'a>(node: &Node, opts: &RenderOpts) -> RcDoc<'a> {
@@ -109,9 +128,14 @@ fn clause_to_rdoc<'a>(clause: &Clause, opts: &RenderOpts) -> RcDoc<'a> {
         None => kw,
         Some(body) => {
             let body_doc = to_rdoc(body, opts);
-            kw.append(RcDoc::line())
-                .append(body_doc.nest(opts.tab_width as isize))
-                .group()
+            // Nest the line break + body together so that when broken, the body
+            // is indented by tab_width relative to the clause keyword.
+            kw.append(
+                RcDoc::line()
+                    .append(body_doc)
+                    .nest(opts.tab_width as isize),
+            )
+            .group()
         }
     }
 }
@@ -206,8 +230,7 @@ mod tests {
         };
         let wide = RenderOpts { line_width: 1000, ..RenderOpts::default() };
         let result = render(&node, &wide);
-        assert!(result.contains("SELECT"), "result: {result}");
-        assert!(result.contains("FROM"), "result: {result}");
+        assert_eq!(result, "SELECT a, b\nFROM t");
     }
 
     #[test]
@@ -222,5 +245,29 @@ mod tests {
         let wide = RenderOpts { line_width: 1000, ..RenderOpts::default() };
         let result = render(&node, &wide);
         assert_eq!(result, "a AND b");
+    }
+
+    #[test]
+    fn test_keyword_title() {
+        let node = Node::Keyword { value: "select".into() };
+        let o = RenderOpts { case: CaseMode::Title, ..RenderOpts::default() };
+        assert_eq!(render(&node, &o), "Select");
+    }
+
+    #[test]
+    fn test_use_tabs_indentation() {
+        // A clause with body rendered narrow so body is on its own indented line.
+        let node = Node::Clauses {
+            items: vec![Clause {
+                keyword: "SELECT".into(),
+                body: Some(Box::new(Node::Identifier { value: "my_col".into(), quote: None })),
+            }],
+        };
+        // Force break by using a very narrow line width (1 char).
+        let tab_opts = RenderOpts { line_width: 1, use_tabs: true, tab_width: 4, case: CaseMode::Upper };
+        let result = render(&node, &tab_opts);
+        // The body should be indented with a tab, not spaces.
+        assert!(result.contains("\tmy_col"), "expected tab indent, got: {:?}", result);
+        assert!(!result.contains("    my_col"), "should not have space indent, got: {:?}", result);
     }
 }
