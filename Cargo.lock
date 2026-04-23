@@ -2567,6 +2567,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sqlfmt-web"
+version = "0.1.0"
+dependencies = [
+ "dialect-materialize",
+ "sqlfmt-core",
+ "sqlfmt-render",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "stable_deref_trait"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3234,10 +3244,6 @@ dependencies = [
  "indexmap",
  "semver",
 ]
-
-[[package]]
-name = "web"
-version = "0.1.0"
 
 [[package]]
 name = "web-sys"
