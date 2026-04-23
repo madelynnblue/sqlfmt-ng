@@ -2,3 +2,7 @@
 name = "sqlfmt-render"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+sqlfmt-ir = { path = "../sqlfmt-ir" }
+pretty = "0.12"
