@@ -1,0 +1,26 @@
+[workspace]
+members = [
+    "crates/sqlfmt-ir",
+    "crates/sqlfmt-render",
+    "crates/sqlfmt-core",
+    "crates/dialect-materialize",
+    "crates/dialect-postgres",
+    "crates/dialect-cockroachdb",
+    "crates/dialect-googlesql",
+    "web",
+    ".",
+]
+resolver = "2"
+
+[package]
+name = "sqlfmt"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sqlfmt-core = { path = "crates/sqlfmt-core" }
+clap = { version = "4", features = ["derive"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
