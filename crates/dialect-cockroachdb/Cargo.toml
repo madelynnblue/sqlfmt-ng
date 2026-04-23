@@ -2,3 +2,7 @@
 name = "dialect-cockroachdb"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+sqlfmt-ir = { path = "../sqlfmt-ir" }
+sqlfmt-core = { path = "../sqlfmt-core" }
