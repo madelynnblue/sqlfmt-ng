@@ -1,5 +1,5 @@
 use sqlfmt_ir::Node;
-use sqlfmt_render::{render, RenderOpts};
+use sqlfmt_render::{RenderOpts, render};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -18,7 +18,17 @@ pub fn format_sql(
     opts: &RenderOpts,
 ) -> Result<String, SqlfmtError> {
     let node = dialect.parse(sql)?;
-    Ok(render(&node, opts))
+    let rendered = render(&node, opts);
+
+    // Round-trip to make sure our conversion didn't drop any AST nodes.
+    let reparsed = dialect.parse(&rendered)?;
+    if node != reparsed {
+        return Err(SqlfmtError::Parse(format!(
+            "non-idempotent formatting detected. Input:\n{sql}\nFormatted:\n{rendered}"
+        )));
+    }
+
+    Ok(rendered)
 }
 
 #[cfg(test)]
