@@ -179,7 +179,7 @@ fn with_alias(node: Node, alias: &TableAlias) -> Node {
     }
 }
 
-pub fn expr_to_node(expr: &Expr<Raw>) -> Node {
+fn expr_to_node(expr: &Expr<Raw>) -> Node {
     match expr {
         Expr::Identifier(names) => Node::Identifier {
             value: names
@@ -321,8 +321,12 @@ fn limit_to_node(limit: &Limit<Raw>) -> Node {
 
 fn ident_to_node(ident: &Ident) -> Node {
     Node::Identifier {
-        value: ident.to_string(),
-        quote: None,
+        value: ident.as_str().to_string(),
+        quote: if ident.can_be_printed_bare() {
+            None
+        } else {
+            Some("\"".to_string())
+        },
     }
 }
 

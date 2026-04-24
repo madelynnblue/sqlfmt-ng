@@ -4,10 +4,59 @@ use pg_query::protobuf::{
 };
 use sqlfmt_ir::{Clause, Node};
 
+/// Return true if a Postgres identifier must be double-quoted to round-trip correctly.
+/// Unquoted Postgres identifiers are folded to lowercase and must match [a-z_][a-z0-9_$]*.
+fn pg_needs_quoting(s: &str) -> bool {
+    if s.is_empty() {
+        return true;
+    }
+    let mut chars = s.chars();
+    let first_ok = chars.next().map(|c| matches!(c, 'a'..='z' | '_')).unwrap_or(false);
+    !first_ok || !chars.all(|c| matches!(c, 'a'..='z' | '0'..='9' | '_' | '$'))
+}
+
+/// Build a single-part identifier node, quoting if necessary.
+fn ident_node(s: &str) -> Node {
+    Node::Identifier {
+        value: s.to_string(),
+        quote: if pg_needs_quoting(s) {
+            Some("\"".to_string())
+        } else {
+            None
+        },
+    }
+}
+
+/// Build a (possibly qualified) identifier from parts joined by '.'.
+/// Each part is individually quoted as needed; a '*' part becomes raw text.
+fn qualified_ident_node(parts: &[&str]) -> Node {
+    if parts.len() == 1 {
+        if parts[0] == "*" {
+            return Node::Text { value: "*".into() };
+        }
+        return ident_node(parts[0]);
+    }
+    let mut items: Vec<Node> = Vec::new();
+    for (i, part) in parts.iter().enumerate() {
+        if i > 0 {
+            items.push(Node::Text { value: ".".into() });
+        }
+        if *part == "*" {
+            items.push(Node::Text { value: "*".into() });
+        } else {
+            items.push(ident_node(part));
+        }
+    }
+    Node::Concat { items }
+}
+
 /// Convert a pg_query RawStmt (statement wrapper) into a sqlfmt IR Node.
+/// Returns None for unsupported top-level statement types.
 pub fn raw_stmt_to_node(raw: &RawStmt) -> Option<Node> {
-    let inner = raw.stmt.as_ref()?.node.as_ref()?;
-    Some(node_enum_to_node(inner))
+    match raw.stmt.as_ref()?.node.as_ref()? {
+        NodeEnum::SelectStmt(s) => Some(select_stmt_to_node(s)),
+        _ => None,
+    }
 }
 
 /// Convert a pg_query Node wrapper (Option<NodeEnum>) into a sqlfmt Node.
@@ -182,20 +231,16 @@ fn res_target_to_node(rt: &ResTarget) -> Node {
 }
 
 fn column_ref_to_node(cr: &ColumnRef) -> Node {
-    // fields is a list of String nodes or A_Star; join them with '.'
-    let parts: Vec<String> = cr
+    let parts: Vec<&str> = cr
         .fields
         .iter()
         .map(|n| match n.node.as_ref() {
-            Some(NodeEnum::String(s)) => s.sval.clone(),
-            Some(NodeEnum::AStar(_)) => "*".to_string(),
-            _ => String::new(),
+            Some(NodeEnum::String(s)) => s.sval.as_str(),
+            Some(NodeEnum::AStar(_)) => "*",
+            _ => "",
         })
         .collect();
-    Node::Identifier {
-        value: parts.join("."),
-        quote: None,
-    }
+    qualified_ident_node(&parts)
 }
 
 fn a_const_to_node(c: &AConst) -> Node {
@@ -231,29 +276,21 @@ fn a_const_to_node(c: &AConst) -> Node {
 }
 
 fn range_var_to_node(rv: &RangeVar) -> Node {
-    let mut parts: Vec<String> = Vec::new();
+    let mut parts: Vec<&str> = Vec::new();
     if !rv.catalogname.is_empty() {
-        parts.push(rv.catalogname.clone());
+        parts.push(&rv.catalogname);
     }
     if !rv.schemaname.is_empty() {
-        parts.push(rv.schemaname.clone());
+        parts.push(&rv.schemaname);
     }
-    parts.push(rv.relname.clone());
-    let ident = Node::Identifier {
-        value: parts.join("."),
-        quote: None,
-    };
+    parts.push(&rv.relname);
+    let ident = qualified_ident_node(&parts);
     if let Some(alias) = &rv.alias {
         Node::Concat {
             items: vec![
                 ident,
-                Node::Text {
-                    value: " AS ".into(),
-                },
-                Node::Identifier {
-                    value: alias.aliasname.clone(),
-                    quote: None,
-                },
+                Node::Text { value: " AS ".into() },
+                ident_node(&alias.aliasname),
             ],
         }
     } else {
