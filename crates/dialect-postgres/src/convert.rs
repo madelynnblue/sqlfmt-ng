@@ -30,6 +30,9 @@ fn ident_node(s: &str) -> Node {
 /// Build a (possibly qualified) identifier from parts joined by '.'.
 /// Each part is individually quoted as needed; a '*' part becomes raw text.
 fn qualified_ident_node(parts: &[&str]) -> Node {
+    if parts.is_empty() {
+        return Node::Text { value: String::new() };
+    }
     if parts.len() == 1 {
         if parts[0] == "*" {
             return Node::Text { value: "*".into() };
@@ -80,10 +83,7 @@ fn node_enum_to_node(node: &NodeEnum) -> Node {
         NodeEnum::AExpr(e) => a_expr_to_node(e),
         NodeEnum::BoolExpr(b) => bool_expr_to_node(b),
         NodeEnum::FuncCall(f) => func_call_to_node(f),
-        NodeEnum::String(s) => Node::Identifier {
-            value: s.sval.clone(),
-            quote: None,
-        },
+        NodeEnum::String(s) => ident_node(&s.sval),
         NodeEnum::Integer(i) => Node::Literal {
             value: i.ival.to_string(),
         },

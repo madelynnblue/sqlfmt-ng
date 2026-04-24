@@ -181,14 +181,26 @@ fn with_alias(node: Node, alias: &TableAlias) -> Node {
 
 fn expr_to_node(expr: &Expr<Raw>) -> Node {
     match expr {
-        Expr::Identifier(names) => Node::Identifier {
-            value: names
-                .iter()
-                .map(|i| i.to_string())
-                .collect::<Vec<_>>()
-                .join("."),
-            quote: None,
-        },
+        Expr::Identifier(names) => {
+            if names.len() == 1 {
+                ident_to_node(&names[0])
+            } else {
+                Node::Concat {
+                    items: names
+                        .iter()
+                        .enumerate()
+                        .flat_map(|(i, ident)| {
+                            let node = ident_to_node(ident);
+                            if i == 0 {
+                                vec![node]
+                            } else {
+                                vec![Node::Text { value: ".".into() }, node]
+                            }
+                        })
+                        .collect(),
+                }
+            }
+        }
         Expr::Value(v) => Node::Literal {
             value: value_to_string(v),
         },
