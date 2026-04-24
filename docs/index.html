@@ -467,26 +467,17 @@
     </div>
   </div>
 
-  <!-- import map so the bare "protobufjs/minimal.js" specifier inside libpg-query-wasm resolves in the browser -->
-  <script type="importmap">
-  {
-    "imports": {
-      "protobufjs/minimal.js": "https://esm.sh/protobufjs@7.2.5/minimal.js"
-    }
-  }
-  </script>
-
   <script type="module">
-    import init, { fmt, fmt_postgres_protobuf } from './wasm/sqlfmt_web.js';
+    import init, { fmt, fmt_postgres_json } from './wasm/sqlfmt_web.js';
 
     await init({ module_or_path: './wasm/sqlfmt_web_bg.wasm' });
 
-    let pgParse = null;
-    let ParseResult = null;
+    // Loaded on first use of the Postgres dialect.
+    let pgQuery = null;
     async function ensurePostgres() {
-      if (pgParse) return;
-      // import directly from the ESM dist file; relative sub-imports resolve via jsdelivr CDN
-      ({ parse: pgParse, ParseResult } = await import('https://cdn.jsdelivr.net/npm/libpg-query-wasm@0.2.1/dist/main.js'));
+      if (pgQuery) return;
+      const { default: PgQueryModule } = await import('https://esm.sh/pg-query-emscripten@5.1.0');
+      pgQuery = await new PgQueryModule();
     }
 
     document.getElementById('submitButton').style.display = 'none';
@@ -556,8 +547,12 @@
         let result;
         if (dialect === 'postgres') {
           await ensurePostgres();
-          const bytes = ParseResult.encode(pgParse(sql)).finish();
-          result = fmt_postgres_protobuf(bytes, v, viw, useTabs, caseMode);
+          const parsed = pgQuery.parse(sql);
+          if (parsed.error) throw new Error(parsed.error.message || 'pg_query parse error');
+          const treeJson = typeof parsed.parse_tree === 'string'
+            ? parsed.parse_tree
+            : JSON.stringify(parsed.parse_tree);
+          result = fmt_postgres_json(treeJson, v, viw, useTabs, caseMode);
         } else {
           result = fmt(sql, dialect, v, viw, useTabs, caseMode);
         }

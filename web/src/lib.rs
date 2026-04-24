@@ -1,7 +1,7 @@
 use dialect_materialize::MaterializeDialect;
-use dialect_postgres_convert::convert_protobuf_bytes;
+use dialect_postgres_convert::convert_pg_query_json;
 use sqlfmt_core::format_sql;
-use sqlfmt_render::{render, CaseMode, RenderOpts};
+use sqlfmt_render::{CaseMode, RenderOpts, render};
 use wasm_bindgen::prelude::*;
 
 fn parse_opts(width: usize, tab_width: usize, use_tabs: bool, case: &str) -> RenderOpts {
@@ -18,7 +18,7 @@ fn parse_opts(width: usize, tab_width: usize, use_tabs: bool, case: &str) -> Ren
 }
 
 /// Format SQL using a native dialect parser.
-/// dialect: "materialize" (postgres uses fmt_postgres_protobuf instead).
+/// dialect: "materialize".
 #[wasm_bindgen]
 pub fn fmt(
     sql: &str,
@@ -33,24 +33,23 @@ pub fn fmt(
         "materialize" | "" => format_sql(&MaterializeDialect, sql, &opts)
             .map_err(|e| JsValue::from_str(&e.to_string())),
         other => Err(JsValue::from_str(&format!(
-            "dialect '{other}' requires a JS-side parser; use fmt_postgres_protobuf instead"
+            "dialect '{other}' requires a JS-side parser"
         ))),
     }
 }
 
-/// Format a Postgres query from raw pg_query protobuf bytes.
-/// Call pg_query.js in JavaScript to get the bytes, then pass them here.
-/// The bytes must be the raw protobuf-encoded ParseResult from libpg_query.
+/// Format a Postgres query from a pg-query-emscripten JSON parse tree.
+/// Pass `JSON.stringify(result.parse_tree)` from `pg-query-emscripten`'s `parse()`.
 #[wasm_bindgen]
-pub fn fmt_postgres_protobuf(
-    protobuf_bytes: &[u8],
+pub fn fmt_postgres_json(
+    parse_tree_json: &str,
     width: usize,
     tab_width: usize,
     use_tabs: bool,
     case: &str,
 ) -> Result<String, JsValue> {
-    let node = convert_protobuf_bytes(protobuf_bytes)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let node =
+        convert_pg_query_json(parse_tree_json).map_err(|e| JsValue::from_str(&e.to_string()))?;
     let opts = parse_opts(width, tab_width, use_tabs, case);
     Ok(render(&node, &opts))
 }

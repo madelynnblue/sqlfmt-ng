@@ -479,6 +479,7 @@ dependencies = [
  "pg_query",
  "prost 0.10.4",
  "prost-build",
+ "serde_json",
  "sqlfmt-core",
  "sqlfmt-ir",
  "sqlfmt-render",

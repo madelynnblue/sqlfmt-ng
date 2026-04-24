@@ -8,6 +8,7 @@ rust-version.workspace = true
 sqlfmt-ir = { path = "../sqlfmt-ir" }
 sqlfmt-core = { path = "../sqlfmt-core" }
 prost = "0.10"
+serde_json = "1"
 
 [build-dependencies]
 prost-build = "0.10"
