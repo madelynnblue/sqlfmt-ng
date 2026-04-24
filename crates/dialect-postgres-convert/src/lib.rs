@@ -22,7 +22,11 @@ pub fn convert_protobuf_bytes(bytes: &[u8]) -> Result<Node, SqlfmtError> {
     for raw in stmts {
         match convert::raw_stmt_to_node(raw) {
             Some(Node::Clauses { items }) => clauses.extend(items),
-            Some(_) => return Err(SqlfmtError::Parse("unexpected non-clauses top-level node".into())),
+            Some(_) => {
+                return Err(SqlfmtError::Parse(
+                    "unexpected non-clauses top-level node".into(),
+                ));
+            }
             None => return Err(SqlfmtError::Parse("unsupported statement type".into())),
         }
     }
@@ -55,7 +59,10 @@ mod tests {
         use sqlfmt_render::render;
         let bytes = parse_bytes("SELECT a, b FROM t WHERE x = 1");
         let node = convert_protobuf_bytes(&bytes).unwrap();
-        let opts = RenderOpts { line_width: 1000, ..Default::default() };
+        let opts = RenderOpts {
+            line_width: 1000,
+            ..Default::default()
+        };
         let out = render(&node, &opts);
         assert!(out.contains("SELECT"), "got: {out}");
         assert!(out.contains("FROM"), "got: {out}");

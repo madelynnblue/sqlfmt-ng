@@ -114,9 +114,7 @@ fn to_rdoc<'a>(node: &Node, opts: &RenderOpts) -> RcDoc<'a> {
             RcDoc::concat(docs)
         }
         Node::Group { content } => to_rdoc(content, opts).group(),
-        Node::Nest { content } => {
-            to_rdoc(content, opts).nest(opts.tab_width as isize)
-        }
+        Node::Nest { content } => to_rdoc(content, opts).nest(opts.tab_width as isize),
         Node::Line => RcDoc::line(),
         Node::Hardline => RcDoc::hardline(),
     }
@@ -130,12 +128,8 @@ fn clause_to_rdoc<'a>(clause: &Clause, opts: &RenderOpts) -> RcDoc<'a> {
             let body_doc = to_rdoc(body, opts);
             // Nest the line break + body together so that when broken, the body
             // is indented by tab_width relative to the clause keyword.
-            kw.append(
-                RcDoc::line()
-                    .append(body_doc)
-                    .nest(opts.tab_width as isize),
-            )
-            .group()
+            kw.append(RcDoc::line().append(body_doc).nest(opts.tab_width as isize))
+                .group()
         }
     }
 }
@@ -151,14 +145,21 @@ mod tests {
 
     #[test]
     fn test_keyword_upper() {
-        let node = Node::Keyword { value: "select".into() };
+        let node = Node::Keyword {
+            value: "select".into(),
+        };
         assert_eq!(render(&node, &opts()), "SELECT");
     }
 
     #[test]
     fn test_keyword_lower() {
-        let node = Node::Keyword { value: "SELECT".into() };
-        let o = RenderOpts { case: CaseMode::Lower, ..RenderOpts::default() };
+        let node = Node::Keyword {
+            value: "SELECT".into(),
+        };
+        let o = RenderOpts {
+            case: CaseMode::Lower,
+            ..RenderOpts::default()
+        };
         assert_eq!(render(&node, &o), "select");
     }
 
@@ -170,7 +171,10 @@ mod tests {
 
     #[test]
     fn test_identifier_unquoted() {
-        let node = Node::Identifier { value: "my_table".into(), quote: None };
+        let node = Node::Identifier {
+            value: "my_table".into(),
+            quote: None,
+        };
         assert_eq!(render(&node, &opts()), "my_table");
     }
 
@@ -199,7 +203,10 @@ mod tests {
         let node = Node::Wrap {
             keyword: Some("count".into()),
             open: "(".into(),
-            content: Box::new(Node::Identifier { value: "x".into(), quote: None }),
+            content: Box::new(Node::Identifier {
+                value: "x".into(),
+                quote: None,
+            }),
             close: ")".into(),
         };
         assert_eq!(render(&node, &opts()), "COUNT(x)");
@@ -213,8 +220,14 @@ mod tests {
                     keyword: "SELECT".into(),
                     body: Some(Box::new(Node::List {
                         items: vec![
-                            Node::Identifier { value: "a".into(), quote: None },
-                            Node::Identifier { value: "b".into(), quote: None },
+                            Node::Identifier {
+                                value: "a".into(),
+                                quote: None,
+                            },
+                            Node::Identifier {
+                                value: "b".into(),
+                                quote: None,
+                            },
                         ],
                         separator: None,
                     })),
@@ -228,7 +241,10 @@ mod tests {
                 },
             ],
         };
-        let wide = RenderOpts { line_width: 1000, ..RenderOpts::default() };
+        let wide = RenderOpts {
+            line_width: 1000,
+            ..RenderOpts::default()
+        };
         let result = render(&node, &wide);
         assert_eq!(result, "SELECT a, b\nFROM t");
     }
@@ -242,15 +258,23 @@ mod tests {
                 Node::Literal { value: "b".into() },
             ],
         };
-        let wide = RenderOpts { line_width: 1000, ..RenderOpts::default() };
+        let wide = RenderOpts {
+            line_width: 1000,
+            ..RenderOpts::default()
+        };
         let result = render(&node, &wide);
         assert_eq!(result, "a AND b");
     }
 
     #[test]
     fn test_keyword_title() {
-        let node = Node::Keyword { value: "select".into() };
-        let o = RenderOpts { case: CaseMode::Title, ..RenderOpts::default() };
+        let node = Node::Keyword {
+            value: "select".into(),
+        };
+        let o = RenderOpts {
+            case: CaseMode::Title,
+            ..RenderOpts::default()
+        };
         assert_eq!(render(&node, &o), "Select");
     }
 
@@ -260,14 +284,30 @@ mod tests {
         let node = Node::Clauses {
             items: vec![Clause {
                 keyword: "SELECT".into(),
-                body: Some(Box::new(Node::Identifier { value: "my_col".into(), quote: None })),
+                body: Some(Box::new(Node::Identifier {
+                    value: "my_col".into(),
+                    quote: None,
+                })),
             }],
         };
         // Force break by using a very narrow line width (1 char).
-        let tab_opts = RenderOpts { line_width: 1, use_tabs: true, tab_width: 4, case: CaseMode::Upper };
+        let tab_opts = RenderOpts {
+            line_width: 1,
+            use_tabs: true,
+            tab_width: 4,
+            case: CaseMode::Upper,
+        };
         let result = render(&node, &tab_opts);
         // The body should be indented with a tab, not spaces.
-        assert!(result.contains("\tmy_col"), "expected tab indent, got: {:?}", result);
-        assert!(!result.contains("    my_col"), "should not have space indent, got: {:?}", result);
+        assert!(
+            result.contains("\tmy_col"),
+            "expected tab indent, got: {:?}",
+            result
+        );
+        assert!(
+            !result.contains("    my_col"),
+            "should not have space indent, got: {:?}",
+            result
+        );
     }
 }

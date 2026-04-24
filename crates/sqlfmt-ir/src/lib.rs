@@ -1,17 +1,19 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Clause {
     pub keyword: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub body: Option<Box<Node>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Node {
     // Sugar nodes
-    Clauses { items: Vec<Clause> },
+    Clauses {
+        items: Vec<Clause>,
+    },
     List {
         items: Vec<Node>,
         #[serde(skip_serializing_if = "Option::is_none")]
@@ -24,19 +26,34 @@ pub enum Node {
         content: Box<Node>,
         close: String,
     },
-    Infix { op: String, items: Vec<Node> },
-    Keyword { value: String },
+    Infix {
+        op: String,
+        items: Vec<Node>,
+    },
+    Keyword {
+        value: String,
+    },
     Identifier {
         value: String,
         #[serde(skip_serializing_if = "Option::is_none")]
         quote: Option<String>,
     },
-    Literal { value: String },
+    Literal {
+        value: String,
+    },
     // Primitives
-    Text { value: String },
-    Concat { items: Vec<Node> },
-    Group { content: Box<Node> },
-    Nest { content: Box<Node> },
+    Text {
+        value: String,
+    },
+    Concat {
+        items: Vec<Node>,
+    },
+    Group {
+        content: Box<Node>,
+    },
+    Nest {
+        content: Box<Node>,
+    },
     Line,
     Hardline,
 }
@@ -47,7 +64,9 @@ mod tests {
 
     #[test]
     fn test_keyword_roundtrip() {
-        let node = Node::Keyword { value: "select".into() };
+        let node = Node::Keyword {
+            value: "select".into(),
+        };
         let json = serde_json::to_string(&node).unwrap();
         assert_eq!(json, r#"{"type":"keyword","value":"select"}"#);
         let back: Node = serde_json::from_str(&json).unwrap();
@@ -59,7 +78,10 @@ mod tests {
         let node = Node::Clauses {
             items: vec![Clause {
                 keyword: "SELECT".into(),
-                body: Some(Box::new(Node::Identifier { value: "a".into(), quote: None })),
+                body: Some(Box::new(Node::Identifier {
+                    value: "a".into(),
+                    quote: None,
+                })),
             }],
         };
         let json = serde_json::to_string(&node).unwrap();
@@ -82,7 +104,10 @@ mod tests {
         let node = Node::Wrap {
             keyword: Some("COUNT".into()),
             open: "(".into(),
-            content: Box::new(Node::Identifier { value: "x".into(), quote: None }),
+            content: Box::new(Node::Identifier {
+                value: "x".into(),
+                quote: None,
+            }),
             close: ")".into(),
         };
         let json = serde_json::to_string(&node).unwrap();

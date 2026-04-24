@@ -51,7 +51,9 @@ fn main() {
         Some(s) => s.clone(),
         None => {
             let mut buf = String::new();
-            io::stdin().read_to_string(&mut buf).expect("failed to read stdin");
+            io::stdin()
+                .read_to_string(&mut buf)
+                .expect("failed to read stdin");
             buf
         }
     };
@@ -71,9 +73,7 @@ fn main() {
         DialectArg::Materialize => {
             format_sql(&dialect_materialize::MaterializeDialect, &sql, &opts)
         }
-        DialectArg::Postgres => {
-            format_sql(&dialect_postgres::PostgresDialect, &sql, &opts)
-        }
+        DialectArg::Postgres => format_sql(&dialect_postgres::PostgresDialect, &sql, &opts),
     };
 
     match result {

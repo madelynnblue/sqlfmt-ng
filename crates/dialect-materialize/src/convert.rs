@@ -214,7 +214,9 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
         },
         Expr::Not { expr } => Node::Concat {
             items: vec![
-                Node::Keyword { value: "NOT".into() },
+                Node::Keyword {
+                    value: "NOT".into(),
+                },
                 Node::Text { value: " ".into() },
                 expr_to_node(expr),
             ],

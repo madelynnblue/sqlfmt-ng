@@ -19,7 +19,7 @@ impl Dialect for MaterializeDialect {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sqlfmt_core::{format_sql, Dialect};
+    use sqlfmt_core::{Dialect, format_sql};
     use sqlfmt_render::RenderOpts;
 
     #[test]

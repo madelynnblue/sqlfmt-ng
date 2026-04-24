@@ -16,7 +16,7 @@ impl Dialect for PostgresDialect {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sqlfmt_core::{format_sql, Dialect};
+    use sqlfmt_core::{Dialect, format_sql};
     use sqlfmt_render::RenderOpts;
 
     #[test]
@@ -36,7 +36,10 @@ mod tests {
     #[test]
     fn test_format_select_where() {
         let d = PostgresDialect;
-        let opts = RenderOpts { line_width: 1000, ..Default::default() };
+        let opts = RenderOpts {
+            line_width: 1000,
+            ..Default::default()
+        };
         let result = format_sql(&d, "SELECT a, b FROM t WHERE x = 1", &opts).unwrap();
         assert!(result.contains("SELECT"), "got: {result}");
         assert!(result.contains("FROM"), "got: {result}");
