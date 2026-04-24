@@ -1,29 +1,35 @@
 [workspace]
 members = [
-    "crates/sqlfmt-ir",
-    "crates/sqlfmt-render",
-    "crates/sqlfmt-core",
-    "crates/dialect-materialize",
-    "crates/dialect-postgres",
-    "crates/dialect-postgres-convert",
+    ".",
     "crates/dialect-cockroachdb",
     "crates/dialect-googlesql",
+    "crates/dialect-materialize",
+    "crates/dialect-postgres-convert",
+    "crates/dialect-postgres",
+    "crates/sqlfmt-core",
+    "crates/sqlfmt-ir",
+    "crates/sqlfmt-render",
     "web",
-    ".",
 ]
-resolver = "2"
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
 
 [package]
 name = "sqlfmt"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [dependencies]
-sqlfmt-core = { path = "crates/sqlfmt-core" }
-sqlfmt-render = { path = "crates/sqlfmt-render" }
+clap = { version = "4", features = ["derive"] }
 dialect-materialize = { path = "crates/dialect-materialize" }
 dialect-postgres = { path = "crates/dialect-postgres" }
-clap = { version = "4", features = ["derive"] }
+sqlfmt-core = { path = "crates/sqlfmt-core" }
+sqlfmt-render = { path = "crates/sqlfmt-render" }
 
 [profile.release]
 opt-level = "z"
