@@ -6,10 +6,14 @@ use thiserror::Error;
 pub enum SqlfmtError {
     #[error("parse error: {0}")]
     Parse(String),
+    #[error("roundtrip error:\nInput:\n{input}\nRendered:\n{output}")]
+    Roundtrip { input: String, output: String },
 }
 
 pub trait Dialect {
     fn parse(&self, sql: &str) -> Result<Node, SqlfmtError>;
+    // ast_equal returns an error if the ASTs of sql and rendered are not equal. This needs to be implemented by each Dialect because that's the only thing with raw AST access.
+    fn ast_equal(&self, sql: &str, rendered: &str) -> Result<(), SqlfmtError>;
 }
 
 pub fn format_sql(
@@ -20,14 +24,8 @@ pub fn format_sql(
     let node = dialect.parse(sql)?;
     let rendered = render(&node, opts);
 
-    // Round-trip to make sure our conversion didn't drop any AST nodes.
-    let reparsed = dialect.parse(&rendered)?;
-    if node != reparsed {
-        return Err(SqlfmtError::Parse(format!(
-            "non-idempotent formatting detected. Input:\n{sql}\nFormatted:\n{rendered}"
-        )));
-    }
-
+    // Round-trip test to make sure we didn't drop any AST nodes during convert.
+    dialect.ast_equal(sql, &rendered)?;
     Ok(rendered)
 }
 
@@ -45,6 +43,16 @@ mod tests {
                     body: Some(Box::new(Node::Literal { value: "1".into() })),
                 }],
             })
+        }
+
+        fn ast_equal(&self, sql: &str, rendered: &str) -> Result<(), SqlfmtError> {
+            if sql != rendered {
+                return Err(SqlfmtError::Roundtrip {
+                    input: sql.to_owned(),
+                    output: rendered.to_owned(),
+                });
+            }
+            Ok(())
         }
     }
 

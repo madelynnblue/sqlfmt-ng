@@ -33,29 +33,46 @@ unsafe extern "C" {
     fn pg_query_free_parse_result(result: PgQueryParseResult);
 }
 
-impl Dialect for PostgresDialect {
-    fn parse(&self, sql: &str) -> Result<Node, SqlfmtError> {
-        let input = CString::new(sql).map_err(|e| SqlfmtError::Parse(e.to_string()))?;
-        let result = unsafe { pg_query_parse(input.as_ptr()) };
-        if !result.error.is_null() {
-            let msg = unsafe { CStr::from_ptr((*result.error).message) }
-                .to_string_lossy()
-                .to_string();
-            unsafe { pg_query_free_parse_result(result) };
-            return Err(SqlfmtError::Parse(msg));
-        }
-        let json = unsafe { CStr::from_ptr(result.parse_tree) }
+fn pg_query_parse_json(sql: &str) -> Result<String, SqlfmtError> {
+    let input = CString::new(sql).map_err(|e| SqlfmtError::Parse(e.to_string()))?;
+    let result = unsafe { pg_query_parse(input.as_ptr()) };
+    if !result.error.is_null() {
+        let msg = unsafe { CStr::from_ptr((*result.error).message) }
             .to_string_lossy()
             .to_string();
         unsafe { pg_query_free_parse_result(result) };
+        return Err(SqlfmtError::Parse(msg));
+    }
+    let json = unsafe { CStr::from_ptr(result.parse_tree) }
+        .to_string_lossy()
+        .to_string();
+    unsafe { pg_query_free_parse_result(result) };
+    Ok(json)
+}
+
+impl Dialect for PostgresDialect {
+    fn parse(&self, sql: &str) -> Result<Node, SqlfmtError> {
+        let json = pg_query_parse_json(sql)?;
         convert_pg_query_json(&json)
+    }
+
+    fn ast_equal(&self, sql: &str, rendered: &str) -> Result<(), SqlfmtError> {
+        let sql_json = pg_query_parse_json(sql)?;
+        let rendered_json = pg_query_parse_json(rendered)?;
+        if sql_json != rendered_json {
+            return Err(SqlfmtError::Roundtrip {
+                input: sql.to_owned(),
+                output: rendered.to_owned(),
+            });
+        }
+        Ok(())
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sqlfmt_core::{format_sql, Dialect};
+    use sqlfmt_core::{Dialect, format_sql};
     use sqlfmt_render::RenderOpts;
 
     #[test]
