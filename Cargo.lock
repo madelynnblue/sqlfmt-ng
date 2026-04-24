@@ -464,11 +464,24 @@ dependencies = [
 name = "dialect-postgres"
 version = "0.1.0"
 dependencies = [
+ "dialect-postgres-convert",
  "pg_query",
+ "prost 0.10.4",
  "sqlfmt-core",
  "sqlfmt-ir",
  "sqlfmt-render",
- "thiserror 1.0.69",
+]
+
+[[package]]
+name = "dialect-postgres-convert"
+version = "0.1.0"
+dependencies = [
+ "pg_query",
+ "prost 0.10.4",
+ "prost-build",
+ "sqlfmt-core",
+ "sqlfmt-ir",
+ "sqlfmt-render",
 ]
 
 [[package]]
@@ -2571,6 +2584,7 @@ name = "sqlfmt-web"
 version = "0.1.0"
 dependencies = [
  "dialect-materialize",
+ "dialect-postgres-convert",
  "serde_json",
  "sqlfmt-core",
  "sqlfmt-ir",

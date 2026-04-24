@@ -1,4 +1,5 @@
 use dialect_materialize::MaterializeDialect;
+use dialect_postgres_convert::convert_protobuf_bytes;
 use sqlfmt_core::format_sql;
 use sqlfmt_render::{render, CaseMode, RenderOpts};
 use wasm_bindgen::prelude::*;
@@ -17,8 +18,7 @@ fn parse_opts(width: usize, tab_width: usize, use_tabs: bool, case: &str) -> Ren
 }
 
 /// Format SQL using a native dialect parser.
-/// dialect: "materialize" (postgres and others are not available natively in WASM;
-///          use fmt_from_ir with a JS-side parser instead).
+/// dialect: "materialize" (postgres uses fmt_postgres_protobuf instead).
 #[wasm_bindgen]
 pub fn fmt(
     sql: &str,
@@ -33,14 +33,30 @@ pub fn fmt(
         "materialize" | "" => format_sql(&MaterializeDialect, sql, &opts)
             .map_err(|e| JsValue::from_str(&e.to_string())),
         other => Err(JsValue::from_str(&format!(
-            "dialect '{other}' requires a JS-side parser; use fmt_from_ir instead"
+            "dialect '{other}' requires a JS-side parser; use fmt_postgres_protobuf instead"
         ))),
     }
 }
 
+/// Format a Postgres query from raw pg_query protobuf bytes.
+/// Call pg_query.js in JavaScript to get the bytes, then pass them here.
+/// The bytes must be the raw protobuf-encoded ParseResult from libpg_query.
+#[wasm_bindgen]
+pub fn fmt_postgres_protobuf(
+    protobuf_bytes: &[u8],
+    width: usize,
+    tab_width: usize,
+    use_tabs: bool,
+    case: &str,
+) -> Result<String, JsValue> {
+    let node = convert_protobuf_bytes(protobuf_bytes)
+        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let opts = parse_opts(width, tab_width, use_tabs, case);
+    Ok(render(&node, &opts))
+}
+
 /// Render pre-parsed SQL from a sqlfmt IR JSON string.
-/// Use this for dialects whose parsers are not compiled into this WASM module
-/// (e.g. Postgres via pg_query.js): parse in JS, convert to IR JSON, call this.
+/// For dialects whose JS parsers produce sqlfmt IR directly rather than pg_query protobuf.
 #[wasm_bindgen]
 pub fn fmt_from_ir(
     ir_json: &str,

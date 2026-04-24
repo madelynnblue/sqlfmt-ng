@@ -5,6 +5,7 @@ members = [
     "crates/sqlfmt-core",
     "crates/dialect-materialize",
     "crates/dialect-postgres",
+    "crates/dialect-postgres-convert",
     "crates/dialect-cockroachdb",
     "crates/dialect-googlesql",
     "web",

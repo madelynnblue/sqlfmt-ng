@@ -1,14 +1,16 @@
 [package]
-name = "dialect-postgres"
+name = "dialect-postgres-convert"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 sqlfmt-ir = { path = "../sqlfmt-ir" }
 sqlfmt-core = { path = "../sqlfmt-core" }
-dialect-postgres-convert = { path = "../dialect-postgres-convert" }
-pg_query = "5"
 prost = "0.10"
 
+[build-dependencies]
+prost-build = "0.10"
+
 [dev-dependencies]
+pg_query = "5"
 sqlfmt-render = { path = "../sqlfmt-render" }
