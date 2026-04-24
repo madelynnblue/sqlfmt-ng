@@ -478,10 +478,16 @@
 
   <script type="module">
     import init, { fmt, fmt_postgres_protobuf } from './wasm/sqlfmt_web.js';
-    // import directly from the ESM dist file; relative sub-imports resolve via jsdelivr CDN
-    import { parse as pgParse, ParseResult } from 'https://cdn.jsdelivr.net/npm/libpg-query-wasm@0.2.1/dist/main.js';
 
     await init({ module_or_path: './wasm/sqlfmt_web_bg.wasm' });
+
+    let pgParse = null;
+    let ParseResult = null;
+    async function ensurePostgres() {
+      if (pgParse) return;
+      // import directly from the ESM dist file; relative sub-imports resolve via jsdelivr CDN
+      ({ parse: pgParse, ParseResult } = await import('https://cdn.jsdelivr.net/npm/libpg-query-wasm@0.2.1/dist/main.js'));
+    }
 
     document.getElementById('submitButton').style.display = 'none';
     document.querySelectorAll('.jsonly').forEach(el => el.style.display = 'inline');
@@ -520,7 +526,7 @@
     function getDialect() { return document.querySelector('input[name="dialect"]:checked')?.value ?? 'materialize'; }
     function getCase()    { return document.querySelector('input[name="case"]:checked')?.value ?? 'upper'; }
 
-    function range() {
+    async function range() {
       const v       = parseInt(nEl.value);
       const viw     = parseInt(indentEl.value);
       const sql     = sqlEl.value;
@@ -549,6 +555,7 @@
       try {
         let result;
         if (dialect === 'postgres') {
+          await ensurePostgres();
           const bytes = ParseResult.encode(pgParse(sql)).finish();
           result = fmt_postgres_protobuf(bytes, v, viw, useTabs, caseMode);
         } else {
