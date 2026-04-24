@@ -468,7 +468,7 @@
   </div>
 
   <script type="module">
-    import init, { fmt, fmt_postgres_json } from './wasm/sqlfmt_web.js';
+    import init, { fmt, fmt_postgres_json, pg_json_ast_equal } from './wasm/sqlfmt_web.js';
 
     await init({ module_or_path: './wasm/sqlfmt_web_bg.wasm' });
 
@@ -553,6 +553,14 @@
             ? parsed.parse_tree
             : JSON.stringify(parsed.parse_tree);
           result = fmt_postgres_json(treeJson, v, viw, useTabs, caseMode);
+          const renderedParsed = pgQuery.parse(result);
+          if (renderedParsed.error) throw new Error('roundtrip parse error: ' + (renderedParsed.error.message || 'pg_query parse error'));
+          const renderedTreeJson = typeof renderedParsed.parse_tree === 'string'
+            ? renderedParsed.parse_tree
+            : JSON.stringify(renderedParsed.parse_tree);
+          if (!pg_json_ast_equal(treeJson, renderedTreeJson)) {
+            throw new Error('roundtrip error: formatted output has a different AST than the input\n\nInput:\n' + sql + '\n\nFormatted:\n' + result);
+          }
         } else {
           result = fmt(sql, dialect, v, viw, useTabs, caseMode);
         }

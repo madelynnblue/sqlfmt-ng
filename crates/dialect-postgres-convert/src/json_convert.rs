@@ -617,3 +617,26 @@ fn sub_link_to_node(sl: &Value) -> Node {
         close: ")".into(),
     }
 }
+
+pub fn json_ast_equal(json1: &str, json2: &str) -> bool {
+    let Ok(v1) = serde_json::from_str::<Value>(json1) else {
+        return false;
+    };
+    let Ok(v2) = serde_json::from_str::<Value>(json2) else {
+        return false;
+    };
+    strip_locations(v1) == strip_locations(v2)
+}
+
+fn strip_locations(v: Value) -> Value {
+    match v {
+        Value::Object(map) => Value::Object(
+            map.into_iter()
+                .filter(|(k, _)| !matches!(k.as_str(), "location" | "stmt_location" | "stmt_len"))
+                .map(|(k, v)| (k, strip_locations(v)))
+                .collect(),
+        ),
+        Value::Array(arr) => Value::Array(arr.into_iter().map(strip_locations).collect()),
+        other => other,
+    }
+}

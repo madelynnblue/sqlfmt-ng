@@ -1,6 +1,6 @@
 mod json_convert;
 
-pub use json_convert::convert_pg_query_json;
+pub use json_convert::{convert_pg_query_json, json_ast_equal};
 
 #[cfg(test)]
 mod tests {
@@ -39,8 +39,9 @@ mod tests {
         let input = CString::new(sql).unwrap();
         let result = unsafe { pg_query_parse(input.as_ptr()) };
         assert!(result.error.is_null(), "pg_query_parse returned error");
-        let json =
-            unsafe { CStr::from_ptr(result.parse_tree) }.to_string_lossy().to_string();
+        let json = unsafe { CStr::from_ptr(result.parse_tree) }
+            .to_string_lossy()
+            .to_string();
         unsafe { pg_query_free_parse_result(result) };
         json
     }
@@ -54,10 +55,13 @@ mod tests {
 
     #[test]
     fn test_json_select_with_where() {
-        use sqlfmt_render::{render, RenderOpts};
+        use sqlfmt_render::{RenderOpts, render};
         let json = parse_to_json_c("SELECT a, b FROM t WHERE x = 1");
         let node = convert_pg_query_json(&json).unwrap();
-        let opts = RenderOpts { line_width: 1000, ..Default::default() };
+        let opts = RenderOpts {
+            line_width: 1000,
+            ..Default::default()
+        };
         let out = render(&node, &opts);
         assert!(out.contains("SELECT"), "got: {out}");
         assert!(out.contains("FROM"), "got: {out}");
@@ -66,10 +70,13 @@ mod tests {
 
     #[test]
     fn test_json_order_by() {
-        use sqlfmt_render::{render, RenderOpts};
+        use sqlfmt_render::{RenderOpts, render};
         let json = parse_to_json_c("SELECT a FROM t ORDER BY a DESC");
         let node = convert_pg_query_json(&json).unwrap();
-        let opts = RenderOpts { line_width: 1000, ..Default::default() };
+        let opts = RenderOpts {
+            line_width: 1000,
+            ..Default::default()
+        };
         let out = render(&node, &opts);
         assert!(out.contains("ORDER BY"), "got: {out}");
         assert!(out.contains("DESC"), "got: {out}");

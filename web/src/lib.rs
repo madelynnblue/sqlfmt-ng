@@ -1,5 +1,5 @@
 use dialect_materialize::MaterializeDialect;
-use dialect_postgres_convert::convert_pg_query_json;
+use dialect_postgres_convert::{convert_pg_query_json, json_ast_equal};
 use sqlfmt_core::format_sql;
 use sqlfmt_render::{CaseMode, RenderOpts, render};
 use wasm_bindgen::prelude::*;
@@ -52,6 +52,14 @@ pub fn fmt_postgres_json(
         convert_pg_query_json(parse_tree_json).map_err(|e| JsValue::from_str(&e.to_string()))?;
     let opts = parse_opts(width, tab_width, use_tabs, case);
     Ok(render(&node, &opts))
+}
+
+/// Compare two pg-query JSON parse trees for AST equality, ignoring location fields.
+/// Pass `JSON.stringify(result.parse_tree)` for both arguments.
+/// Returns true if the ASTs are structurally identical (modulo byte offsets).
+#[wasm_bindgen]
+pub fn pg_json_ast_equal(json1: &str, json2: &str) -> bool {
+    json_ast_equal(json1, json2)
 }
 
 /// Render pre-parsed SQL from a sqlfmt IR JSON string.

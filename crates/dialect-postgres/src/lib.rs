@@ -59,7 +59,7 @@ impl Dialect for PostgresDialect {
     fn ast_equal(&self, sql: &str, rendered: &str) -> Result<(), SqlfmtError> {
         let sql_json = pg_query_parse_json(sql)?;
         let rendered_json = pg_query_parse_json(rendered)?;
-        if sql_json != rendered_json {
+        if !dialect_postgres_convert::json_ast_equal(&sql_json, &rendered_json) {
             return Err(SqlfmtError::Roundtrip {
                 input: sql.to_owned(),
                 output: rendered.to_owned(),
@@ -87,6 +87,17 @@ mod tests {
     fn test_parse_error() {
         let d = PostgresDialect;
         assert!(d.parse("NOT VALID SQL @@@@").is_err());
+    }
+
+    #[test]
+    fn test_format_roundtrip() {
+        let d = PostgresDialect;
+        let opts = RenderOpts {
+            line_width: 1000,
+            ..Default::default()
+        };
+        let result = format_sql(&d, "SELECT a, b FROM t WHERE x = 1 ORDER BY a DESC", &opts);
+        assert!(result.is_ok(), "roundtrip failed: {:?}", result);
     }
 
     #[test]
