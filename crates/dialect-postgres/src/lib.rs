@@ -1,22 +1,61 @@
-use dialect_postgres_convert::convert_protobuf_bytes;
-use prost::Message;
+// Force the pg_query crate to be linked so libpg_query.a is available for the
+// extern "C" symbols below.
+extern crate pg_query as _;
+
+use std::ffi::{CStr, CString};
+use std::os::raw::c_char;
+
+use dialect_postgres_convert::convert_pg_query_json;
 use sqlfmt_core::{Dialect, SqlfmtError};
 use sqlfmt_ir::Node;
 
 pub struct PostgresDialect;
 
+#[repr(C)]
+struct PgQueryError {
+    message: *mut c_char,
+    _funcname: *mut c_char,
+    _filename: *mut c_char,
+    _lineno: i32,
+    _cursorpos: i32,
+    _context: *mut c_char,
+}
+
+#[repr(C)]
+struct PgQueryParseResult {
+    parse_tree: *mut c_char,
+    _stderr_buffer: *mut c_char,
+    error: *mut PgQueryError,
+}
+
+unsafe extern "C" {
+    fn pg_query_parse(input: *const c_char) -> PgQueryParseResult;
+    fn pg_query_free_parse_result(result: PgQueryParseResult);
+}
+
 impl Dialect for PostgresDialect {
     fn parse(&self, sql: &str) -> Result<Node, SqlfmtError> {
-        let result = pg_query::parse(sql).map_err(|e| SqlfmtError::Parse(e.to_string()))?;
-        let bytes = result.protobuf.encode_to_vec();
-        convert_protobuf_bytes(&bytes)
+        let input = CString::new(sql).map_err(|e| SqlfmtError::Parse(e.to_string()))?;
+        let result = unsafe { pg_query_parse(input.as_ptr()) };
+        if !result.error.is_null() {
+            let msg = unsafe { CStr::from_ptr((*result.error).message) }
+                .to_string_lossy()
+                .to_string();
+            unsafe { pg_query_free_parse_result(result) };
+            return Err(SqlfmtError::Parse(msg));
+        }
+        let json = unsafe { CStr::from_ptr(result.parse_tree) }
+            .to_string_lossy()
+            .to_string();
+        unsafe { pg_query_free_parse_result(result) };
+        convert_pg_query_json(&json)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sqlfmt_core::{Dialect, format_sql};
+    use sqlfmt_core::{format_sql, Dialect};
     use sqlfmt_render::RenderOpts;
 
     #[test]

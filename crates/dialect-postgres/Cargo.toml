@@ -9,7 +9,6 @@ sqlfmt-ir = { path = "../sqlfmt-ir" }
 sqlfmt-core = { path = "../sqlfmt-core" }
 dialect-postgres-convert = { path = "../dialect-postgres-convert" }
 pg_query = "5"
-prost = "0.10"
 
 [dev-dependencies]
 sqlfmt-render = { path = "../sqlfmt-render" }

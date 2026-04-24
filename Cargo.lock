@@ -466,7 +466,6 @@ version = "0.1.0"
 dependencies = [
  "dialect-postgres-convert",
  "pg_query",
- "prost 0.10.4",
  "sqlfmt-core",
  "sqlfmt-ir",
  "sqlfmt-render",
@@ -477,8 +476,6 @@ name = "dialect-postgres-convert"
 version = "0.1.0"
 dependencies = [
  "pg_query",
- "prost 0.10.4",
- "prost-build",
  "serde_json",
  "sqlfmt-core",
  "sqlfmt-ir",
