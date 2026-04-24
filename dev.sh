@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SERVE=0
-PORT=8080
+PORT=8012
 
 for arg in "$@"; do
     case "$arg" in
