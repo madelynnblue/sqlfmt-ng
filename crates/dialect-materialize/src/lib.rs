@@ -12,7 +12,6 @@ impl Dialect for MaterializeDialect {
         if stmts.is_empty() {
             return Err(SqlfmtError::Parse("empty input".into()));
         }
-        dbg!(&stmts);
         Ok(convert::statement_to_node(&stmts[0].ast))
     }
 

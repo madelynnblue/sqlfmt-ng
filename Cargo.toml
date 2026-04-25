@@ -6,6 +6,7 @@ members = [
     "crates/dialect-materialize",
     "crates/dialect-postgres-convert",
     "crates/dialect-postgres",
+    "crates/sqlfmt-corpus-tests",
     "crates/sqlfmt-core",
     "crates/sqlfmt-ir",
     "crates/sqlfmt-render",
