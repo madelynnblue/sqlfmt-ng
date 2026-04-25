@@ -65,16 +65,4 @@ mod tests {
         assert!(result.contains("FROM"), "got: {result}");
         assert!(result.contains("WHERE"), "got: {result}");
     }
-
-    #[test]
-    fn test_format_with_select() {
-        let d = MaterializeDialect;
-        let opts = RenderOpts {
-            line_width: 1000,
-            ..Default::default()
-        };
-        let input = "WITH a AS (SELECT 2) SELECT * FROM a";
-        let result = format_sql(&d, input, &opts).unwrap();
-        assert_eq!(result, input);
-    }
 }

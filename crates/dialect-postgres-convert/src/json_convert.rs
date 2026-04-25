@@ -2,8 +2,17 @@ use serde_json::Value;
 use sqlfmt_core::SqlfmtError;
 use sqlfmt_ir::{Clause, Node};
 
+// PostgreSQL reserved keywords that need quoting when used as identifiers.
+// Kept minimal — only add words that appear in actual corpus failures.
+const PG_RESERVED_TYPE_KEYWORDS: &[&str] = &[
+    "char", // pseudo-type "char" vs the SQL char/character(1) type
+];
+
 fn pg_needs_quoting(s: &str) -> bool {
     if s.is_empty() {
+        return true;
+    }
+    if PG_RESERVED_TYPE_KEYWORDS.contains(&s) {
         return true;
     }
     let mut chars = s.chars();
@@ -76,7 +85,7 @@ pub fn convert_pg_query_json(json_str: &str) -> Result<Node, SqlfmtError> {
         return Err(SqlfmtError::Parse("empty statement list".into()));
     }
 
-    let mut clauses = Vec::new();
+    let mut nodes: Vec<Node> = Vec::new();
     for raw in stmts {
         // Each element is either {"stmt": {NodeType: {...}}, ...} or {"RawStmt": {"stmt": {...}}}
         let stmt = if let Some(inner) = raw.get("stmt") {
@@ -90,12 +99,7 @@ pub fn convert_pg_query_json(json_str: &str) -> Result<Node, SqlfmtError> {
         };
 
         match stmt_to_node(stmt) {
-            Some(Node::Clauses { items }) => clauses.extend(items),
-            Some(_) => {
-                return Err(SqlfmtError::Parse(
-                    "unexpected non-clauses top-level node".into(),
-                ));
-            }
+            Some(node) => nodes.push(node),
             None => {
                 return Err(SqlfmtError::Parse(format!(
                     "unsupported statement type: {stmt}"
@@ -104,6 +108,22 @@ pub fn convert_pg_query_json(json_str: &str) -> Result<Node, SqlfmtError> {
         }
     }
 
+    // Single statement: return it directly (handles UNION/INTERSECT/EXCEPT which are not Clauses).
+    if nodes.len() == 1 {
+        return Ok(nodes.remove(0));
+    }
+
+    // Multiple statements: merge Clauses, wrap non-Clauses nodes into empty keyword clauses.
+    let mut clauses = Vec::new();
+    for node in nodes {
+        match node {
+            Node::Clauses { items } => clauses.extend(items),
+            other => clauses.push(Clause {
+                keyword: String::new(),
+                body: Some(Box::new(other)),
+            }),
+        }
+    }
     Ok(Node::Clauses { items: clauses })
 }
 
@@ -173,30 +193,245 @@ fn string_val(v: &Value) -> &str {
         .unwrap_or("")
 }
 
-fn select_stmt_to_node(s: &Value) -> Node {
-    let mut clauses: Vec<Clause> = Vec::new();
+fn set_op_to_node(s: &Value) -> Node {
+    let op_kw = match s["op"].as_str().unwrap_or("SETOP_NONE") {
+        "SETOP_UNION" => {
+            if s["all"].as_bool().unwrap_or(false) {
+                "UNION ALL"
+            } else {
+                "UNION"
+            }
+        }
+        "SETOP_INTERSECT" => {
+            if s["all"].as_bool().unwrap_or(false) {
+                "INTERSECT ALL"
+            } else {
+                "INTERSECT"
+            }
+        }
+        "SETOP_EXCEPT" => {
+            if s["all"].as_bool().unwrap_or(false) {
+                "EXCEPT ALL"
+            } else {
+                "EXCEPT"
+            }
+        }
+        _ => "UNION",
+    };
 
-    // DISTINCT / DISTINCT ON
-    let distinct = s["distinctClause"].as_array();
-    let select_keyword = if let Some(dc) = distinct {
-        if dc.is_empty() {
-            // distinctClause: [] means SELECT DISTINCT
-            "SELECT DISTINCT".to_string()
-        } else {
-            // distinctClause: [{...}, ...] means SELECT DISTINCT ON (exprs)
-            let items: Vec<Node> = dc.iter().map(node_value_to_node).collect();
-            let on_list = Node::Wrap {
+    let larg = &s["larg"];
+    let rarg = &s["rarg"];
+
+    // Render one side of the set op; wrap nested set-ops in parens to preserve precedence.
+    let render_side = |side: &Value| -> Node {
+        let side_op = side["op"].as_str().unwrap_or("SETOP_NONE");
+        let inner = select_stmt_to_node(side);
+        if side_op != "SETOP_NONE" {
+            Node::Wrap {
                 keyword: None,
                 open: "(".into(),
-                content: Box::new(Node::List {
-                    items,
-                    separator: None,
-                }),
+                content: Box::new(inner),
                 close: ")".into(),
-            };
-            // We'll handle DISTINCT ON as a keyword for now; the body will follow
-            // by constructing the clause manually below.
-            let _ = on_list; // handled inline in clause push
+            }
+        } else {
+            inner
+        }
+    };
+
+    let lnode = render_side(larg);
+    let rnode = render_side(rarg);
+
+    // Build: larg \n op_kw \n rarg with hard line breaks between sections.
+    let mut concat_items: Vec<Node> = vec![
+        lnode,
+        Node::Hardline,
+        Node::Keyword { value: op_kw.into() },
+        Node::Hardline,
+        rnode,
+    ];
+
+    // Top-level ORDER BY / LIMIT / OFFSET apply to the whole set expression.
+    if let Some(sort) = s["sortClause"].as_array() {
+        if !sort.is_empty() {
+            let sort_items: Vec<Node> = sort.iter().map(node_value_to_node).collect();
+            concat_items.push(Node::Hardline);
+            concat_items.push(Node::Keyword { value: "ORDER BY".into() });
+            concat_items.push(Node::Text { value: " ".into() });
+            concat_items.push(Node::List {
+                items: sort_items,
+                separator: None,
+            });
+        }
+    }
+    if !s["limitCount"].is_null() {
+        concat_items.push(Node::Hardline);
+        concat_items.push(Node::Keyword { value: "LIMIT".into() });
+        concat_items.push(Node::Text { value: " ".into() });
+        concat_items.push(node_value_to_node(&s["limitCount"]));
+    }
+    if !s["limitOffset"].is_null() {
+        concat_items.push(Node::Hardline);
+        concat_items.push(Node::Keyword { value: "OFFSET".into() });
+        concat_items.push(Node::Text { value: " ".into() });
+        concat_items.push(node_value_to_node(&s["limitOffset"]));
+    }
+
+    Node::Concat { items: concat_items }
+}
+
+fn common_table_expr_to_node(cte: &Value) -> Node {
+    let ctename = cte["ctename"].as_str().unwrap_or("");
+    let ctequery = node_value_to_node(&cte["ctequery"]);
+
+    // Column aliases: CTE name(col1, col2, ...) AS (query)
+    let col_aliases = cte["aliascolnames"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|n| n["String"]["sval"].as_str().or_else(|| n["String"]["str"].as_str()))
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+
+    let header = if col_aliases.is_empty() {
+        Node::Concat {
+            items: vec![
+                ident_node(ctename),
+                Node::Text { value: " AS ".into() },
+            ],
+        }
+    } else {
+        let aliases: Vec<Node> = col_aliases
+            .iter()
+            .map(|&a| ident_node(a))
+            .collect();
+        Node::Concat {
+            items: vec![
+                ident_node(ctename),
+                Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::List {
+                        items: aliases,
+                        separator: None,
+                    }),
+                    close: ")".into(),
+                },
+                Node::Text { value: " AS ".into() },
+            ],
+        }
+    };
+
+    let body = Node::Wrap {
+        keyword: None,
+        open: "(".into(),
+        content: Box::new(ctequery),
+        close: ")".into(),
+    };
+
+    // Search and cycle clauses for recursive CTEs.
+    let mut cte_items = vec![header, body];
+    if let Some(search) = cte.get("searchclause").filter(|s| !s.is_null()) {
+        let search_col = search["search_col_name"].as_str().unwrap_or("");
+        let search_cols: Vec<Node> = search["search_cols"]
+            .as_array()
+            .map(|arr| {
+                arr.iter()
+                    .map(node_value_to_node)
+                    .collect()
+            })
+            .unwrap_or_default();
+        let search_body = Node::Concat {
+            items: vec![
+                Node::Text { value: "SEARCH BREADTH FIRST BY ".into() },
+                Node::List {
+                    items: search_cols,
+                    separator: None,
+                },
+                Node::Text { value: format!(" SET {search_col}") },
+            ],
+        };
+        cte_items.push(search_body);
+    }
+    if let Some(cycle) = cte.get("cycleclause").filter(|c| !c.is_null()) {
+        let cycle_cols: Vec<Node> = cycle["cycle_cols"]
+            .as_array()
+            .map(|arr| {
+                arr.iter()
+                    .map(node_value_to_node)
+                    .collect()
+            })
+            .unwrap_or_default();
+        let cycle_mark = cycle["cycle_mark_column"].as_str().unwrap_or("");
+        let cycle_mark_value = a_const_value_str(&cycle["cycle_mark_value"]).unwrap_or_default();
+        let cycle_mark_default = a_const_value_str(&cycle["cycle_mark_default"]).unwrap_or_default();
+        let cycle_body = Node::Concat {
+            items: vec![
+                Node::Text { value: "CYCLE ".into() },
+                Node::List {
+                    items: cycle_cols,
+                    separator: None,
+                },
+                Node::Text {
+                    value: format!(" SET {cycle_mark} TO {cycle_mark_value} DEFAULT {cycle_mark_default}"),
+                },
+            ],
+        };
+        cte_items.push(cycle_body);
+    }
+
+    Node::Concat { items: cte_items }
+}
+
+fn select_stmt_to_node(s: &Value) -> Node {
+    // UNION / INTERSECT / EXCEPT: delegate to set-op handling.
+    let op = s["op"].as_str().unwrap_or("SETOP_NONE");
+    if op != "SETOP_NONE" {
+        return set_op_to_node(s);
+    }
+
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    // WITH clause (CTEs).
+    if let Some(with) = s.get("withClause").filter(|w| !w.is_null()) {
+        let recursive = with["recursive"].as_bool().unwrap_or(false);
+        let kw = if recursive {
+            "WITH RECURSIVE"
+        } else {
+            "WITH"
+        };
+        let ctes = with["ctes"].as_array().map(|arr| {
+            arr.iter()
+                .map(|c| {
+                    c.get("CommonTableExpr")
+                        .map(common_table_expr_to_node)
+                        .unwrap_or(Node::Text {
+                            value: format!("{c}"),
+                        })
+                })
+                .collect::<Vec<_>>()
+        }).unwrap_or_default();
+        clauses.push(Clause {
+            keyword: kw.into(),
+            body: Some(Box::new(Node::List {
+                items: ctes,
+                separator: Some(",".into()),
+            })),
+        });
+    }
+
+    // DISTINCT / DISTINCT ON
+    // pg_query represents SELECT DISTINCT as distinctClause: [{}] (NIL sentinel),
+    // and SELECT DISTINCT ON (exprs) as distinctClause: [{expr}, ...].
+    let distinct = s["distinctClause"].as_array();
+    let is_nil = |v: &serde_json::Value| v.as_object().map_or(false, |o| o.is_empty()) || v.is_null();
+    let select_keyword = if let Some(dc) = distinct {
+        let has_real_exprs = dc.iter().any(|v| !is_nil(v));
+        if !has_real_exprs {
+            // Empty array or [NIL] — plain SELECT DISTINCT
+            "SELECT DISTINCT".to_string()
+        } else {
+            // Non-nil elements — SELECT DISTINCT ON (exprs)
             "SELECT DISTINCT ON".to_string()
         }
     } else {
@@ -267,6 +502,25 @@ fn select_stmt_to_node(s: &Value) -> Node {
 }
 
 fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
+    // SELECT INTO: INTO clause comes before FROM in PostgreSQL syntax.
+    if !s["intoClause"].is_null() {
+        let rel = s["intoClause"]["IntoClause"]["rel"]
+            .as_object()
+            .map(|o| serde_json::Value::Object(o.clone()))
+            .or_else(|| {
+                s["intoClause"]["rel"]
+                    .as_object()
+                    .map(|o| serde_json::Value::Object(o.clone()))
+            });
+        if let Some(rel_val) = rel {
+            let dest = range_var_to_node(&rel_val);
+            clauses.push(Clause {
+                keyword: "INTO".into(),
+                body: Some(Box::new(dest)),
+            });
+        }
+    }
+
     if let Some(from) = s["fromClause"].as_array() {
         if !from.is_empty() {
             let items: Vec<Node> = from.iter().map(node_value_to_node).collect();
@@ -339,6 +593,24 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
         });
     }
 
+    // FOR UPDATE / FOR SHARE locking clauses.
+    if let Some(locking) = s["lockingClause"].as_array() {
+        for lc in locking {
+            let lc_inner = lc.get("LockingClause").unwrap_or(lc);
+            let strength = lc_inner["strength"].as_str().unwrap_or("LCS_FORUPDATE");
+            let kw = match strength {
+                "LCS_FORKEYSHARE" => "FOR KEY SHARE",
+                "LCS_FORSHARE" => "FOR SHARE",
+                "LCS_FORNOKEYUPDATE" => "FOR NO KEY UPDATE",
+                _ => "FOR UPDATE",
+            };
+            clauses.push(Clause {
+                keyword: kw.into(),
+                body: None,
+            });
+        }
+    }
+
     Node::Clauses { items: clauses }
 }
 
@@ -360,10 +632,7 @@ fn res_target_to_node(rt: &Value) -> Node {
                 Node::Text {
                     value: " AS ".into(),
                 },
-                Node::Identifier {
-                    value: name.to_string(),
-                    quote: None,
-                },
+                ident_node(name),
             ],
         }
     }
@@ -532,6 +801,58 @@ fn a_expr_to_node(e: &Value) -> Node {
     let has_lexpr = !e["lexpr"].is_null();
     let has_rexpr = !e["rexpr"].is_null();
 
+    // NULLIF(a, b)
+    if kind == "AEXPR_NULLIF" {
+        if has_lexpr && has_rexpr {
+            return Node::Wrap {
+                keyword: Some("NULLIF".into()),
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items: vec![
+                        node_value_to_node(&e["lexpr"]),
+                        node_value_to_node(&e["rexpr"]),
+                    ],
+                    separator: None,
+                }),
+                close: ")".into(),
+            };
+        }
+    }
+
+    // SIMILAR TO / NOT SIMILAR TO: rexpr is pg_catalog.similar_to_escape(pattern[, escape]).
+    // Extract the pattern from the FuncCall args and render as `lexpr SIMILAR TO pattern`.
+    if kind == "AEXPR_SIMILAR" {
+        let similar_kw = if op_raw == "~" { "SIMILAR TO" } else { "NOT SIMILAR TO" };
+        if has_lexpr && has_rexpr {
+            let pattern = e["rexpr"]["FuncCall"]["args"]
+                .as_array()
+                .and_then(|args| args.first())
+                .map(node_value_to_node)
+                .unwrap_or(node_value_to_node(&e["rexpr"]));
+            return Node::Infix {
+                op: similar_kw.to_string(),
+                items: vec![wrap_infix_in_parens(node_value_to_node(&e["lexpr"])), pattern],
+            };
+        }
+    }
+
+    // lexpr op ANY(rexpr) / lexpr op ALL(rexpr)
+    if kind == "AEXPR_OP_ANY" || kind == "AEXPR_OP_ALL" {
+        let quantifier = if kind == "AEXPR_OP_ANY" { "ANY" } else { "ALL" };
+        if has_lexpr && has_rexpr {
+            let rhs = Node::Wrap {
+                keyword: Some(quantifier.into()),
+                open: "(".into(),
+                content: Box::new(node_value_to_node(&e["rexpr"])),
+                close: ")".into(),
+            };
+            return Node::Infix {
+                op: op_raw,
+                items: vec![wrap_infix_in_parens(node_value_to_node(&e["lexpr"])), rhs],
+            };
+        }
+    }
+
     // AEXPR_IN: lexpr IN (rexpr_list) or lexpr NOT IN (rexpr_list)
     if kind == "AEXPR_IN" {
         let in_kw = if op_raw == "<>" { "NOT IN" } else { "IN" };
@@ -551,7 +872,7 @@ fn a_expr_to_node(e: &Value) -> Node {
             };
             return Node::Infix {
                 op: in_kw.to_string(),
-                items: vec![node_value_to_node(&e["lexpr"]), list],
+                items: vec![wrap_infix_in_parens(node_value_to_node(&e["lexpr"])), list],
             };
         }
     }
@@ -583,7 +904,7 @@ fn a_expr_to_node(e: &Value) -> Node {
                 };
                 return Node::Infix {
                     op: kw.to_string(),
-                    items: vec![node_value_to_node(&e["lexpr"]), range],
+                    items: vec![wrap_infix_in_parens(node_value_to_node(&e["lexpr"])), range],
                 };
             }
         }
@@ -593,8 +914,8 @@ fn a_expr_to_node(e: &Value) -> Node {
         (true, true) => Node::Infix {
             op,
             items: vec![
-                node_value_to_node(&e["lexpr"]),
-                node_value_to_node(&e["rexpr"]),
+                wrap_infix_in_parens(node_value_to_node(&e["lexpr"])),
+                wrap_infix_in_parens(node_value_to_node(&e["rexpr"])),
             ],
         },
         (true, false) => Node::Concat {
@@ -607,7 +928,6 @@ fn a_expr_to_node(e: &Value) -> Node {
         (false, true) => Node::Concat {
             items: vec![
                 Node::Text { value: op },
-                Node::Text { value: " ".into() },
                 node_value_to_node(&e["rexpr"]),
             ],
         },
@@ -615,11 +935,46 @@ fn a_expr_to_node(e: &Value) -> Node {
     }
 }
 
+fn a_const_value_str(v: &Value) -> Option<String> {
+    let ac = v.get("A_Const")?;
+    if ac["isnull"].as_bool().unwrap_or(false) {
+        return Some("NULL".into());
+    }
+    if let Some(ival) = ac.get("ival") {
+        let n = ival.as_i64().or_else(|| ival["ival"].as_i64())?;
+        return Some(n.to_string());
+    }
+    if let Some(sval) = ac.get("sval") {
+        return sval.as_str().or_else(|| sval["sval"].as_str()).map(|s| format!("'{s}'"));
+    }
+    None
+}
+
+fn wrap_infix_in_parens(node: Node) -> Node {
+    if matches!(node, Node::Infix { .. }) {
+        Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(node),
+            close: ")".into(),
+        }
+    } else {
+        node
+    }
+}
+
+fn is_or_expr(v: &Value) -> bool {
+    if let Some(be) = v.get("BoolExpr") {
+        let boolop_str = be["boolop"].as_str().unwrap_or("");
+        let boolop_num = be["boolop"].as_u64();
+        boolop_str == "OR_EXPR" || boolop_num == Some(1)
+    } else {
+        false
+    }
+}
+
 fn bool_expr_to_node(b: &Value) -> Node {
-    let args: Vec<Node> = b["args"]
-        .as_array()
-        .map(|arr| arr.iter().map(node_value_to_node).collect())
-        .unwrap_or_default();
+    let raw_args = b["args"].as_array().map(|a| a.as_slice()).unwrap_or(&[]);
 
     // boolop may be a string enum name or an integer value.
     let boolop_str = b["boolop"].as_str().unwrap_or("");
@@ -630,16 +985,35 @@ fn bool_expr_to_node(b: &Value) -> Node {
     let is_not = boolop_str == "NOT_EXPR" || boolop_num == Some(2);
 
     if is_and {
+        // Wrap any OR sub-expressions in parens to preserve precedence.
+        let args: Vec<Node> = raw_args
+            .iter()
+            .map(|arg| {
+                let node = node_value_to_node(arg);
+                if is_or_expr(arg) {
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(node),
+                        close: ")".into(),
+                    }
+                } else {
+                    node
+                }
+            })
+            .collect();
         Node::Infix {
             op: "AND".into(),
             items: args,
         }
     } else if is_or {
+        let args: Vec<Node> = raw_args.iter().map(node_value_to_node).collect();
         Node::Infix {
             op: "OR".into(),
             items: args,
         }
     } else if is_not {
+        let args: Vec<Node> = raw_args.iter().map(node_value_to_node).collect();
         let inner = args.into_iter().next().unwrap_or(Node::Text {
             value: String::new(),
         });
@@ -673,18 +1047,14 @@ fn func_call_to_node(f: &Value) -> Node {
         })
         .unwrap_or_default();
 
-    // Strip pg_catalog schema prefix — it's an implementation detail that doesn't
-    // affect semantics and causes case-mismatch round-trip failures.
-    let name_parts: Vec<&str> = if all_name_parts.first() == Some(&"pg_catalog") {
-        all_name_parts[1..].to_vec()
-    } else {
-        all_name_parts
-    };
-    let name = name_parts.join(".");
+    let name = all_name_parts.join(".");
 
     // C struct field is agg_star (snake_case).
     let agg_star = f["agg_star"].as_bool().unwrap_or(false);
     let agg_distinct = f["agg_distinct"].as_bool().unwrap_or(false);
+
+    let agg_within_group = f["agg_within_group"].as_bool().unwrap_or(false);
+    let agg_order = f["agg_order"].as_array();
 
     let content = if agg_star {
         Node::Text { value: "*".into() }
@@ -699,7 +1069,7 @@ fn func_call_to_node(f: &Value) -> Node {
                 items: arg_nodes,
                 separator: None,
             };
-            if agg_distinct {
+            let with_distinct = if agg_distinct {
                 Node::Concat {
                     items: vec![
                         Node::Keyword {
@@ -711,6 +1081,28 @@ fn func_call_to_node(f: &Value) -> Node {
                 }
             } else {
                 list
+            };
+            // Aggregate ORDER BY inside parens (not WITHIN GROUP): func(args ORDER BY ...)
+            if !agg_within_group {
+                if let Some(order) = agg_order.filter(|o| !o.is_empty()) {
+                    let order_items: Vec<Node> = order.iter().map(node_value_to_node).collect();
+                    Node::Concat {
+                        items: vec![
+                            with_distinct,
+                            Node::Text { value: " ".into() },
+                            Node::Keyword { value: "ORDER BY".into() },
+                            Node::Text { value: " ".into() },
+                            Node::List {
+                                items: order_items,
+                                separator: None,
+                            },
+                        ],
+                    }
+                } else {
+                    with_distinct
+                }
+            } else {
+                with_distinct
             }
         }
     } else {
@@ -724,6 +1116,63 @@ fn func_call_to_node(f: &Value) -> Node {
         open: "(".into(),
         content: Box::new(content),
         close: ")".into(),
+    };
+
+    // WITHIN GROUP (ORDER BY ...) — ordered-set aggregates like percentile_cont.
+    let base = if agg_within_group {
+        if let Some(order) = agg_order.filter(|o| !o.is_empty()) {
+            let order_items: Vec<Node> = order.iter().map(node_value_to_node).collect();
+            let within_clause = Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::Clauses {
+                    items: vec![Clause {
+                        keyword: "ORDER BY".into(),
+                        body: Some(Box::new(Node::List {
+                            items: order_items,
+                            separator: None,
+                        })),
+                    }],
+                }),
+                close: ")".into(),
+            };
+            Node::Concat {
+                items: vec![
+                    base,
+                    Node::Text { value: " WITHIN GROUP ".into() },
+                    within_clause,
+                ],
+            }
+        } else {
+            base
+        }
+    } else {
+        base
+    };
+
+    // FILTER (WHERE ...) clause.
+    let base = if !f["agg_filter"].is_null() {
+        let filter_expr = node_value_to_node(&f["agg_filter"]);
+        Node::Concat {
+            items: vec![
+                base,
+                Node::Text { value: " FILTER ".into() },
+                Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::Concat {
+                        items: vec![
+                            Node::Keyword { value: "WHERE".into() },
+                            Node::Text { value: " ".into() },
+                            filter_expr,
+                        ],
+                    }),
+                    close: ")".into(),
+                },
+            ],
+        }
+    } else {
+        base
     };
 
     // Handle OVER clause for window functions.
@@ -845,18 +1294,37 @@ fn sort_by_to_node(sb: &Value) -> Node {
 
 fn type_name_str(tn: &Value) -> String {
     // In pg_query JSON, the TypeName fields are inline under "typeName" (no extra wrapper).
-    let base_type = tn["names"]
+    // We preserve all name parts (including "pg_catalog") to ensure round-trip fidelity:
+    // NULL::int parses to names=["pg_catalog","int4"]; stripping pg_catalog gives "int4" which
+    // re-parses as names=["int4"] (no prefix) — a different AST.
+    let name_parts: Vec<&str> = tn["names"]
         .as_array()
-        .and_then(|arr| {
+        .map(|arr| {
             arr.iter()
                 .filter_map(|n| {
                     n["String"]["sval"]
                         .as_str()
                         .or_else(|| n["String"]["str"].as_str())
                 })
-                .find(|s| *s != "pg_catalog")
+                .collect()
         })
-        .unwrap_or("unknown");
+        .unwrap_or_default();
+
+    let base_type = if name_parts.is_empty() {
+        "unknown".to_string()
+    } else {
+        name_parts
+            .iter()
+            .map(|&part| {
+                if pg_needs_quoting(part) {
+                    format!("\"{part}\"")
+                } else {
+                    part.to_string()
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(".")
+    };
 
     // Typmods: numeric(10,3), varchar(255), char(1), etc.
     let typmods = tn["typmods"].as_array();
@@ -907,7 +1375,7 @@ fn type_name_str(tn: &Value) -> String {
 }
 
 fn type_cast_to_node(tc: &Value) -> Node {
-    let arg = node_value_to_node(&tc["arg"]);
+    let arg = wrap_infix_in_parens(node_value_to_node(&tc["arg"]));
     let type_str = type_name_str(&tc["typeName"]);
     Node::Concat {
         items: vec![
@@ -920,12 +1388,85 @@ fn type_cast_to_node(tc: &Value) -> Node {
 }
 
 fn sub_link_to_node(sl: &Value) -> Node {
+    let sub_link_type = sl["subLinkType"].as_str().unwrap_or("EXPR_SUBLINK");
     let inner = node_value_to_node(&sl["subselect"]);
-    Node::Wrap {
+    let wrapped = Node::Wrap {
         keyword: None,
         open: "(".into(),
         content: Box::new(inner),
         close: ")".into(),
+    };
+    match sub_link_type {
+        "EXISTS_SUBLINK" => Node::Concat {
+            items: vec![Node::Keyword { value: "EXISTS".into() }, wrapped],
+        },
+        "ARRAY_SUBLINK" => Node::Wrap {
+            keyword: Some("ARRAY".into()),
+            open: "(".into(),
+            content: Box::new(node_value_to_node(&sl["subselect"])),
+            close: ")".into(),
+        },
+        "ANY_SUBLINK" => {
+            // testexpr op ANY (subselect), or testexpr IN (subselect) when op is "=".
+            let op_name = sl["operName"]
+                .as_array()
+                .and_then(|arr| arr.first())
+                .and_then(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .unwrap_or("=");
+            if sl["testexpr"].is_null() {
+                wrapped
+            } else {
+                let test = node_value_to_node(&sl["testexpr"]);
+                if op_name == "=" {
+                    Node::Infix {
+                        op: "IN".into(),
+                        items: vec![test, wrapped],
+                    }
+                } else {
+                    let rhs = Node::Wrap {
+                        keyword: Some("ANY".into()),
+                        open: "(".into(),
+                        content: Box::new(node_value_to_node(&sl["subselect"])),
+                        close: ")".into(),
+                    };
+                    Node::Infix {
+                        op: op_name.to_string(),
+                        items: vec![test, rhs],
+                    }
+                }
+            }
+        }
+        "ALL_SUBLINK" => {
+            let op_name = sl["operName"]
+                .as_array()
+                .and_then(|arr| arr.first())
+                .and_then(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .unwrap_or("=");
+            if sl["testexpr"].is_null() {
+                wrapped
+            } else {
+                let test = node_value_to_node(&sl["testexpr"]);
+                let rhs = Node::Wrap {
+                    keyword: Some("ALL".into()),
+                    open: "(".into(),
+                    content: Box::new(node_value_to_node(&sl["subselect"])),
+                    close: ")".into(),
+                };
+                Node::Infix {
+                    op: op_name.to_string(),
+                    items: vec![test, rhs],
+                }
+            }
+        }
+        _ => wrapped,
     }
 }
 
