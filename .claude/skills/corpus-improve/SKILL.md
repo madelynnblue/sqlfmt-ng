@@ -19,7 +19,7 @@ Iteratively improve a dialect's round-trip correctness by running the external c
 
 ### 1. Triage failures
 
-Choose the first failure in `testdata/failing/{corpus}-{dialect}.sql`, then:
+Choose the first failure in `crates/sqlfmt-corpus-tests/testdata/failing/{corpus}-{dialect}.sql`, then:
 
 ```sh
 # Format one failing statement to see the error
@@ -62,14 +62,14 @@ cargo test -p sqlfmt-corpus-tests test_permanent_corpus
 
 ### 4. Move fixed statements to success/
 
-After fixing a class of failures, run `test_rewrite_corpus` to automatically move all now-passing statements from `testdata/failing/` to `testdata/success/`. The test panics when statements are moved, signaling you to commit the updated testdata.
+After fixing a class of failures, run `test_rewrite_corpus` to automatically move all now-passing statements from `crates/sqlfmt-corpus-tests/testdata/failing/` to `crates/sqlfmt-corpus-tests/testdata/success/`. The test panics when statements are moved, signaling you to commit the updated testdata.
 
 The `test_permanent_corpus` test then ensures:
 
-- `success/` statements remain passing (regression prevention)
-- `failing/` statements still produce round-trip errors (still need fixing)
+- `crates/sqlfmt-corpus-tests/testdata/success/` statements remain passing (regression prevention)
+- `crates/sqlfmt-corpus-tests/testdata/failing/` statements still produce round-trip errors (still need fixing)
 
-If a statement still fails and the fix is complex, leave it in `testdata/failing/` as a known failure and move to the next one.
+If a statement still fails and the fix is complex, leave it in `crates/sqlfmt-corpus-tests/testdata/failing/` as a known failure and move to the next one.
 
 After the statement (and possibly others) have been moved to success, commit the changes and start a new change. Try to keep it to one change per commit. Sometimes multiple fixes will be required for a single statement to move to succes if that statement has multiple broken things; that's ok.
 
@@ -88,7 +88,7 @@ cargo run -- --dialect postgres --stmt "SELECT a AT TIME ZONE 'UTC' FROM t"
 ## Testdata directory structure
 
 ```
-testdata/
+crates/sqlfmt-corpus-tests/testdata/
   failing/
     {corpus}-{dialect}.sql    — known round-trip failures
   success/
