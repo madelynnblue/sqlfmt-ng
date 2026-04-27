@@ -9,39 +9,17 @@ Iteratively improve a dialect's round-trip correctness by running the external c
 
 ## Dialect → Corpus → Converter mapping
 
-| Dialect | Corpus source repo | Test files | Converter |
-|---|---|---|---|
-| `postgres` | `postgres/postgres` `src/test/regress/sql/*.sql` | raw SQL | `crates/dialect-postgres-convert/src/json_convert.rs` |
-| `materialize` | `MaterializeInc/materialize` `test/sqllogictest/*.slt` | sqllogictest | `crates/dialect-materialize/src/convert.rs` |
-| `cockroachdb` | `cockroachdb/cockroach` `pkg/sql/logictest/testdata/logic_test/*` | sqllogictest | *(stub — not yet implemented)* |
+| Dialect       | Corpus source repo                                                | Test files   | Converter                                             |
+| ------------- | ----------------------------------------------------------------- | ------------ | ----------------------------------------------------- |
+| `postgres`    | `postgres/postgres` `src/test/regress/sql/*.sql`                  | raw SQL      | `crates/dialect-postgres-convert/src/json_convert.rs` |
+| `materialize` | `MaterializeInc/materialize` `test/sqllogictest/*.slt`            | sqllogictest | `crates/dialect-materialize/src/convert.rs`           |
+| `cockroachdb` | `cockroachdb/cockroach` `pkg/sql/logictest/testdata/logic_test/*` | sqllogictest | _(stub — not yet implemented)_                        |
 
 ## Workflow
 
-### 1. Set up
+### 1. Triage failures
 
-```sh
-# Avoid GitHub rate limits (60 req/hr anon vs 5000 auth)
-export GITHUB_TOKEN=<token>   # if available
-```
-
-### 2. Run the external corpus test
-
-Run the corpus focused on the target dialect's own source repo first — those statements are most likely to exercise real-world patterns for that dialect.
-
-```sh
-# Full external corpus run (downloads and caches in target/sqlfmt-corpus-cache/)
-cargo test -p sqlfmt-corpus-tests -- --ignored 2>&1 | tee /tmp/corpus-out.txt
-
-# Check what failures were recorded
-ls crates/sqlfmt-corpus-tests/testdata/failing/
-ls crates/sqlfmt-corpus-tests/testdata/success/
-```
-
-Round-trip failures are written to `testdata/failing/{corpus}-{dialect}.sql`, and successful statements to `testdata/success/{corpus}-{dialect}.sql`. All statements are separated by `\n\n-- sqlfmt-corpus-separator --\n\n`. The test panics if **new** failures or regressions appear.
-
-### 3. Triage failures
-
-For each failure in `testdata/failing/{corpus}-{dialect}.sql`:
+Choose the first failure in `testdata/failing/{corpus}-{dialect}.sql`, then:
 
 ```sh
 # Format one failing statement to see the error
@@ -50,11 +28,13 @@ cargo run -- --dialect <dialect> --stmt "<paste stmt here>"
 echo "<stmt>" | cargo run -- --dialect <dialect>
 ```
 
-The error will be one of:
-- `SqlfmtError::Roundtrip` — IR conversion is lossy; something dropped from the AST
-- `SqlfmtError::Parse` — foreign-dialect SQL; skip (this is expected)
+The error should be:
 
-### 4. Diagnose a round-trip failure
+- `SqlfmtError::Roundtrip` — IR conversion is lossy; something dropped from the AST
+
+Find another statement if not and restart.
+
+### 2. Diagnose a round-trip failure
 
 A `Roundtrip` error means the rendered SQL re-parses to a different AST than the original. Find what's being lost:
 
@@ -65,7 +45,7 @@ A `Roundtrip` error means the rendered SQL re-parses to a different AST than the
    - A match arm that ignores fields (e.g., `OrderByClause` missing `NULLS FIRST/LAST`)
    - A new AST node variant added upstream that has no arm
 
-### 5. Fix the converter
+### 3. Fix the converter
 
 Edit the appropriate converter file and add or complete the conversion for the failing node. After fixing:
 
@@ -80,30 +60,22 @@ cargo test -p sqlfmt-corpus-tests test_rewrite_corpus
 cargo test -p sqlfmt-corpus-tests test_permanent_corpus
 ```
 
-### 6. Move fixed statements to success/
+### 4. Move fixed statements to success/
 
 After fixing a class of failures, run `test_rewrite_corpus` to automatically move all now-passing statements from `testdata/failing/` to `testdata/success/`. The test panics when statements are moved, signaling you to commit the updated testdata.
 
 The `test_permanent_corpus` test then ensures:
+
 - `success/` statements remain passing (regression prevention)
 - `failing/` statements still produce round-trip errors (still need fixing)
 
 If a statement still fails and the fix is complex, leave it in `testdata/failing/` as a known failure and move to the next one.
 
-### 7. Iterate
+After the statement (and possibly others) have been moved to success, commit the changes and start a new change. Try to keep it to one change per commit. Sometimes multiple fixes will be required for a single statement to move to succes if that statement has multiple broken things; that's ok.
 
-Repeat steps 2–6. Focus on fixing the most common failure patterns first (group similar errors before fixing).
+### 5. Iterate
 
-```sh
-# Re-run external corpus to discover any remaining new failures
-cargo test -p sqlfmt-corpus-tests -- --ignored
-```
-
-Stop when the external corpus produces zero new failures for the target dialect.
-
-## Corpus cache
-
-Files are cached in `target/sqlfmt-corpus-cache/`. Delete this directory to force a fresh download.
+Repeat steps 1-5.
 
 ## Running a single corpus test quickly
 
@@ -137,8 +109,8 @@ Statements are separated by `\n\n-- sqlfmt-corpus-separator --\n\n`. Each statem
 
 ### Three test tiers
 
-| Test | Command | What it does |
-|---|---|---|
-| `test_external_corpus` | `cargo test -p sqlfmt-corpus-tests -- --ignored` | Fetches live SQL from upstream repos, writes new failures to `failing/` and successes to `success/` |
-| `test_rewrite_corpus` | `cargo test -p sqlfmt-corpus-tests test_rewrite_corpus` | Scans `failing/`, moves passing statements to `success/`, panics on changes |
-| `test_permanent_corpus` | `cargo test -p sqlfmt-corpus-tests test_permanent_corpus` | Verifies `success/` stays passing and `failing/` still fails |
+| Test                    | Command                                                   | What it does                                                                                        |
+| ----------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `test_external_corpus`  | `cargo test -p sqlfmt-corpus-tests -- --ignored`          | Fetches live SQL from upstream repos, writes new failures to `failing/` and successes to `success/` |
+| `test_rewrite_corpus`   | `cargo test -p sqlfmt-corpus-tests test_rewrite_corpus`   | Scans `failing/`, moves passing statements to `success/`, panics on changes                         |
+| `test_permanent_corpus` | `cargo test -p sqlfmt-corpus-tests test_permanent_corpus` | Verifies `success/` stays passing and `failing/` still fails                                        |
