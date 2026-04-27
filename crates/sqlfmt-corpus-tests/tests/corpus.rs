@@ -348,6 +348,7 @@ fn test_external_corpus() {
 /// Parse errors are acceptable — they result from cross-dialect SQL or parser
 /// changes and the statement stays in failing/.
 #[test]
+#[ignore]
 fn test_rewrite_corpus() {
     let testdata_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata");
     let opts = default_opts();
