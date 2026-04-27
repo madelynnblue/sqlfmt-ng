@@ -72,7 +72,7 @@ fn to_rdoc<'a>(node: &Node, opts: &RenderOpts) -> RcDoc<'a> {
     match node {
         Node::Clauses { items } => {
             let docs: Vec<RcDoc> = items.iter().map(|c| clause_to_rdoc(c, opts)).collect();
-            RcDoc::intersperse(docs, RcDoc::hardline())
+            RcDoc::intersperse(docs, RcDoc::line())
         }
         Node::List { items, separator } => {
             let sep_str = separator.as_deref().unwrap_or(",");
@@ -116,7 +116,6 @@ fn to_rdoc<'a>(node: &Node, opts: &RenderOpts) -> RcDoc<'a> {
         Node::Group { content } => to_rdoc(content, opts).group(),
         Node::Nest { content } => to_rdoc(content, opts).nest(opts.tab_width as isize),
         Node::Line => RcDoc::line(),
-        Node::Hardline => RcDoc::hardline(),
     }
 }
 

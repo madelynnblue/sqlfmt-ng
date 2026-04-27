@@ -288,11 +288,11 @@ fn set_op_to_node(s: &Value) -> Node {
     // Build: larg \n op_kw \n rarg with hard line breaks between sections.
     let mut concat_items: Vec<Node> = vec![
         lnode,
-        Node::Hardline,
+        Node::Line,
         Node::Keyword {
             value: op_kw.into(),
         },
-        Node::Hardline,
+        Node::Line,
         rnode,
     ];
 
@@ -300,7 +300,7 @@ fn set_op_to_node(s: &Value) -> Node {
     if let Some(sort) = s["sortClause"].as_array() {
         if !sort.is_empty() {
             let sort_items: Vec<Node> = sort.iter().map(node_value_to_node).collect();
-            concat_items.push(Node::Hardline);
+            concat_items.push(Node::Line);
             concat_items.push(Node::Keyword {
                 value: "ORDER BY".into(),
             });
@@ -312,7 +312,7 @@ fn set_op_to_node(s: &Value) -> Node {
         }
     }
     if !s["limitCount"].is_null() {
-        concat_items.push(Node::Hardline);
+        concat_items.push(Node::Line);
         if s["limitOption"].as_str() == Some("LIMIT_OPTION_WITH_TIES") {
             concat_items.push(Node::Keyword {
                 value: "FETCH FIRST".into(),
@@ -332,7 +332,7 @@ fn set_op_to_node(s: &Value) -> Node {
         }
     }
     if !s["limitOffset"].is_null() {
-        concat_items.push(Node::Hardline);
+        concat_items.push(Node::Line);
         concat_items.push(Node::Keyword {
             value: "OFFSET".into(),
         });
@@ -344,7 +344,7 @@ fn set_op_to_node(s: &Value) -> Node {
     if let Some(locking) = s["lockingClause"].as_array() {
         for lc in locking {
             let (base_kw, wait_kw, rel_nodes) = locking_clause_parts(lc);
-            concat_items.push(Node::Hardline);
+            concat_items.push(Node::Line);
             if let Some(rels) = rel_nodes {
                 concat_items.push(Node::Keyword {
                     value: format!("{base_kw} OF"),
@@ -563,7 +563,7 @@ fn select_stmt_to_node(s: &Value) -> Node {
                     Node::Clauses {
                         items: vec![with_clause],
                     },
-                    Node::Hardline,
+                    Node::Line,
                     set_op,
                 ],
             };

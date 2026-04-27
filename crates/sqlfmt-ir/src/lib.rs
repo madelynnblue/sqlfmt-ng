@@ -55,7 +55,6 @@ pub enum Node {
         content: Box<Node>,
     },
     Line,
-    Hardline,
 }
 
 #[cfg(test)]
@@ -90,13 +89,12 @@ mod tests {
     }
 
     #[test]
-    fn test_line_hardline_roundtrip() {
+    fn test_line_roundtrip() {
         let line = Node::Line;
         let json = serde_json::to_string(&line).unwrap();
         assert_eq!(json, r#"{"type":"line"}"#);
-        let hard = Node::Hardline;
-        let json = serde_json::to_string(&hard).unwrap();
-        assert_eq!(json, r#"{"type":"hardline"}"#);
+        let back: Node = serde_json::from_str(&json).unwrap();
+        assert!(matches!(back, Node::Line));
     }
 
     #[test]
