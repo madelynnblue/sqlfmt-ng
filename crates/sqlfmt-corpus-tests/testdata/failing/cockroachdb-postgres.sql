@@ -281,23 +281,6 @@ ORDER BY a.id, b.id
 -- sqlfmt-corpus-separator --
 
 SELECT
-  avg(a) OVER            (RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(a) OVER (ORDER BY a RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(a) OVER (ORDER BY b RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(a) OVER (ORDER BY c RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(b) OVER            (RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(b) OVER (ORDER BY a RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(b) OVER (ORDER BY b RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(b) OVER (ORDER BY c RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(c) OVER            (RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(c) OVER (ORDER BY a RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(c) OVER (ORDER BY b RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING),
-  avg(c) OVER (ORDER BY c RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
-FROM abc
-
--- sqlfmt-corpus-separator --
-
-SELECT
   id,
   row_number() OVER (ORDER BY id NULLS LAST) AS row_num_using_nulls_last,
   row_number() OVER (ORDER BY COALESCE(id, 999)) AS row_num_using_coalesce
@@ -367,35 +350,11 @@ SELECT '$'::JSONPATH IS NOT DISTINCT FROM NULL
 
 -- sqlfmt-corpus-separator --
 
-SELECT '%A' SIMILAR TO '%A' ESCAPE '%'
-
--- sqlfmt-corpus-separator --
-
-SELECT '%A' SIMILAR TO '_A' ESCAPE '%'
-
--- sqlfmt-corpus-separator --
-
 SELECT ''::VOID IS DISTINCT FROM NULL
 
 -- sqlfmt-corpus-separator --
 
 SELECT ''::VOID IS DISTINCT FROM NULL::UNKNOWN
-
--- sqlfmt-corpus-separator --
-
-SELECT '123A_' SIMILAR TO '%A_' ESCAPE '_'
-
--- sqlfmt-corpus-separator --
-
-SELECT '123A_' SIMILAR TO '%A__' ESCAPE '_'
-
--- sqlfmt-corpus-separator --
-
-SELECT 'A' SIMILAR TO 'AA' ESCAPE 'AA'
-
--- sqlfmt-corpus-separator --
-
-SELECT 'A' SIMILAR TO '\A' ESCAPE '\'
 
 -- sqlfmt-corpus-separator --
 
@@ -436,10 +395,6 @@ SELECT 'SRID=4326;POINT(2.0 3.0)'::geography::geography(point, 4004)
 -- sqlfmt-corpus-separator --
 
 SELECT 'SRID=4326;POINT(2.0 3.0)'::geometry::geography(point, 4004)
-
--- sqlfmt-corpus-separator --
-
-SELECT '\A' SIMILAR TO '\A' ESCAPE ''
 
 -- sqlfmt-corpus-separator --
 
@@ -496,22 +451,6 @@ SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
 -- sqlfmt-corpus-separator --
 
 SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
-
--- sqlfmt-corpus-separator --
-
-SELECT '春A' SIMILAR TO '春春_' ESCAPE '春'
-
--- sqlfmt-corpus-separator --
-
-SELECT '春A' SIMILAR TO '春春_' ESCAPE '春春'
-
--- sqlfmt-corpus-separator --
-
-SELECT '春A_春春' SIMILAR TO '%_春_%' ESCAPE '春'
-
--- sqlfmt-corpus-separator --
-
-SELECT ((-1.234E+401)::DECIMAL * '-53 years -10 mons -377 days -08:33:40.519057'::INTERVAL::INTERVAL)::INTERVAL FROM many_types
 
 -- sqlfmt-corpus-separator --
 
@@ -733,14 +672,6 @@ SELECT * FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY avg(k) OVER w 
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM regression_46973 WHERE (-9223372036854775808)::TIMESTAMP!=regression_46973.c0
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM regression_46973 WHERE (-9223372036854775808)::TIMESTAMPTZ!=regression_46973.c1
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM system.information_schema.role_table_grants
 WHERE
 (table_schema <> 'crdb_internal' OR table_name = 'node_build_info')
@@ -845,32 +776,6 @@ SELECT *, avg(k) OVER (w ORDER BY w) FROM kv WINDOW w AS (PARTITION BY v) ORDER 
 -- sqlfmt-corpus-separator --
 
 SELECT *, avg(k) OVER w FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY avg(k) OVER w, k
-
--- sqlfmt-corpus-separator --
-
-SELECT 0.0::decimal as a,
-      -0.0::decimal as b,
-      0.00::decimal as c,
-     -0.00::decimal as d,
-  (-0.000)::decimal as e,
-         0::decimal as f,
-        -0::decimal as g,
-  '0.0000'::decimal as h,
- '-0.0000'::decimal as i
-
--- sqlfmt-corpus-separator --
-
-SELECT 0.0::float as a,
-      -0.0::float as b,
-      0.00::float as c,
-     -0.00::float as d,
-  (-0.000)::float as e,
-                0 as f,
-               -0 as g,
-         0::float as h,
-        -0::float as i,
-  '0.0000'::float as j,
- '-0.0000'::float as k
 
 -- sqlfmt-corpus-separator --
 
@@ -998,10 +903,6 @@ SELECT a, b FROM nulls WHERE a IS NOT DISTINCT FROM NULL
 
 -- sqlfmt-corpus-separator --
 
-SELECT a, b, avg(b) OVER (ROWS 0 PRECEDING) FROM t ORDER BY a
-
--- sqlfmt-corpus-separator --
-
 SELECT a, b, c, first_value(a) OVER w, last_value(a) OVER w, nth_value(a, b) OVER w
 FROM t WINDOW w AS (ORDER BY c, b GROUPS BETWEEN 5 PRECEDING AND CURRENT ROW)
 
@@ -1080,10 +981,6 @@ SELECT a, b, rowid FROM ab UNION VALUES (1, 2, 3);
 
 -- sqlfmt-corpus-separator --
 
-SELECT a, b, sum(b) OVER (ROWS 0 PRECEDING) FROM t ORDER BY a
-
--- sqlfmt-corpus-separator --
-
 SELECT a, max(a) OVER w, min(a) OVER w FROM t
 WINDOW w AS (ORDER BY a DESC RANGE BETWEEN 10 PRECEDING AND UNBOUNDED FOLLOWING);
 
@@ -1098,10 +995,6 @@ SELECT abc.b FROM abc AS foo (foo1)
 -- sqlfmt-corpus-separator --
 
 SELECT abc.foo1 FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT array_agg(a) OVER (ORDER BY a ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING) FROM t38901 ORDER BY a
 
 -- sqlfmt-corpus-separator --
 
@@ -1161,62 +1054,6 @@ SELECT avg(price) FILTER (WHERE price > 300) OVER w1, sum(price) FILTER (WHERE g
 
 -- sqlfmt-corpus-separator --
 
-SELECT avg(price) OVER (GROUPS 1 PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (GROUPS group_id PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (ORDER BY group_id GROUPS BETWEEN 1 PRECEDING AND NULL FOLLOWING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (ORDER BY group_id GROUPS BETWEEN NULL PRECEDING AND 1 FOLLOWING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (ORDER BY group_id GROUPS NULL PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (PARTITION BY group_name ORDER BY group_id GROUPS 1.5 PRECEDING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN 1.5 PRECEDING AND UNBOUNDED FOLLOWING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN UNBOUNDED PRECEDING AND 1.5 FOLLOWING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (PARTITION BY group_name ROWS 1.5 PRECEDING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (PARTITION BY group_name ROWS BETWEEN 1.5 PRECEDING AND UNBOUNDED FOLLOWING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (PARTITION BY group_name ROWS BETWEEN UNBOUNDED PRECEDING AND 1.5 FOLLOWING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (ROWS BETWEEN 1 PRECEDING AND NULL FOLLOWING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (ROWS BETWEEN NULL PRECEDING AND 1 FOLLOWING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER (ROWS NULL PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
 SELECT avg(price) OVER (w ORDER BY price) FROM products WINDOW w AS (ROWS 1 PRECEDING)
 
 -- sqlfmt-corpus-separator --
@@ -1262,19 +1099,11 @@ SELECT c0 FROM t103755 WHERE c0 < 0 OR c0 IN (VALUES (2)) ORDER BY c0;
 
 -- sqlfmt-corpus-separator --
 
-SELECT count(a) OVER (ROWS 1 PRECEDING) FROM t
-
--- sqlfmt-corpus-separator --
-
 SELECT d3,d1,d2 FROM d WHERE (d1,d3) NOT IN (SELECT b1,b2 FROM b WHERE EXISTS (SELECT 1 FROM c WHERE c2=b2 OR c2=b3))
 
 -- sqlfmt-corpus-separator --
 
 SELECT f::DECIMAL + round(max(k) * w * avg(d) OVER wind) + (lead(f, 2, 17::FLOAT) OVER wind::DECIMAL / d * row_number() OVER wind) FROM kv GROUP BY k, w, f, d WINDOW wind AS (ORDER BY k) ORDER BY k
-
--- sqlfmt-corpus-separator --
-
-SELECT first_value(x) OVER (ORDER BY x RANGE BETWEEN CURRENT ROW AND '0 YEAR'::INTERVAL FOLLOWING) FROM t;
 
 -- sqlfmt-corpus-separator --
 
@@ -1286,171 +1115,7 @@ SELECT foo1, foo.foo1, b, foo.c FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
 
-SELECT group_name, price, sum(price) OVER (PARTITION BY group_name ORDER BY price DESC RANGE BETWEEN 49.999 FOLLOWING AND 300.001 FOLLOWING) FROM products ORDER BY group_name, price DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, price, sum(price) OVER (PARTITION BY group_name ORDER BY price RANGE BETWEEN 49.999 FOLLOWING AND 300.001 FOLLOWING) FROM products ORDER BY group_name, price, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, price, sum(pricefloat) OVER (PARTITION BY group_name ORDER BY pricefloat DESC RANGE BETWEEN 50 FOLLOWING AND 300 FOLLOWING) FROM products ORDER BY group_name, price DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, price, sum(pricefloat) OVER (PARTITION BY group_name ORDER BY pricefloat RANGE BETWEEN 50 FOLLOWING AND 300 FOLLOWING) FROM products ORDER BY group_name, price, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, pdate, price, sum(price) OVER (ORDER BY pdate DESC RANGE '1 days' PRECEDING) FROM products ORDER BY pdate DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, pdate, price, sum(price) OVER (ORDER BY pdate RANGE '1 days' PRECEDING) FROM products ORDER BY pdate, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, array_agg(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 PRECEDING AND 2 FOLLOWING) AS array_agg_price FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
 SELECT group_name, product_name, price, array_agg(price) OVER (w ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING), array_agg(price) OVER (w ROWS BETWEEN UNBOUNDED PRECEDING AND 3 FOLLOWING), array_agg(price) OVER (w GROUPS BETWEEN 3 PRECEDING AND UNBOUNDED FOLLOWING), array_agg(price) OVER (w RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) FROM products WINDOW w AS (PARTITION BY group_name ORDER BY group_id DESC) ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, avg(price) OVER (ORDER BY group_id GROUPS BETWEEN 1 PRECEDING AND 2 PRECEDING), avg(price) OVER (ORDER BY price GROUPS BETWEEN CURRENT ROW AND CURRENT ROW) FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, avg(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS (SELECT count(*) FROM PRODUCTS WHERE price = 200) PRECEDING) AS running_avg_of_three FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, avg(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING) AS running_avg FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, avg(price) OVER (PARTITION BY group_name ORDER BY price GROUPS BETWEEN CURRENT ROW AND 3 FOLLOWING), avg(price) OVER (ORDER BY price GROUPS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, avg(price) OVER (PARTITION BY group_name RANGE UNBOUNDED PRECEDING) AS avg_price FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, min(price) OVER (PARTITION BY group_name ROWS BETWEEN 1 PRECEDING AND 2 PRECEDING) AS min_over_empty_frame FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, min(price) OVER (PARTITION BY group_name ROWS CURRENT ROW) AS min_over_single_row FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, nth_value(pricefloat, 2) OVER (PARTITION BY group_name ORDER BY pricefloat DESC RANGE BETWEEN 1.23 FOLLOWING AND 500.23 FOLLOWING) FROM products ORDER BY group_name, pricefloat DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, nth_value(pricefloat, 2) OVER (PARTITION BY group_name ORDER BY pricefloat RANGE BETWEEN 1.23 FOLLOWING AND 500.23 FOLLOWING) FROM products ORDER BY group_name, pricefloat, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS 2 PRECEDING) AS running_sum FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (PARTITION BY group_name ORDER BY price DESC RANGE 200.002 PRECEDING) FROM products ORDER BY group_name, price DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (PARTITION BY group_name ORDER BY price DESC RANGE BETWEEN 99.99 PRECEDING AND 100.00 PRECEDING) FROM products ORDER BY group_name, priceint DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (PARTITION BY group_name ORDER BY price RANGE 200.002 PRECEDING) FROM products ORDER BY group_name, price, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (PARTITION BY group_name ORDER BY price RANGE BETWEEN 99.99 PRECEDING AND 100.00 PRECEDING) FROM products ORDER BY group_name, priceint, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (RANGE BETWEEN CURRENT ROW AND CURRENT ROW) FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(price) OVER (RANGE CURRENT ROW) FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(pricefloat) OVER (PARTITION BY group_name ORDER BY pricefloat DESC RANGE BETWEEN 200.01 PRECEDING AND 99.99 FOLLOWING) FROM products ORDER BY group_name, priceint DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(pricefloat) OVER (PARTITION BY group_name ORDER BY pricefloat RANGE BETWEEN 200.01 PRECEDING AND 99.99 FOLLOWING) FROM products ORDER BY group_name, priceint, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(priceint) OVER (PARTITION BY group_name ORDER BY priceint DESC RANGE 200 PRECEDING) FROM products ORDER BY group_name, priceint DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(priceint) OVER (PARTITION BY group_name ORDER BY priceint DESC RANGE BETWEEN 300 PRECEDING AND 50 PRECEDING) FROM products ORDER BY group_name, priceint DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(priceint) OVER (PARTITION BY group_name ORDER BY priceint DESC RANGE BETWEEN 50 FOLLOWING AND 300 FOLLOWING) FROM products ORDER BY group_name, priceint DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(priceint) OVER (PARTITION BY group_name ORDER BY priceint RANGE 200 PRECEDING) FROM products ORDER BY group_name, priceint, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(priceint) OVER (PARTITION BY group_name ORDER BY priceint RANGE BETWEEN 300 PRECEDING AND 50 PRECEDING) FROM products ORDER BY group_name, priceint, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, price, sum(priceint) OVER (PARTITION BY group_name ORDER BY priceint RANGE BETWEEN 50 FOLLOWING AND 300 FOLLOWING) FROM products ORDER BY group_name, priceint, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, ptime, price, min(price) OVER (PARTITION BY group_name ORDER BY ptime DESC RANGE BETWEEN '1 hours' FOLLOWING AND UNBOUNDED FOLLOWING) FROM products ORDER BY group_name, ptime DESC
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, ptime, price, min(price) OVER (PARTITION BY group_name ORDER BY ptime RANGE BETWEEN '1 hours' FOLLOWING AND UNBOUNDED FOLLOWING) FROM products ORDER BY group_name, ptime
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, ptimestamp, price, first_value(price) OVER (PARTITION BY group_name ORDER BY ptimestamp DESC RANGE BETWEEN '12 hours' PRECEDING AND '6 hours' FOLLOWING) FROM products ORDER BY group_name, ptimestamp DESC
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, ptimestamp, price, first_value(price) OVER (PARTITION BY group_name ORDER BY ptimestamp RANGE BETWEEN '12 hours' PRECEDING AND '6 hours' FOLLOWING) FROM products ORDER BY group_name, ptimestamp
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, ptimestamptz, price, avg(price) OVER (PARTITION BY group_name ORDER BY ptimestamptz DESC RANGE BETWEEN '1 days 12 hours' PRECEDING AND CURRENT ROW) FROM products ORDER BY group_name, ptimestamptz DESC
-
--- sqlfmt-corpus-separator --
-
-SELECT group_name, product_name, ptimestamptz, price, avg(price) OVER (PARTITION BY group_name ORDER BY ptimestamptz RANGE BETWEEN '1 days 12 hours' PRECEDING AND CURRENT ROW) FROM products ORDER BY group_name, ptimestamptz
-
--- sqlfmt-corpus-separator --
-
-SELECT jsonb_agg(a) OVER (ORDER BY a GROUPS BETWEEN 5 FOLLOWING AND UNBOUNDED FOLLOWING) FROM x
-
--- sqlfmt-corpus-separator --
-
-SELECT jsonb_object_agg(s, s) OVER (ORDER BY s RANGE UNBOUNDED PRECEDING) FROM t54604
 
 -- sqlfmt-corpus-separator --
 
@@ -1471,10 +1136,6 @@ SELECT k, (rank() OVER wind + avg(w) OVER wind), w, (v + row_number() OVER wind)
 -- sqlfmt-corpus-separator --
 
 SELECT k, avg(d) OVER w1, avg(d) OVER w2, row_number() OVER w2, sum(f) OVER w1, row_number() OVER w1, sum(f) OVER w2 FROM kv WINDOW w1 AS (ORDER BY k), w2 AS (ORDER BY w, k) ORDER BY k
-
--- sqlfmt-corpus-separator --
-
-SELECT k, first_value(k) OVER (ORDER BY v GROUPS BETWEEN 0 PRECEDING AND 2 PRECEDING) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
@@ -1503,42 +1164,6 @@ SELECT lag(x) OVER w, lead(x) OVER w, first_value(x) OVER w, last_value(x) OVER 
 -- sqlfmt-corpus-separator --
 
 SELECT lag(y) OVER w, lead(y) OVER w, first_value(y) OVER w, last_value(y) OVER w FROM t WINDOW w AS ();
-
--- sqlfmt-corpus-separator --
-
-SELECT max(c) OVER (ORDER BY c ROWS BETWEEN UNBOUNDED PRECEDING AND 9223372036854775807::INT8 FOLLOWING) FROM t65978
-
--- sqlfmt-corpus-separator --
-
-SELECT max(c) OVER (ORDER BY c ROWS BETWEEN UNBOUNDED PRECEDING AND 9223372036854775807::INT8 PRECEDING) FROM t65978
-
--- sqlfmt-corpus-separator --
-
-SELECT max(c) OVER (ROWS BETWEEN 9223372036854775807::INT8 FOLLOWING AND UNBOUNDED FOLLOWING) FROM t65978
-
--- sqlfmt-corpus-separator --
-
-SELECT max(c) OVER (ROWS BETWEEN 9223372036854775807::INT8 PRECEDING AND UNBOUNDED FOLLOWING) FROM t65978
-
--- sqlfmt-corpus-separator --
-
-SELECT oid(3), oid(0), (-1)::oid, (-2147483648)::oid, (4294967295)::oid
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER (PARTITION BY price ORDER BY group_id GROUPS -1 PRECEDING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER (PARTITION BY price ORDER BY group_id GROUPS BETWEEN 1 FOLLOWING AND -1 FOLLOWING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER (PARTITION BY price ROWS -1 PRECEDING) AS avg_price FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER (PARTITION BY price ROWS BETWEEN 1 FOLLOWING AND -1 FOLLOWING) AS avg_price FROM products
 
 -- sqlfmt-corpus-separator --
 
@@ -1574,30 +1199,6 @@ SELECT price, dense_rank() OVER w, avg(price) OVER (w GROUPS BETWEEN UNBOUNDED P
 
 -- sqlfmt-corpus-separator --
 
-SELECT price, sum(price) OVER (ORDER BY price GROUPS UNBOUNDED PRECEDING), sum(price) OVER (ORDER BY price GROUPS 100 PRECEDING), sum(price) OVER (ORDER BY price GROUPS 1 PRECEDING), sum(price) OVER (ORDER BY group_name GROUPS CURRENT ROW) FROM products ORDER BY price, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, group_name, price, avg(price) OVER (PARTITION BY group_name ORDER BY price, product_name ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS avg_of_three FROM products ORDER BY group_name, price, product_name
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, group_name, price, avg(priceFloat) OVER (PARTITION BY group_name ORDER BY price, product_name ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS avg_of_three_floats FROM products ORDER BY group_name, price, product_name
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, group_name, price, avg(priceInt) OVER (PARTITION BY group_name ORDER BY price, product_name ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS avg_of_three_ints FROM products ORDER BY group_name, price, product_name
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, pinterval, price, avg(price) OVER (ORDER BY pinterval DESC RANGE BETWEEN '2 hours 34 minutes 56 seconds' PRECEDING AND '3 months' FOLLOWING) FROM products ORDER BY pinterval DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, pinterval, price, avg(price) OVER (ORDER BY pinterval RANGE BETWEEN '2 hours 34 minutes 56 seconds' PRECEDING AND '3 months' FOLLOWING) FROM products ORDER BY pinterval, group_id
-
--- sqlfmt-corpus-separator --
-
 SELECT product_name, price, first_value(product_name) OVER w AS first FROM products WHERE price = 200 OR price = 700 WINDOW w as (PARTITION BY price ORDER BY product_name RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) ORDER BY price, product_name
 
 -- sqlfmt-corpus-separator --
@@ -1606,31 +1207,7 @@ SELECT product_name, price, last_value(product_name) OVER w AS last FROM product
 
 -- sqlfmt-corpus-separator --
 
-SELECT product_name, price, min(price) OVER (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS min_over_three, max(price) OVER (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN UNBOUNDED PRECEDING AND -1 FOLLOWING) AS max_over_partition FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, price, min(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS min_over_three, max(price) OVER (PARTITION BY group_name ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS max_over_partition FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, price, min(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS UNBOUNDED PRECEDING), max(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING), sum(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING), avg(price) OVER (PARTITION BY group_name ROWS CURRENT ROW) FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, price, min(price) OVER (PARTITION BY group_name ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS min_over_three, max(price) OVER (PARTITION BY group_name ROWS BETWEEN UNBOUNDED PRECEDING AND -1 FOLLOWING) AS max_over_partition FROM products ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
 SELECT product_name, price, nth_value(product_name, 2) OVER w AS second FROM products WHERE price = 200 OR price = 700 WINDOW w as (PARTITION BY price ORDER BY product_name RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) ORDER BY price, product_name
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, ptime, price, avg(price) OVER (ORDER BY ptime DESC RANGE BETWEEN '1 hours 15 minutes' PRECEDING AND '1 hours 15 minutes' FOLLOWING) FROM products ORDER BY ptime DESC, group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT product_name, ptime, price, avg(price) OVER (ORDER BY ptime RANGE BETWEEN '1 hours 15 minutes' PRECEDING AND '1 hours 15 minutes' FOLLOWING) FROM products ORDER BY ptime, group_id
 
 -- sqlfmt-corpus-separator --
 
@@ -1658,42 +1235,6 @@ SELECT s, w + k, (sum(w) OVER wind + avg(d) OVER wind), (min(w) OVER wind + d), 
 
 -- sqlfmt-corpus-separator --
 
-SELECT sum(price) OVER (ORDER BY pdate RANGE '-1 days' PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (ORDER BY price RANGE BETWEEN 123.4 PRECEDING AND '1 days' FOLLOWING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (ORDER BY price, priceint RANGE 100 PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (ORDER BY product_name RANGE 'foo' PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (ORDER BY ptime RANGE BETWEEN '-1 hours' PRECEDING AND '1 hours' FOLLOWING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (ORDER BY ptime RANGE BETWEEN '1 hours' PRECEDING AND '-1 hours' FOLLOWING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (ORDER BY ptimestamp RANGE 123.4 PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (ORDER BY ptimestamptz RANGE BETWEEN 123 PRECEDING AND CURRENT ROW) FROM products
-
--- sqlfmt-corpus-separator --
-
-SELECT sum(price) OVER (RANGE 100 PRECEDING) FROM products
-
--- sqlfmt-corpus-separator --
-
 SELECT table_catalog, table_schema, table_name, table_type, is_insertable_into
 FROM system.information_schema.tables
 WHERE
@@ -1703,18 +1244,10 @@ ORDER BY table_name, table_schema
 
 -- sqlfmt-corpus-separator --
 
-SELECT x, y, first_value(y) OVER (PARTITION BY x ROWS BETWEEN CURRENT ROW AND CURRENT ROW) FROM t;
-
--- sqlfmt-corpus-separator --
-
 SELECT y.a, (
   WITH foo AS MATERIALIZED (SELECT x.a FROM x WHERE x.a = y.a)
   SELECT * FROM foo
 ) FROM y
-
--- sqlfmt-corpus-separator --
-
-SELECT |/ -1.0::float
 
 -- sqlfmt-corpus-separator --
 

@@ -67,6 +67,18 @@
 -- sqlfmt-corpus-separator --
 
 SELECT
+    empno,
+    depname,
+    row_number() OVER (PARTITION BY depname ORDER BY enroll_date) rn,
+    rank() OVER (PARTITION BY depname ORDER BY enroll_date ROWS BETWEEN
+                 UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) rnk,
+    count(*) OVER (PARTITION BY depname ORDER BY enroll_date RANGE BETWEEN
+                   CURRENT ROW AND CURRENT ROW) cnt
+FROM empsalary
+
+-- sqlfmt-corpus-separator --
+
+SELECT
     pg_catalog.pg_restore_relation_stats(
         'schemaname', 'stats_import',
         'relname', 'test',
@@ -121,6 +133,24 @@ SELECT  interval '1 day -1 hours',
         interval '-1 days +1 hours',
         interval '1 years 2 months -3 days 4 hours 5 minutes 6.789 seconds',
         - interval '1 years 2 months -3 days 4 hours 5 minutes 6.789 seconds'
+
+-- sqlfmt-corpus-separator --
+
+SELECT  thousand
+		FROM onek WHERE thousand < 5
+		ORDER BY thousand FETCH FIRST 1 ROW WITH TIES
+
+-- sqlfmt-corpus-separator --
+
+SELECT  thousand
+		FROM onek WHERE thousand < 5
+		ORDER BY thousand FETCH FIRST 2 ROW WITH TIES
+
+-- sqlfmt-corpus-separator --
+
+SELECT  thousand
+		FROM onek WHERE thousand < 5
+		ORDER BY thousand FETCH FIRST ROWS WITH TIES
 
 -- sqlfmt-corpus-separator --
 
@@ -2680,7 +2710,27 @@ SELECT 'abc'::name NOT LIKE '_b_' AS "false"
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'abcd%' SIMILAR TO '_bcd#%' ESCAPE '#' AS true
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'abcd\efg' SIMILAR TO '_bcd\%' ESCAPE '' AS true
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'abcdefg' SIMILAR TO '_bcd#%' ESCAPE '##' AS error
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'abcdefg' SIMILAR TO '_bcd#%' ESCAPE '#' AS false
+
+-- sqlfmt-corpus-separator --
+
 SELECT 'abcdefg' SIMILAR TO '_bcd%' AS true
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'abcdefg' SIMILAR TO '_bcd%' ESCAPE NULL AS null
 
 -- sqlfmt-corpus-separator --
 
@@ -3818,6 +3868,18 @@ SELECT (-1234567890)::money
 
 -- sqlfmt-corpus-separator --
 
+SELECT (-12345678901234567)::int8::money
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-12345678901234567)::money
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-12345678901234567)::numeric::money
+
+-- sqlfmt-corpus-separator --
+
 SELECT (-1::int2<<15)::text
 
 -- sqlfmt-corpus-separator --
@@ -3830,6 +3892,38 @@ SELECT (-1::int8<<63)::text
 
 -- sqlfmt-corpus-separator --
 
+SELECT (-2147483648)::int4 % (-1)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-2147483648)::int4 % (-1)::int4
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-2147483648)::int4 * (-1)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-2147483648)::int4 * (-1)::int4
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-2147483648)::int4 / (-1)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-2147483648)::int4 / (-1)::int4
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-2147483648.4)::int4
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-2147483648.5)::int4
+
+-- sqlfmt-corpus-separator --
+
 SELECT (-32768)::int2 % (-1)::int2
 
 -- sqlfmt-corpus-separator --
@@ -3839,6 +3933,58 @@ SELECT (-32768)::int2 * (-1)::int2
 -- sqlfmt-corpus-separator --
 
 SELECT (-32768)::int2 / (-1)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-32768.4)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-32768.5)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 % (-1)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 % (-1)::int4
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 % (-1)::int8
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 * (-1)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 * (-1)::int4
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 * (-1)::int8
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 / (-1)::int2
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 / (-1)::int4
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808)::int8 / (-1)::int8
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808.4)::int8
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-9223372036854775808.5)::int8
 
 -- sqlfmt-corpus-separator --
 
@@ -8449,6 +8595,22 @@ SELECT gamma(float8 '1000')
 
 -- sqlfmt-corpus-separator --
 
+SELECT gcd((-2147483648)::int4, (-2147483648)::int4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT gcd((-2147483648)::int4, 0::int4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT gcd((-9223372036854775808)::int8, (-9223372036854775808)::int8)
+
+-- sqlfmt-corpus-separator --
+
+SELECT gcd((-9223372036854775808)::int8, 0::int8)
+
+-- sqlfmt-corpus-separator --
+
 SELECT generate_series(1, 100) OVER () FROM empsalary
 
 -- sqlfmt-corpus-separator --
@@ -9774,6 +9936,14 @@ SELECT last_seq_scan, last_idx_scan FROM pg_stat_all_tables WHERE relid = 'test_
 -- sqlfmt-corpus-separator --
 
 SELECT last_value(four) OVER (ORDER BY ten), ten, four FROM tenk1 WHERE unique2 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT lcm((-2147483648)::int4, 1::int4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT lcm((-9223372036854775808)::int8, 1::int8)
 
 -- sqlfmt-corpus-separator --
 
@@ -12996,6 +13166,170 @@ FROM empsalary GROUP BY depname
 -- sqlfmt-corpus-separator --
 
 SELECT sum(t1.a), avg(t1.a), sum(t1.b), avg(t1.b) FROM prt1 t1 WHERE NOT EXISTS (SELECT 1 FROM prt2 t2 WHERE t1.a = t2.b)
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over
+	(order by unique1
+	 rows (SELECT unique1 FROM tenk1 ORDER BY unique1 LIMIT 1) + 1 PRECEDING),
+	unique1
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (ORDER BY four groups between 9223372036854775807 following and unbounded following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (ORDER BY four groups between current row and 9223372036854775807 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four desc range between 2::int8 preceding and 1::int2 preceding),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between 0 preceding and 0 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between 1 following and unbounded following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between 1 preceding and unbounded following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between 2 preceding and 1 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between 2 preceding and 1 preceding),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between current row and unbounded following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between unbounded preceding and 2 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between unbounded preceding and current row),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between unbounded preceding and unbounded following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four range between 2::int8 preceding and 1::int2 preceding exclude no others),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four range between 2::int8 preceding and 1::int2 preceding),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four range between current row and unbounded following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (partition by four order by unique1 range between 5::int8 preceding and 6::int2 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (partition by ten
+	order by four groups between 0 preceding and 0 following),unique1, four, ten
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 1 following and 3 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 1 preceding and 1 following),
+       unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 2 preceding and 1 preceding),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 2 preceding and 2 following exclude no others),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 2 preceding and 2 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 9223372036854775807 following and 1 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between current row and unbounded following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between unbounded preceding and 1 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between unbounded(1) preceding and unbounded(1) following),
+       unique1, four
+FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
@@ -18324,6 +18658,68 @@ from int4_tbl i4
 
 -- sqlfmt-corpus-separator --
 
+select f1, sum(f1) over (partition by f1
+                         groups between 1 preceding and 1 following)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select f1, sum(f1) over (partition by f1
+                         range between 1 preceding and 1 following)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select f1, sum(f1) over (partition by f1 order by f2
+                         groups between 1 preceding and 1 following)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select f1, sum(f1) over (partition by f1 order by f2
+                         range between 1 preceding and 1 following)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select f1, sum(f1) over (partition by f1, f1 order by f2
+                         groups between 2 preceding and 1 preceding)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select f1, sum(f1) over (partition by f1, f1 order by f2
+                         range between 2 preceding and 1 preceding)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select f1, sum(f1) over (partition by f1, f2 order by f2
+                         groups between 1 following and 2 following)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select f1, sum(f1) over (partition by f1, f2 order by f2
+                         range between 1 following and 2 following)
+from t1 where f1 = f2
+
+-- sqlfmt-corpus-separator --
+
+select first_value(salary) over(order by enroll_date groups between 1 preceding and 1 following),
+	lead(salary) over(order by enroll_date groups between 1 preceding and 1 following),
+	nth_value(salary, 1) over(order by enroll_date groups between 1 preceding and 1 following),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select first_value(salary) over(order by salary range between 1000 preceding and 1000 following),
+	lead(salary) over(order by salary range between 1000 preceding and 1000 following),
+	nth_value(salary, 1) over(order by salary range between 1000 preceding and 1000 following),
+	salary from empsalary
+
+-- sqlfmt-corpus-separator --
+
 select formarray(1, 'x'::text)
 
 -- sqlfmt-corpus-separator --
@@ -19712,6 +20108,18 @@ select jsonb_typeof('{"a":1}'::jsonb)
 
 -- sqlfmt-corpus-separator --
 
+select last_value(salary) over(order by enroll_date groups between 1 preceding and 1 following),
+	lag(salary) over(order by enroll_date groups between 1 preceding and 1 following),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select last_value(salary) over(order by salary range between 1000 preceding and 1000 following),
+	lag(salary) over(order by salary range between 1000 preceding and 1000 following),
+	salary from empsalary
+
+-- sqlfmt-corpus-separator --
+
 select length(stringu1) into parallel_write
     from tenk1 group by length(stringu1)
 
@@ -20111,6 +20519,21 @@ select sum(1/ten) filter (where ten > 0) from tenk1
 -- sqlfmt-corpus-separator --
 
 select sum(f1) into total from t1
+
+-- sqlfmt-corpus-separator --
+
+select sum(salary) over (order by enroll_date desc range between '1 year'::interval following and '1 year'::interval following),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select sum(salary) over (order by enroll_date desc range between '1 year'::interval preceding and '1 year'::interval following),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select sum(salary) over (order by enroll_date range between '1 year'::interval preceding and '1 year'::interval following),
+	salary, enroll_date from empsalary
 
 -- sqlfmt-corpus-separator --
 

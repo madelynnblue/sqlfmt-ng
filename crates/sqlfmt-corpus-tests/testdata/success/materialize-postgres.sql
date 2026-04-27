@@ -334,6 +334,13 @@ ORDER BY a;
 -- sqlfmt-corpus-separator --
 
 SELECT
+  array_agg(y) OVER (PARTITION BY x ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING)
+FROM t9
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   array_agg(y) OVER (PARTITION BY x)
 FROM t9
 ORDER BY x;
@@ -359,6 +366,13 @@ FROM kv
 -- sqlfmt-corpus-separator --
 
 SELECT
+  avg(y+y) OVER (PARTITION BY x ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING)
+FROM t9
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   avg(y+y) OVER (PARTITION BY x)
 FROM t9
 ORDER BY x;
@@ -375,6 +389,21 @@ ORDER BY x;
 SELECT
   count(min(x)) OVER ()
 FROM t7;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  count(y) OVER (PARTITION BY x ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING)
+FROM t9
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  count(y) OVER (PARTITION BY x ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING),
+  sum(y)   OVER (PARTITION BY x ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING)
+FROM t9
+ORDER BY x;
 
 -- sqlfmt-corpus-separator --
 
@@ -446,8 +475,65 @@ ORDER BY name;
 -- sqlfmt-corpus-separator --
 
 SELECT
+  o1,
+  o2,
+  v,
+  sum(v) OVER (ORDER BY o1, o2),
+  max(v) OVER (ORDER BY o1, o2),
+  min(v) OVER (ORDER BY o1, o2),
+  array_agg(v) OVER (ORDER BY o1, o2 RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+FROM t8
+ORDER BY o1, o2;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  o1,
+  o2,
+  v,
+  sum(v) OVER (PARTITION BY o1 ORDER BY o2),
+  max(v) OVER (PARTITION BY o1 ORDER BY o2),
+  min(v) OVER (PARTITION BY o1 ORDER BY o2),
+  array_agg(v) OVER (PARTITION BY o1 ORDER BY o2 RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+FROM t8
+ORDER BY o1, o2;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   sum(sum(x)) OVER ()
 FROM t7;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  sum(y) OVER (ORDER BY x ROWS BETWEEN 2 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t7;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  sum(y) OVER (ORDER BY x ROWS BETWEEN 3 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t7;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  sum(y) OVER (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND 2 FOLLOWING)
+FROM t7;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  sum(y) OVER (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND 2 PRECEDING)
+FROM t7;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  sum(y) OVER (PARTITION BY x ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING)
+FROM t9
+ORDER BY x;
 
 -- sqlfmt-corpus-separator --
 
@@ -475,6 +561,30 @@ ORDER BY x;
 SELECT
   x,
   y,
+  sum(x+x) OVER (PARTITION BY x-y ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-y ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-y ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-y ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t7
+ORDER BY x-y, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t7
+ORDER BY x-y, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x,
+  y,
   sum(y) OVER (),
   max(y) OVER (),
   min(y) OVER (),
@@ -488,6 +598,158 @@ ORDER BY x;
 -- sqlfmt-corpus-separator --
 
 SELECT
+  x,
+  y,
+  sum(y) OVER (ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  max(y) OVER (ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  min(y) OVER (ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  array_agg(y) OVER (ORDER BY x RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t7
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x,
+  y,
+  sum(y) OVER (ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),
+  max(y) OVER (ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),
+  min(y) OVER (ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),
+  jsonb_agg(y) OVER (ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+FROM t7
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x,
+  y,
+  sum(y) OVER (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  max(y) OVER (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  min(y) OVER (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  array_agg(y) OVER (ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t7
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x,
+  y,
+  sum(y) OVER (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+  max(y) OVER (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+  min(y) OVER (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+  array_agg(y) OVER (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+FROM t7
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-row_number() OVER (ORDER BY x+y),
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+FROM t7
+ORDER BY x-row_number() OVER (ORDER BY x+y), x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-row_number() OVER (ORDER BY x+y),
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN row_number() OVER (ORDER BY x+y) PRECEDING AND 0 FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN row_number() OVER (ORDER BY x+y) PRECEDING AND 0 FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN row_number() OVER (ORDER BY x+y) PRECEDING AND 0 FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN row_number() OVER (ORDER BY x+y) PRECEDING AND 0 FOLLOWING)
+FROM t7
+ORDER BY x-row_number() OVER (ORDER BY x+y), x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y+x/10,
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+FROM t7
+ORDER BY x-y+x/10, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y+x/10,
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1000000 PRECEDING AND 1000000 FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1000000 PRECEDING AND 1000000 FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1000000 PRECEDING AND 1000000 FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 1000000 PRECEDING AND 1000000 FOLLOWING)
+FROM t7
+ORDER BY x-y+x/10, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y+x/10,
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),
+  max(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),
+  min(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW),
+  array_agg(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+FROM t7
+ORDER BY x-y+x/10, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y+x/10,
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING)
+FROM t7
+ORDER BY x-y+x/10, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y+x/10,
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND CURRENT ROW),
+  max(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND CURRENT ROW),
+  min(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND CURRENT ROW),
+  array_agg(x+x) OVER (PARTITION BY x-y+x/10 ORDER BY x ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
+FROM t7
+ORDER BY x-y+x/10, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y+x/10,
+  x,
+  y,
+  sum(y) OVER (PARTITION BY x-y+x/10 ROWS BETWEEN 200 PRECEDING AND 100 PRECEDING),
+  count(y) OVER (PARTITION BY x-y+x/10 ROWS BETWEEN 200 PRECEDING AND 100 PRECEDING),
+  array_agg(y) OVER (PARTITION BY x-y+x/10 ROWS BETWEEN 200 PRECEDING AND 100 PRECEDING),
+  avg(y) OVER (PARTITION BY x-y+x/10 ROWS BETWEEN 200 PRECEDING AND 100 PRECEDING)
+FROM t7
+ORDER BY x, y;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   x-y+x/10,
   x,
   y,
@@ -497,6 +759,45 @@ SELECT
   array_agg(y) OVER (PARTITION BY x-y+x/10)
 FROM t7
 ORDER BY x-y+x/10;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y,
+  x,
+  y,
+  array_agg(x/10) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  count(DISTINCT x/10) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t7
+ORDER BY x-y, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y,
+  x,
+  y,
+  jsonb_agg(2*x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  avg(x+y) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  variance(x+y) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  var_pop(x+y) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  stddev(x+y) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  stddev_pop(x+y) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t7
+ORDER BY x-y, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  x-y,
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-y ORDER BY x ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t7
+ORDER BY x-y, x;
 
 -- sqlfmt-corpus-separator --
 
@@ -24879,6 +25180,14 @@ SELECT (-1)::oid < 2::oid
 
 -- sqlfmt-corpus-separator --
 
+SELECT (-1)::smallint::text, (-1)::bigint::text, (-1.0)::text, (-1.0)::float::text, (-1.0)::double::text
+
+-- sqlfmt-corpus-separator --
+
+SELECT (-6734743351254754)::bigint * (-99783359317598)::bigint
+
+-- sqlfmt-corpus-separator --
+
 SELECT (0.12 * 0.2)::numeric(39,1);
 
 -- sqlfmt-corpus-separator --
@@ -24936,6 +25245,10 @@ SELECT (5 + 3)::text;
 -- sqlfmt-corpus-separator --
 
 SELECT (999999999999999999999999999999999999.123 + 1::numeric)::numeric(39,3);
+
+-- sqlfmt-corpus-separator --
+
+SELECT (CAST(-6734743351254754 AS bigint) * CAST(-99783359317598 AS bigint))
 
 -- sqlfmt-corpus-separator --
 
@@ -25600,6 +25913,32 @@ SELECT 0.000::float8, 3.40282347E+38::float8, -3.40282347E+38::float8
 -- sqlfmt-corpus-separator --
 
 SELECT 0.002::numeric(39,1);
+
+-- sqlfmt-corpus-separator --
+
+SELECT 0.0::decimal as a,
+      -0.0::decimal as b,
+      0.00::decimal as c,
+     -0.00::decimal as d,
+  (-0.000)::decimal as e,
+         0::decimal as f,
+        -0::decimal as g,
+  '0.0000'::decimal as h,
+ '-0.0000'::decimal as i
+
+-- sqlfmt-corpus-separator --
+
+SELECT 0.0::float as a,
+      -0.0::float as b,
+      0.00::float as c,
+     -0.00::float as d,
+  (-0.000)::float as e,
+                0 as f,
+               -0 as g,
+         0::float as h,
+        -0::float as i,
+  '0.0000'::float as j,
+ '-0.0000'::float as k
 
 -- sqlfmt-corpus-separator --
 
@@ -32321,6 +32660,382 @@ WHERE f1 IN (SELECT ROW_NUMBER() OVER () FROM t2);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 FOLLOWING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 FOLLOWING AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 FOLLOWING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 PRECEDING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 PRECEDING AND 10 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 0 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 FOLLOWING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 FOLLOWING AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 PRECEDING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 PRECEDING AND 10 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 10 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 100 FOLLOWING AND 1000001 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1000 PRECEDING AND 1000 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 1000 PRECEDING AND 999 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 18446744073709551614 FOLLOWING AND 18446744073709551615 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 18446744073709551615 FOLLOWING AND 18446744073709551615 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 18446744073709551615 PRECEDING AND 18446744073709551614 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 18446744073709551615 PRECEDING AND 18446744073709551615 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 FOLLOWING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 FOLLOWING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 PRECEDING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN 2 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN CURRENT ROW AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN CURRENT ROW AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 10 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, first_value
+
+-- sqlfmt-corpus-separator --
+
 SELECT f1, f2, f3, first_value(f1) OVER (PARTITION BY f2 ORDER BY f1, f3)
 FROM t
 ORDER BY f2, f3, f1, first_value
@@ -32480,6 +33195,376 @@ ORDER BY f2 DESC, f3 DESC, f1, lag
 SELECT f1, f2, f3, lag(nullif(f1, 4)) OVER (PARTITION BY f2 ORDER BY f3 DESC, f1)
 FROM t
 ORDER BY f2 DESC, f3 DESC, f1, lag
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 FOLLOWING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 FOLLOWING AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 FOLLOWING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 PRECEDING AND 10 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 0 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 FOLLOWING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 FOLLOWING AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 PRECEDING AND -1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 PRECEDING AND 10 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 10 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1000 FOLLOWING AND 1000 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1000 FOLLOWING AND 1001 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 1000001 PRECEDING AND 100 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 18446744073709551614 FOLLOWING AND 18446744073709551615 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 18446744073709551615 FOLLOWING AND 18446744073709551615 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 FOLLOWING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 FOLLOWING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 FOLLOWING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN 2 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN CURRENT ROW AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN CURRENT ROW AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 0 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 0 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 10 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 10 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 2 FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND 2 PRECEDING)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+FROM t
+ORDER BY f2, f3, f1, last_value
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, f2, f3, last_value(f1) OVER (PARTITION BY f2 ORDER BY f1 DESC, f3 DESC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t
+ORDER BY f2, f3, f1, last_value
 
 -- sqlfmt-corpus-separator --
 
@@ -32651,6 +33736,174 @@ ORDER BY f2 DESC, f3 DESC, f1, lead
 
 -- sqlfmt-corpus-separator --
 
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 FOLLOWING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 FOLLOWING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 0 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 1 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 FOLLOWING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 0 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 0 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, first_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
 SELECT f1, first_value(f1) OVER (PARTITION BY f1)
 FROM t5
 GROUP BY f1
@@ -32658,6 +33911,174 @@ GROUP BY f1
 -- sqlfmt-corpus-separator --
 
 SELECT f1, lag(0, f1 , 0) OVER (PARTITION BY f1 ORDER BY f1) FROM t3 GROUP BY f1 ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 FOLLOWING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 FOLLOWING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 0 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND 1 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 0 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 FOLLOWING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 0 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 0 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 0 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+FROM t5
+GROUP BY f1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1, last_value(f1) OVER (PARTITION BY f1 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM t5
+GROUP BY f1
 
 -- sqlfmt-corpus-separator --
 
@@ -35424,6 +36845,14 @@ SELECT round(5.0, CAST ((SELECT * FROM nums) AS integer))
 
 -- sqlfmt-corpus-separator --
 
+SELECT round(CAST (-1.4678 AS double precision))
+
+-- sqlfmt-corpus-separator --
+
+SELECT round(CAST (-1.4678 AS float))
+
+-- sqlfmt-corpus-separator --
+
 SELECT round(CAST (1.5678 AS double precision))
 
 -- sqlfmt-corpus-separator --
@@ -35484,6 +36913,58 @@ SELECT row_number() OVER (), row_number() OVER () from t
 
 -- sqlfmt-corpus-separator --
 
+SELECT row_number() OVER (GROUPS BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN CURRENT ROW AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN CURRENT ROW AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
 SELECT row_number() OVER (ORDER BY x DESC), x FROM t
 ORDER BY row_number
 
@@ -35525,6 +37006,74 @@ ORDER BY row_number, x
 
 SELECT row_number() OVER (PARTITION BY y ORDER BY x), x FROM t
 ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN CURRENT ROW AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN CURRENT ROW AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE UNBOUNDED PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS -1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN 1 PRECEDING AND 2 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN 2 FOLLOWING AND 1 FOLLOWING)
 
 -- sqlfmt-corpus-separator --
 
@@ -36342,6 +37891,14 @@ SELECT trunc(-0.0), trunc(0.0), trunc(1.9), trunc(19.5678::decimal)
 -- sqlfmt-corpus-separator --
 
 SELECT trunc(1.234), trunc(-1.234), trunc('NaN'::numeric)
+
+-- sqlfmt-corpus-separator --
+
+SELECT trunc(CAST (-1.4678 AS double precision))
+
+-- sqlfmt-corpus-separator --
+
+SELECT trunc(CAST (-1.4678 AS float))
 
 -- sqlfmt-corpus-separator --
 

@@ -263,11 +263,23 @@ fn set_op_to_node(s: &Value) -> Node {
     }
     if !s["limitCount"].is_null() {
         concat_items.push(Node::Hardline);
-        concat_items.push(Node::Keyword {
-            value: "LIMIT".into(),
-        });
-        concat_items.push(Node::Text { value: " ".into() });
-        concat_items.push(node_value_to_node(&s["limitCount"]));
+        if s["limitOption"].as_str() == Some("LIMIT_OPTION_WITH_TIES") {
+            concat_items.push(Node::Keyword {
+                value: "FETCH FIRST".into(),
+            });
+            concat_items.push(Node::Text { value: " ".into() });
+            concat_items.push(node_value_to_node(&s["limitCount"]));
+            concat_items.push(Node::Text { value: " ".into() });
+            concat_items.push(Node::Keyword {
+                value: "ROWS WITH TIES".into(),
+            });
+        } else {
+            concat_items.push(Node::Keyword {
+                value: "LIMIT".into(),
+            });
+            concat_items.push(Node::Text { value: " ".into() });
+            concat_items.push(node_value_to_node(&s["limitCount"]));
+        }
     }
     if !s["limitOffset"].is_null() {
         concat_items.push(Node::Hardline);
@@ -589,10 +601,27 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
     }
 
     if !s["limitCount"].is_null() {
-        clauses.push(Clause {
-            keyword: "LIMIT".into(),
-            body: Some(Box::new(node_value_to_node(&s["limitCount"]))),
-        });
+        if s["limitOption"].as_str() == Some("LIMIT_OPTION_WITH_TIES") {
+            clauses.push(Clause {
+                keyword: "FETCH FIRST".into(),
+                body: Some(Box::new(Node::Concat {
+                    items: vec![
+                        node_value_to_node(&s["limitCount"]),
+                        Node::Text {
+                            value: " ".into(),
+                        },
+                        Node::Keyword {
+                            value: "ROWS WITH TIES".into(),
+                        },
+                    ],
+                })),
+            });
+        } else {
+            clauses.push(Clause {
+                keyword: "LIMIT".into(),
+                body: Some(Box::new(node_value_to_node(&s["limitCount"]))),
+            });
+        }
     }
 
     if !s["limitOffset"].is_null() {
@@ -829,7 +858,7 @@ fn a_expr_to_node(e: &Value) -> Node {
     }
 
     // SIMILAR TO / NOT SIMILAR TO: rexpr is pg_catalog.similar_to_escape(pattern[, escape]).
-    // Extract the pattern from the FuncCall args and render as `lexpr SIMILAR TO pattern`.
+    // When ESCAPE is specified, similar_to_escape has two args: (pattern, escape).
     if kind == "AEXPR_SIMILAR" {
         let similar_kw = if op_raw == "~" {
             "SIMILAR TO"
@@ -837,16 +866,29 @@ fn a_expr_to_node(e: &Value) -> Node {
             "NOT SIMILAR TO"
         };
         if has_lexpr && has_rexpr {
-            let pattern = e["rexpr"]["FuncCall"]["args"]
-                .as_array()
-                .and_then(|args| args.first())
+            let args = e["rexpr"]["FuncCall"]["args"].as_array();
+            let pattern = args
+                .and_then(|a| a.first())
                 .map(node_value_to_node)
                 .unwrap_or(node_value_to_node(&e["rexpr"]));
+            let rhs = if let Some(escape_node) = args.and_then(|a| a.get(1)) {
+                Node::Concat {
+                    items: vec![
+                        pattern,
+                        Node::Text {
+                            value: " ESCAPE ".into(),
+                        },
+                        node_value_to_node(escape_node),
+                    ],
+                }
+            } else {
+                pattern
+            };
             return Node::Infix {
                 op: similar_kw.to_string(),
                 items: vec![
                     wrap_infix_in_parens(node_value_to_node(&e["lexpr"])),
-                    pattern,
+                    rhs,
                 ],
             };
         }
@@ -939,7 +981,8 @@ fn a_expr_to_node(e: &Value) -> Node {
             ],
         },
         (false, true) => Node::Concat {
-            items: vec![Node::Text { value: op }, node_value_to_node(&e["rexpr"])],
+            // Space after unary operator prevents `--rhs` from being parsed as a SQL comment.
+            items: vec![Node::Text { value: format!("{op} ") }, node_value_to_node(&e["rexpr"])],
         },
         (false, false) => Node::Text { value: op },
     }
@@ -1230,6 +1273,10 @@ fn func_call_to_node(f: &Value) -> Node {
         }
     }
 
+    if let Some(frame_clause) = window_frame_clause(over) {
+        over_clauses.push(frame_clause);
+    }
+
     let over_content: Node = if over_clauses.is_empty() {
         Node::Text {
             value: String::new(),
@@ -1253,6 +1300,132 @@ fn func_call_to_node(f: &Value) -> Node {
                 close: ")".into(),
             },
         ],
+    }
+}
+
+// Frame option bit flags matching PostgreSQL's gram.y FRAMEOPTION_* constants.
+const FRAMEOPTION_NONDEFAULT: u64 = 0x00001;
+const FRAMEOPTION_RANGE: u64 = 0x00002;
+const FRAMEOPTION_ROWS: u64 = 0x00004;
+const FRAMEOPTION_GROUPS: u64 = 0x00008;
+const FRAMEOPTION_BETWEEN: u64 = 0x00010;
+const FRAMEOPTION_START_UNBOUNDED_PRECEDING: u64 = 0x00020;
+const FRAMEOPTION_END_UNBOUNDED_PRECEDING: u64 = 0x00040;
+const FRAMEOPTION_START_UNBOUNDED_FOLLOWING: u64 = 0x00080;
+const FRAMEOPTION_END_UNBOUNDED_FOLLOWING: u64 = 0x00100;
+const FRAMEOPTION_START_CURRENT_ROW: u64 = 0x00200;
+const FRAMEOPTION_END_CURRENT_ROW: u64 = 0x00400;
+const FRAMEOPTION_START_OFFSET_PRECEDING: u64 = 0x00800;
+const FRAMEOPTION_END_OFFSET_PRECEDING: u64 = 0x01000;
+const FRAMEOPTION_START_OFFSET_FOLLOWING: u64 = 0x02000;
+const FRAMEOPTION_END_OFFSET_FOLLOWING: u64 = 0x04000;
+
+fn frame_bound_str(
+    opts: u64,
+    preceding_flag: u64,
+    following_flag: u64,
+    current_row_flag: u64,
+    offset_preceding_flag: u64,
+    offset_following_flag: u64,
+    offset: &Value,
+) -> Node {
+    if opts & preceding_flag != 0 {
+        Node::Keyword {
+            value: "UNBOUNDED PRECEDING".into(),
+        }
+    } else if opts & following_flag != 0 {
+        Node::Keyword {
+            value: "UNBOUNDED FOLLOWING".into(),
+        }
+    } else if opts & current_row_flag != 0 {
+        Node::Keyword {
+            value: "CURRENT ROW".into(),
+        }
+    } else if opts & offset_preceding_flag != 0 {
+        Node::Concat {
+            items: vec![
+                node_value_to_node(offset),
+                Node::Text { value: " ".into() },
+                Node::Keyword {
+                    value: "PRECEDING".into(),
+                },
+            ],
+        }
+    } else if opts & offset_following_flag != 0 {
+        Node::Concat {
+            items: vec![
+                node_value_to_node(offset),
+                Node::Text { value: " ".into() },
+                Node::Keyword {
+                    value: "FOLLOWING".into(),
+                },
+            ],
+        }
+    } else {
+        Node::Keyword {
+            value: "CURRENT ROW".into(),
+        }
+    }
+}
+
+fn window_frame_clause(over: &Value) -> Option<Clause> {
+    let opts = over["frameOptions"].as_u64()?;
+    if opts & FRAMEOPTION_NONDEFAULT == 0 {
+        return None;
+    }
+
+    let frame_type = if opts & FRAMEOPTION_ROWS != 0 {
+        "ROWS"
+    } else if opts & FRAMEOPTION_GROUPS != 0 {
+        "GROUPS"
+    } else if opts & FRAMEOPTION_RANGE != 0 {
+        "RANGE"
+    } else {
+        "RANGE"
+    };
+
+    let start_offset = &over["startOffset"];
+    let end_offset = &over["endOffset"];
+
+    let start_bound = frame_bound_str(
+        opts,
+        FRAMEOPTION_START_UNBOUNDED_PRECEDING,
+        FRAMEOPTION_START_UNBOUNDED_FOLLOWING,
+        FRAMEOPTION_START_CURRENT_ROW,
+        FRAMEOPTION_START_OFFSET_PRECEDING,
+        FRAMEOPTION_START_OFFSET_FOLLOWING,
+        start_offset,
+    );
+
+    if opts & FRAMEOPTION_BETWEEN != 0 {
+        let end_bound = frame_bound_str(
+            opts,
+            FRAMEOPTION_END_UNBOUNDED_PRECEDING,
+            FRAMEOPTION_END_UNBOUNDED_FOLLOWING,
+            FRAMEOPTION_END_CURRENT_ROW,
+            FRAMEOPTION_END_OFFSET_PRECEDING,
+            FRAMEOPTION_END_OFFSET_FOLLOWING,
+            end_offset,
+        );
+        Some(Clause {
+            keyword: format!("{frame_type} BETWEEN"),
+            body: Some(Box::new(Node::Concat {
+                items: vec![
+                    start_bound,
+                    Node::Text { value: " ".into() },
+                    Node::Keyword {
+                        value: "AND".into(),
+                    },
+                    Node::Text { value: " ".into() },
+                    end_bound,
+                ],
+            })),
+        })
+    } else {
+        Some(Clause {
+            keyword: frame_type.into(),
+            body: Some(Box::new(start_bound)),
+        })
     }
 }
 
@@ -1393,7 +1566,25 @@ fn type_name_str(tn: &Value) -> String {
 }
 
 fn type_cast_to_node(tc: &Value) -> Node {
-    let arg = wrap_infix_in_parens(node_value_to_node(&tc["arg"]));
+    let arg_node = node_value_to_node(&tc["arg"]);
+    // Negative literal values (e.g. "-2147483648" stored as fval) must be wrapped in
+    // parentheses so the typecast applies to the value, not to the cast result.
+    // Without parens, "-2147483648::int4" parses as "-(2147483648::int4)".
+    let arg = match &arg_node {
+        Node::Literal { value } if value.starts_with('-') => Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(arg_node),
+            close: ")".into(),
+        },
+        Node::Infix { .. } => Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(arg_node),
+            close: ")".into(),
+        },
+        _ => arg_node,
+    };
     let type_str = type_name_str(&tc["typeName"]);
     Node::Concat {
         items: vec![
