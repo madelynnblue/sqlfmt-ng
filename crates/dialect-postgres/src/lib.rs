@@ -76,6 +76,21 @@ mod tests {
     use sqlfmt_render::RenderOpts;
 
     #[test]
+    fn test_roundtrip_dml_in_cte() {
+        let d = PostgresDialect;
+        let opts = RenderOpts {
+            line_width: 1000,
+            ..Default::default()
+        };
+        let result = format_sql(
+            &d,
+            "SELECT (WITH foo AS (INSERT INTO y VALUES (1) RETURNING *) SELECT * FROM foo)",
+            &opts,
+        );
+        assert!(result.is_ok(), "roundtrip failed: {:?}", result);
+    }
+
+    #[test]
     fn test_parse_simple_select() {
         let d = PostgresDialect;
         let result = d.parse("SELECT 1");

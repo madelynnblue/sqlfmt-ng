@@ -129,7 +129,19 @@ pub fn convert_pg_query_json(json_str: &str) -> Result<Node, SqlfmtError> {
 
 fn stmt_to_node(stmt: &Value) -> Option<Node> {
     let obj = stmt.as_object()?;
-    obj.get("SelectStmt").map(select_stmt_to_node)
+    if let Some(inner) = obj.get("SelectStmt") {
+        Some(select_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("InsertStmt") {
+        Some(insert_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("UpdateStmt") {
+        Some(update_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("DeleteStmt") {
+        Some(delete_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("MergeStmt") {
+        Some(merge_stmt_to_node(inner))
+    } else {
+        None
+    }
 }
 
 fn node_value_to_node(v: &Value) -> Node {
@@ -141,6 +153,14 @@ fn node_value_to_node(v: &Value) -> Node {
 
     if let Some(inner) = obj.get("SelectStmt") {
         select_stmt_to_node(inner)
+    } else if let Some(inner) = obj.get("InsertStmt") {
+        insert_stmt_to_node(inner)
+    } else if let Some(inner) = obj.get("UpdateStmt") {
+        update_stmt_to_node(inner)
+    } else if let Some(inner) = obj.get("DeleteStmt") {
+        delete_stmt_to_node(inner)
+    } else if let Some(inner) = obj.get("MergeStmt") {
+        merge_stmt_to_node(inner)
     } else if let Some(inner) = obj.get("ResTarget") {
         res_target_to_node(inner)
     } else if let Some(inner) = obj.get("ColumnRef") {
@@ -175,6 +195,8 @@ fn node_value_to_node(v: &Value) -> Node {
         sub_link_to_node(inner)
     } else if let Some(inner) = obj.get("NullTest") {
         null_test_to_node(inner)
+    } else if let Some(inner) = obj.get("IndexElem") {
+        index_elem_to_node(inner)
     } else if let Some(inner) = obj.get("Integer") {
         let ival = inner["ival"].as_i64().unwrap_or(0);
         Node::Literal {
@@ -232,6 +254,437 @@ fn locking_clause_parts(lc: &Value) -> (&'static str, &'static str, Option<Vec<N
             .collect()
     });
     (base_kw, wait_kw, rel_nodes)
+}
+
+fn insert_stmt_to_node(stmt: &Value) -> Node {
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    if let Some(with_clause) = build_with_clause(stmt) {
+        clauses.push(with_clause);
+    }
+
+    let relation = range_var_to_node(&stmt["relation"]);
+    let insert_into_body = if let Some(cols) = stmt["cols"].as_array().filter(|a| !a.is_empty()) {
+        let col_nodes: Vec<Node> = cols
+            .iter()
+            .map(|c| {
+                let rv = c.get("ResTarget").unwrap_or(c);
+                ident_node(rv["name"].as_str().unwrap_or(""))
+            })
+            .collect();
+        Node::Concat {
+            items: vec![
+                relation,
+                Node::Text { value: " ".into() },
+                Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::List {
+                        items: col_nodes,
+                        separator: None,
+                    }),
+                    close: ")".into(),
+                },
+            ],
+        }
+    } else {
+        relation
+    };
+    clauses.push(Clause {
+        keyword: "INSERT INTO".into(),
+        body: Some(Box::new(insert_into_body)),
+    });
+
+    match stmt["override"].as_str().unwrap_or("OVERRIDING_NOT_SET") {
+        "OVERRIDING SYSTEM VALUE" => {
+            clauses.push(Clause {
+                keyword: "OVERRIDING SYSTEM VALUE".into(),
+                body: None,
+            });
+        }
+        "OVERRIDING USER VALUE" => {
+            clauses.push(Clause {
+                keyword: "OVERRIDING USER VALUE".into(),
+                body: None,
+            });
+        }
+        _ => {}
+    }
+
+    // Source: VALUES, DEFAULT VALUES, or subquery
+    if !stmt["selectStmt"].is_null() {
+        let source = node_value_to_node(&stmt["selectStmt"]);
+        if let Node::Clauses { items } = source {
+            clauses.extend(items);
+        } else {
+            // Set-operation sources (UNION/INTERSECT/EXCEPT) return Concat, not Clauses.
+            clauses.push(Clause {
+                keyword: String::new(),
+                body: Some(Box::new(source)),
+            });
+        }
+    } else {
+        clauses.push(Clause {
+            keyword: "DEFAULT VALUES".into(),
+            body: None,
+        });
+    }
+
+    // ON CONFLICT clause
+    if stmt["onConflictClause"].get("OnConflictClause").or_else(|| {
+        stmt["onConflictClause"]
+            .as_object()
+            .filter(|o| !o.is_empty())
+            .map(|_| &stmt["onConflictClause"])
+    }).is_some() {
+        let oc = stmt["onConflictClause"]
+            .get("OnConflictClause")
+            .unwrap_or(&stmt["onConflictClause"]);
+        let action = match oc["action"].as_str().unwrap_or("") {
+            "ONCONFLICT_NOTHING" => "DO NOTHING",
+            _ => "DO UPDATE",
+        };
+        let mut conflict_body_items: Vec<Node> = Vec::new();
+
+        // Inference: (col1, col2) or ON CONSTRAINT name
+        if let Some(infer) = oc.get("infer").filter(|i| !i.is_null()) {
+            let infer = infer.get("InferClause").unwrap_or(infer);
+            if let Some(con) = infer["conname"].as_str().filter(|s| !s.is_empty()) {
+                conflict_body_items.push(Node::Text {
+                    value: format!("ON CONSTRAINT {con}"),
+                });
+            } else if let Some(elems) = infer["indexElems"].as_array().filter(|a| !a.is_empty())
+            {
+                let elem_nodes: Vec<Node> =
+                    elems.iter().map(node_value_to_node).collect();
+                conflict_body_items.push(Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::List {
+                        items: elem_nodes,
+                        separator: None,
+                    }),
+                    close: ")".into(),
+                });
+            }
+            if !infer["whereClause"].is_null() {
+                conflict_body_items.push(Node::Concat {
+                    items: vec![
+                        Node::Text {
+                            value: " WHERE ".into(),
+                        },
+                        node_value_to_node(&infer["whereClause"]),
+                    ],
+                });
+            }
+        }
+
+        conflict_body_items.push(Node::Concat {
+            items: vec![
+                Node::Text {
+                    value: " ".into(),
+                },
+                Node::Keyword {
+                    value: action.into(),
+                },
+            ],
+        });
+
+        // For DO UPDATE SET assignments
+        if action == "DO UPDATE" {
+            if let Some(targets) = oc["targetList"].as_array() {
+                if !targets.is_empty() {
+                    let set_items: Vec<Node> = targets.iter().map(|t| {
+                        set_target_to_node(t.get("ResTarget").unwrap_or(t))
+                    }).collect();
+                    conflict_body_items.push(Node::Concat {
+                        items: vec![
+                            Node::Text {
+                                value: " SET ".into(),
+                            },
+                            Node::List {
+                                items: set_items,
+                                separator: None,
+                            },
+                        ],
+                    });
+                }
+            }
+            if !oc["whereClause"].is_null() {
+                conflict_body_items.push(Node::Concat {
+                    items: vec![
+                        Node::Text {
+                            value: " WHERE ".into(),
+                        },
+                        node_value_to_node(&oc["whereClause"]),
+                    ],
+                });
+            }
+        }
+
+        clauses.push(Clause {
+            keyword: "ON CONFLICT".into(),
+            body: Some(Box::new(Node::Concat {
+                items: conflict_body_items,
+            })),
+        });
+    }
+
+    if let Some(ret) = stmt["returningList"].as_array() {
+        if !ret.is_empty() {
+            let items: Vec<Node> = ret.iter().map(node_value_to_node).collect();
+            clauses.push(Clause {
+                keyword: "RETURNING".into(),
+                body: Some(Box::new(Node::List {
+                    items,
+                    separator: None,
+                })),
+            });
+        }
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn update_stmt_to_node(stmt: &Value) -> Node {
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    if let Some(with_clause) = build_with_clause(stmt) {
+        clauses.push(with_clause);
+    }
+
+    let relation = range_var_to_node(&stmt["relation"]);
+    clauses.push(Clause {
+        keyword: "UPDATE".into(),
+        body: Some(Box::new(relation)),
+    });
+
+    if let Some(targets) = stmt["targetList"].as_array() {
+        if !targets.is_empty() {
+            let set_items: Vec<Node> = targets.iter().map(|t| {
+                set_target_to_node(t.get("ResTarget").unwrap_or(t))
+            }).collect();
+            clauses.push(Clause {
+                keyword: "SET".into(),
+                body: Some(Box::new(Node::List {
+                    items: set_items,
+                    separator: None,
+                })),
+            });
+        }
+    }
+
+    if let Some(from) = stmt["fromClause"].as_array() {
+        if !from.is_empty() {
+            let items: Vec<Node> = from.iter().map(node_value_to_node).collect();
+            let body = if items.len() == 1 {
+                items.into_iter().next().unwrap()
+            } else {
+                Node::List {
+                    items,
+                    separator: None,
+                }
+            };
+            clauses.push(Clause {
+                keyword: "FROM".into(),
+                body: Some(Box::new(body)),
+            });
+        }
+    }
+
+    if !stmt["whereClause"].is_null() {
+        clauses.push(Clause {
+            keyword: "WHERE".into(),
+            body: Some(Box::new(node_value_to_node(&stmt["whereClause"]))),
+        });
+    }
+
+    if let Some(ret) = stmt["returningList"].as_array() {
+        if !ret.is_empty() {
+            let items: Vec<Node> = ret.iter().map(node_value_to_node).collect();
+            clauses.push(Clause {
+                keyword: "RETURNING".into(),
+                body: Some(Box::new(Node::List {
+                    items,
+                    separator: None,
+                })),
+            });
+        }
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn delete_stmt_to_node(stmt: &Value) -> Node {
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    if let Some(with_clause) = build_with_clause(stmt) {
+        clauses.push(with_clause);
+    }
+
+    let relation = range_var_to_node(&stmt["relation"]);
+    clauses.push(Clause {
+        keyword: "DELETE FROM".into(),
+        body: Some(Box::new(relation)),
+    });
+
+    if let Some(using) = stmt["usingClause"].as_array() {
+        if !using.is_empty() {
+            let items: Vec<Node> = using.iter().map(node_value_to_node).collect();
+            let body = if items.len() == 1 {
+                items.into_iter().next().unwrap()
+            } else {
+                Node::List {
+                    items,
+                    separator: None,
+                }
+            };
+            clauses.push(Clause {
+                keyword: "USING".into(),
+                body: Some(Box::new(body)),
+            });
+        }
+    }
+
+    if !stmt["whereClause"].is_null() {
+        clauses.push(Clause {
+            keyword: "WHERE".into(),
+            body: Some(Box::new(node_value_to_node(&stmt["whereClause"]))),
+        });
+    }
+
+    if let Some(ret) = stmt["returningList"].as_array() {
+        if !ret.is_empty() {
+            let items: Vec<Node> = ret.iter().map(node_value_to_node).collect();
+            clauses.push(Clause {
+                keyword: "RETURNING".into(),
+                body: Some(Box::new(Node::List {
+                    items,
+                    separator: None,
+                })),
+            });
+        }
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn merge_stmt_to_node(stmt: &Value) -> Node {
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    if let Some(with_clause) = build_with_clause(stmt) {
+        clauses.push(with_clause);
+    }
+
+    let relation = range_var_to_node(&stmt["relation"]);
+    clauses.push(Clause {
+        keyword: "MERGE INTO".into(),
+        body: Some(Box::new(relation)),
+    });
+
+    // Source relation
+    if !stmt["sourceRelation"].is_null() {
+        let source = node_value_to_node(&stmt["sourceRelation"]);
+        clauses.push(Clause {
+            keyword: "USING".into(),
+            body: Some(Box::new(source)),
+        });
+    }
+
+    if !stmt["joinCondition"].is_null() {
+        clauses.push(Clause {
+            keyword: "ON".into(),
+            body: Some(Box::new(node_value_to_node(&stmt["joinCondition"]))),
+        });
+    }
+
+    if let Some(when_clauses) = stmt["mergeWhenClauses"].as_array() {
+        for wc in when_clauses {
+            let mwc = wc.get("MergeWhenClause").unwrap_or(wc);
+            let matched = mwc["matched"].as_bool().unwrap_or(false);
+            let cmd_type = mwc["commandType"].as_str().unwrap_or("");
+            let when_kw = if matched {
+                "WHEN MATCHED THEN"
+            } else {
+                "WHEN NOT MATCHED THEN"
+            };
+            let action_kw = match cmd_type {
+                "CMD_INSERT" => "INSERT",
+                "CMD_UPDATE" => "UPDATE",
+                "CMD_DELETE" => "DELETE",
+                _ => "DO NOTHING",
+            };
+
+            let mut body_items: Vec<Node> = vec![Node::Keyword {
+                value: action_kw.into(),
+            }];
+
+            if cmd_type == "CMD_UPDATE" {
+                if let Some(targets) = mwc["targetList"].as_array() {
+                    if !targets.is_empty() {
+                        let set_items: Vec<Node> =
+                            targets.iter().map(|t| {
+                                set_target_to_node(t.get("ResTarget").unwrap_or(t))
+                            }).collect();
+                        body_items.push(Node::Concat {
+                            items: vec![
+                                Node::Text {
+                                    value: " SET ".into(),
+                                },
+                                Node::List {
+                                    items: set_items,
+                                    separator: None,
+                                },
+                            ],
+                        });
+                    }
+                }
+            } else if cmd_type == "CMD_INSERT" {
+                if let Some(vals) = mwc["values"].as_array() {
+                    if !vals.is_empty() {
+                        let val_items: Vec<Node> =
+                            vals.iter().map(node_value_to_node).collect();
+                        body_items.push(Node::Concat {
+                            items: vec![
+                                Node::Text {
+                                    value: " VALUES ".into(),
+                                },
+                                Node::Wrap {
+                                    keyword: None,
+                                    open: "(".into(),
+                                    content: Box::new(Node::List {
+                                        items: val_items,
+                                        separator: None,
+                                    }),
+                                    close: ")".into(),
+                                },
+                            ],
+                        });
+                    }
+                }
+            }
+
+            if !mwc["condition"].is_null() {
+                body_items.push(Node::Concat {
+                    items: vec![
+                        Node::Text {
+                            value: " AND ".into(),
+                        },
+                        node_value_to_node(&mwc["condition"]),
+                    ],
+                });
+            }
+
+            clauses.push(Clause {
+                keyword: when_kw.into(),
+                body: Some(Box::new(Node::Concat {
+                    items: body_items,
+                })),
+            });
+        }
+    }
+
+    Node::Clauses { items: clauses }
 }
 
 fn set_op_to_node(s: &Value) -> Node {
@@ -909,6 +1362,32 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
     Node::Clauses { items: clauses }
 }
 
+fn set_target_to_node(rt: &Value) -> Node {
+    // For SET clauses (UPDATE SET, ON CONFLICT DO UPDATE SET):
+    // renders as "colname = value" instead of "value AS colname".
+    let val = if rt["val"].is_null() {
+        Node::Text {
+            value: String::new(),
+        }
+    } else {
+        node_value_to_node(&rt["val"])
+    };
+    let name = rt["name"].as_str().unwrap_or("");
+    if name.is_empty() {
+        val
+    } else {
+        Node::Concat {
+            items: vec![
+                ident_node(name),
+                Node::Text {
+                    value: " = ".into(),
+                },
+                val,
+            ],
+        }
+    }
+}
+
 fn res_target_to_node(rt: &Value) -> Node {
     let val = if rt["val"].is_null() {
         Node::Text {
@@ -954,6 +1433,80 @@ fn column_ref_to_node(cr: &Value) -> Node {
         .collect();
     let refs: Vec<&str> = parts.iter().map(String::as_str).collect();
     qualified_ident_node(&refs)
+}
+
+fn index_elem_to_node(ie: &Value) -> Node {
+    // Simple column name: just return the identifier
+    if let Some(name) = ie["name"].as_str().filter(|s| !s.is_empty()) {
+        return ident_node(name);
+    }
+    // Expression-based index element: e.g., (expr COLLATE coll) or function
+    if let Some(expr) = ie.get("expr").filter(|e| !e.is_null()) {
+        let mut items = vec![node_value_to_node(expr)];
+        if let Some(coll) = ie["collation"]
+            .as_array()
+            .filter(|a| !a.is_empty())
+        {
+            let coll_parts: Vec<&str> = coll
+                .iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect();
+            items.push(Node::Text {
+                value: " COLLATE ".into(),
+            });
+            items.push(qualified_ident_node(&coll_parts));
+        }
+        if let Some(opclass) = ie["opclass"]
+            .as_array()
+            .filter(|a| !a.is_empty())
+        {
+            let oc_parts: Vec<&str> = opclass
+                .iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect();
+            items.push(Node::Text { value: " ".into() });
+            items.push(qualified_ident_node(&oc_parts));
+        }
+        // Ordering / nulls ordering
+        match ie["ordering"].as_str().unwrap_or("SORTBY_DEFAULT") {
+            "SORTBY_ASC" => {
+                items.push(Node::Text {
+                    value: " ASC".into(),
+                });
+            }
+            "SORTBY_DESC" => {
+                items.push(Node::Text {
+                    value: " DESC".into(),
+                });
+            }
+            _ => {}
+        }
+        match ie["nulls_ordering"].as_str().unwrap_or("SORTBY_NULLS_DEFAULT") {
+            "SORTBY_NULLS_FIRST" => {
+                items.push(Node::Text {
+                    value: " NULLS FIRST".into(),
+                });
+            }
+            "SORTBY_NULLS_LAST" => {
+                items.push(Node::Text {
+                    value: " NULLS LAST".into(),
+                });
+            }
+            _ => {}
+        }
+        return Node::Concat { items };
+    }
+    Node::Text {
+        value: String::new(),
+    }
 }
 
 fn a_const_to_node(c: &Value) -> Node {
@@ -1085,7 +1638,32 @@ fn range_function_to_node(rf: &Value) -> Node {
         })
         .unwrap_or_default();
 
-    if alias_name.is_empty() && colnames.is_empty() {
+    // Build column definition list: (colname type, colname type, ...)
+    let coldeflist_items: Vec<Node> = rf["coldeflist"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .map(|cd| {
+                    let coldef = cd.get("ColumnDef").unwrap_or(cd);
+                    let name = coldef["colname"].as_str().unwrap_or("");
+                    let type_name = type_name_str(&coldef["typeName"]);
+                    Node::Concat {
+                        items: vec![
+                            ident_node(name),
+                            Node::Text {
+                                value: " ".into(),
+                            },
+                            Node::Text {
+                                value: type_name,
+                            },
+                        ],
+                    }
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    if alias_name.is_empty() && colnames.is_empty() && coldeflist_items.is_empty() {
         return funcs_node;
     }
 
@@ -1094,7 +1672,17 @@ fn range_function_to_node(rf: &Value) -> Node {
         items.push(Node::Text { value: " ".into() });
         items.push(ident_node(alias_name));
     }
-    if !colnames.is_empty() {
+    if !coldeflist_items.is_empty() {
+        items.push(Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(Node::List {
+                items: coldeflist_items,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    } else if !colnames.is_empty() {
         let col_nodes: Vec<Node> = colnames.iter().map(|&c| ident_node(c)).collect();
         items.push(Node::Wrap {
             keyword: None,
@@ -1780,8 +2368,13 @@ fn row_expr_to_node(re: &Value) -> Node {
         }
         concat_items.push(item);
     }
+    let is_explicit = re["row_format"].as_str() == Some("COERCE_EXPLICIT_CALL");
     Node::Wrap {
-        keyword: None,
+        keyword: if is_explicit {
+            Some("ROW".into())
+        } else {
+            None
+        },
         open: "(".into(),
         content: Box::new(Node::Concat {
             items: concat_items,

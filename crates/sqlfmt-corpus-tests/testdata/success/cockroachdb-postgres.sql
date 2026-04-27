@@ -4630,6 +4630,10 @@ SELECT (VALUES (1)) FOR UPDATE
 
 -- sqlfmt-corpus-separator --
 
+SELECT (WITH foo AS (INSERT INTO y VALUES (1) RETURNING *) SELECT * FROM foo)
+
+-- sqlfmt-corpus-separator --
+
 SELECT (a * (a + b)) - b, sub(mult(a, add(a, b)), b) FROM ab
 
 -- sqlfmt-corpus-separator --
@@ -4869,6 +4873,10 @@ SELECT * FROM ab AS foo (foo1, foo2, foo3)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM ab WHERE (a, b) IN (SELECT x+1, y+1 FROM xy);
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab WHERE ROW(ROW(a, b)) IN (SELECT x+1 FROM xy);
 
 -- sqlfmt-corpus-separator --
 
@@ -5132,6 +5140,10 @@ SELECT * FROM e WHERE x NOT LIKE 'a%c'
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM e WHERE x NOT LIKE 'ab%'
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_insert_select(5,6) AS t1(a INT, b INT) UNION ALL SELECT * FROM f_insert_select(7,8) AS t2(a INT, b INT)
 
 -- sqlfmt-corpus-separator --
 
@@ -16085,6 +16097,15 @@ VALUES (length('a')), (1 + length('a')), (length('abc')), (length('ab') * 2)
 -- sqlfmt-corpus-separator --
 
 WITH
+    a AS (INSERT INTO y VALUES (1) RETURNING 1), b AS (DELETE FROM x WHERE true RETURNING 1)
+SELECT
+    *
+FROM
+    a
+
+-- sqlfmt-corpus-separator --
+
+WITH
     foo(f) AS (SELECT array_agg(x) FROM generate_series(1, 3) g(x)),
     bar(b) AS (SELECT array_agg(f) FROM foo, generate_series(1, 3)),
     baz(z) AS (SELECT array_agg(b) FROM bar, generate_series(1, 3))
@@ -16121,6 +16142,55 @@ WITH
   cte1 AS (SELECT b FROM ab ORDER BY a+b),
   cte2 AS (SELECT DISTINCT ON (x) y FROM xy ORDER BY x, y)
 SELECT * FROM cte1 UNION ALL SELECT * FROM cte2
+
+-- sqlfmt-corpus-separator --
+
+WITH
+  t AS (DELETE FROM r WHERE i IN (SELECT i FROM s) RETURNING i),
+  u AS (DELETE FROM s WHERE i IN (SELECT i FROM t) RETURNING i)
+SELECT i FROM r WHERE i IN (SELECT i FROM s)
+
+-- sqlfmt-corpus-separator --
+
+WITH
+  t AS (INSERT INTO r SELECT i FROM s ON CONFLICT (i) DO UPDATE SET i = r.i + 2 RETURNING r.i),
+  u AS (INSERT INTO s SELECT i FROM t ON CONFLICT (i) DO UPDATE SET i = s.i - 2 RETURNING s.i)
+SELECT * FROM r, u
+
+-- sqlfmt-corpus-separator --
+
+WITH
+  t AS (INSERT INTO r VALUES (1) RETURNING i),
+  u AS (INSERT INTO s SELECT * FROM r RETURNING i)
+SELECT i FROM s
+
+-- sqlfmt-corpus-separator --
+
+WITH
+  t AS (UPDATE r SET i = i + 2 RETURNING i),
+  u AS (UPDATE s SET i = -r.i FROM r WHERE s.i < r.i RETURNING s.i)
+SELECT i FROM u
+
+-- sqlfmt-corpus-separator --
+
+WITH
+  u1 AS (UPDATE t SET j = j - 40 WHERE i < 20 RETURNING *),
+  u2 AS (UPDATE t SET j = j + 40 WHERE i >= 20 RETURNING *)
+TABLE u1 UNION ALL TABLE u2
+
+-- sqlfmt-corpus-separator --
+
+WITH
+  v AS (UPDATE u SET j = 3 WHERE i = 0 RETURNING *),
+  w AS (UPDATE u SET j = 4 WHERE i = 0 RETURNING *)
+SELECT * FROM u
+
+-- sqlfmt-corpus-separator --
+
+WITH
+  v AS (UPDATE u SET j = 5 WHERE i = 0 RETURNING *),
+  w AS (UPDATE u SET j = v.j + 1 FROM v WHERE u.i = v.i RETURNING *)
+SELECT * FROM w
 
 -- sqlfmt-corpus-separator --
 
@@ -16232,7 +16302,17 @@ WITH a AS (
 
 -- sqlfmt-corpus-separator --
 
+WITH a AS (INSERT INTO a VALUES (2,3), (3,4) RETURNING a,b)
+SELECT * FROM a LIMIT 0
+
+-- sqlfmt-corpus-separator --
+
 WITH a AS (SELECT a FROM ab ORDER BY b) SELECT * FROM a
+
+-- sqlfmt-corpus-separator --
+
+WITH a AS (UPDATE a SET a = -a WHERE b % 2 = 1 RETURNING a,b)
+SELECT * FROM a LIMIT 0
 
 -- sqlfmt-corpus-separator --
 
@@ -16296,11 +16376,35 @@ WITH cte(s) AS (SELECT NULL::TSQUERY) SELECT a FROM a, cte WHERE a @@ s;
 
 -- sqlfmt-corpus-separator --
 
+WITH foo AS (DELETE FROM z RETURNING 1) SELECT 4
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (INSERT INTO t1 VALUES (1, 2) RETURNING a) SELECT insert_t1();
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (INSERT INTO t2 VALUES (1, 1) RETURNING a) SELECT insert_t1();
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (INSERT INTO z VALUES (10) RETURNING 1) SELECT 2
+
+-- sqlfmt-corpus-separator --
+
 WITH foo AS (SELECT 2) SELECT f(), * FROM foo;
 
 -- sqlfmt-corpus-separator --
 
 WITH foo AS (SELECT insert_t1()) SELECT insert_t1();
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (UPDATE t2 SET b = 1 WHERE a = 1 RETURNING a) SELECT insert_t1();
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (UPDATE z SET c = 20 RETURNING 1) SELECT 3
 
 -- sqlfmt-corpus-separator --
 
@@ -16689,6 +16793,27 @@ FROM t;
 -- sqlfmt-corpus-separator --
 
 WITH t AS (
+    DELETE FROM x RETURNING a
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    INSERT INTO x(a) VALUES(0)
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    UPDATE x SET a = a * 100 RETURNING a
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
    SELECT json_array_elements(crdb_internal.pb_to_json('cockroach.sql.sqlbase.Descriptor', descriptor)
      -> 'database'
      -> 'defaultPrivileges'
@@ -16849,6 +16974,18 @@ SELECT strict_fn(a, b, c) FROM tmp
 
 -- sqlfmt-corpus-separator --
 
+WITH u AS (
+  UPDATE kv SET v = v + 10 RETURNING k
+)
+SELECT
+get_l(k) l1, get_l(int_identity_v(k)) l2,
+get_i(k) i1, get_i(int_identity_v(k)) i2,
+get_s(k) s1, get_s(int_identity_v(k)) s2,
+get_v(k) v1, get_v(int_identity_v(k)) v2
+FROM u;
+
+-- sqlfmt-corpus-separator --
+
 WITH v(id, x) AS (VALUES (1, '0'::numeric), (2, '1'::numeric), (3, '-1'::numeric),
   (4, '4.2'::numeric), (5, 'inf'::numeric), (6, '-inf'::numeric), (7, 'nan'::numeric)
 )
@@ -16883,6 +17020,22 @@ WITH v(x) AS
 (VALUES (' inf '), (' +inf '), (' -inf '), (' Infinity '), (' +inFinity '), (' -INFINITY '))
 SELECT x1::decimal
 FROM v AS v1(x1)
+
+-- sqlfmt-corpus-separator --
+
+WITH x AS (INSERT INTO parent VALUES (2) RETURNING p) SELECT f_fk_c(101, 2);
+
+-- sqlfmt-corpus-separator --
+
+WITH x AS (SELECT f(0) AS j), y AS (UPDATE child SET j = 2 WHERE i = 0 RETURNING j) SELECT * FROM x;
+
+-- sqlfmt-corpus-separator --
+
+WITH x AS (SELECT f(0) AS j), y AS (UPDATE child SET j = 2, k = 2 WHERE i = 0 RETURNING j) SELECT * FROM x;
+
+-- sqlfmt-corpus-separator --
+
+WITH x AS (SELECT f(0) AS j), y AS (UPDATE grandchild SET j = 2 WHERE i = 0 RETURNING j) SELECT * FROM x;
 
 -- sqlfmt-corpus-separator --
 

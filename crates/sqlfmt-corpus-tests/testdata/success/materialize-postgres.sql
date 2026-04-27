@@ -38751,6 +38751,16 @@ ORDER BY x5_simple;
 
 -- sqlfmt-corpus-separator --
 
+WITH a AS (INSERT INTO a VALUES (2,3), (3,4) RETURNING a,b)
+SELECT * FROM a LIMIT 0
+
+-- sqlfmt-corpus-separator --
+
+WITH a AS (UPDATE a SET a = -a WHERE b % 2 = 1 RETURNING a,b)
+SELECT * FROM a LIMIT 0
+
+-- sqlfmt-corpus-separator --
+
 WITH a(x) AS (SELECT 'a') SELECT generate_series(1, 2), * FROM a ORDER BY generate_series
 
 -- sqlfmt-corpus-separator --
@@ -41050,6 +41060,18 @@ select unique1, unique2 from tenk1
 where (unique1, unique2) < any (select ten, ten from tenk1 where hundred < 3)
       and unique1 <= 20
 order by 1;
+
+-- sqlfmt-corpus-separator --
+
+select x from (values (row(1, 2)), (row(1, 3))) _(x) except select x from (values (row(1, 2)), (row(1, 4))) _(x)
+
+-- sqlfmt-corpus-separator --
+
+select x from (values (row(1, 2)), (row(1, 3))) _(x) intersect select x from (values (row(1, 2)), (row(1, 4))) _(x)
+
+-- sqlfmt-corpus-separator --
+
+select x from (values (row(1, 2)), (row(1, 3))) _(x) union select x from (values (row(1, 2)), (row(1, 4))) _(x)
 
 -- sqlfmt-corpus-separator --
 

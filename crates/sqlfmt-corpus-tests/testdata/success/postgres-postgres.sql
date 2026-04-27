@@ -15771,6 +15771,27 @@ SELECT * FROM subdepartment WHERE level >= 2 ORDER BY name
 
 -- sqlfmt-corpus-separator --
 
+WITH RECURSIVE t AS (
+	INSERT INTO y
+		SELECT * FROM t
+)
+VALUES(FALSE)
+
+-- sqlfmt-corpus-separator --
+
+WITH RECURSIVE t AS (
+	INSERT INTO y
+		SELECT a+5 FROM t2 WHERE a > 5
+	RETURNING *
+), t2 AS (
+	UPDATE y SET a=a-11 RETURNING *
+)
+SELECT * FROM t
+UNION ALL
+SELECT * FROM t2
+
+-- sqlfmt-corpus-separator --
+
 WITH RECURSIVE t(i,j) AS (
 	VALUES (1,2)
 	UNION ALL
@@ -15865,6 +15886,24 @@ SELECT * FROM t LIMIT 10
 
 -- sqlfmt-corpus-separator --
 
+WITH RECURSIVE t1 AS (
+  INSERT INTO y SELECT * FROM y RETURNING *
+), t2 AS (
+  INSERT INTO yy SELECT * FROM t1 RETURNING *
+)
+SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+WITH RECURSIVE t1 AS (
+  INSERT INTO yy SELECT * FROM t2 RETURNING *
+), t2 AS (
+  INSERT INTO y SELECT * FROM y RETURNING *
+)
+SELECT 1
+
+-- sqlfmt-corpus-separator --
+
 WITH RECURSIVE w1(c1) AS
  (WITH w2(c2) AS
   (WITH w3(c3) AS
@@ -15903,6 +15942,13 @@ WITH RECURSIVE x(n) AS (
 WITH RECURSIVE x(n) AS (
   SELECT 0 UNION SELECT 1
   ORDER BY (SELECT n FROM x))
+	SELECT * FROM x
+
+-- sqlfmt-corpus-separator --
+
+WITH RECURSIVE x(n) AS (
+  WITH sub_cte AS (SELECT * FROM x)
+  DELETE FROM graph RETURNING f)
 	SELECT * FROM x
 
 -- sqlfmt-corpus-separator --
@@ -16007,6 +16053,15 @@ WITH RECURSIVE x(n) AS (SELECT n FROM x)
 
 -- sqlfmt-corpus-separator --
 
+WITH aa AS (
+    INSERT INTO withz VALUES(1, 5) ON CONFLICT (k) DO UPDATE SET v = EXCLUDED.v
+    WHERE withz.k != EXCLUDED.k
+    RETURNING *
+)
+SELECT * FROM aa
+
+-- sqlfmt-corpus-separator --
+
 WITH cte (x) AS (
         SELECT * FROM generate_series(1, 35, 2)
 )
@@ -16061,10 +16116,33 @@ WITH cte (x) AS (
 SELECT x, (sum(x) over w)
 FROM cte
 WINDOW w AS (ORDER BY x rows between 1 preceding and 1 following)
+
+-- sqlfmt-corpus-separator --
+
+WITH cte1 AS (INSERT INTO t1 VALUES (20, 'Success') RETURNING *) SELECT * FROM cte1
+
+-- sqlfmt-corpus-separator --
+
+WITH cte1 AS (INSERT INTO t1 VALUES (21, 'Fail') RETURNING *) SELECT * FROM cte1
+
+-- sqlfmt-corpus-separator --
+
+WITH cte1 AS (UPDATE t1 SET a = a + 1 RETURNING *) SELECT * FROM cte1
+
+-- sqlfmt-corpus-separator --
+
+WITH cte1 AS (UPDATE t1 SET a = a RETURNING *) SELECT * FROM cte1
 
 -- sqlfmt-corpus-separator --
 
 WITH cte1 AS MATERIALIZED (SELECT * FROM t1 WHERE f_leak(b)) SELECT * FROM cte1
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (
+  MERGE INTO target USING source ON (true)
+  WHEN MATCHED THEN DELETE
+) SELECT * FROM foo
 
 -- sqlfmt-corpus-separator --
 
@@ -16126,6 +16204,107 @@ WITH rows AS
 SELECT
   bool_and(to_number(roman, 'RN') = i) as valid
 FROM rows
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+	DELETE FROM y RETURNING *
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+	INSERT INTO y VALUES(0)
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+	INSERT INTO y VALUES(0)
+)
+VALUES(FALSE)
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    DELETE FROM y
+    WHERE a <= 10
+    RETURNING *
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    INSERT INTO y
+    VALUES
+        (11),
+        (12),
+        (13),
+        (14),
+        (15),
+        (16),
+        (17),
+        (18),
+        (19),
+        (20)
+    RETURNING *
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    INSERT INTO y
+    VALUES
+        (21),
+        (22),
+        (23)
+    RETURNING *
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    INSERT INTO y
+    VALUES
+        (31),
+        (32),
+        (33)
+    RETURNING *
+)
+SELECT * FROM t LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    INSERT INTO y
+    VALUES
+        (41),
+        (42),
+        (43)
+    RETURNING *
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    UPDATE y
+    SET a=a+1
+    RETURNING *
+)
+SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t AS (
+    UPDATE y SET a = a * 100 RETURNING *
+)
+SELECT * FROM t LIMIT 10
 
 -- sqlfmt-corpus-separator --
 
@@ -22698,6 +22877,26 @@ select unnest('11 22 33'::oidvector)
 
 -- sqlfmt-corpus-separator --
 
+select x from (values (row('10'::varbit)), (row('11'::varbit))) _(x) union select x from (values (row('10'::varbit)), (row('01'::varbit))) _(x)
+
+-- sqlfmt-corpus-separator --
+
+select x from (values (row('10'::varbit)::ct1), (row('11'::varbit)::ct1)) _(x) union select x from (values (row('10'::varbit)::ct1), (row('01'::varbit)::ct1)) _(x)
+
+-- sqlfmt-corpus-separator --
+
+select x from (values (row(1, 2)), (row(1, 3))) _(x) except select x from (values (row(1, 2)), (row(1, 4))) _(x)
+
+-- sqlfmt-corpus-separator --
+
+select x from (values (row(1, 2)), (row(1, 3))) _(x) intersect select x from (values (row(1, 2)), (row(1, 4))) _(x)
+
+-- sqlfmt-corpus-separator --
+
+select x from (values (row(1, 2)), (row(1, 3))) _(x) union select x from (values (row(1, 2)), (row(1, 4))) _(x)
+
+-- sqlfmt-corpus-separator --
+
 with
 A as ( select q2 as id, (select q1) as x from int8_tbl ),
 B as ( select id, row_number() over (partition by id) as r from A ),
@@ -22723,6 +22922,12 @@ select from cte union select from cte
 -- sqlfmt-corpus-separator --
 
 with cte(foo) as ( values(42) ) values((select foo from cte))
+
+-- sqlfmt-corpus-separator --
+
+with ins (a, b, c) as
+  (insert into mlparted (b, a) select s.a, 1 from generate_series(2, 39) s(a) returning tableoid::regclass, *)
+  select a, b, min(c), max(c) from ins group by a, b order by 1
 
 -- sqlfmt-corpus-separator --
 

@@ -76,16 +76,6 @@ SELECT * FROM a LIMIT 0
 
 -- sqlfmt-corpus-separator --
 
-WITH a AS (INSERT INTO a VALUES (2,3), (3,4) RETURNING a,b)
-SELECT * FROM a LIMIT 0
-
--- sqlfmt-corpus-separator --
-
-WITH a AS (UPDATE a SET a = -a WHERE b % 2 = 1 RETURNING a,b)
-SELECT * FROM a LIMIT 0
-
--- sqlfmt-corpus-separator --
-
 WITH parsed AS (
   SELECT regexp_split_to_table(input, '\n') AS line FROM aoc_1204
 ),
@@ -133,18 +123,6 @@ select x from (values (array[1, 2]), (array[1, 3])) _(x) intersect select x from
 -- sqlfmt-corpus-separator --
 
 select x from (values (array[1, 2]), (array[1, 3])) _(x) union select x from (values (array[1, 2]), (array[1, 4])) _(x)
-
--- sqlfmt-corpus-separator --
-
-select x from (values (row(1, 2)), (row(1, 3))) _(x) except select x from (values (row(1, 2)), (row(1, 4))) _(x)
-
--- sqlfmt-corpus-separator --
-
-select x from (values (row(1, 2)), (row(1, 3))) _(x) intersect select x from (values (row(1, 2)), (row(1, 4))) _(x)
-
--- sqlfmt-corpus-separator --
-
-select x from (values (row(1, 2)), (row(1, 3))) _(x) union select x from (values (row(1, 2)), (row(1, 4))) _(x)
 
 -- sqlfmt-corpus-separator --
 
