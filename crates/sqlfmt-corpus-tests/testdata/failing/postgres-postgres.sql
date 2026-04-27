@@ -26,20 +26,12 @@ SELECT array_agg(id ORDER BY guid_encoded COLLATE "C") FROM guid3
 
 -- sqlfmt-corpus-separator --
 
-SELECT depname, empno, salary, rank() OVER w FROM empsalary WINDOW w AS (PARTITION BY depname ORDER BY salary) ORDER BY rank() OVER w
-
--- sqlfmt-corpus-separator --
-
 SELECT f1 AS five FROM FLOAT8_TBL
   WHERE f1 BETWEEN -1e6 AND 1e6
 UNION
 SELECT f1 FROM INT4_TBL
   WHERE f1 BETWEEN 0 AND 1000000
 ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-SELECT q1 FROM int8_tbl EXCEPT (((SELECT q2 FROM int8_tbl ORDER BY q2 LIMIT 1))) ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 

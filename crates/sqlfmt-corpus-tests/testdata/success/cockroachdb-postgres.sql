@@ -64,6 +64,50 @@
 
 -- sqlfmt-corpus-separator --
 
+(SELECT x FROM xyz ORDER BY y) EXCEPT (SELECT x FROM xyz ORDER BY y, z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) EXCEPT (SELECT y AS x FROM xyz ORDER BY z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) EXCEPT ALL (SELECT x FROM xyz ORDER BY y, z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) EXCEPT ALL (SELECT y AS x FROM xyz ORDER BY z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) INTERSECT (SELECT x FROM xyz ORDER BY y, z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) INTERSECT (SELECT x FROM xyz ORDER BY z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) INTERSECT ALL (SELECT x FROM xyz ORDER BY y, z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) INTERSECT ALL (SELECT x FROM xyz ORDER BY z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) UNION (SELECT x FROM xyz ORDER BY z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) UNION ALL (SELECT x FROM xyz ORDER BY y, z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT x FROM xyz ORDER BY y) UNION ALL (SELECT x FROM xyz ORDER BY z) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
 (SELECT x FROM xyz WHERE x < 2) EXCEPT (SELECT x FROM xyz WHERE x >= 2) ORDER BY x
 
 -- sqlfmt-corpus-separator --
@@ -77,6 +121,38 @@
 -- sqlfmt-corpus-separator --
 
 (SELECT x FROM xyz WHERE x < 2) INTERSECT ALL (SELECT x FROM xyz WHERE x >= 2) ORDER BY x
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY y) EXCEPT (SELECT y FROM xyz ORDER BY y)
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY y) EXCEPT ALL (SELECT y FROM xyz ORDER BY y)
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY y) INTERSECT (SELECT y FROM xyz ORDER BY y)
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY y) INTERSECT ALL (SELECT y FROM xyz ORDER BY y)
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY z) EXCEPT (SELECT y FROM xyz ORDER BY z)
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY z) EXCEPT ALL (SELECT y FROM xyz ORDER BY z)
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY z) INTERSECT (SELECT y FROM xyz ORDER BY z)
+
+-- sqlfmt-corpus-separator --
+
+(SELECT y FROM xyz ORDER BY z) INTERSECT ALL (SELECT y FROM xyz ORDER BY z)
 
 -- sqlfmt-corpus-separator --
 
@@ -119,6 +195,136 @@
 SELECT
 	degrees(ST_Azimuth(ST_Point(25, 45)::geography, ST_Point(75, 90)::geography)) AS degA_B,
 	degrees(ST_Azimuth(ST_Point(75, 90)::geography, ST_Point(25, 45)::geography)) AS degB_A
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	first_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE CURRENT ROW
+	),
+	first_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE GROUP
+	),
+	first_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE TIES
+	),
+	first_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE NO OTHERS
+	)
+FROM
+	products
+WINDOW
+	w AS (ORDER BY group_id)
+ORDER BY
+	group_id
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	last_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE CURRENT ROW
+	),
+	last_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE GROUP
+	),
+	last_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE TIES
+	),
+	last_value(product_name) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE NO OTHERS
+	)
+FROM
+	products
+WINDOW
+	w AS (ORDER BY group_id)
+ORDER BY
+	group_id
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	nth_value(product_name, 2) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE CURRENT ROW
+	),
+	nth_value(product_name, 3) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE GROUP
+	),
+	nth_value(product_name, 4) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE TIES
+	),
+	nth_value(product_name, 5) OVER (
+		w RANGE UNBOUNDED PRECEDING EXCLUDE NO OTHERS
+	)
+FROM
+	products
+WINDOW
+	w AS (ORDER BY group_id)
+ORDER BY
+	group_id
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	price, array_agg(price) OVER w, avg(price) OVER w
+FROM
+	products
+WINDOW
+	w AS (
+		ORDER BY
+			price
+		RANGE
+			UNBOUNDED PRECEDING EXCLUDE NO OTHERS
+	)
+ORDER BY
+	price
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	price, array_agg(price) OVER w, avg(price) OVER w
+FROM
+	products
+WINDOW
+	w AS (
+		ORDER BY
+			price
+		RANGE
+			UNBOUNDED PRECEDING EXCLUDE TIES
+	)
+ORDER BY
+	price
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	price, array_agg(price) OVER w, max(price) OVER w
+FROM
+	products
+WINDOW
+	w AS (
+		ORDER BY
+			price
+		RANGE
+			UNBOUNDED PRECEDING EXCLUDE GROUP
+	)
+ORDER BY
+	price
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	price, array_agg(price) OVER w, sum(price) OVER w
+FROM
+	products
+WINDOW
+	w AS (
+		ORDER BY
+			price
+		RANGE
+			UNBOUNDED PRECEDING EXCLUDE CURRENT ROW
+	)
+ORDER BY
+	price
 
 -- sqlfmt-corpus-separator --
 
@@ -336,6 +542,50 @@ SELECT
   (a + b + a) * (a + 3 + 7) * (b + 11 + 17),
   mult(add(a, b, a), add(a, 3, 7), add(b, 11, 17))
 FROM ab
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  *,
+  array_agg(v) OVER (wv RANGE BETWEEN UNBOUNDED PRECEDING AND 0 PRECEDING),
+  array_agg(v) OVER (wv RANGE BETWEEN 0 PRECEDING AND 1 PRECEDING),
+  array_agg(f) OVER (wf RANGE BETWEEN UNBOUNDED PRECEDING AND -0.0 PRECEDING),
+  array_agg(f) OVER (wf RANGE BETWEEN 0.0 PRECEDING AND 1.0 PRECEDING),
+  array_agg(d) OVER (wd RANGE BETWEEN 0.0 FOLLOWING AND 0.0 FOLLOWING),
+  array_agg(d) OVER (wd RANGE BETWEEN 1.0 FOLLOWING AND UNBOUNDED FOLLOWING),
+  array_agg(i) OVER (wi RANGE BETWEEN '1s'::INTERVAL PRECEDING AND '0s'::INTERVAL PRECEDING),
+  array_agg(i) OVER (wi RANGE BETWEEN '1s'::INTERVAL FOLLOWING AND '1s'::INTERVAL FOLLOWING)
+FROM
+  kv
+WINDOW
+  wv AS (ORDER BY v DESC),
+  wf AS (ORDER BY f),
+  wd AS (ORDER BY d DESC),
+  wi AS (ORDER BY i)
+ORDER BY
+  k
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  *,
+  array_agg(v) OVER (wv RANGE BETWEEN UNBOUNDED PRECEDING AND 0 PRECEDING),
+  array_agg(v) OVER (wv RANGE BETWEEN 0 PRECEDING AND 1 PRECEDING),
+  array_agg(f) OVER (wf RANGE BETWEEN UNBOUNDED PRECEDING AND -0.0 PRECEDING),
+  array_agg(f) OVER (wf RANGE BETWEEN 0.0 PRECEDING AND 1.0 PRECEDING),
+  array_agg(d) OVER (wd RANGE BETWEEN 0.0 FOLLOWING AND 0.0 FOLLOWING),
+  array_agg(d) OVER (wd RANGE BETWEEN 1.0 FOLLOWING AND UNBOUNDED FOLLOWING),
+  array_agg(i) OVER (wi RANGE BETWEEN '1s'::INTERVAL PRECEDING AND '0s'::INTERVAL PRECEDING),
+  array_agg(i) OVER (wi RANGE BETWEEN '1s'::INTERVAL FOLLOWING AND '1s'::INTERVAL FOLLOWING)
+FROM
+  kv
+WINDOW
+  wv AS (PARTITION BY v ORDER BY v),
+  wf AS (PARTITION BY f ORDER BY f DESC),
+  wd AS (PARTITION BY d ORDER BY d),
+  wi AS (PARTITION BY i ORDER BY i DESC)
+ORDER BY
+  k
 
 -- sqlfmt-corpus-separator --
 
@@ -1074,6 +1324,14 @@ g,
 1 / '-Infinity'::DECIMAL,
 1 / 'Infinity'::DECIMAL
 FROM regression_40929
+
+-- sqlfmt-corpus-separator --
+
+SELECT "LOWERCASE_HINT_ERROR_IMPLICIT_SCHEMA_FN"();
+
+-- sqlfmt-corpus-separator --
+
+SELECT "PG_TYPEOF"(123)
 
 -- sqlfmt-corpus-separator --
 
@@ -4300,6 +4558,14 @@ WHERE relname = 'pg_constraint'
 
 -- sqlfmt-corpus-separator --
 
+SELECT (rank() OVER wind + lead(k, 3, v) OVER wind + lag(w, 1, 2) OVER wind), (row_number() OVER wind + dense_rank() OVER wind) FROM kv WINDOW wind as (PARTITION BY v ORDER BY k) ORDER BY k
+
+-- sqlfmt-corpus-separator --
+
+SELECT (round(avg(k) OVER w1 + sum(w) OVER w2) + row_number() OVER w2 + d + min(d) OVER w3 + f::DECIMAL) AS big_sum, v + w AS v_plus_w, (rank() OVER w3 + first_value(d) OVER w1 + nth_value(k, 2) OVER w1) AS small_sum FROM kv WINDOW w1 AS (PARTITION BY b ORDER BY k), w2 AS (PARTITION BY w ORDER BY k), w3 AS (PARTITION BY v ORDER BY k) ORDER BY k
+
+-- sqlfmt-corpus-separator --
+
 SELECT (timestamp '2016-02-10 19:46:33.306157519')::string
 
 -- sqlfmt-corpus-separator --
@@ -4731,6 +4997,10 @@ SELECT * FROM e WHERE x NOT LIKE 'ab%'
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM foo FOR SHARE OF foo SKIP LOCKED
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM foo FOR UPDATE
 
 -- sqlfmt-corpus-separator --
@@ -4792,6 +5062,10 @@ SELECT * FROM kv WHERE k = 5 FOR UPDATE;
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM kv WHERE k IN (SELECT k FROM kv)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY avg(k) OVER w DESC, k
 
 -- sqlfmt-corpus-separator --
 
@@ -4875,6 +5149,14 @@ SELECT * FROM t FOR NO KEY UPDATE
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t FOR SHARE
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t FOR SHARE FOR UPDATE OF t NOWAIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t FOR SHARE NOWAIT FOR UPDATE OF t
 
 -- sqlfmt-corpus-separator --
 
@@ -5083,6 +5365,14 @@ SELECT * from t7 FOR UPDATE SKIP LOCKED;
 
 -- sqlfmt-corpus-separator --
 
+SELECT *, avg(k) OVER (w ORDER BY w) FROM kv WINDOW w AS (PARTITION BY v) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, avg(k) OVER w FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY avg(k) OVER w, k
+
+-- sqlfmt-corpus-separator --
+
 SELECT *, avg(w) OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY w LIMIT 2
 
 -- sqlfmt-corpus-separator --
@@ -5253,6 +5543,10 @@ SELECT 1 FOR SHARE NOWAIT
 
 -- sqlfmt-corpus-separator --
 
+SELECT 1 FOR SHARE OF a, b
+
+-- sqlfmt-corpus-separator --
+
 SELECT 1 FOR SHARE SKIP LOCKED
 
 -- sqlfmt-corpus-separator --
@@ -5266,6 +5560,50 @@ SELECT 1 FOR UPDATE FOR SHARE FOR NO KEY UPDATE FOR KEY SHARE
 -- sqlfmt-corpus-separator --
 
 SELECT 1 FOR UPDATE NOWAIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a FOR SHARE OF b, c FOR NO KEY UPDATE OF d FOR KEY SHARE OF e, f
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a NOWAIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a NOWAIT FOR NO KEY UPDATE OF b NOWAIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a NOWAIT FOR SHARE OF b, c NOWAIT FOR NO KEY UPDATE OF d NOWAIT FOR KEY SHARE OF e, f NOWAIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a SKIP LOCKED
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a SKIP LOCKED FOR NO KEY UPDATE OF b NOWAIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a SKIP LOCKED FOR NO KEY UPDATE OF b SKIP LOCKED
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF a SKIP LOCKED FOR SHARE OF b, c SKIP LOCKED FOR NO KEY UPDATE OF d SKIP LOCKED FOR KEY SHARE OF e, f SKIP LOCKED
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF db.public.a
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 FOR UPDATE OF public.a
 
 -- sqlfmt-corpus-separator --
 
@@ -7028,7 +7366,15 @@ SELECT array_agg(a) OVER (ORDER BY a ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING) F
 
 -- sqlfmt-corpus-separator --
 
+SELECT array_agg(a) OVER (w GROUPS 1 PRECEDING) FROM x WINDOW w AS (PARTITION BY a ORDER BY a DESC) ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
 SELECT array_agg(a) OVER (w GROUPS 1 PRECEDING) FROM x WINDOW w AS (PARTITION BY a)
+
+-- sqlfmt-corpus-separator --
+
+SELECT array_agg(a) OVER (w RANGE 1 PRECEDING) FROM x WINDOW w AS (ORDER BY a DESC) ORDER BY a
 
 -- sqlfmt-corpus-separator --
 
@@ -7359,6 +7705,10 @@ SELECT avg(k) OVER (w ORDER BY v) FROM kv WINDOW w AS (ORDER BY v)
 
 -- sqlfmt-corpus-separator --
 
+SELECT avg(k) OVER (w ORDER BY w) FROM kv WINDOW w AS (PARTITION BY v) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT avg(k) OVER (w PARTITION BY v) FROM kv WINDOW w AS ()
 
 -- sqlfmt-corpus-separator --
@@ -7367,7 +7717,23 @@ SELECT avg(k) OVER (w PARTITION BY v) FROM kv WINDOW w AS (PARTITION BY v)
 
 -- sqlfmt-corpus-separator --
 
+SELECT avg(k) OVER (w) FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT avg(k) OVER (x) FROM kv WINDOW w AS ()
+
+-- sqlfmt-corpus-separator --
+
 SELECT avg(k) OVER w FROM kv WINDOW w AS (), w AS ()
+
+-- sqlfmt-corpus-separator --
+
+SELECT avg(k) OVER w FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT avg(k) OVER w, avg(k) OVER w + 1 FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY k
 
 -- sqlfmt-corpus-separator --
 
@@ -7380,6 +7746,10 @@ SELECT avg(k), max(v), min(w), 2 + row_number() OVER () FROM kv ORDER BY 1
 -- sqlfmt-corpus-separator --
 
 SELECT avg(k::decimal), avg(v::decimal), sum(k::decimal), sum(v::decimal) FROM kv
+
+-- sqlfmt-corpus-separator --
+
+SELECT avg(price) FILTER (WHERE price > 300) OVER w1, sum(price) FILTER (WHERE group_name = 'Smartphone') OVER w2, avg(price) FILTER (WHERE price = 200 OR price = 700) OVER w1, avg(price) FILTER (WHERE price < 900) OVER w2 FROM products WINDOW w1 AS (ORDER BY group_id), w2 AS (PARTITION BY group_name ORDER BY price, group_id) ORDER BY group_id
 
 -- sqlfmt-corpus-separator --
 
@@ -7443,6 +7813,10 @@ SELECT avg(price) OVER (w ORDER BY price) FROM products WINDOW w AS (ROWS 1 PREC
 
 -- sqlfmt-corpus-separator --
 
+SELECT avg(price) OVER (w) FROM products WINDOW w AS (ROWS 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
 SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ORDER BY group_id GROUPS 1.5 PRECEDING)
 
 -- sqlfmt-corpus-separator --
@@ -7464,6 +7838,10 @@ SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY gr
 -- sqlfmt-corpus-separator --
 
 SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ROWS BETWEEN UNBOUNDED PRECEDING AND 1.5 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT avg(price) OVER w1, avg(price) OVER w2, avg(price) OVER w1 FROM products WINDOW w1 AS (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING), w2 AS (ORDER BY group_id ROWS 1 PRECEDING) ORDER BY group_id
 
 -- sqlfmt-corpus-separator --
 
@@ -8893,6 +9271,10 @@ SELECT f1::string AS "Three" FROM TIMETZ_TBL WHERE f1 < '05:06:07-07' ORDER BY i
 
 -- sqlfmt-corpus-separator --
 
+SELECT f::DECIMAL + round(max(k) * w * avg(d) OVER wind) + (lead(f, 2, 17::FLOAT) OVER wind::DECIMAL / d * row_number() OVER wind) FROM kv GROUP BY k, w, f, d WINDOW wind AS (ORDER BY k) ORDER BY k
+
+-- sqlfmt-corpus-separator --
+
 SELECT f::INT FROM t112515
 
 -- sqlfmt-corpus-separator --
@@ -9066,6 +9448,10 @@ SELECT group_name, product_name, pdate, price, sum(price) OVER (ORDER BY pdate R
 -- sqlfmt-corpus-separator --
 
 SELECT group_name, product_name, price, array_agg(price) OVER (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 PRECEDING AND 2 FOLLOWING) AS array_agg_price FROM products ORDER BY group_id
+
+-- sqlfmt-corpus-separator --
+
+SELECT group_name, product_name, price, array_agg(price) OVER (w ROWS BETWEEN 3 PRECEDING AND 3 FOLLOWING), array_agg(price) OVER (w ROWS BETWEEN UNBOUNDED PRECEDING AND 3 FOLLOWING), array_agg(price) OVER (w GROUPS BETWEEN 3 PRECEDING AND UNBOUNDED FOLLOWING), array_agg(price) OVER (w RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) FROM products WINDOW w AS (PARTITION BY group_name ORDER BY group_id DESC) ORDER BY group_id
 
 -- sqlfmt-corpus-separator --
 
@@ -10424,7 +10810,27 @@ SELECT k FROM kv WHERE avg(k) OVER () > 1
 
 -- sqlfmt-corpus-separator --
 
+SELECT k, (avg(w) OVER w + rank() OVER w), k FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, (lag(k, 5, w) OVER w + lead(k, 3, v) OVER w) FROM kv WINDOW w AS (ORDER BY k) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, (rank() OVER w + avg(w) OVER w), k FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, (rank() OVER wind + avg(w) OVER wind), w, (v + row_number() OVER wind), v FROM kv WINDOW wind AS (ORDER BY k) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT k, abs(k) FILTER (WHERE k=1) FROM kv
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, avg(d) OVER w1, avg(d) OVER w2, row_number() OVER w2, sum(f) OVER w1, row_number() OVER w1, sum(f) OVER w2 FROM kv WINDOW w1 AS (ORDER BY k), w2 AS (ORDER BY w, k) ORDER BY k
 
 -- sqlfmt-corpus-separator --
 
@@ -10792,11 +11198,19 @@ SELECT k, stddev(d) OVER (PARTITION BY v ORDER BY w) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
+SELECT k, stddev(d) OVER w FROM kv WINDOW w as (PARTITION BY v) ORDER BY variance(d) OVER w, k
+
+-- sqlfmt-corpus-separator --
+
 SELECT k, sum(d) OVER (PARTITION BY v ORDER BY w) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
 SELECT k, u FROM t3 WHERE u = 2 FOR UPDATE SKIP LOCKED
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v + w, round(rank() OVER wind + lead(k, 3, v) OVER wind + lag(w, 1, 2) OVER wind + f::DECIMAL + avg(d) OVER wind)::INT, round(row_number() OVER wind::FLOAT + round(f) + dense_rank() OVER wind::FLOAT)::INT FROM kv WINDOW wind as (PARTITION BY v ORDER BY k) ORDER BY k
 
 -- sqlfmt-corpus-separator --
 
@@ -12193,6 +12607,22 @@ SELECT price, avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITIO
 
 -- sqlfmt-corpus-separator --
 
+SELECT price, dense_rank() OVER w, avg(price) OVER (w GROUPS BETWEEN 0 PRECEDING AND 0 PRECEDING), avg(price) OVER (w GROUPS BETWEEN 0 PRECEDING AND CURRENT ROW), avg(price) OVER (w GROUPS BETWEEN 0 PRECEDING AND 0 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN CURRENT ROW AND CURRENT ROW), avg(price) OVER (w GROUPS BETWEEN CURRENT ROW AND 2 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN CURRENT ROW AND 100 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) FROM products WINDOW w AS (ORDER BY price) ORDER BY price
+
+-- sqlfmt-corpus-separator --
+
+SELECT price, dense_rank() OVER w, avg(price) OVER (w GROUPS BETWEEN 3 FOLLOWING AND 100 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN 3 FOLLOWING AND 1 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN 2 FOLLOWING AND 6 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN 3 FOLLOWING AND 3 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN 0 FOLLOWING AND 4 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN 5 FOLLOWING AND UNBOUNDED FOLLOWING) FROM products WINDOW w AS (ORDER BY price) ORDER BY price
+
+-- sqlfmt-corpus-separator --
+
+SELECT price, dense_rank() OVER w, avg(price) OVER (w GROUPS BETWEEN 4 PRECEDING AND 100 PRECEDING), avg(price) OVER (w GROUPS BETWEEN 3 PRECEDING AND 2 PRECEDING), avg(price) OVER (w GROUPS BETWEEN 2 PRECEDING AND CURRENT ROW), avg(price) OVER (w GROUPS BETWEEN 1 PRECEDING AND 2 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN 1 PRECEDING AND 100 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING) FROM products WINDOW w AS (ORDER BY price) ORDER BY price
+
+-- sqlfmt-corpus-separator --
+
+SELECT price, dense_rank() OVER w, avg(price) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND 100 PRECEDING), avg(price) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND 2 PRECEDING), avg(price) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW), avg(price) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND 2 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND 100 FOLLOWING), avg(price) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) FROM products WINDOW w AS (ORDER BY price) ORDER BY price
+
+-- sqlfmt-corpus-separator --
+
 SELECT price, sum(price) OVER (ORDER BY price GROUPS UNBOUNDED PRECEDING), sum(price) OVER (ORDER BY price GROUPS 100 PRECEDING), sum(price) OVER (ORDER BY price GROUPS 1 PRECEDING), sum(price) OVER (ORDER BY group_name GROUPS CURRENT ROW) FROM products ORDER BY price, group_id
 
 -- sqlfmt-corpus-separator --
@@ -12225,6 +12655,14 @@ SELECT product_name, pinterval, price, avg(price) OVER (ORDER BY pinterval RANGE
 
 -- sqlfmt-corpus-separator --
 
+SELECT product_name, price, first_value(product_name) OVER w AS first FROM products WHERE price = 200 OR price = 700 WINDOW w as (PARTITION BY price ORDER BY product_name RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) ORDER BY price, product_name
+
+-- sqlfmt-corpus-separator --
+
+SELECT product_name, price, last_value(product_name) OVER w AS last FROM products WHERE price = 200 OR price = 700 WINDOW w as (PARTITION BY price ORDER BY product_name RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) ORDER BY price, product_name
+
+-- sqlfmt-corpus-separator --
+
 SELECT product_name, price, min(price) OVER (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS min_over_three, max(price) OVER (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN UNBOUNDED PRECEDING AND -1 FOLLOWING) AS max_over_partition FROM products ORDER BY group_id
 
 -- sqlfmt-corpus-separator --
@@ -12241,11 +12679,19 @@ SELECT product_name, price, min(price) OVER (PARTITION BY group_name ROWS BETWEE
 
 -- sqlfmt-corpus-separator --
 
+SELECT product_name, price, nth_value(product_name, 2) OVER w AS second FROM products WHERE price = 200 OR price = 700 WINDOW w as (PARTITION BY price ORDER BY product_name RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) ORDER BY price, product_name
+
+-- sqlfmt-corpus-separator --
+
 SELECT product_name, ptime, price, avg(price) OVER (ORDER BY ptime DESC RANGE BETWEEN '1 hours 15 minutes' PRECEDING AND '1 hours 15 minutes' FOLLOWING) FROM products ORDER BY ptime DESC, group_id
 
 -- sqlfmt-corpus-separator --
 
 SELECT product_name, ptime, price, avg(price) OVER (ORDER BY ptime RANGE BETWEEN '1 hours 15 minutes' PRECEDING AND '1 hours 15 minutes' FOLLOWING) FROM products ORDER BY ptime, group_id
+
+-- sqlfmt-corpus-separator --
+
+SELECT public."LOWERCASE_HINT_ERROR_EXPLICIT_SCHEMA_FN"();
 
 -- sqlfmt-corpus-separator --
 
@@ -12454,6 +12900,10 @@ SELECT round('nan'::decimal), round('nan'::decimal, 1), round('nan'::float), rou
 
 -- sqlfmt-corpus-separator --
 
+SELECT round((avg(d) OVER wind) * max(k) + (lag(d, 1, 42.0) OVER wind) * max(d)) FROM kv GROUP BY d, k WINDOW wind AS (ORDER BY k) ORDER BY k
+
+-- sqlfmt-corpus-separator --
+
 SELECT round(-1.23456789e+308::float, -308), round(1.23456789e+308::float, -308)
 
 -- sqlfmt-corpus-separator --
@@ -12530,6 +12980,14 @@ SELECT round(erf(1)::numeric, 4), round(erfc(1)::numeric, 4)
 
 -- sqlfmt-corpus-separator --
 
+SELECT round(max(w) * w * avg(w) OVER wind) + (lead(w, 2, 17) OVER wind::DECIMAL / w * row_number() OVER wind) FROM kv GROUP BY w WINDOW wind AS (PARTITION BY w) ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT round(row_number() OVER w1 + lead(k, v, w) OVER w2 + avg(k) OVER w1), (lag(k, 1) OVER w1 + v + rank() OVER w2 + min(k) OVER w1) FROM kv WINDOW w1 AS (PARTITION BY w ORDER BY k), w2 AS (PARTITION BY b ORDER BY k) ORDER BY k
+
+-- sqlfmt-corpus-separator --
+
 SELECT rowid, foo.rowid FROM ab AS foo (foo1, foo2)
 
 -- sqlfmt-corpus-separator --
@@ -12539,6 +12997,10 @@ SELECT s, s::a FROM strings ORDER BY 1
 -- sqlfmt-corpus-separator --
 
 SELECT s, s::record FROM strings ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT s, w + k, (sum(w) OVER wind + avg(d) OVER wind), (min(w) OVER wind + d), v FROM kv WINDOW wind AS (ORDER BY w, k) ORDER BY k
 
 -- sqlfmt-corpus-separator --
 

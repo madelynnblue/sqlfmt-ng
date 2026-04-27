@@ -325,6 +325,18 @@ SELECT
 -- sqlfmt-corpus-separator --
 
 SELECT
+   ~1 & 0  as def_and, ~(1 & 0)  as l_prec_and, (~1) & 0  as h_prec_and,
+   ~0 | 1  as def_or , ~(0 | 1)  as l_prec_or , (~0) | 1  as h_prec_or
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+   ~1 + 1  as def_add, ~(1 + 1)  as l_prec_add, (~1) + 1  as h_prec_add,
+   ~1 - 2  as def_sub, ~(1 - 2)  as l_prec_sub, (~1) - 2  as h_prec_sub
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   *,
   first_value(
     lag(x*x,y,1111) OVER (PARTITION BY x ORDER BY y)
@@ -25826,6 +25838,18 @@ SELECT -'NaN'::numeric;
 
 -- sqlfmt-corpus-separator --
 
+SELECT -(.1 * 2.2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT -(0.1 - 0.10);
+
+-- sqlfmt-corpus-separator --
+
+SELECT -(1.23 - 2.34)
+
+-- sqlfmt-corpus-separator --
+
 SELECT -0.0 - 1::numeric  * '-0.0 '::numeric;
 
 -- sqlfmt-corpus-separator --
@@ -32118,6 +32142,10 @@ SELECT d FROM s ORDER BY d, d::TEXT
 
 -- sqlfmt-corpus-separator --
 
+SELECT d::text[][1][1] FROM array_t2;
+
+-- sqlfmt-corpus-separator --
+
 SELECT d::timestamp FROM u WHERE a = 123
 
 -- sqlfmt-corpus-separator --
@@ -36982,6 +37010,10 @@ SELECT privileges::text FROM mz_system_privileges
 -- sqlfmt-corpus-separator --
 
 SELECT privileges::text[] FROM mz_views;
+
+-- sqlfmt-corpus-separator --
+
+SELECT q1 FROM int8_tbl EXCEPT (((SELECT q2 FROM int8_tbl ORDER BY q2 LIMIT 1))) ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 

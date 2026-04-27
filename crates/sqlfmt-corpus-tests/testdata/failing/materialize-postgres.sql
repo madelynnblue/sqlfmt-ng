@@ -1,15 +1,3 @@
-SELECT
-   ~1 & 0  as def_and, ~(1 & 0)  as l_prec_and, (~1) & 0  as h_prec_and,
-   ~0 | 1  as def_or , ~(0 | 1)  as l_prec_or , (~0) | 1  as h_prec_or
-
--- sqlfmt-corpus-separator --
-
-SELECT
-   ~1 + 1  as def_add, ~(1 + 1)  as l_prec_add, (~1) + 1  as h_prec_add,
-   ~1 - 2  as def_sub, ~(1 - 2)  as l_prec_sub, (~1) - 2  as h_prec_sub
-
--- sqlfmt-corpus-separator --
-
 SELECT 'abc'::char(3) !~~* 'Abc'::char(4);
 
 -- sqlfmt-corpus-separator --
@@ -98,18 +86,6 @@ SELECT * FROM kv WHERE (k,v) IN (SELECT * FROM kv)
 
 -- sqlfmt-corpus-separator --
 
-SELECT -(.1 * 2.2)
-
--- sqlfmt-corpus-separator --
-
-SELECT -(0.1 - 0.10);
-
--- sqlfmt-corpus-separator --
-
-SELECT -(1.23 - 2.34)
-
--- sqlfmt-corpus-separator --
-
 SELECT 1 = ANY(SELECT 1)
 
 -- sqlfmt-corpus-separator --
@@ -134,20 +110,12 @@ SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY r
 
 -- sqlfmt-corpus-separator --
 
-SELECT d::text[][1][1] FROM array_t2;
-
--- sqlfmt-corpus-separator --
-
 SELECT f1 AS five FROM FLOAT8_TBL
   WHERE f1 BETWEEN -1e6 AND 1e6
 UNION
 SELECT f1 FROM INT4_TBL
   WHERE f1 BETWEEN 0 AND 1000000
 ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-SELECT q1 FROM int8_tbl EXCEPT (((SELECT q2 FROM int8_tbl ORDER BY q2 LIMIT 1))) ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 

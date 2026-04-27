@@ -201,6 +201,33 @@ fn string_val(v: &Value) -> &str {
         .unwrap_or("")
 }
 
+/// Extract the strength keyword, wait keyword, and optional locked relations
+/// from a LockingClause JSON value. Shared between set-op and select locking paths.
+fn locking_clause_parts(lc: &Value) -> (&'static str, &'static str, Option<Vec<Node>>) {
+    let lc_inner = lc.get("LockingClause").unwrap_or(lc);
+    let base_kw = match lc_inner["strength"].as_str().unwrap_or("LCS_FORUPDATE") {
+        "LCS_FORKEYSHARE" => "FOR KEY SHARE",
+        "LCS_FORSHARE" => "FOR SHARE",
+        "LCS_FORNOKEYUPDATE" => "FOR NO KEY UPDATE",
+        _ => "FOR UPDATE",
+    };
+    let wait_kw = match lc_inner["waitPolicy"].as_str().unwrap_or("") {
+        "LockWaitError" => " NOWAIT",
+        "LockWaitSkip" => " SKIP LOCKED",
+        _ => "",
+    };
+    let rel_nodes = lc_inner["lockedRels"].as_array().map(|rels| {
+        rels
+            .iter()
+            .map(|r| {
+                let rv = r.get("RangeVar").unwrap_or(r);
+                range_var_to_node(rv)
+            })
+            .collect()
+    });
+    (base_kw, wait_kw, rel_nodes)
+}
+
 fn set_op_to_node(s: &Value) -> Node {
     let op_kw = match s["op"].as_str().unwrap_or("SETOP_NONE") {
         "SETOP_UNION" if s["all"].as_bool().unwrap_or(false) => "UNION ALL",
@@ -228,10 +255,16 @@ fn set_op_to_node(s: &Value) -> Node {
     let render_side = |side: &Value| -> Node {
         let side_op = side["op"].as_str().unwrap_or("SETOP_NONE");
         let side_has_with = side.get("withClause").filter(|w| !w.is_null()).is_some();
+        // A non-setop arm with its own ORDER BY / LIMIT / OFFSET needs parens
+        // because pg_query rejects bare `SELECT ... ORDER BY y EXCEPT SELECT ...`.
+        let side_has_order_limit = side["sortClause"]
+            .as_array()
+            .map(|a| !a.is_empty())
+            .unwrap_or(false)
+            || !side["limitCount"].is_null()
+            || !side["limitOffset"].is_null();
         let inner = select_stmt_to_node(side);
-        // Wrap in parens if side is itself a set-op, or if it has a WITH clause
-        // (WITH must be scoped inside parens when it's a sub-expression of a UNION).
-        if side_op != "SETOP_NONE" || side_has_with {
+        if side_op != "SETOP_NONE" || side_has_with || side_has_order_limit {
             Node::Wrap {
                 keyword: None,
                 open: "(".into(),
@@ -304,24 +337,31 @@ fn set_op_to_node(s: &Value) -> Node {
     // FOR UPDATE / FOR SHARE on set operations.
     if let Some(locking) = s["lockingClause"].as_array() {
         for lc in locking {
-            let lc_inner = lc.get("LockingClause").unwrap_or(lc);
-            let strength = lc_inner["strength"].as_str().unwrap_or("LCS_FORUPDATE");
-            let kw = match strength {
-                "LCS_FORKEYSHARE" => "FOR KEY SHARE",
-                "LCS_FORSHARE" => "FOR SHARE",
-                "LCS_FORNOKEYUPDATE" => "FOR NO KEY UPDATE",
-                _ => "FOR UPDATE",
-            };
-            let wait = lc_inner["waitPolicy"].as_str().unwrap_or("");
-            let kw = match wait {
-                "LockWaitError" => format!("{kw} NOWAIT"),
-                "LockWaitSkip" => format!("{kw} SKIP LOCKED"),
-                _ => kw.to_string(),
-            };
+            let (base_kw, wait_kw, rel_nodes) = locking_clause_parts(lc);
             concat_items.push(Node::Hardline);
-            concat_items.push(Node::Keyword {
-                value: kw,
-            });
+            if let Some(rels) = rel_nodes {
+                concat_items.push(Node::Keyword {
+                    value: format!("{base_kw} OF"),
+                });
+                concat_items.push(Node::Text { value: " ".into() });
+                concat_items.push(Node::List {
+                    items: rels,
+                    separator: None,
+                });
+                if !wait_kw.is_empty() {
+                    concat_items.push(Node::Text {
+                        value: wait_kw.into(),
+                    });
+                }
+            } else {
+                concat_items.push(Node::Keyword {
+                    value: if wait_kw.is_empty() {
+                        base_kw.to_string()
+                    } else {
+                        format!("{base_kw}{wait_kw}")
+                    },
+                });
+            }
         }
     }
 
@@ -713,50 +753,6 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
         });
     }
 
-    if let Some(sort) = s["sortClause"].as_array() {
-        if !sort.is_empty() {
-            let items: Vec<Node> = sort.iter().map(node_value_to_node).collect();
-            clauses.push(Clause {
-                keyword: "ORDER BY".into(),
-                body: Some(Box::new(Node::List {
-                    items,
-                    separator: None,
-                })),
-            });
-        }
-    }
-
-    if !s["limitCount"].is_null() {
-        if s["limitOption"].as_str() == Some("LIMIT_OPTION_WITH_TIES") {
-            clauses.push(Clause {
-                keyword: "FETCH FIRST".into(),
-                body: Some(Box::new(Node::Concat {
-                    items: vec![
-                        node_value_to_node(&s["limitCount"]),
-                        Node::Text {
-                            value: " ".into(),
-                        },
-                        Node::Keyword {
-                            value: "ROWS WITH TIES".into(),
-                        },
-                    ],
-                })),
-            });
-        } else {
-            clauses.push(Clause {
-                keyword: "LIMIT".into(),
-                body: Some(Box::new(node_value_to_node(&s["limitCount"]))),
-            });
-        }
-    }
-
-    if !s["limitOffset"].is_null() {
-        clauses.push(Clause {
-            keyword: "OFFSET".into(),
-            body: Some(Box::new(node_value_to_node(&s["limitOffset"]))),
-        });
-    }
-
     // WINDOW clause: WINDOW name AS (definition), ...
     if let Some(windows) = s["windowClause"].as_array() {
         if !windows.is_empty() {
@@ -826,27 +822,81 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
         }
     }
 
+    if let Some(sort) = s["sortClause"].as_array() {
+        if !sort.is_empty() {
+            let items: Vec<Node> = sort.iter().map(node_value_to_node).collect();
+            clauses.push(Clause {
+                keyword: "ORDER BY".into(),
+                body: Some(Box::new(Node::List {
+                    items,
+                    separator: None,
+                })),
+            });
+        }
+    }
+
+    if !s["limitCount"].is_null() {
+        if s["limitOption"].as_str() == Some("LIMIT_OPTION_WITH_TIES") {
+            clauses.push(Clause {
+                keyword: "FETCH FIRST".into(),
+                body: Some(Box::new(Node::Concat {
+                    items: vec![
+                        node_value_to_node(&s["limitCount"]),
+                        Node::Text {
+                            value: " ".into(),
+                        },
+                        Node::Keyword {
+                            value: "ROWS WITH TIES".into(),
+                        },
+                    ],
+                })),
+            });
+        } else {
+            clauses.push(Clause {
+                keyword: "LIMIT".into(),
+                body: Some(Box::new(node_value_to_node(&s["limitCount"]))),
+            });
+        }
+    }
+
+    if !s["limitOffset"].is_null() {
+        clauses.push(Clause {
+            keyword: "OFFSET".into(),
+            body: Some(Box::new(node_value_to_node(&s["limitOffset"]))),
+        });
+    }
+
     // FOR UPDATE / FOR SHARE locking clauses.
     if let Some(locking) = s["lockingClause"].as_array() {
         for lc in locking {
-            let lc_inner = lc.get("LockingClause").unwrap_or(lc);
-            let strength = lc_inner["strength"].as_str().unwrap_or("LCS_FORUPDATE");
-            let kw = match strength {
-                "LCS_FORKEYSHARE" => "FOR KEY SHARE",
-                "LCS_FORSHARE" => "FOR SHARE",
-                "LCS_FORNOKEYUPDATE" => "FOR NO KEY UPDATE",
-                _ => "FOR UPDATE",
+            let (base_kw, wait_kw, rel_nodes) = locking_clause_parts(lc);
+            let (keyword, body) = if let Some(rels) = rel_nodes {
+                let mut body_items: Vec<Node> = vec![Node::List {
+                    items: rels,
+                    separator: None,
+                }];
+                if !wait_kw.is_empty() {
+                    body_items.push(Node::Text {
+                        value: wait_kw.into(),
+                    });
+                }
+                (
+                    format!("{base_kw} OF"),
+                    Some(Box::new(Node::Concat {
+                        items: body_items,
+                    })),
+                )
+            } else {
+                (
+                    if wait_kw.is_empty() {
+                        base_kw.to_string()
+                    } else {
+                        format!("{base_kw}{wait_kw}")
+                    },
+                    None,
+                )
             };
-            let wait = lc_inner["waitPolicy"].as_str().unwrap_or("");
-            let kw = match wait {
-                "LockWaitError" => format!("{kw} NOWAIT"),
-                "LockWaitSkip" => format!("{kw} SKIP LOCKED"),
-                _ => kw.to_string(),
-            };
-            clauses.push(Clause {
-                keyword: kw,
-                body: None,
-            });
+            clauses.push(Clause { keyword, body });
         }
     }
 
@@ -1457,14 +1507,38 @@ fn a_expr_to_node(e: &Value) -> Node {
         }
     }
 
+    // Check if a value is a prefix-unary A_Expr (only has rexpr, no lexpr) that would
+    // need parens when used as a side of an infix operator: ~ 1 + 1 means (~1) + 1,
+    // but pg_query parses it as ~(1 + 1).
+    let is_prefix_unary = |v: &Value| -> bool {
+        v.get("A_Expr")
+            .map(|ae| ae["lexpr"].is_null() && !ae["rexpr"].is_null())
+            .unwrap_or(false)
+    };
+
     match (has_lexpr, has_rexpr) {
-        (true, true) => Node::Infix {
-            op,
-            items: vec![
-                wrap_infix_in_parens(node_value_to_node(&e["lexpr"])),
-                wrap_infix_in_parens(node_value_to_node(&e["rexpr"])),
-            ],
-        },
+        (true, true) => {
+            let wrap_side = |side: &Value| -> Node {
+                let node = node_value_to_node(side);
+                if is_prefix_unary(side) {
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(node),
+                        close: ")".into(),
+                    }
+                } else {
+                    wrap_infix_in_parens(node)
+                }
+            };
+            Node::Infix {
+                op,
+                items: vec![
+                    wrap_side(&e["lexpr"]),
+                    wrap_side(&e["rexpr"]),
+                ],
+            }
+        }
         (true, false) => Node::Concat {
             items: vec![
                 node_value_to_node(&e["lexpr"]),
@@ -1472,10 +1546,30 @@ fn a_expr_to_node(e: &Value) -> Node {
                 Node::Text { value: op },
             ],
         },
-        (false, true) => Node::Concat {
+        (false, true) => {
             // Space after unary operator prevents `--rhs` from being parsed as a SQL comment.
-            items: vec![Node::Text { value: format!("{op} ") }, node_value_to_node(&e["rexpr"])],
-        },
+            let rhs = node_value_to_node(&e["rexpr"]);
+            // Wrap argument in parens if it's a complex expression that would bind
+            // differently without them, e.g. ~(1 & 0) vs ~ 1 & 0.
+            let needs_parens = e["rexpr"]
+                .get("BoolExpr")
+                .or_else(|| e["rexpr"].get("A_Expr"))
+                .or_else(|| e["rexpr"].get("SubLink"))
+                .is_some();
+            let rhs = if needs_parens {
+                Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(rhs),
+                    close: ")".into(),
+                }
+            } else {
+                rhs
+            };
+            Node::Concat {
+                items: vec![Node::Text { value: format!("{op} ") }, rhs],
+            }
+        }
         (false, false) => Node::Text { value: op },
     }
 }
@@ -1630,9 +1724,6 @@ fn func_call_to_node(f: &Value) -> Node {
         })
         .unwrap_or_default();
 
-    let name = all_name_parts.join(".");
-
-    // C struct field is agg_star (snake_case).
     let agg_star = f["agg_star"].as_bool().unwrap_or(false);
     let agg_distinct = f["agg_distinct"].as_bool().unwrap_or(false);
 
@@ -1709,11 +1800,21 @@ fn func_call_to_node(f: &Value) -> Node {
         }
     };
 
-    let base = Node::Wrap {
-        keyword: Some(name),
-        open: "(".into(),
-        content: Box::new(content),
-        close: ")".into(),
+    let name_node = if all_name_parts.len() == 1 {
+        ident_node(all_name_parts[0])
+    } else {
+        qualified_ident_node(&all_name_parts)
+    };
+    let base = Node::Concat {
+        items: vec![
+            name_node,
+            Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(content),
+                close: ")".into(),
+            },
+        ],
     };
 
     // WITHIN GROUP (ORDER BY ...) — ordered-set aggregates like percentile_cont.
@@ -1822,8 +1923,27 @@ fn func_call_to_node(f: &Value) -> Node {
         .or_else(|| over["name"].as_str())
         .unwrap_or("");
 
-    // Named window reference without any clauses: OVER name
+    // Named window reference without any clauses.
+    // pg_query uses `name` for bare OVER name, `refname` for OVER (name).
+    // Preserve the distinction so the round-trip AST matches.
+    let is_parenthesized_ref = over["refname"].as_str().is_some();
     if !over_name.is_empty() && over_clauses.is_empty() {
+        if is_parenthesized_ref {
+            return Node::Concat {
+                items: vec![
+                    base,
+                    Node::Text {
+                        value: " OVER ".into(),
+                    },
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(ident_node(over_name)),
+                        close: ")".into(),
+                    },
+                ],
+            };
+        }
         return Node::Concat {
             items: vec![
                 base,
@@ -2182,8 +2302,16 @@ fn type_name_str(tn: &Value) -> String {
     };
 
     // Array bounds: integer[], text[][], etc.
-    let array_dims = tn["arrayBounds"].as_array().map(|a| a.len()).unwrap_or(0);
-    let array_suffix = "[]".repeat(array_dims);
+    // Non-empty Integer entries are subscripts (e.g., text[][1][1]) — not array dims.
+    let dims = tn["arrayBounds"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .filter(|b| b["Integer"].as_object().is_some_and(|o| o.is_empty()))
+                .count()
+        })
+        .unwrap_or(0);
+    let array_suffix = "[]".repeat(dims);
 
     format!("{with_mods}{array_suffix}")
 }
@@ -2209,14 +2337,35 @@ fn type_cast_to_node(tc: &Value) -> Node {
         _ => arg_node,
     };
     let type_str = type_name_str(&tc["typeName"]);
-    Node::Concat {
-        items: vec![
-            arg,
-            Node::Text {
-                value: format!("::{type_str}"),
-            },
-        ],
-    }
+
+    // Non-empty arrayBounds are subscripts, e.g. text[][1][1] — the [1][1] are indices.
+    let subscripts: Vec<Node> = tc["typeName"]["arrayBounds"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|b| {
+                    let iv = b["Integer"]["ival"].as_i64()?;
+                    Some(Node::Wrap {
+                        keyword: None,
+                        open: "[".into(),
+                        content: Box::new(Node::Text {
+                            value: iv.to_string(),
+                        }),
+                        close: "]".into(),
+                    })
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    let mut items = vec![
+        arg,
+        Node::Text {
+            value: format!("::{type_str}"),
+        },
+    ];
+    items.extend(subscripts);
+    Node::Concat { items }
 }
 
 fn sub_link_to_node(sl: &Value) -> Node {

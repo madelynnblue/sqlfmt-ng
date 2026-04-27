@@ -8180,6 +8180,10 @@ SELECT depname, empno, salary, rank() OVER (PARTITION BY depname ORDER BY salary
 
 -- sqlfmt-corpus-separator --
 
+SELECT depname, empno, salary, rank() OVER w FROM empsalary WINDOW w AS (PARTITION BY depname ORDER BY salary) ORDER BY rank() OVER w
+
+-- sqlfmt-corpus-separator --
+
 SELECT depname, empno, salary, sum(salary) OVER (PARTITION BY depname) FROM empsalary ORDER BY depname, salary
 
 -- sqlfmt-corpus-separator --
@@ -12752,6 +12756,10 @@ WHERE pp.oid = ap.amproc AND po.oid = o.oprcode AND o.oid = ao.amopopr AND
     (pp.provolatile != po.provolatile OR
      pp.proleakproof != po.proleakproof)
 ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT q1 FROM int8_tbl EXCEPT (((SELECT q2 FROM int8_tbl ORDER BY q2 LIMIT 1))) ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
