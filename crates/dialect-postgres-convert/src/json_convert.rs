@@ -195,13 +195,7 @@ fn string_val(v: &Value) -> &str {
 
 fn set_op_to_node(s: &Value) -> Node {
     let op_kw = match s["op"].as_str().unwrap_or("SETOP_NONE") {
-        "SETOP_UNION" => {
-            if s["all"].as_bool().unwrap_or(false) {
-                "UNION ALL"
-            } else {
-                "UNION"
-            }
-        }
+        "SETOP_UNION" if s["all"].as_bool().unwrap_or(false) => "UNION ALL",
         "SETOP_INTERSECT" => {
             if s["all"].as_bool().unwrap_or(false) {
                 "INTERSECT ALL"
@@ -439,8 +433,7 @@ fn select_stmt_to_node(s: &Value) -> Node {
     // pg_query represents SELECT DISTINCT as distinctClause: [{}] (NIL sentinel),
     // and SELECT DISTINCT ON (exprs) as distinctClause: [{expr}, ...].
     let distinct = s["distinctClause"].as_array();
-    let is_nil =
-        |v: &serde_json::Value| v.as_object().map_or(false, |o| o.is_empty()) || v.is_null();
+    let is_nil = |v: &serde_json::Value| v.as_object().is_some_and(|o| o.is_empty()) || v.is_null();
     let select_keyword = if let Some(dc) = distinct {
         let has_real_exprs = dc.iter().any(|v| !is_nil(v));
         if !has_real_exprs {
@@ -820,21 +813,19 @@ fn a_expr_to_node(e: &Value) -> Node {
     let has_rexpr = !e["rexpr"].is_null();
 
     // NULLIF(a, b)
-    if kind == "AEXPR_NULLIF" {
-        if has_lexpr && has_rexpr {
-            return Node::Wrap {
-                keyword: Some("NULLIF".into()),
-                open: "(".into(),
-                content: Box::new(Node::List {
-                    items: vec![
-                        node_value_to_node(&e["lexpr"]),
-                        node_value_to_node(&e["rexpr"]),
-                    ],
-                    separator: None,
-                }),
-                close: ")".into(),
-            };
-        }
+    if kind == "AEXPR_NULLIF" && has_lexpr && has_rexpr {
+        return Node::Wrap {
+            keyword: Some("NULLIF".into()),
+            open: "(".into(),
+            content: Box::new(Node::List {
+                items: vec![
+                    node_value_to_node(&e["lexpr"]),
+                    node_value_to_node(&e["rexpr"]),
+                ],
+                separator: None,
+            }),
+            close: ")".into(),
+        };
     }
 
     // SIMILAR TO / NOT SIMILAR TO: rexpr is pg_catalog.similar_to_escape(pattern[, escape]).
