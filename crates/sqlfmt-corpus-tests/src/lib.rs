@@ -2,8 +2,8 @@ use std::path::Path;
 
 pub mod github;
 pub mod slt;
-pub mod sql;
 pub mod sources;
+pub mod sql;
 
 pub trait CorpusSource: Send + Sync {
     fn name(&self) -> &str;

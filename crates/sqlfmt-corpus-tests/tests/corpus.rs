@@ -1,10 +1,10 @@
+use sqlfmt_core::{SqlfmtError, format_sql};
+use sqlfmt_corpus_tests::CorpusSource;
+use sqlfmt_corpus_tests::sources::{CockroachDbCorpus, MaterializeCorpus, PostgresCorpus};
+use sqlfmt_render::{CaseMode, RenderOpts};
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::Path;
-use sqlfmt_corpus_tests::sources::{CockroachDbCorpus, MaterializeCorpus, PostgresCorpus};
-use sqlfmt_corpus_tests::CorpusSource;
-use sqlfmt_core::{format_sql, SqlfmtError};
-use sqlfmt_render::{CaseMode, RenderOpts};
 
 const SEPARATOR: &str = "\n\n-- sqlfmt-corpus-separator --\n\n";
 const FAILING: &str = "failing";
@@ -115,8 +115,7 @@ fn remove_corpus_file_if_empty(dir: &Path, subdir: &str, source: &str, dialect: 
 #[test]
 #[ignore]
 fn test_external_corpus() {
-    let cache_dir =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/sqlfmt-corpus-cache");
+    let cache_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/sqlfmt-corpus-cache");
     let testdata_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata");
 
     let opts = default_opts();
@@ -446,9 +445,7 @@ fn test_permanent_corpus() {
             match format_sql(&*dialect_inst, stmt, &opts) {
                 Ok(_) => {}
                 Err(e) => {
-                    test_failures.push(format!(
-                        "[success/{source}-{dialect}]: {e}: {stmt}"
-                    ));
+                    test_failures.push(format!("[success/{source}-{dialect}]: {e}: {stmt}"));
                 }
             }
         }

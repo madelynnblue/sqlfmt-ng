@@ -1,6 +1,6 @@
-use std::path::Path;
-use crate::github::{CorpusFormat, GithubFetcher};
 use crate::CorpusSource;
+use crate::github::{CorpusFormat, GithubFetcher};
+use std::path::Path;
 
 pub struct MaterializeCorpus;
 pub struct PostgresCorpus;

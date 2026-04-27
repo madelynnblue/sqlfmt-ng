@@ -245,7 +245,9 @@ fn set_op_to_node(s: &Value) -> Node {
     let mut concat_items: Vec<Node> = vec![
         lnode,
         Node::Hardline,
-        Node::Keyword { value: op_kw.into() },
+        Node::Keyword {
+            value: op_kw.into(),
+        },
         Node::Hardline,
         rnode,
     ];
@@ -255,7 +257,9 @@ fn set_op_to_node(s: &Value) -> Node {
         if !sort.is_empty() {
             let sort_items: Vec<Node> = sort.iter().map(node_value_to_node).collect();
             concat_items.push(Node::Hardline);
-            concat_items.push(Node::Keyword { value: "ORDER BY".into() });
+            concat_items.push(Node::Keyword {
+                value: "ORDER BY".into(),
+            });
             concat_items.push(Node::Text { value: " ".into() });
             concat_items.push(Node::List {
                 items: sort_items,
@@ -265,18 +269,24 @@ fn set_op_to_node(s: &Value) -> Node {
     }
     if !s["limitCount"].is_null() {
         concat_items.push(Node::Hardline);
-        concat_items.push(Node::Keyword { value: "LIMIT".into() });
+        concat_items.push(Node::Keyword {
+            value: "LIMIT".into(),
+        });
         concat_items.push(Node::Text { value: " ".into() });
         concat_items.push(node_value_to_node(&s["limitCount"]));
     }
     if !s["limitOffset"].is_null() {
         concat_items.push(Node::Hardline);
-        concat_items.push(Node::Keyword { value: "OFFSET".into() });
+        concat_items.push(Node::Keyword {
+            value: "OFFSET".into(),
+        });
         concat_items.push(Node::Text { value: " ".into() });
         concat_items.push(node_value_to_node(&s["limitOffset"]));
     }
 
-    Node::Concat { items: concat_items }
+    Node::Concat {
+        items: concat_items,
+    }
 }
 
 fn common_table_expr_to_node(cte: &Value) -> Node {
@@ -288,7 +298,11 @@ fn common_table_expr_to_node(cte: &Value) -> Node {
         .as_array()
         .map(|arr| {
             arr.iter()
-                .filter_map(|n| n["String"]["sval"].as_str().or_else(|| n["String"]["str"].as_str()))
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default();
@@ -297,14 +311,13 @@ fn common_table_expr_to_node(cte: &Value) -> Node {
         Node::Concat {
             items: vec![
                 ident_node(ctename),
-                Node::Text { value: " AS ".into() },
+                Node::Text {
+                    value: " AS ".into(),
+                },
             ],
         }
     } else {
-        let aliases: Vec<Node> = col_aliases
-            .iter()
-            .map(|&a| ident_node(a))
-            .collect();
+        let aliases: Vec<Node> = col_aliases.iter().map(|&a| ident_node(a)).collect();
         Node::Concat {
             items: vec![
                 ident_node(ctename),
@@ -317,7 +330,9 @@ fn common_table_expr_to_node(cte: &Value) -> Node {
                     }),
                     close: ")".into(),
                 },
-                Node::Text { value: " AS ".into() },
+                Node::Text {
+                    value: " AS ".into(),
+                },
             ],
         }
     };
@@ -335,20 +350,20 @@ fn common_table_expr_to_node(cte: &Value) -> Node {
         let search_col = search["search_col_name"].as_str().unwrap_or("");
         let search_cols: Vec<Node> = search["search_cols"]
             .as_array()
-            .map(|arr| {
-                arr.iter()
-                    .map(node_value_to_node)
-                    .collect()
-            })
+            .map(|arr| arr.iter().map(node_value_to_node).collect())
             .unwrap_or_default();
         let search_body = Node::Concat {
             items: vec![
-                Node::Text { value: "SEARCH BREADTH FIRST BY ".into() },
+                Node::Text {
+                    value: "SEARCH BREADTH FIRST BY ".into(),
+                },
                 Node::List {
                     items: search_cols,
                     separator: None,
                 },
-                Node::Text { value: format!(" SET {search_col}") },
+                Node::Text {
+                    value: format!(" SET {search_col}"),
+                },
             ],
         };
         cte_items.push(search_body);
@@ -356,24 +371,25 @@ fn common_table_expr_to_node(cte: &Value) -> Node {
     if let Some(cycle) = cte.get("cycleclause").filter(|c| !c.is_null()) {
         let cycle_cols: Vec<Node> = cycle["cycle_cols"]
             .as_array()
-            .map(|arr| {
-                arr.iter()
-                    .map(node_value_to_node)
-                    .collect()
-            })
+            .map(|arr| arr.iter().map(node_value_to_node).collect())
             .unwrap_or_default();
         let cycle_mark = cycle["cycle_mark_column"].as_str().unwrap_or("");
         let cycle_mark_value = a_const_value_str(&cycle["cycle_mark_value"]).unwrap_or_default();
-        let cycle_mark_default = a_const_value_str(&cycle["cycle_mark_default"]).unwrap_or_default();
+        let cycle_mark_default =
+            a_const_value_str(&cycle["cycle_mark_default"]).unwrap_or_default();
         let cycle_body = Node::Concat {
             items: vec![
-                Node::Text { value: "CYCLE ".into() },
+                Node::Text {
+                    value: "CYCLE ".into(),
+                },
                 Node::List {
                     items: cycle_cols,
                     separator: None,
                 },
                 Node::Text {
-                    value: format!(" SET {cycle_mark} TO {cycle_mark_value} DEFAULT {cycle_mark_default}"),
+                    value: format!(
+                        " SET {cycle_mark} TO {cycle_mark_value} DEFAULT {cycle_mark_default}"
+                    ),
                 },
             ],
         };
@@ -395,22 +411,21 @@ fn select_stmt_to_node(s: &Value) -> Node {
     // WITH clause (CTEs).
     if let Some(with) = s.get("withClause").filter(|w| !w.is_null()) {
         let recursive = with["recursive"].as_bool().unwrap_or(false);
-        let kw = if recursive {
-            "WITH RECURSIVE"
-        } else {
-            "WITH"
-        };
-        let ctes = with["ctes"].as_array().map(|arr| {
-            arr.iter()
-                .map(|c| {
-                    c.get("CommonTableExpr")
-                        .map(common_table_expr_to_node)
-                        .unwrap_or(Node::Text {
-                            value: format!("{c}"),
-                        })
-                })
-                .collect::<Vec<_>>()
-        }).unwrap_or_default();
+        let kw = if recursive { "WITH RECURSIVE" } else { "WITH" };
+        let ctes = with["ctes"]
+            .as_array()
+            .map(|arr| {
+                arr.iter()
+                    .map(|c| {
+                        c.get("CommonTableExpr")
+                            .map(common_table_expr_to_node)
+                            .unwrap_or(Node::Text {
+                                value: format!("{c}"),
+                            })
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default();
         clauses.push(Clause {
             keyword: kw.into(),
             body: Some(Box::new(Node::List {
@@ -424,7 +439,8 @@ fn select_stmt_to_node(s: &Value) -> Node {
     // pg_query represents SELECT DISTINCT as distinctClause: [{}] (NIL sentinel),
     // and SELECT DISTINCT ON (exprs) as distinctClause: [{expr}, ...].
     let distinct = s["distinctClause"].as_array();
-    let is_nil = |v: &serde_json::Value| v.as_object().map_or(false, |o| o.is_empty()) || v.is_null();
+    let is_nil =
+        |v: &serde_json::Value| v.as_object().map_or(false, |o| o.is_empty()) || v.is_null();
     let select_keyword = if let Some(dc) = distinct {
         let has_real_exprs = dc.iter().any(|v| !is_nil(v));
         if !has_real_exprs {
@@ -740,7 +756,9 @@ fn range_var_to_node(rv: &Value) -> Node {
     let base = if only {
         Node::Concat {
             items: vec![
-                Node::Keyword { value: "ONLY".into() },
+                Node::Keyword {
+                    value: "ONLY".into(),
+                },
                 Node::Text { value: " ".into() },
                 ident,
             ],
@@ -822,7 +840,11 @@ fn a_expr_to_node(e: &Value) -> Node {
     // SIMILAR TO / NOT SIMILAR TO: rexpr is pg_catalog.similar_to_escape(pattern[, escape]).
     // Extract the pattern from the FuncCall args and render as `lexpr SIMILAR TO pattern`.
     if kind == "AEXPR_SIMILAR" {
-        let similar_kw = if op_raw == "~" { "SIMILAR TO" } else { "NOT SIMILAR TO" };
+        let similar_kw = if op_raw == "~" {
+            "SIMILAR TO"
+        } else {
+            "NOT SIMILAR TO"
+        };
         if has_lexpr && has_rexpr {
             let pattern = e["rexpr"]["FuncCall"]["args"]
                 .as_array()
@@ -831,7 +853,10 @@ fn a_expr_to_node(e: &Value) -> Node {
                 .unwrap_or(node_value_to_node(&e["rexpr"]));
             return Node::Infix {
                 op: similar_kw.to_string(),
-                items: vec![wrap_infix_in_parens(node_value_to_node(&e["lexpr"])), pattern],
+                items: vec![
+                    wrap_infix_in_parens(node_value_to_node(&e["lexpr"])),
+                    pattern,
+                ],
             };
         }
     }
@@ -880,10 +905,7 @@ fn a_expr_to_node(e: &Value) -> Node {
     // BETWEEN variants
     if matches!(
         kind,
-        "AEXPR_BETWEEN"
-            | "AEXPR_NOT_BETWEEN"
-            | "AEXPR_BETWEEN_SYM"
-            | "AEXPR_NOT_BETWEEN_SYM"
+        "AEXPR_BETWEEN" | "AEXPR_NOT_BETWEEN" | "AEXPR_BETWEEN_SYM" | "AEXPR_NOT_BETWEEN_SYM"
     ) {
         let kw = match kind {
             "AEXPR_BETWEEN" => "BETWEEN",
@@ -926,10 +948,7 @@ fn a_expr_to_node(e: &Value) -> Node {
             ],
         },
         (false, true) => Node::Concat {
-            items: vec![
-                Node::Text { value: op },
-                node_value_to_node(&e["rexpr"]),
-            ],
+            items: vec![Node::Text { value: op }, node_value_to_node(&e["rexpr"])],
         },
         (false, false) => Node::Text { value: op },
     }
@@ -945,7 +964,10 @@ fn a_const_value_str(v: &Value) -> Option<String> {
         return Some(n.to_string());
     }
     if let Some(sval) = ac.get("sval") {
-        return sval.as_str().or_else(|| sval["sval"].as_str()).map(|s| format!("'{s}'"));
+        return sval
+            .as_str()
+            .or_else(|| sval["sval"].as_str())
+            .map(|s| format!("'{s}'"));
     }
     None
 }
@@ -1090,7 +1112,9 @@ fn func_call_to_node(f: &Value) -> Node {
                         items: vec![
                             with_distinct,
                             Node::Text { value: " ".into() },
-                            Node::Keyword { value: "ORDER BY".into() },
+                            Node::Keyword {
+                                value: "ORDER BY".into(),
+                            },
                             Node::Text { value: " ".into() },
                             Node::List {
                                 items: order_items,
@@ -1139,7 +1163,9 @@ fn func_call_to_node(f: &Value) -> Node {
             Node::Concat {
                 items: vec![
                     base,
-                    Node::Text { value: " WITHIN GROUP ".into() },
+                    Node::Text {
+                        value: " WITHIN GROUP ".into(),
+                    },
                     within_clause,
                 ],
             }
@@ -1156,13 +1182,17 @@ fn func_call_to_node(f: &Value) -> Node {
         Node::Concat {
             items: vec![
                 base,
-                Node::Text { value: " FILTER ".into() },
+                Node::Text {
+                    value: " FILTER ".into(),
+                },
                 Node::Wrap {
                     keyword: None,
                     open: "(".into(),
                     content: Box::new(Node::Concat {
                         items: vec![
-                            Node::Keyword { value: "WHERE".into() },
+                            Node::Keyword {
+                                value: "WHERE".into(),
+                            },
                             Node::Text { value: " ".into() },
                             filter_expr,
                         ],
@@ -1365,10 +1395,7 @@ fn type_name_str(tn: &Value) -> String {
     };
 
     // Array bounds: integer[], text[][], etc.
-    let array_dims = tn["arrayBounds"]
-        .as_array()
-        .map(|a| a.len())
-        .unwrap_or(0);
+    let array_dims = tn["arrayBounds"].as_array().map(|a| a.len()).unwrap_or(0);
     let array_suffix = "[]".repeat(array_dims);
 
     format!("{with_mods}{array_suffix}")
@@ -1398,7 +1425,12 @@ fn sub_link_to_node(sl: &Value) -> Node {
     };
     match sub_link_type {
         "EXISTS_SUBLINK" => Node::Concat {
-            items: vec![Node::Keyword { value: "EXISTS".into() }, wrapped],
+            items: vec![
+                Node::Keyword {
+                    value: "EXISTS".into(),
+                },
+                wrapped,
+            ],
         },
         "ARRAY_SUBLINK" => Node::Wrap {
             keyword: Some("ARRAY".into()),
