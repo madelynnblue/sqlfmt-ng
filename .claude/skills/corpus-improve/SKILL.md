@@ -33,14 +33,15 @@ Run the corpus focused on the target dialect's own source repo first — those s
 cargo test -p sqlfmt-corpus-tests -- --ignored 2>&1 | tee /tmp/corpus-out.txt
 
 # Check what failures were recorded
-ls crates/sqlfmt-corpus-tests/testdata/
+ls crates/sqlfmt-corpus-tests/testdata/failing/
+ls crates/sqlfmt-corpus-tests/testdata/success/
 ```
 
-Failures are written to `testdata/{corpus}-{dialect}.sql`, separated by `\n\n-- sqlfmt-corpus-separator --\n\n`. The test panics if **new** failures appear (not already in testdata).
+Round-trip failures are written to `testdata/failing/{corpus}-{dialect}.sql`, and successful statements to `testdata/success/{corpus}-{dialect}.sql`. All statements are separated by `\n\n-- sqlfmt-corpus-separator --\n\n`. The test panics if **new** failures or regressions appear.
 
 ### 3. Triage failures
 
-For each failure in `testdata/{corpus}-{dialect}.sql`:
+For each failure in `testdata/failing/{corpus}-{dialect}.sql`:
 
 ```sh
 # Format one failing statement to see the error
@@ -72,18 +73,22 @@ Edit the appropriate converter file and add or complete the conversion for the f
 # Verify the specific statement now passes
 cargo run -- --dialect <dialect> --stmt "<stmt>"
 
-# Run permanent corpus test (fast, no network)
-cargo test -p sqlfmt-corpus-tests
+# Run the rewriter to move now-passing statements from failing/ to success/
+cargo test -p sqlfmt-corpus-tests test_rewrite_corpus
 
-# Remove the fixed statement from testdata if it now passes
-# (edit the file manually or re-run the external corpus to regenerate it)
+# Run permanent corpus test (fast, no network) to verify both dirs
+cargo test -p sqlfmt-corpus-tests test_permanent_corpus
 ```
 
-### 6. Remove fixed statements from testdata
+### 6. Move fixed statements to success/
 
-After fixing a class of failures, remove the now-passing statements from `testdata/{corpus}-{dialect}.sql`. The permanent corpus test (`test_permanent_corpus`) will catch regressions going forward.
+After fixing a class of failures, run `test_rewrite_corpus` to automatically move all now-passing statements from `testdata/failing/` to `testdata/success/`. The test panics when statements are moved, signaling you to commit the updated testdata.
 
-If a statement still fails and the fix is complex, leave it in testdata as a known failure and move to the next one.
+The `test_permanent_corpus` test then ensures:
+- `success/` statements remain passing (regression prevention)
+- `failing/` statements still produce round-trip errors (still need fixing)
+
+If a statement still fails and the fix is complex, leave it in `testdata/failing/` as a known failure and move to the next one.
 
 ### 7. Iterate
 
@@ -108,7 +113,17 @@ To diagnose a specific failing statement without re-running the full corpus:
 cargo run -- --dialect postgres --stmt "SELECT a AT TIME ZONE 'UTC' FROM t"
 ```
 
-## Testdata file format
+## Testdata directory structure
+
+```
+testdata/
+  failing/
+    {corpus}-{dialect}.sql    — known round-trip failures
+  success/
+    {corpus}-{dialect}.sql    — verified passing statements (regression suite)
+```
+
+### Testdata file format
 
 ```sql
 SELECT a FROM t
@@ -119,3 +134,11 @@ SELECT b, c FROM t WHERE x > 1
 ```
 
 Statements are separated by `\n\n-- sqlfmt-corpus-separator --\n\n`. Each statement is trimmed before comparison, so whitespace-only differences don't create duplicates.
+
+### Three test tiers
+
+| Test | Command | What it does |
+|---|---|---|
+| `test_external_corpus` | `cargo test -p sqlfmt-corpus-tests -- --ignored` | Fetches live SQL from upstream repos, writes new failures to `failing/` and successes to `success/` |
+| `test_rewrite_corpus` | `cargo test -p sqlfmt-corpus-tests test_rewrite_corpus` | Scans `failing/`, moves passing statements to `success/`, panics on changes |
+| `test_permanent_corpus` | `cargo test -p sqlfmt-corpus-tests test_permanent_corpus` | Verifies `success/` stays passing and `failing/` still fails |
