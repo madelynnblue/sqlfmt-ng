@@ -74,9 +74,9 @@ If a statement still fails and the fix is complex, leave it in `crates/sqlfmt-co
 
 After the statement (and possibly others) have been moved to success, commit the changes and start a new change. Try to keep it to one change per commit. Sometimes multiple fixes will be required for a single statement to move to succes if that statement has multiple broken things; that's ok.
 
-### 5. Iterate
+### 5. Commit
 
-Repeat steps 1-5.
+After the permanent corpus test passes, set a jj commit description summarizing the converter fixes. Then start a new change with `jj new`.
 
 ## Running a single corpus test quickly
 
@@ -110,8 +110,8 @@ Statements are separated by `\n\n-- sqlfmt-corpus-separator --\n\n`. Each statem
 
 ### Three test tiers
 
-| Test                    | Command                                                   | What it does                                                                                        |
-| ----------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `test_external_corpus`  | `cargo test -p sqlfmt-corpus-tests -- --ignored`          | Fetches live SQL from upstream repos, writes new failures to `failing/` and successes to `success/` |
-| `test_rewrite_corpus`   | `cargo test -p sqlfmt-corpus-tests test_rewrite_corpus -- --ignored`   | Scans `failing/`, moves passing statements to `success/`, panics on changes                         |
-| `test_permanent_corpus` | `cargo test -p sqlfmt-corpus-tests test_permanent_corpus` | Verifies `success/` stays passing and `failing/` still fails                                        |
+| Test                    | Command                                                              | What it does                                                                                        |
+| ----------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `test_external_corpus`  | `cargo test -p sqlfmt-corpus-tests -- --ignored`                     | Fetches live SQL from upstream repos, writes new failures to `failing/` and successes to `success/` |
+| `test_rewrite_corpus`   | `cargo test -p sqlfmt-corpus-tests test_rewrite_corpus -- --ignored` | Scans `failing/`, moves passing statements to `success/`, panics on changes                         |
+| `test_permanent_corpus` | `cargo test -p sqlfmt-corpus-tests test_permanent_corpus`            | Verifies `success/` stays passing and `failing/` still fails                                        |

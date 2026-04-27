@@ -1,7 +1,3 @@
-(SELECT NULL FROM t34524) EXCEPT (VALUES((SELECT 1 FROM t34524 LIMIT 1)), (1))
-
--- sqlfmt-corpus-separator --
-
 (SELECT x FROM xyz ORDER BY y) EXCEPT (SELECT x FROM xyz ORDER BY y, z) ORDER BY x
 
 -- sqlfmt-corpus-separator --
@@ -75,10 +71,6 @@
 -- sqlfmt-corpus-separator --
 
 (SELECT y FROM xyz ORDER BY z) INTERSECT ALL (SELECT y FROM xyz ORDER BY z)
-
--- sqlfmt-corpus-separator --
-
-(VALUES (1)) FOR UPDATE
 
 -- sqlfmt-corpus-separator --
 
@@ -278,13 +270,6 @@ ORDER BY
 
 -- sqlfmt-corpus-separator --
 
-SELECT
-  max(k) OVER (w GROUPS BETWEEN 9223372036854775807 FOLLOWING AND UNBOUNDED FOLLOWING),
-  max(k) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND 9223372036854775807 FOLLOWING)
-FROM kv WINDOW w AS (PARTITION BY b ORDER BY v)
-
--- sqlfmt-corpus-separator --
-
 SELECT "LOWERCASE_HINT_ERROR_IMPLICIT_SCHEMA_FN"();
 
 -- sqlfmt-corpus-separator --
@@ -395,20 +380,6 @@ SELECT (SELECT (2, 2), (3, 3)) IN (SELECT x+1, y+1 FROM xy)
 
 -- sqlfmt-corpus-separator --
 
-SELECT (SELECT 123 AS a),
-       (VALUES (cos(1)::INT)),
-       (SELECT cos(0)::INT)
-
--- sqlfmt-corpus-separator --
-
-SELECT (SELECT 123 IN (VALUES (1), (2)))
-
--- sqlfmt-corpus-separator --
-
-SELECT (VALUES (1)) FOR UPDATE
-
--- sqlfmt-corpus-separator --
-
 SELECT (WITH foo AS (INSERT INTO y VALUES (1) RETURNING *) SELECT * FROM foo)
 
 -- sqlfmt-corpus-separator --
@@ -418,28 +389,6 @@ SELECT (rank() OVER wind + lead(k, 3, v) OVER wind + lag(w, 1, 2) OVER wind), (r
 -- sqlfmt-corpus-separator --
 
 SELECT (round(avg(k) OVER w1 + sum(w) OVER w2) + row_number() OVER w2 + d + min(d) OVER w3 + f::DECIMAL) AS big_sum, v + w AS v_plus_w, (rank() OVER w3 + first_value(d) OVER w1 + nth_value(k, 2) OVER w1) AS small_sum FROM kv WINDOW w1 AS (PARTITION BY b ORDER BY k), w2 AS (PARTITION BY w ORDER BY k), w3 AS (PARTITION BY v ORDER BY k) ORDER BY k
-
--- sqlfmt-corpus-separator --
-
-SELECT *
-FROM t_48638
-WHERE key IN (
-  WITH v AS (
-    SELECT
-      level1.value AS value, level1.key AS level1, level2.key AS level2, level3.key AS level3
-    FROM
-      t_48638 AS level2
-      RIGHT JOIN (SELECT * FROM t_48638 WHERE value = 4) AS level1 ON level1.value = level2.key
-      LEFT JOIN (SELECT * FROM t_48638) AS level3 ON level3.key = level2.value
-  )
-  SELECT v.level1 FROM v WHERE v.level1 IS NOT NULL
-  UNION ALL SELECT v.level2 FROM v WHERE v.level2 IS NOT NULL
-  UNION ALL SELECT v.level3 FROM v WHERE v.level3 IS NOT NULL
-)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM (SELECT message FROM messages_rbr LIMIT 1) UNION ALL SELECT message FROM messages_rbt
 
 -- sqlfmt-corpus-separator --
 
@@ -589,18 +538,6 @@ SELECT 1 FOR UPDATE OF public.a
 
 -- sqlfmt-corpus-separator --
 
-SELECT 1 UNION SELECT 1 FOR UPDATE
-
--- sqlfmt-corpus-separator --
-
-SELECT ARRAY(VALUES ('a'),('b'),('c'))
-
--- sqlfmt-corpus-separator --
-
-SELECT ARRAY(VALUES (1),(2),(1))
-
--- sqlfmt-corpus-separator --
-
 SELECT ARRAY(VALUES (ARRAY[1]))
 
 -- sqlfmt-corpus-separator --
@@ -617,15 +554,7 @@ SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY r
 
 -- sqlfmt-corpus-separator --
 
-SELECT a, b, rowid FROM ab UNION VALUES (1, 2, 3);
-
--- sqlfmt-corpus-separator --
-
 SELECT array_agg(a) OVER (w GROUPS 1 PRECEDING) FROM x WINDOW w AS (PARTITION BY a ORDER BY a DESC) ORDER BY a
-
--- sqlfmt-corpus-separator --
-
-SELECT array_agg(a) OVER (w GROUPS 1 PRECEDING) FROM x WINDOW w AS (PARTITION BY a)
 
 -- sqlfmt-corpus-separator --
 
@@ -633,19 +562,7 @@ SELECT array_agg(a) OVER (w RANGE 1 PRECEDING) FROM x WINDOW w AS (ORDER BY a DE
 
 -- sqlfmt-corpus-separator --
 
-SELECT avg(k) OVER (w ORDER BY v) FROM kv WINDOW w AS (ORDER BY v)
-
--- sqlfmt-corpus-separator --
-
 SELECT avg(k) OVER (w ORDER BY w) FROM kv WINDOW w AS (PARTITION BY v) ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(k) OVER (w PARTITION BY v) FROM kv WINDOW w AS ()
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(k) OVER (w PARTITION BY v) FROM kv WINDOW w AS (PARTITION BY v)
 
 -- sqlfmt-corpus-separator --
 
@@ -669,19 +586,11 @@ SELECT avg(price) FILTER (WHERE price > 300) OVER w1, sum(price) FILTER (WHERE g
 
 -- sqlfmt-corpus-separator --
 
-SELECT avg(price) OVER (w ORDER BY price) FROM products WINDOW w AS (ROWS 1 PRECEDING)
-
--- sqlfmt-corpus-separator --
-
 SELECT avg(price) OVER (w) FROM products WINDOW w AS (ROWS 1 PRECEDING)
 
 -- sqlfmt-corpus-separator --
 
 SELECT avg(price) OVER w1, avg(price) OVER w2, avg(price) OVER w1 FROM products WINDOW w1 AS (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING), w2 AS (ORDER BY group_id ROWS 1 PRECEDING) ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT c0 FROM t103755 WHERE c0 < 0 OR c0 IN (VALUES (2)) ORDER BY c0;
 
 -- sqlfmt-corpus-separator --
 
@@ -773,238 +682,12 @@ SELECT s, w + k, (sum(w) OVER wind + avg(d) OVER wind), (min(w) OVER wind + d), 
 
 -- sqlfmt-corpus-separator --
 
-SELECT y.a, (
-  WITH foo AS MATERIALIZED (SELECT x.a FROM x WHERE x.a = y.a)
-  SELECT * FROM foo
-) FROM y
-
--- sqlfmt-corpus-separator --
-
-VALUES (
-  '"hello"'::JSONB   ? 'hello',
-  '"hello"'::JSONB   ? 'goodbye',
-  '"hello"'::JSONB   ? 'ello',
-  '"hello"'::JSONB   ? 'h',
-  'true'::JSONB      ? 'true',
-  '1'::JSONB         ? '1',
-  'null'::JSONB      ? 'null'
-)
-
--- sqlfmt-corpus-separator --
-
-VALUES ('pg_constraint'::REGCLASS, 'pg_catalog.pg_constraint'::REGCLASS)
-
--- sqlfmt-corpus-separator --
-
-VALUES ((SELECT 1)), ((SELECT 2))
-
--- sqlfmt-corpus-separator --
-
-VALUES (1) EXCEPT VALUES (NULL) ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-VALUES (1) FOR UPDATE
-
--- sqlfmt-corpus-separator --
-
-VALUES (1) INTERSECT VALUES (NULL) ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-VALUES (1) UNION ALL VALUES (NULL) ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (1), (2), (2) EXCEPT ALL VALUES (1), (3), (1)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (1), (2), (2) EXCEPT VALUES (1), (3), (1)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (1), (2), (2) INTERSECT ALL VALUES (1), (3), (1)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (1), (2), (2) INTERSECT VALUES (1), (3), (1)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (1), (2), (2) UNION ALL VALUES (1), (3), (1)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (1), (2), (2) UNION ALL VALUES (1), (3), (1) ORDER BY 1 DESC LIMIT 2
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (1), (2), (2) UNION VALUES (1), (3), (1)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (2), (3) ORDER BY 1 DESC LIMIT 3
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (1), (2), (3) ORDER BY z
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (2) UNION VALUES (2), (3)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1), (2, 3)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1, (SELECT (2)))
-
--- sqlfmt-corpus-separator --
-
-VALUES (1, 10), (2, NULL), (3, 30), (NULL, 40)
-ORDER BY (SELECT count(*) FROM t_lookup WHERE k = column1) NULLS LAST, column1 NULLS FIRST
-
--- sqlfmt-corpus-separator --
-
-VALUES (1, 2), (1, 1), (1, 2), (2, 1), (2, 1) UNION VALUES (1, 3), (3, 4), (1, 1)
-
--- sqlfmt-corpus-separator --
-
-VALUES (1, 2, 1.0, 'string1'), (4, 3, 2.3, 'string2')
-
--- sqlfmt-corpus-separator --
-
-VALUES (1, 2, 3), (4, 5, 6)
-
--- sqlfmt-corpus-separator --
-
-VALUES (@485)
-
--- sqlfmt-corpus-separator --
-
-VALUES (NULL) EXCEPT VALUES (1) ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-VALUES (NULL) EXCEPT VALUES (NULL)
-
--- sqlfmt-corpus-separator --
-
-VALUES (NULL) INTERSECT VALUES (1) ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-VALUES (NULL) INTERSECT VALUES (NULL)
-
--- sqlfmt-corpus-separator --
-
-VALUES (NULL) UNION ALL VALUES (1) ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-VALUES (NULL) UNION ALL VALUES (NULL)
-
--- sqlfmt-corpus-separator --
-
-VALUES (NULL, 1), (2, NULL), (NULL, 'a')
-
--- sqlfmt-corpus-separator --
-
-VALUES (format_type('anyelement'::regtype, -1)),
-       (format_type('bit'::regtype, -1)),
-       (format_type('bool'::regtype, -1)),
-       (format_type('bytea'::regtype, -1)),
-       (format_type('char'::regtype, -1)),
-       (format_type('"char"'::regtype, -1)),
-       (format_type('date'::regtype, -1)),
-       (format_type('decimal'::regtype, -1)),
-       (format_type('float'::regtype, -1)),
-       (format_type('float4'::regtype, -1)),
-       (format_type('interval'::regtype, -1)),
-       (format_type('numeric'::regtype, -1)),
-       (format_type('oid'::regtype, -1)),
-       (format_type('oidvector'::regtype, -1)),
-       (format_type('inet'::regtype, -1)),
-       (format_type('int'::regtype, -1)),
-       (format_type('int4'::regtype, -1)),
-       (format_type('int2'::regtype, -1)),
-       (format_type('int2vector'::regtype, -1)),
-       (format_type('interval'::regtype, -1)),
-       (format_type('json'::regtype, -1)),
-       (format_type('name'::regtype, -1)),
-       (format_type('regclass'::regtype, -1)),
-       (format_type('regnamespace'::regtype, -1)),
-       (format_type('regproc'::regtype, -1)),
-       (format_type('regprocedure'::regtype, -1)),
-       (format_type('regrole'::regtype, -1)),
-       (format_type('regtype'::regtype, -1)),
-       (format_type('string'::regtype, -1)),
-       (format_type('time'::regtype, -1)),
-       (format_type('timestamp'::regtype, -1)),
-       (format_type('timestamptz'::regtype, -1)),
-       (format_type('record'::regtype, -1)),
-       (format_type('uuid'::regtype, -1)),
-       (format_type('unknown'::regtype, -1)),
-       (format_type('varbit'::regtype, -1)),
-       (format_type('varchar'::regtype, -1)),
-       (format_type('void'::regtype, -1)),
-       (format_type('int[]'::regtype, -1)),
-       (format_type('int2[]'::regtype, -1)),
-       (format_type('string[]'::regtype, -1)),
-       (format_type('varchar[]'::regtype, -1)),
-       (format_type('pg_catalog.int4'::regtype, -1)),
-       (format_type('pg_catalog.int2'::regtype, -1))
-
--- sqlfmt-corpus-separator --
-
-VALUES (format_type('anyelement'::regtype, NULL)),
-       (format_type('bool'::regtype, NULL)),
-       (format_type('bytea'::regtype, NULL)),
-       (format_type('date'::regtype, NULL)),
-       (format_type('numeric'::regtype, NULL)),
-       (format_type('interval'::regtype, NULL)),
-       (format_type('timestamp'::regtype, NULL)),
-       (format_type('timestamptz'::regtype, NULL)),
-       (format_type('record'::regtype, NULL))
-
--- sqlfmt-corpus-separator --
-
-VALUES (generate_series(1,3))
-
--- sqlfmt-corpus-separator --
-
-VALUES (length('a')), (1 + length('a')), (length('abc')), (length('ab') * 2)
-
--- sqlfmt-corpus-separator --
-
 WITH
     a AS (INSERT INTO y VALUES (1) RETURNING 1), b AS (DELETE FROM x WHERE true RETURNING 1)
 SELECT
     *
 FROM
     a
-
--- sqlfmt-corpus-separator --
-
-WITH
-    foo(f) AS (SELECT array_agg(x) FROM generate_series(1, 3) g(x)),
-    bar(b) AS (SELECT array_agg(f) FROM foo, generate_series(1, 3)),
-    baz(z) AS (SELECT array_agg(b) FROM bar, generate_series(1, 3))
-SELECT z FROM baz;
-
--- sqlfmt-corpus-separator --
-
-WITH
-    w (c) AS (VALUES (NULL), (NULL))
-SELECT
-    '1971-03-18'::DATE + 300866802885581286
-FROM
-    w
-ORDER BY
-    c
 
 -- sqlfmt-corpus-separator --
 
@@ -1039,20 +722,6 @@ SELECT
   crdb_internal.validate_session_revival_token(a.token)
 FROM
   c, a
-
--- sqlfmt-corpus-separator --
-
-WITH
-  cte1 AS (SELECT b FROM ab ORDER BY a),
-  cte2 AS (SELECT y FROM xy ORDER BY x, y)
-SELECT * FROM cte1 UNION ALL SELECT * FROM cte2
-
--- sqlfmt-corpus-separator --
-
-WITH
-  cte1 AS (SELECT b FROM ab ORDER BY a+b),
-  cte2 AS (SELECT DISTINCT ON (x) y FROM xy ORDER BY x, y)
-SELECT * FROM cte1 UNION ALL SELECT * FROM cte2
 
 -- sqlfmt-corpus-separator --
 
@@ -1102,47 +771,6 @@ WITH
   v AS (UPDATE u SET j = 5 WHERE i = 0 RETURNING *),
   w AS (UPDATE u SET j = v.j + 1 FROM v WHERE u.i = v.i RETURNING *)
 SELECT * FROM w
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE cte(a, b) AS (
-    VALUES (1, 1), (1, 2), (2, 2)
-  UNION
-    SELECT (a+i) % 4, (b+1-i) % 4 FROM cte, (VALUES (0), (1)) AS v(i)
-) SELECT * FROM cte;
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE cte(a, b) AS (
-    VALUES (1, 1), (1, 2), (2, 2)
-  UNION
-    SELECT 4-a, 4-a FROM cte
-) SELECT * FROM cte;
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE cte(a, b) AS (
-    VALUES (2, 2), (1, 1), (1, 2), (1, 1), (1, 3), (1, 2), (2, 2)
-  UNION
-    SELECT a+10, b+10 FROM cte WHERE a < 20
-) SELECT * FROM cte;
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE foo(i) AS
-    (SELECT i FROM (VALUES(1),(2)) t(i)
-    UNION ALL
-    SELECT (i+1)::numeric(10,0) FROM foo WHERE i < 10)
-SELECT * FROM foo
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE nodes AS (
-  SELECT 'A' AS id
-  UNION ALL
-  SELECT graph_node.id FROM graph_node JOIN nodes ON graph_node.parent = nodes.id
-)
-SELECT * FROM nodes
 
 -- sqlfmt-corpus-separator --
 
@@ -1202,24 +830,6 @@ WITH RECURSIVE points AS (
 
 -- sqlfmt-corpus-separator --
 
-WITH RECURSIVE t(n) AS (
-    VALUES (1)
-  UNION
-    SELECT n+y FROM t, (VALUES (1), (2)) AS v(y) WHERE n < 99
-)
-SELECT sum(n) FROM t
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE t(n) AS (
-    VALUES (1)
-  UNION ALL
-    SELECT n+1 FROM t WHERE n < 100
-)
-SELECT sum(n) FROM t
-
--- sqlfmt-corpus-separator --
-
 WITH RECURSIVE temp (i) AS (
   (SELECT n FROM ints ORDER BY n ASC LIMIT 1)
 UNION ALL (
@@ -1285,17 +895,6 @@ UNION ALL (
   )
 )
 SELECT count(*) FROM temp;
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE x(a) AS (
-    VALUES ('a'), ('b')
-  UNION ALL
-    (WITH z AS (SELECT * FROM x)
-      SELECT z.a || z1.a AS a FROM z CROSS JOIN z AS z1 WHERE length(z.a) < 3
-    )
-)
-SELECT * FROM x
 
 -- sqlfmt-corpus-separator --
 
@@ -1311,34 +910,6 @@ SELECT * FROM a LIMIT 0
 
 WITH a AS (UPDATE a SET a = -a WHERE b % 2 = 1 RETURNING a,b)
 SELECT * FROM a LIMIT 0
-
--- sqlfmt-corpus-separator --
-
-WITH a(a) AS ( VALUES
-  ('2010-11-06 23:59:00'::timestamptz + '24 hours'::interval), -- no offset specified
-  ('2010-11-06 23:59:00'::timestamptz + '1 day'::interval),
-  ('2010-11-06 23:59:00'::timestamptz + '1 month'::interval),
-  ('2010-11-07 23:59:00'::timestamptz - '24 hours'::interval),
-  ('2010-11-07 23:59:00'::timestamptz - '1 day'::interval),
-  ('2010-11-07 23:59:00'::timestamptz - '1 month'::interval),
-  ('2010-11-06 23:59:00-05'::timestamptz + '24 hours'::interval), -- offset at time zone
-  ('2010-11-06 23:59:00-05'::timestamptz + '1 day'::interval),
-  ('2010-11-06 23:59:00-05'::timestamptz + '1 month'::interval),
-  ('2010-11-07 23:59:00-06'::timestamptz - '24 hours'::interval),
-  ('2010-11-07 23:59:00-06'::timestamptz - '1 day'::interval),
-  ('2010-11-07 23:59:00-06'::timestamptz - '1 month'::interval),
-  ('2010-11-06 23:59:00-04'::timestamptz + '24 hours'::interval), -- different offset
-  ('2010-11-06 23:59:00-04'::timestamptz + '1 day'::interval),
-  ('2010-11-06 23:59:00-04'::timestamptz + '1 month'::interval),
-  ('2010-11-07 23:59:00-04'::timestamptz - '24 hours'::interval),
-  ('2010-11-07 23:59:00-04'::timestamptz - '1 day'::interval),
-  ('2010-11-07 23:59:00-04'::timestamptz - '1 month'::interval)
-) select * from a;
-
--- sqlfmt-corpus-separator --
-
-WITH cte (x, a, b) AS (SELECT x, random(), random() FROM (VALUES (1), (2), (3)) AS v(x))
-SELECT count(*) FROM cte WHERE a = b
 
 -- sqlfmt-corpus-separator --
 
@@ -1372,48 +943,6 @@ WITH foo AS (UPDATE t2 SET b = 1 WHERE a = 1 RETURNING a) SELECT insert_t1();
 -- sqlfmt-corpus-separator --
 
 WITH foo AS (UPDATE z SET c = 20 RETURNING 1) SELECT 3
-
--- sqlfmt-corpus-separator --
-
-WITH indexes AS (
-    SELECT json_array_elements(crdb_internal.pb_to_json('cockroach.sql.sqlbase.Descriptor', descriptor)->'table'->'indexes') AS idx
-    FROM system.descriptor AS d
-    JOIN system.namespace AS n
-    ON d.id = n.id
-    WHERE n.name = 'a'
-)
-SELECT idx->>'name', idx->>'id' FROM indexes
-
--- sqlfmt-corpus-separator --
-
-WITH payloads AS (
-  SELECT *
-  FROM crdb_internal.payloads_for_trace(crdb_internal.trace_id())
-) SELECT count(*) > 0
-  FROM payloads
-  WHERE payload_type = 'roachpb.ContentionEvent'
-  AND crdb_internal.pretty_key(decode(payload_jsonb->>'key', 'base64'), 1) LIKE '/1/"k"/%'
-
--- sqlfmt-corpus-separator --
-
-WITH payloads AS (
-  SELECT *
-  FROM crdb_internal.payloads_for_trace(crdb_internal.trace_id())
-) SELECT count(*) > 0
-  FROM payloads
-  WHERE payload_type = 'roachpb.ContentionEvent'
-  AND crdb_internal.pretty_key(decode(payload_jsonb->>'key', 'base64'), 1) LIKE '/1/"k"/%'
-  AND (payload_jsonb->'txnMeta'->>'coordinatorNodeId')::INTEGER = 4
-
--- sqlfmt-corpus-separator --
-
-WITH q (x, y) AS (
-  SELECT * FROM (VALUES ('a', 'a'), ('b', 'b'), ('c', 'c'))
-  UNION ALL
-  SELECT * FROM (VALUES ('d', 'd'))
-)
-SELECT 'e', y FROM q
-ORDER BY x
 
 -- sqlfmt-corpus-separator --
 
@@ -1489,28 +1018,6 @@ SELECT * FROM t
 
 -- sqlfmt-corpus-separator --
 
-WITH t3(c1, c2) AS (
-  SELECT t2.b AS c1, t2.k AS c2 FROM t100561a t1 FULL OUTER JOIN t100561b t2 ON true
-)
-SELECT t3.c2, t3.c1 FROM t3, t100561b t2
-WHERE t3.c2 = t2.k
-
--- sqlfmt-corpus-separator --
-
-WITH tmp AS (SELECT * FROM generate_series(1, 10) i ORDER BY i % 5 ASC, i ASC)
-SELECT * FROM tmp ORDER BY i DESC;
-
--- sqlfmt-corpus-separator --
-
-WITH tmp AS (SELECT * FROM generate_series(1, 10) i ORDER BY i % 5 ASC, i ASC) SELECT * FROM tmp;
-
--- sqlfmt-corpus-separator --
-
-WITH tmp(a, b, c) AS MATERIALIZED (VALUES (1, 'foo', true))
-SELECT strict_fn(a, b, c) FROM tmp
-
--- sqlfmt-corpus-separator --
-
 WITH u AS (
   UPDATE kv SET v = v + 10 RETURNING k
 )
@@ -1520,43 +1027,6 @@ get_i(k) i1, get_i(int_identity_v(k)) i2,
 get_s(k) s1, get_s(int_identity_v(k)) s2,
 get_v(k) v1, get_v(int_identity_v(k)) v2
 FROM u;
-
--- sqlfmt-corpus-separator --
-
-WITH v(id, x) AS (VALUES (1, '0'::numeric), (2, '1'::numeric), (3, '-1'::numeric),
-  (4, '4.2'::numeric), (5, 'inf'::numeric), (6, '-inf'::numeric), (7, 'nan'::numeric)
-)
-SELECT x1, x2,
-  x1 / x2 AS quot,
-  x1 % x2 AS mod,
-  div(x1, x2) AS div
-FROM v AS v1(id1, x1), v AS v2(id2, x2) WHERE x2 != 0
-ORDER BY id1, id2
-
--- sqlfmt-corpus-separator --
-
-WITH v(x) AS
-  (VALUES('0'::numeric),('1'::numeric),('-1'::numeric),('4.2'::numeric),
-    ('-7.777'::numeric),('9127.777'::numeric),('inf'::numeric),('-inf'::numeric),('nan'::numeric))
-SELECT x, trunc(x), trunc(x,1), trunc(x,2), trunc(x,0), trunc(x,-1), trunc(x,-2)
-FROM v
-
--- sqlfmt-corpus-separator --
-
-WITH v(x) AS
-  (VALUES('0'::numeric),('1'::numeric),('-1'::numeric),('4.2'::numeric),('inf'::numeric),('-inf'::numeric),('nan'::numeric))
-SELECT x1, x2,
-  x1 + x2 AS sum,
-  x1 - x2 AS diff,
-  x1 * x2 AS prod
-FROM v AS v1(x1), v AS v2(x2)
-
--- sqlfmt-corpus-separator --
-
-WITH v(x) AS
-(VALUES (' inf '), (' +inf '), (' -inf '), (' Infinity '), (' +inFinity '), (' -INFINITY '))
-SELECT x1::decimal
-FROM v AS v1(x1)
 
 -- sqlfmt-corpus-separator --
 
