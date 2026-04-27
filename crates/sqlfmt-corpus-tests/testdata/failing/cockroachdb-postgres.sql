@@ -1,15 +1,3 @@
-((SELECT 1 FOR UPDATE SKIP LOCKED))
-
--- sqlfmt-corpus-separator --
-
-((SELECT 1) FOR UPDATE SKIP LOCKED)
-
--- sqlfmt-corpus-separator --
-
-((SELECT 1)) FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
 (SELECT NULL FROM t34524) EXCEPT (VALUES((SELECT 1 FROM t34524 LIMIT 1)), (1))
 
 -- sqlfmt-corpus-separator --
@@ -269,18 +257,6 @@ ORDER BY
 -- sqlfmt-corpus-separator --
 
 SELECT
-  a.elems,
-  b.elems,
-  a.elems = b.elems,
-  a.elems < b.elems,
-  a.elems <= b.elems,
-  a.elems IS NOT DISTINCT FROM b.elems
-FROM enum_array_table a, enum_array_table b
-ORDER BY a.id, b.id
-
--- sqlfmt-corpus-separator --
-
-SELECT
   id,
   row_number() OVER (ORDER BY id NULLS LAST) AS row_num_using_nulls_last,
   row_number() OVER (ORDER BY COALESCE(id, 999)) AS row_num_using_coalesce
@@ -303,23 +279,6 @@ ORDER BY
 -- sqlfmt-corpus-separator --
 
 SELECT
-  lag(_int2, _int4, _int2) OVER w,
-  lead(_int4, _int2, _int4) OVER w,
-  first_value(_int2) OVER w,
-  last_value(_int4) OVER w,
-  nth_value(_int2, _int4) OVER w,
-  min(_int4) OVER w,
-  row_number() OVER w,
-  rank() OVER w,
-  dense_rank() OVER w,
-  percent_rank() OVER w,
-  cume_dist() OVER w,
-  ntile(_int2) OVER w
-FROM t74087 WINDOW w AS (ORDER BY _int4);
-
--- sqlfmt-corpus-separator --
-
-SELECT
   max(k) OVER (w GROUPS BETWEEN 9223372036854775807 FOLLOWING AND UNBOUNDED FOLLOWING),
   max(k) OVER (w GROUPS BETWEEN UNBOUNDED PRECEDING AND 9223372036854775807 FOLLOWING)
 FROM kv WINDOW w AS (PARTITION BY b ORDER BY v)
@@ -331,30 +290,6 @@ SELECT "LOWERCASE_HINT_ERROR_IMPLICIT_SCHEMA_FN"();
 -- sqlfmt-corpus-separator --
 
 SELECT "PG_TYPEOF"(123)
-
--- sqlfmt-corpus-separator --
-
-SELECT '$'::JSONPATH IS DISTINCT FROM '$'::JSONPATH
-
--- sqlfmt-corpus-separator --
-
-SELECT '$'::JSONPATH IS DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT '$'::JSONPATH IS NOT DISTINCT FROM '$'::JSONPATH
-
--- sqlfmt-corpus-separator --
-
-SELECT '$'::JSONPATH IS NOT DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT ''::VOID IS DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT ''::VOID IS DISTINCT FROM NULL::UNKNOWN
 
 -- sqlfmt-corpus-separator --
 
@@ -395,62 +330,6 @@ SELECT 'SRID=4326;POINT(2.0 3.0)'::geography::geography(point, 4004)
 -- sqlfmt-corpus-separator --
 
 SELECT 'SRID=4326;POINT(2.0 3.0)'::geometry::geography(point, 4004)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS DISTINCT FROM 'foo'::REFCURSOR;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS DISTINCT FROM 'foo'::TEXT;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS DISTINCT FROM (NULL::REFCURSOR);
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS DISTINCT FROM NULL;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS DISTINCT FROM l FROM implicit_types;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS NOT DISTINCT FROM 'foo'::REFCURSOR;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS NOT DISTINCT FROM 'foo'::TEXT;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS NOT DISTINCT FROM (NULL::REFCURSOR);
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS NOT DISTINCT FROM NULL;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'foo'::REFCURSOR IS NOT DISTINCT FROM l FROM implicit_types;
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", * FROM J1_TBL AS t1 (a, b, c)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
 
 -- sqlfmt-corpus-separator --
 
@@ -543,20 +422,6 @@ SELECT (round(avg(k) OVER w1 + sum(w) OVER w2) + row_number() OVER w2 + d + min(
 -- sqlfmt-corpus-separator --
 
 SELECT *
-FROM system.information_schema.constraint_column_usage
-WHERE NOT (table_catalog = 'system' AND table_schema = 'public' AND table_name <> 'locations')
-ORDER BY TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME
-
--- sqlfmt-corpus-separator --
-
-SELECT *
-FROM system.information_schema.table_constraints
-WHERE NOT (table_catalog = 'system' AND table_schema = 'public' AND table_name <> 'locations')
-ORDER BY TABLE_NAME, CONSTRAINT_TYPE, CONSTRAINT_NAME
-
--- sqlfmt-corpus-separator --
-
-SELECT *
 FROM t_48638
 WHERE key IN (
   WITH v AS (
@@ -596,47 +461,11 @@ SELECT * FROM a WHERE (a1, a2) NOT IN (SELECT c1, d1 FROM c, d WHERE c3 = d3 or 
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM ab AS foo (foo1, foo2)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM ab AS foo (foo1, foo2, foo3)
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM ab WHERE (a, b) IN (SELECT x+1, y+1 FROM xy);
 
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM ab WHERE ROW(ROW(a, b)) IN (SELECT x+1 FROM xy);
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.c = 6
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo1 = 1
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo2 = 2
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2, foo3)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2, foo3, foo4)
 
 -- sqlfmt-corpus-separator --
 
@@ -656,14 +485,6 @@ SELECT * FROM foo FOR SHARE OF foo SKIP LOCKED
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM int WHERE a IS DISTINCT FROM 2
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM int WHERE a IS NOT DISTINCT FROM 2
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM kv WHERE (k,v) IN (SELECT * FROM kv)
 
 -- sqlfmt-corpus-separator --
@@ -672,50 +493,11 @@ SELECT * FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY avg(k) OVER w 
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM system.information_schema.role_table_grants
-WHERE
-(table_schema <> 'crdb_internal' OR table_name = 'node_build_info')
-AND NOT (table_schema = 'public' AND table_name <> 'locations');
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM system.information_schema.table_privileges
-WHERE
-  (table_schema <> 'crdb_internal' OR table_name = 'node_build_info') AND
-  NOT (table_catalog = 'system' AND table_schema = 'public' AND 'table_name' <> 'locations')
-ORDER BY table_schema, table_name, table_schema, grantee, privilege_type
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM t FOR SHARE FOR UPDATE OF t NOWAIT
 
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t FOR SHARE NOWAIT FOR UPDATE OF t
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t FOR SHARE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t FOR UPDATE NOWAIT
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t WHERE k = 1 FOR UPDATE NOWAIT
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t WHERE k = 2 FOR UPDATE NOWAIT
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t WHERE v = 9 FOR UPDATE NOWAIT
 
 -- sqlfmt-corpus-separator --
 
@@ -743,34 +525,6 @@ SELECT * FROM t1 WHERE ((t1.c0 COLLATE en) > ('c' COLLATE en)) IS NULL
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM t129145 WHERE b = 1 FOR UPDATE NOWAIT
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t129145 WHERE b = 1 FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t3 WHERE u = 2 FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t3 WHERE u = 2 LIMIT 1 FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM xyz WHERE z = 100 ORDER BY x FOR UPDATE NOWAIT
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM xyz WHERE z = 100 ORDER BY x FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT * from t7 FOR UPDATE SKIP LOCKED;
-
--- sqlfmt-corpus-separator --
-
 SELECT *, avg(k) OVER (w ORDER BY w) FROM kv WINDOW w AS (PARTITION BY v) ORDER BY 1
 
 -- sqlfmt-corpus-separator --
@@ -787,35 +541,7 @@ SELECT 1 = SOME(SELECT 1)
 
 -- sqlfmt-corpus-separator --
 
-SELECT 1 FOR KEY SHARE NOWAIT
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 FOR KEY SHARE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 FOR NO KEY UPDATE NOWAIT
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 FOR NO KEY UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 FOR SHARE NOWAIT
-
--- sqlfmt-corpus-separator --
-
 SELECT 1 FOR SHARE OF a, b
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 FOR SHARE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 FOR UPDATE NOWAIT
 
 -- sqlfmt-corpus-separator --
 
@@ -863,10 +589,6 @@ SELECT 1 FOR UPDATE OF public.a
 
 -- sqlfmt-corpus-separator --
 
-SELECT 1 FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
 SELECT 1 UNION SELECT 1 FOR UPDATE
 
 -- sqlfmt-corpus-separator --
@@ -895,106 +617,7 @@ SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY r
 
 -- sqlfmt-corpus-separator --
 
-SELECT a, b FROM nulls WHERE a IS DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b FROM nulls WHERE a IS NOT DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, first_value(a) OVER w, last_value(a) OVER w, nth_value(a, b) OVER w
-FROM t WINDOW w AS (ORDER BY c, b GROUPS BETWEEN 5 PRECEDING AND CURRENT ROW)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, first_value(a) OVER w, last_value(a) OVER w, nth_value(a, b) OVER w
-FROM t WINDOW w AS (ORDER BY c, b ROWS BETWEEN 5 PRECEDING AND CURRENT ROW)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, first_value(a) OVER w, last_value(a) OVER w, nth_value(a, b) OVER w
-FROM t WINDOW w AS (ORDER BY c, b)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, first_value(a) OVER w, last_value(a) OVER w, nth_value(a, b) OVER w
-FROM t WINDOW w AS (PARTITION BY a ORDER BY c)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, lag(a, b) OVER w, lead(a, b) OVER w FROM t WINDOW w AS (PARTITION BY a ORDER BY c)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, sum_int(a) OVER w, sum(a) OVER w, count(*) OVER w, count(a) OVER w, avg(a) OVER w,
-       max(a) OVER w, min(a) OVER w, bool_and(d) OVER w, bool_or(d) OVER w, concat_agg(e) OVER w
-FROM t WINDOW w AS (ORDER BY c RANGE BETWEEN 5 PRECEDING AND CURRENT ROW)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, sum_int(a) OVER w, sum(a) OVER w, count(*) OVER w, count(a) OVER w, avg(a) OVER w,
-       max(a) OVER w, min(a) OVER w, bool_and(d) OVER w, bool_or(d) OVER w, concat_agg(e) OVER w
-FROM t WINDOW w AS (ORDER BY c, b GROUPS BETWEEN 5 PRECEDING AND CURRENT ROW)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, sum_int(a) OVER w, sum(a) OVER w, count(*) OVER w, count(a) OVER w, avg(a) OVER w,
-       max(a) OVER w, min(a) OVER w, bool_and(d) OVER w, bool_or(d) OVER w, concat_agg(e) OVER w
-FROM t WINDOW w AS (ORDER BY c, b ROWS BETWEEN 5 PRECEDING AND CURRENT ROW)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, sum_int(a) OVER w, sum(a) OVER w, count(*) OVER w, count(a) OVER w, avg(a) OVER w,
-       max(a) OVER w, min(a) OVER w, bool_and(d) OVER w, bool_or(d) OVER w, concat_agg(e) OVER w
-FROM t WINDOW w AS (ORDER BY c, b)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, c, sum_int(a) OVER w, sum(a) OVER w, count(*) OVER w, count(a) OVER w, avg(a) OVER w,
-       max(a) OVER w, min(a) OVER w, bool_and(d) OVER w, bool_or(d) OVER w, concat_agg(e) OVER w
-FROM t WINDOW w AS (PARTITION BY a ORDER BY c)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, lag(a, b) OVER w, lead(a, b) OVER w FROM t WINDOW w AS (ORDER BY a, b)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, rank() OVER w, dense_rank() OVER w, percent_rank() OVER w, cume_dist() OVER w FROM t WINDOW w AS ()
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, rank() OVER w, dense_rank() OVER w, percent_rank() OVER w, cume_dist() OVER w FROM t WINDOW w AS (ORDER BY a)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, rank() OVER w, dense_rank() OVER w, percent_rank() OVER w, cume_dist() OVER w FROM t WINDOW w AS (PARTITION BY a ORDER BY b)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b, rank() OVER w, dense_rank() OVER w, percent_rank() OVER w, cume_dist() OVER w FROM t WINDOW w AS (PARTITION BY a)
-
--- sqlfmt-corpus-separator --
-
 SELECT a, b, rowid FROM ab UNION VALUES (1, 2, 3);
-
--- sqlfmt-corpus-separator --
-
-SELECT a, max(a) OVER w, min(a) OVER w FROM t
-WINDOW w AS (ORDER BY a DESC RANGE BETWEEN 10 PRECEDING AND UNBOUNDED FOLLOWING);
-
--- sqlfmt-corpus-separator --
-
-SELECT ab.rowid FROM ab AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT abc.b FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT abc.foo1 FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
 
@@ -1034,19 +657,11 @@ SELECT avg(k) OVER (x) FROM kv WINDOW w AS ()
 
 -- sqlfmt-corpus-separator --
 
-SELECT avg(k) OVER w FROM kv WINDOW w AS (), w AS ()
-
--- sqlfmt-corpus-separator --
-
 SELECT avg(k) OVER w FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
 SELECT avg(k) OVER w, avg(k) OVER w + 1 FROM kv WINDOW w AS (PARTITION BY v ORDER BY w) ORDER BY k
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(k) OVER x FROM kv WINDOW w AS ()
 
 -- sqlfmt-corpus-separator --
 
@@ -1062,36 +677,7 @@ SELECT avg(price) OVER (w) FROM products WINDOW w AS (ROWS 1 PRECEDING)
 
 -- sqlfmt-corpus-separator --
 
-SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ORDER BY group_id GROUPS 1.5 PRECEDING)
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN 1.5 PRECEDING AND UNBOUNDED FOLLOWING)
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ORDER BY group_id GROUPS BETWEEN UNBOUNDED PRECEDING AND 1.5 FOLLOWING)
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ROWS 1.5 PRECEDING)
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ROWS BETWEEN 1.5 PRECEDING AND UNBOUNDED FOLLOWING)
-
--- sqlfmt-corpus-separator --
-
-SELECT avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY group_name ROWS BETWEEN UNBOUNDED PRECEDING AND 1.5 FOLLOWING)
-
--- sqlfmt-corpus-separator --
-
 SELECT avg(price) OVER w1, avg(price) OVER w2, avg(price) OVER w1 FROM products WINDOW w1 AS (PARTITION BY group_name ORDER BY group_id ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING), w2 AS (ORDER BY group_id ROWS 1 PRECEDING) ORDER BY group_id
-
--- sqlfmt-corpus-separator --
-
-SELECT c, first_value(c) OVER w, last_value(c) OVER w, nth_value(c, 2) OVER w
-FROM t WINDOW w AS (ORDER BY c RANGE BETWEEN 5 PRECEDING AND CURRENT ROW)
 
 -- sqlfmt-corpus-separator --
 
@@ -1104,14 +690,6 @@ SELECT d3,d1,d2 FROM d WHERE (d1,d3) NOT IN (SELECT b1,b2 FROM b WHERE EXISTS (S
 -- sqlfmt-corpus-separator --
 
 SELECT f::DECIMAL + round(max(k) * w * avg(d) OVER wind) + (lead(f, 2, 17::FLOAT) OVER wind::DECIMAL / d * row_number() OVER wind) FROM kv GROUP BY k, w, f, d WINDOW wind AS (ORDER BY k) ORDER BY k
-
--- sqlfmt-corpus-separator --
-
-SELECT foo.a FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT foo1, foo.foo1, b, foo.c FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
 
@@ -1143,43 +721,7 @@ SELECT k, stddev(d) OVER w FROM kv WINDOW w as (PARTITION BY v) ORDER BY varianc
 
 -- sqlfmt-corpus-separator --
 
-SELECT k, u FROM t3 WHERE u = 2 FOR UPDATE SKIP LOCKED
-
--- sqlfmt-corpus-separator --
-
 SELECT k, v + w, round(rank() OVER wind + lead(k, 3, v) OVER wind + lag(w, 1, 2) OVER wind + f::DECIMAL + avg(d) OVER wind)::INT, round(row_number() OVER wind::FLOAT + round(f) + dense_rank() OVER wind::FLOAT)::INT FROM kv WINDOW wind as (PARTITION BY v ORDER BY k) ORDER BY k
-
--- sqlfmt-corpus-separator --
-
-SELECT l IS DISTINCT FROM NULL FROM implicit_types;
-
--- sqlfmt-corpus-separator --
-
-SELECT l IS NOT DISTINCT FROM NULL FROM implicit_types;
-
--- sqlfmt-corpus-separator --
-
-SELECT lag(x) OVER w, lead(x) OVER w, first_value(x) OVER w, last_value(x) OVER w FROM t WINDOW w AS (ORDER BY x);
-
--- sqlfmt-corpus-separator --
-
-SELECT lag(y) OVER w, lead(y) OVER w, first_value(y) OVER w, last_value(y) OVER w FROM t WINDOW w AS ();
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY price ORDER BY group_id GROUPS -1 PRECEDING)
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY price ORDER BY group_id GROUPS BETWEEN 1 FOLLOWING AND -1 FOLLOWING)
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY price ROWS -1 PRECEDING)
-
--- sqlfmt-corpus-separator --
-
-SELECT price, avg(price) OVER w AS avg_price FROM products WINDOW w AS (PARTITION BY price ROWS BETWEEN 1 FOLLOWING AND -1 FOLLOWING)
 
 -- sqlfmt-corpus-separator --
 
@@ -1227,20 +769,7 @@ SELECT round(row_number() OVER w1 + lead(k, v, w) OVER w2 + avg(k) OVER w1), (la
 
 -- sqlfmt-corpus-separator --
 
-SELECT rowid, foo.rowid FROM ab AS foo (foo1, foo2)
-
--- sqlfmt-corpus-separator --
-
 SELECT s, w + k, (sum(w) OVER wind + avg(d) OVER wind), (min(w) OVER wind + d), v FROM kv WINDOW wind AS (ORDER BY w, k) ORDER BY k
-
--- sqlfmt-corpus-separator --
-
-SELECT table_catalog, table_schema, table_name, table_type, is_insertable_into
-FROM system.information_schema.tables
-WHERE
-(table_schema <> 'crdb_internal' OR table_name = 'node_build_info')
-AND NOT (table_schema = 'public' AND table_name <> 'locations')
-ORDER BY table_name, table_schema
 
 -- sqlfmt-corpus-separator --
 

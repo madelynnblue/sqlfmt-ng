@@ -82,22 +82,6 @@ SELECT 'abc'::char(4) ~~ 'abc';
 
 -- sqlfmt-corpus-separator --
 
-SELECT 'x' AS "xxx", * FROM J1_TBL AS t1 (a, b, c)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
-
--- sqlfmt-corpus-separator --
-
 SELECT (1, 2) = ALL(SELECT 1, 2)
 
 -- sqlfmt-corpus-separator --
@@ -168,42 +152,6 @@ SELECT (map_agg(a::TEXT, a) FILTER (WHERE a IS NOT NULL))::TEXT FROM t1
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM ab AS foo (foo1, foo2)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM ab AS foo (foo1, foo2, foo3)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.c = 6
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo1 = 1
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo2 = 2
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2, foo3)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc AS foo (foo1, foo2, foo3, foo4)
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM abc WHERE a = ANY(SELECT a FROM abc WHERE b = 10)
 
 -- sqlfmt-corpus-separator --
@@ -212,19 +160,7 @@ SELECT * FROM c WHERE bill = ANY(SELECT ship FROM o);
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM int WHERE a IS DISTINCT FROM 2
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM int WHERE a IS NOT DISTINCT FROM 2
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM kv WHERE (k,v) IN (SELECT * FROM kv)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM t3 WHERE NOT ((t3.c0 != 0.6) AND (t3.c0 != -0.1) AND (t3.c0 != 0.1) AND (-0.1 != t3.c0));
 
 -- sqlfmt-corpus-separator --
 
@@ -252,58 +188,6 @@ SELECT 1 = SOME(SELECT 1)
 
 -- sqlfmt-corpus-separator --
 
-SELECT 1 IS DISTINCT FROM 'hello'
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS DISTINCT FROM 1
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS DISTINCT FROM 1.0
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS DISTINCT FROM 2
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS NOT DISTINCT FROM 'hello'
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS NOT DISTINCT FROM 1
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS NOT DISTINCT FROM 1.0
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS NOT DISTINCT FROM 2
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 IS NOT DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT 1::int4 IS DISTINCT FROM 1::int8
-
--- sqlfmt-corpus-separator --
-
-SELECT 1::int4 IS DISTINCT FROM 2::int8
-
--- sqlfmt-corpus-separator --
-
-SELECT 1::int4 IS NOT DISTINCT FROM 1::int8
-
--- sqlfmt-corpus-separator --
-
 SELECT ARRAY[1] UNION ALL SELECT ARRAY['foo']
 
 -- sqlfmt-corpus-separator --
@@ -317,22 +201,6 @@ SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz
 -- sqlfmt-corpus-separator --
 
 SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY row_number() OVER(ORDER BY (pk1, pk2)) DESC
-
--- sqlfmt-corpus-separator --
-
-SELECT NULL IS DISTINCT FROM 1
-
--- sqlfmt-corpus-separator --
-
-SELECT NULL IS DISTINCT FROM NULL
-
--- sqlfmt-corpus-separator --
-
-SELECT NULL IS NOT DISTINCT FROM 1
-
--- sqlfmt-corpus-separator --
-
-SELECT NULL IS NOT DISTINCT FROM NULL
 
 -- sqlfmt-corpus-separator --
 
@@ -489,14 +357,6 @@ ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
-SELECT abc.b FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT abc.foo1 FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
 SELECT array_agg(a) FILTER (WHERE a IS NOT NULL) FROM t1
 
 -- sqlfmt-corpus-separator --
@@ -515,14 +375,6 @@ UNION
 SELECT f1 FROM INT4_TBL
   WHERE f1 BETWEEN 0 AND 1000000
 ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
-SELECT foo.a FROM abc AS foo (foo1)
-
--- sqlfmt-corpus-separator --
-
-SELECT foo1, foo.foo1, b, foo.c FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
 

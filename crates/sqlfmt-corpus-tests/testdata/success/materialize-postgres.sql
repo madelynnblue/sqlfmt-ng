@@ -24188,6 +24188,22 @@ SELECT 'wifi' LIKE '_i_i'
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'x' AS "xxx", * FROM J1_TBL AS t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
+
+-- sqlfmt-corpus-separator --
+
 SELECT 'x' LIKE repeat('x', 367416)
 
 -- sqlfmt-corpus-separator --
@@ -25390,6 +25406,42 @@ SELECT * FROM a UNION ALL SELECT * FROM b
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM ab AS foo (foo1, foo2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.c = 6
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo1 = 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo2 = 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2, foo3, foo4)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM abc WHERE a < ALL(SELECT a FROM abc WHERE a >= 2)
 
 -- sqlfmt-corpus-separator --
@@ -25475,6 +25527,14 @@ SELECT * FROM dateish WHERE a >= DATE '1999-01-01' + INTERVAL '2' YEAR
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM dateish WHERE a >= DATE '1999-12-31' + INTERVAL '2' DAY
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM int WHERE a IS DISTINCT FROM 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM int WHERE a IS NOT DISTINCT FROM 2
 
 -- sqlfmt-corpus-separator --
 
@@ -25572,6 +25632,10 @@ SELECT * FROM t2 UNION ALL SELECT * FROM t1 EXCEPT ALL SELECT * FROM t1
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t3 WHERE NOT (((t3.c0)::INT != 0));
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t3 WHERE NOT ((t3.c0 != 0.6) AND (t3.c0 != -0.1) AND (t3.c0 != 0.1) AND (-0.1 != t3.c0));
 
 -- sqlfmt-corpus-separator --
 
@@ -26317,6 +26381,46 @@ SELECT 1 IN (SELECT x FROM xyz ORDER BY x DESC)
 -- sqlfmt-corpus-separator --
 
 SELECT 1 INTERSECT SELECT '3'
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS DISTINCT FROM 'hello'
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS DISTINCT FROM 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS DISTINCT FROM 1.0
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS DISTINCT FROM 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS DISTINCT FROM NULL
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS NOT DISTINCT FROM 'hello'
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS NOT DISTINCT FROM 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS NOT DISTINCT FROM 1.0
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS NOT DISTINCT FROM 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS NOT DISTINCT FROM NULL
 
 -- sqlfmt-corpus-separator --
 
@@ -27135,6 +27239,18 @@ SELECT 1::decimal(2, 2)
 -- sqlfmt-corpus-separator --
 
 SELECT 1::int
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1::int4 IS DISTINCT FROM 1::int8
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1::int4 IS DISTINCT FROM 2::int8
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1::int4 IS NOT DISTINCT FROM 1::int8
 
 -- sqlfmt-corpus-separator --
 
@@ -30331,6 +30447,22 @@ SELECT NULL AS "a", CAST(NULL AS int4range) AS "b";
 
 -- sqlfmt-corpus-separator --
 
+SELECT NULL IS DISTINCT FROM 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT NULL IS DISTINCT FROM NULL
+
+-- sqlfmt-corpus-separator --
+
+SELECT NULL IS NOT DISTINCT FROM 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT NULL IS NOT DISTINCT FROM NULL
+
+-- sqlfmt-corpus-separator --
+
 SELECT NULL, NULL::t;
 
 -- sqlfmt-corpus-separator --
@@ -30949,6 +31081,14 @@ SELECT a::string[]::int[]::text[]::float8[] FROM array_t2;
 -- sqlfmt-corpus-separator --
 
 SELECT a::text from t
+
+-- sqlfmt-corpus-separator --
+
+SELECT abc.b FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT abc.foo1 FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
 
@@ -34149,6 +34289,14 @@ SELECT floor(cast(1 AS bigint))
 -- sqlfmt-corpus-separator --
 
 SELECT fnv32(NULL::STRING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT foo.a FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT foo1, foo.foo1, b, foo.c FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
 

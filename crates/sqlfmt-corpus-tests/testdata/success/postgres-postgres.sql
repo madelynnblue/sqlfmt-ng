@@ -4170,6 +4170,25 @@ SELECT *
 
 -- sqlfmt-corpus-separator --
 
+SELECT *
+  FROM J1_TBL AS t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+  FROM J1_TBL t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+  FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM INT2_TBL AS f(a, b)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM INT8_TBL WHERE '123'::int2 < q1
 
 -- sqlfmt-corpus-separator --
@@ -4466,6 +4485,10 @@ SELECT * FROM pxtest_rowlock WHERE id = 1 FOR SHARE
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM pxtest_rowlock WHERE id = 1 FOR UPDATE NOWAIT
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM rls_test_src FOR KEY SHARE
 
 -- sqlfmt-corpus-separator --
@@ -4673,6 +4696,14 @@ SELECT 1 FROM pg_statistic_ext WHERE stxrelid = 'stxdinp'::regclass
 
 -- sqlfmt-corpus-separator --
 
+SELECT 1 IS DISTINCT FROM 2 as "yes"
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IS NOT DISTINCT FROM 2 as "no"
+
+-- sqlfmt-corpus-separator --
+
 SELECT 1.0::float8 AS two UNION ALL SELECT 1 ORDER BY 1
 
 -- sqlfmt-corpus-separator --
@@ -4758,6 +4789,22 @@ SELECT 1::oid8::oid
 -- sqlfmt-corpus-separator --
 
 SELECT 1::oid::oid8
+
+-- sqlfmt-corpus-separator --
+
+SELECT 2 IS DISTINCT FROM 2 as "no"
+
+-- sqlfmt-corpus-separator --
+
+SELECT 2 IS DISTINCT FROM null as "yes"
+
+-- sqlfmt-corpus-separator --
+
+SELECT 2 IS NOT DISTINCT FROM 2 as "yes"
+
+-- sqlfmt-corpus-separator --
+
+SELECT 2 IS NOT DISTINCT FROM null as "no"
 
 -- sqlfmt-corpus-separator --
 
@@ -4932,6 +4979,10 @@ SELECT COUNT(*) OVER () FROM tenk1 WHERE unique2 < 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT COUNT(*) OVER w FROM tenk1 WHERE unique2 < 10 WINDOW w AS ()
+
+-- sqlfmt-corpus-separator --
+
 SELECT COUNT(a), COUNT(1) FILTER(WHERE a=1) FROM heapmv
 
 -- sqlfmt-corpus-separator --
@@ -5002,6 +5053,24 @@ SELECT DATE_TRUNC('MILLENNIUM', TIMESTAMP '1970-03-20 04:30:00.00000')
 
 SELECT DISTINCT ON (four) four,two
    FROM tenk1 WHERE four = 0 ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON (string4) string4, two, ten
+   FROM onek
+   ORDER BY string4 using <, two using >, ten using <
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON (string4, ten) string4, ten, two
+   FROM onek
+   ORDER BY string4 using <, ten using >, two using <
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON (string4, ten) string4, two, ten
+   FROM onek
+   ORDER BY string4 using <, two using <, ten using <
 
 -- sqlfmt-corpus-separator --
 
@@ -6295,6 +6364,13 @@ WHERE a1.amopopr = o1.oid AND a1.amoppurpose = 's' AND
 
 -- sqlfmt-corpus-separator --
 
+SELECT a1.amopfamily, a1.amopstrategy
+FROM pg_amop as a1
+WHERE NOT ((a1.amoppurpose = 's' AND a1.amopsortfamily = 0) OR
+           (a1.amoppurpose = 'o' AND a1.amopsortfamily <> 0))
+
+-- sqlfmt-corpus-separator --
+
 SELECT a1.amopfamily, a1.amopstrategy, a1.amopopr
 FROM pg_amop AS a1
 WHERE NOT EXISTS(SELECT 1 FROM pg_opclass AS c1
@@ -7414,6 +7490,10 @@ SELECT count(*) FROM test_tsvector WHERE a @@ any ('{wr,qh}')
 
 -- sqlfmt-corpus-separator --
 
+SELECT count(*) OVER w FROM tenk1 WINDOW w AS (ORDER BY unique1), w AS (ORDER BY unique1)
+
+-- sqlfmt-corpus-separator --
+
 SELECT count(*) from testjsonb  WHERE j->'array' ? '5'::text
 
 -- sqlfmt-corpus-separator --
@@ -8097,6 +8177,10 @@ SELECT depname, empno, salary, sum(salary) OVER (PARTITION BY depname) FROM emps
 
 -- sqlfmt-corpus-separator --
 
+SELECT depname, empno, salary, sum(salary) OVER w FROM empsalary WINDOW w AS (PARTITION BY depname)
+
+-- sqlfmt-corpus-separator --
+
 SELECT descr, substring(make_tuple_indirect(indtoasttest)::text, 1, 200) FROM indtoasttest
 
 -- sqlfmt-corpus-separator --
@@ -8399,6 +8483,10 @@ SELECT f1,
 
 -- sqlfmt-corpus-separator --
 
+SELECT f1, f1 IS DISTINCT FROM f1 as "false" FROM disttable
+
+-- sqlfmt-corpus-separator --
+
 SELECT f1, f1::INTERVAL DAY TO MINUTE AS "minutes",
   (f1 + INTERVAL '1 month')::INTERVAL MONTH::INTERVAL YEAR AS "years"
   FROM interval_tbl
@@ -8455,6 +8543,32 @@ SELECT few.dataa, count(*), min(id), max(id), unnest('{1,1,3}'::int[]) FROM few 
 -- sqlfmt-corpus-separator --
 
 SELECT first_value(ten) OVER (PARTITION BY four ORDER BY ten), ten, four FROM tenk1 WHERE unique2 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT first_value(unique1) over (ORDER BY four rows between current row and 2 following exclude current row),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT first_value(unique1) over (ORDER BY four rows between current row and 2 following exclude group),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT first_value(unique1) over (ORDER BY four rows between current row and 2 following exclude ties),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT first_value(unique1) over w,
+	nth_value(unique1, 2) over w AS nth_2,
+	last_value(unique1) over w, unique1, four
+FROM tenk1 WHERE unique1 < 10
+WINDOW w AS (order by four range between current row and unbounded following)
 
 -- sqlfmt-corpus-separator --
 
@@ -8570,6 +8684,10 @@ WHERE attrelid = 'mytab'::regclass AND attnum > 0
 
 -- sqlfmt-corpus-separator --
 
+SELECT four FROM tenk1 WHERE FALSE WINDOW w AS (PARTITION BY ten)
+
+-- sqlfmt-corpus-separator --
+
 SELECT four, ten, SUM(SUM(four)) OVER (PARTITION BY four), AVG(ten) FROM tenk1
 GROUP BY four, ten ORDER BY four, ten
 
@@ -8612,6 +8730,10 @@ SELECT gcd((-9223372036854775808)::int8, 0::int8)
 -- sqlfmt-corpus-separator --
 
 SELECT generate_series(1, 100) OVER () FROM empsalary
+
+-- sqlfmt-corpus-separator --
+
+SELECT generate_series(1,3) IS DISTINCT FROM 2
 
 -- sqlfmt-corpus-separator --
 
@@ -8933,6 +9055,34 @@ SELECT i.f1, i.f1 / int4 '2' AS x FROM INT2_TBL i
 -- sqlfmt-corpus-separator --
 
 SELECT i.f1, i.f1 / int4 '2' AS x FROM INT4_TBL i
+
+-- sqlfmt-corpus-separator --
+
+SELECT id FROM dist_tab WHERE val_nn IS DISTINCT FROM 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT id FROM dist_tab WHERE val_nn IS DISTINCT FROM NULL::INT
+
+-- sqlfmt-corpus-separator --
+
+SELECT id FROM dist_tab WHERE val_nn IS NOT DISTINCT FROM 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT id FROM dist_tab WHERE val_nn IS NOT DISTINCT FROM NULL::INT
+
+-- sqlfmt-corpus-separator --
+
+SELECT id FROM dist_tab WHERE val_null IS DISTINCT FROM 20
+
+-- sqlfmt-corpus-separator --
+
+SELECT id FROM dist_tab WHERE val_null IS DISTINCT FROM NULL::INT
+
+-- sqlfmt-corpus-separator --
+
+SELECT id FROM dist_tab WHERE val_null IS NOT DISTINCT FROM NULL::INT
 
 -- sqlfmt-corpus-separator --
 
@@ -9638,6 +9788,30 @@ SELECT json_build_array('a',1,'b',1.2,'c',true,'d',null,'e',json '{"x": 3, "y": 
 
 -- sqlfmt-corpus-separator --
 
+SELECT json_build_array(VARIADIC '{1,2,3,4}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_array(VARIADIC '{1,2,3,4}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_array(VARIADIC '{a,b,c}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_array(VARIADIC '{{1,4},{2,5},{3,6}}'::int[][])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_array(VARIADIC '{}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_array(VARIADIC NULL::text[])
+
+-- sqlfmt-corpus-separator --
+
 SELECT json_build_object('a',1,'b',1.2,'c',true,'d',null,'e',json '{"x": 3, "y": [1,2,3]}')
 
 -- sqlfmt-corpus-separator --
@@ -9651,6 +9825,30 @@ SELECT json_build_object('{a,b,c}'::text[])
 -- sqlfmt-corpus-separator --
 
 SELECT json_build_object('{a,b,c}'::text[], '{d,e,f}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object(VARIADIC '{1,2,3,4}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object(VARIADIC '{1,2,3,4}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object(VARIADIC '{a,b,c}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object(VARIADIC '{{1,4},{2,5},{3,6}}'::int[][])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object(VARIADIC '{}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object(VARIADIC NULL::text[])
 
 -- sqlfmt-corpus-separator --
 
@@ -9788,6 +9986,30 @@ SELECT jsonb_build_array('a',1,'b',1.2,'c',true,'d',null,'e',json '{"x": 3, "y":
 
 -- sqlfmt-corpus-separator --
 
+SELECT jsonb_build_array(VARIADIC '{1,2,3,4}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_array(VARIADIC '{1,2,3,4}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_array(VARIADIC '{a,b,c}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_array(VARIADIC '{{1,4},{2,5},{3,6}}'::int[][])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_array(VARIADIC '{}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_array(VARIADIC NULL::text[])
+
+-- sqlfmt-corpus-separator --
+
 SELECT jsonb_build_object('a',1,'b',1.2,'c',true,'d',null,'e',json '{"x": 3, "y": [1,2,3]}')
 
 -- sqlfmt-corpus-separator --
@@ -9801,6 +10023,30 @@ SELECT jsonb_build_object('{a,b,c}'::text[])
 -- sqlfmt-corpus-separator --
 
 SELECT jsonb_build_object('{a,b,c}'::text[], '{d,e,f}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_object(VARIADIC '{1,2,3,4}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_object(VARIADIC '{1,2,3,4}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_object(VARIADIC '{a,b,c}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_object(VARIADIC '{{1,4},{2,5},{3,6}}'::int[][])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_object(VARIADIC '{}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_object(VARIADIC NULL::text[])
 
 -- sqlfmt-corpus-separator --
 
@@ -9936,6 +10182,30 @@ SELECT last_seq_scan, last_idx_scan FROM pg_stat_all_tables WHERE relid = 'test_
 -- sqlfmt-corpus-separator --
 
 SELECT last_value(four) OVER (ORDER BY ten), ten, four FROM tenk1 WHERE unique2 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT last_value(unique1) over (ORDER BY four rows between current row and 2 following exclude current row),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT last_value(unique1) over (ORDER BY four rows between current row and 2 following exclude group),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT last_value(unique1) over (ORDER BY four rows between current row and 2 following exclude ties),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT last_value(unique1) over (ORDER BY four rows between current row and 9223372036854775807 following exclude current row),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
@@ -10350,6 +10620,14 @@ SELECT ntile(NULL) OVER (ORDER BY ten, four), ten, four FROM tenk1 LIMIT 2
 
 -- sqlfmt-corpus-separator --
 
+SELECT null IS DISTINCT FROM null as "no"
+
+-- sqlfmt-corpus-separator --
+
+SELECT null IS NOT DISTINCT FROM null as "yes"
+
+-- sqlfmt-corpus-separator --
+
 SELECT num_nonnulls(1, 2, NULL::text, NULL::point, '', int8 '9', 1.0 / NULL)
 
 -- sqlfmt-corpus-separator --
@@ -10362,6 +10640,22 @@ SELECT num_nonnulls(NULL::text, NULL::int)
 
 -- sqlfmt-corpus-separator --
 
+SELECT num_nonnulls(VARIADIC '{"1","2","3","4"}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT num_nonnulls(VARIADIC '{1,2,NULL,3}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT num_nonnulls(VARIADIC '{}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT num_nonnulls(VARIADIC NULL::text[])
+
+-- sqlfmt-corpus-separator --
+
 SELECT num_nulls(1, 2, NULL::text, NULL::point, '', int8 '9', 1.0 / NULL)
 
 -- sqlfmt-corpus-separator --
@@ -10371,6 +10665,22 @@ SELECT num_nulls(NULL::text)
 -- sqlfmt-corpus-separator --
 
 SELECT num_nulls(NULL::text, NULL::int)
+
+-- sqlfmt-corpus-separator --
+
+SELECT num_nulls(VARIADIC '{"1","2","3","4"}'::text[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT num_nulls(VARIADIC '{1,2,NULL,3}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT num_nulls(VARIADIC '{}'::int[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT num_nulls(VARIADIC NULL::text[])
 
 -- sqlfmt-corpus-separator --
 
@@ -10453,6 +10763,12 @@ WHERE o1.oprcanmerge AND NOT EXISTS
   (SELECT 1 FROM pg_amop
    WHERE amopmethod = (SELECT oid FROM pg_am WHERE amname = 'btree') AND
          amopopr = o1.oid AND amopstrategy = 3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT o1.oid, o1.oprname FROM pg_operator AS o1
+WHERE (o1.oprcanmerge OR o1.oprcanhash) AND NOT
+    (o1.oprkind = 'b' AND o1.oprresult = 'bool'::regtype AND o1.oprcom != 0)
 
 -- sqlfmt-corpus-separator --
 
@@ -13150,6 +13466,15 @@ SELECT sum(orbit) OVER () FROM planets
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(salary) OVER w, rank() OVER w FROM empsalary WINDOW w AS (PARTITION BY depname ORDER BY salary DESC)
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(salary) OVER w1, count(*) OVER w2
+FROM empsalary WINDOW w1 AS (ORDER BY salary), w2 AS (ORDER BY salary)
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(salary),
 	row_number() OVER (ORDER BY depname),
 	sum(sum(salary)) OVER (ORDER BY depname DESC)
@@ -13213,6 +13538,24 @@ FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(unique1) over (order by four groups between 2 preceding and 1 following
+	exclude current row), unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between 2 preceding and 1 following
+	exclude group), unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four groups between 2 preceding and 1 following
+	exclude ties), unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(unique1) over (order by four groups between 2 preceding and 1 following),
 	unique1, four
 FROM tenk1 WHERE unique1 < 10
@@ -13249,7 +13592,25 @@ FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(unique1) over (order by four range between 2::int8 preceding and 1::int2 preceding exclude current row),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four range between 2::int8 preceding and 1::int2 preceding exclude group),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(unique1) over (order by four range between 2::int8 preceding and 1::int2 preceding exclude no others),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four range between 2::int8 preceding and 1::int2 preceding exclude ties),
 	unique1, four
 FROM tenk1 WHERE unique1 < 10
 
@@ -13261,14 +13622,50 @@ FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(unique1) over (order by four range between 2::int8 preceding and 6::int2 following exclude group),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (order by four range between 2::int8 preceding and 6::int2 following exclude ties),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(unique1) over (order by four range between current row and unbounded following),
 	unique1, four
 FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(unique1) over (partition by four order by unique1 range between 5::int8 preceding and 6::int2 following
+	exclude current row),unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(unique1) over (partition by four order by unique1 range between 5::int8 preceding and 6::int2 following),
 	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (partition by ten
+	order by four groups between 0 preceding and 0 following exclude current row), unique1, four, ten
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (partition by ten
+	order by four groups between 0 preceding and 0 following exclude group), unique1, four, ten
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (partition by ten
+	order by four groups between 0 preceding and 0 following exclude ties), unique1, four, ten
 FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
@@ -13297,7 +13694,25 @@ FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(unique1) over (rows between 2 preceding and 2 following exclude current row),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 2 preceding and 2 following exclude group),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(unique1) over (rows between 2 preceding and 2 following exclude no others),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between 2 preceding and 2 following exclude ties),
 	unique1, four
 FROM tenk1 WHERE unique1 < 10
 
@@ -13310,6 +13725,12 @@ FROM tenk1 WHERE unique1 < 10
 -- sqlfmt-corpus-separator --
 
 SELECT sum(unique1) over (rows between 9223372036854775807 following and 1 following),
+	unique1, four
+FROM tenk1 WHERE unique1 < 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(unique1) over (rows between current row and 9223372036854775807 following exclude current row),
 	unique1, four
 FROM tenk1 WHERE unique1 < 10
 
@@ -13377,6 +13798,12 @@ SELECT t1.a, t2.b FROM prt1 t1, prt2 t2 WHERE t1::text = t2::text AND t1.a = t2.
 
 -- sqlfmt-corpus-separator --
 
+SELECT t1.a, t2.e
+  FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
+  WHERE t1.a = t2.d
+
+-- sqlfmt-corpus-separator --
+
 SELECT t1.oid, t1.typname
 FROM pg_type as t1
 WHERE t1.typbyval AND
@@ -13398,6 +13825,43 @@ SELECT t1.oid, t1.typname
 FROM pg_type as t1
 WHERE t1.typtype = 'r' AND
    NOT EXISTS(SELECT 1 FROM pg_range r WHERE rngtypid = t1.oid)
+
+-- sqlfmt-corpus-separator --
+
+SELECT t1.oid, t1.typname,
+       t1.typelem, t1.typlen, t1.typbyval
+FROM pg_type AS t1
+WHERE t1.typsubscript = 'array_subscript_handler'::regproc AND NOT
+    (t1.typelem != 0 AND t1.typlen = -1 AND NOT t1.typbyval)
+
+-- sqlfmt-corpus-separator --
+
+SELECT t1.oid, t1.typname,
+       t1.typelem, t1.typlen, t1.typbyval
+FROM pg_type AS t1
+WHERE t1.typsubscript = 'raw_array_subscript_handler'::regproc AND NOT
+    (t1.typelem != 0 AND t1.typlen > 0 AND NOT t1.typbyval)
+
+-- sqlfmt-corpus-separator --
+
+SELECT t1.oid, t1.typname, p1.oid, p1.proname
+FROM pg_type AS t1, pg_proc AS p1
+WHERE t1.typoutput = p1.oid AND NOT
+    (p1.prorettype = 'cstring'::regtype AND NOT p1.proretset)
+
+-- sqlfmt-corpus-separator --
+
+SELECT t1.oid, t1.typname, p1.oid, p1.proname
+FROM pg_type AS t1, pg_proc AS p1
+WHERE t1.typsend = p1.oid AND NOT
+    (p1.prorettype = 'bytea'::regtype AND NOT p1.proretset)
+
+-- sqlfmt-corpus-separator --
+
+SELECT t1.oid, t1.typname, t2.oid, t2.typname
+FROM pg_type AS t1, pg_type AS t2
+WHERE t1.typelem = t2.oid AND NOT
+    (t1.typmodin = t2.typmodin AND t1.typmodout = t2.typmodout)
 
 -- sqlfmt-corpus-separator --
 
@@ -13609,6 +14073,11 @@ SELECT tanh(float8 'nan')
 
 SELECT ten, two, sum(hundred) AS gsum, sum(sum(hundred)) OVER (PARTITION BY two ORDER BY ten) AS wsum
 FROM tenk1 GROUP BY ten, two
+
+-- sqlfmt-corpus-separator --
+
+SELECT ten, two, sum(hundred) AS gsum, sum(sum(hundred)) OVER win AS wsum
+FROM tenk1 GROUP BY ten, two WINDOW win AS (PARTITION BY two ORDER BY ten)
 
 -- sqlfmt-corpus-separator --
 
@@ -18017,6 +18486,10 @@ where not exists (select 1 from prtx2
 
 -- sqlfmt-corpus-separator --
 
+select * from rtest_vcomp where size_in_cm > 10.0 order by size_in_cm using >
+
+-- sqlfmt-corpus-separator --
+
 select * from sj p
 where exists (select * from sj q
               where q.a = p.a and q.b < 10)
@@ -18286,6 +18759,12 @@ order by attrelid::regclass::text
 
 -- sqlfmt-corpus-separator --
 
+select avg((select avg(a1.col1 order by (select avg(a2.col2) from tenk1 a3))
+            from tenk1 a1(col1)))
+from tenk1 a2(col2)
+
+-- sqlfmt-corpus-separator --
+
 select avg(unique1::int8) from tenk1
 
 -- sqlfmt-corpus-separator --
@@ -18319,6 +18798,10 @@ select cast (fullname as text) from fullname
 -- sqlfmt-corpus-separator --
 
 select concat('|', 'a'::text, 'b', 'c')
+
+-- sqlfmt-corpus-separator --
+
+select concat(variadic '{}'::int[]) = ''
 
 -- sqlfmt-corpus-separator --
 
@@ -18706,10 +19189,59 @@ from t1 where f1 = f2
 
 -- sqlfmt-corpus-separator --
 
+select first_value(salary) over(order by enroll_date groups between 1 following and 3 following
+	exclude current row),
+	lead(salary) over(order by enroll_date groups between 1 following and 3 following exclude ties),
+	nth_value(salary, 1) over(order by enroll_date groups between 1 following and 3 following
+	exclude ties),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
 select first_value(salary) over(order by enroll_date groups between 1 preceding and 1 following),
 	lead(salary) over(order by enroll_date groups between 1 preceding and 1 following),
 	nth_value(salary, 1) over(order by enroll_date groups between 1 preceding and 1 following),
 	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select first_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following
+	exclude current row),
+	last_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following
+	exclude current row),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select first_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following
+	exclude group),
+	last_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following
+	exclude group),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select first_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following
+	exclude ties),
+	last_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following
+	exclude ties),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select first_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following
+	exclude ties),
+	last_value(salary) over(order by enroll_date range between unbounded preceding and '1 year'::interval following),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select first_value(salary) over(order by salary range between 1000 following and 3000 following
+	exclude current row),
+	lead(salary) over(order by salary range between 1000 following and 3000 following exclude ties),
+	nth_value(salary, 1) over(order by salary range between 1000 following and 3000 following
+	exclude ties),
+	salary from empsalary
 
 -- sqlfmt-corpus-separator --
 
@@ -18790,6 +19322,389 @@ select has_column_privilege('pg_authid',99::int2,'select')
 -- sqlfmt-corpus-separator --
 
 select has_column_privilege(9999,99::int2,'select')
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float4, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float4 range between
+             'inf' following and 'inf' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float4, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float4 range between
+             'inf' preceding and 'inf' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float4, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float4 range between
+             'inf' preceding and 'inf' preceding)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float4, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float4 range between
+             1 preceding and 1 following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float4, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float4 range between
+             1 preceding and 1.1::float4 following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float4, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float4 range between
+             1.1 preceding and 'NaN' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float8, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float8 range between
+             'inf' following and 'inf' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float8, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float8 range between
+             'inf' preceding and 'inf' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float8, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float8 range between
+             'inf' preceding and 'inf' preceding)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float8, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float8 range between
+             1 preceding and 1 following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float8, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float8 range between
+             1 preceding and 1.1::float8 following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_float8, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_float8 range between
+             1.1 preceding and 'NaN' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_interval, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_interval desc range between
+             '-1 year' preceding and '1 year' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_interval, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_interval desc range between
+             '1 year' preceding and '1 year' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_interval, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_interval range between
+             '-infinity'::interval following and
+             'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_interval, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_interval range between
+             '1 year'::interval preceding and '1 year'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_interval, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_interval range between
+             'infinity'::interval following and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_interval, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_interval range between
+             'infinity'::interval preceding and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_interval, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_interval range between
+             'infinity'::interval preceding and 'infinity'::interval preceding)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_numeric, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_numeric range between
+             'inf' following and 'inf' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_numeric, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_numeric range between
+             'inf' preceding and 'inf' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_numeric, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_numeric range between
+             'inf' preceding and 'inf' preceding)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_numeric, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_numeric range between
+             1 preceding and 1 following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_numeric, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_numeric range between
+             1 preceding and 1.1::float8 following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_numeric, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_numeric range between
+             1 preceding and 1.1::numeric following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_numeric, first_value(id) over w, last_value(id) over w
+from numerics
+window w as (order by f_numeric range between
+             1.1 preceding and 'NaN' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_time, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_time desc range between
+             '-70 min' preceding and '2 hours' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_time, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_time desc range between
+             '70 min' preceding and '2 hours' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_time, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_time range between
+             '-infinity'::interval following and
+             'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_time, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_time range between
+             '70 min'::interval preceding and '2 hours'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_time, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_time range between
+             'infinity'::interval following and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_time, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_time range between
+             'infinity'::interval preceding and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_time, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_time range between
+             'infinity'::interval preceding and 'infinity'::interval preceding)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamp, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamp desc range between
+             '-1 year' preceding and '1 year' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamp, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamp desc range between
+             '1 year' preceding and '1 year' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamp, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamp range between
+             '-infinity'::interval following and
+             'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamp, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamp range between
+             '1 year'::interval preceding and '1 year'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamp, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamp range between
+             'infinity'::interval following and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamp, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamp range between
+             'infinity'::interval preceding and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamp, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamp range between
+             'infinity'::interval preceding and 'infinity'::interval preceding)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamptz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamptz desc range between
+             '1 year' preceding and '-1 year' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamptz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamptz desc range between
+             '1 year' preceding and '1 year' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamptz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamptz range between
+             '-infinity'::interval following and
+             'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamptz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamptz range between
+             '1 year'::interval preceding and '1 year'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamptz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamptz range between
+             'infinity'::interval following and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamptz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamptz range between
+             'infinity'::interval preceding and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timestamptz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timestamptz range between
+             'infinity'::interval preceding and 'infinity'::interval preceding)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timetz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timetz desc range between
+             '70 min' preceding and '-2 hours' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timetz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timetz desc range between
+             '70 min' preceding and '2 hours' following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timetz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timetz range between
+             '70 min'::interval preceding and '2 hours'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timetz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timetz range between
+             'infinity'::interval following and
+             '-infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timetz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timetz range between
+             'infinity'::interval following and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timetz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timetz range between
+             'infinity'::interval preceding and 'infinity'::interval following)
+
+-- sqlfmt-corpus-separator --
+
+select id, f_timetz, first_value(id) over w, last_value(id) over w
+from datetimes
+window w as (order by f_timetz range between
+             'infinity'::interval preceding and 'infinity'::interval preceding)
 
 -- sqlfmt-corpus-separator --
 
@@ -20108,9 +21023,23 @@ select jsonb_typeof('{"a":1}'::jsonb)
 
 -- sqlfmt-corpus-separator --
 
+select last_value(salary) over(order by enroll_date groups between 1 following and 3 following
+	exclude group),
+	lag(salary) over(order by enroll_date groups between 1 following and 3 following exclude group),
+	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
 select last_value(salary) over(order by enroll_date groups between 1 preceding and 1 following),
 	lag(salary) over(order by enroll_date groups between 1 preceding and 1 following),
 	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select last_value(salary) over(order by salary range between 1000 following and 3000 following
+	exclude group),
+	lag(salary) over(order by salary range between 1000 following and 3000 following exclude group),
+	salary from empsalary
 
 -- sqlfmt-corpus-separator --
 
@@ -20126,6 +21055,31 @@ select length(stringu1) into parallel_write
 -- sqlfmt-corpus-separator --
 
 select max(0) filter (where b1) from bool_test
+
+-- sqlfmt-corpus-separator --
+
+select max(enroll_date) over (order by enroll_date range between '1 year'::interval preceding and '-2 years'::interval following
+	exclude ties), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select max(enroll_date) over (order by enroll_date range between 1 preceding and 2 following
+	exclude ties), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select max(enroll_date) over (order by salary range between '1 year'::interval preceding and '2 years'::interval following
+	exclude ties), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select max(enroll_date) over (order by salary range between -1 preceding and 2 following
+	exclude ties), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select max(enroll_date) over (order by salary range between 1 preceding and -2 following
+	exclude ties), salary, enroll_date from empsalary
 
 -- sqlfmt-corpus-separator --
 
@@ -20433,6 +21387,10 @@ select round(((1 - 1.500012345678e-1000) ^ 1.45e1003) * 1e1000)
 
 -- sqlfmt-corpus-separator --
 
+select row_to_json(i) from int8_tbl i(x,y)
+
+-- sqlfmt-corpus-separator --
+
 select row_to_json(tt3::tt2::tt1) from tt3
 
 -- sqlfmt-corpus-separator --
@@ -20522,6 +21480,11 @@ select sum(f1) into total from t1
 
 -- sqlfmt-corpus-separator --
 
+select sum(salary) over (order by depname range between '1 year'::interval preceding and '2 years'::interval following
+	exclude ties), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
 select sum(salary) over (order by enroll_date desc range between '1 year'::interval following and '1 year'::interval following),
 	salary, enroll_date from empsalary
 
@@ -20532,8 +21495,33 @@ select sum(salary) over (order by enroll_date desc range between '1 year'::inter
 
 -- sqlfmt-corpus-separator --
 
+select sum(salary) over (order by enroll_date range between '1 year'::interval preceding and '1 year'::interval following
+	exclude current row), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select sum(salary) over (order by enroll_date range between '1 year'::interval preceding and '1 year'::interval following
+	exclude group), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select sum(salary) over (order by enroll_date range between '1 year'::interval preceding and '1 year'::interval following
+	exclude ties), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
 select sum(salary) over (order by enroll_date range between '1 year'::interval preceding and '1 year'::interval following),
 	salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select sum(salary) over (order by enroll_date, salary range between '1 year'::interval preceding and '2 years'::interval following
+	exclude ties), salary, enroll_date from empsalary
+
+-- sqlfmt-corpus-separator --
+
+select sum(salary) over (range between '1 year'::interval preceding and '2 years'::interval following
+	exclude ties), salary, enroll_date from empsalary
 
 -- sqlfmt-corpus-separator --
 

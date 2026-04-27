@@ -631,6 +631,75 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
         });
     }
 
+    // WINDOW clause: WINDOW name AS (definition), ...
+    if let Some(windows) = s["windowClause"].as_array() {
+        if !windows.is_empty() {
+            let items: Vec<Node> = windows
+                .iter()
+                .map(|w| {
+                    let wd = w.get("WindowDef").unwrap_or(w);
+                    let name = wd["name"].as_str().unwrap_or("");
+                    let mut wd_clauses: Vec<Clause> = Vec::new();
+                    if let Some(partition) = wd["partitionClause"].as_array() {
+                        if !partition.is_empty() {
+                            let parts: Vec<Node> = partition.iter().map(node_value_to_node).collect();
+                            wd_clauses.push(Clause {
+                                keyword: "PARTITION BY".into(),
+                                body: Some(Box::new(Node::List {
+                                    items: parts,
+                                    separator: None,
+                                })),
+                            });
+                        }
+                    }
+                    if let Some(order) = wd["orderClause"].as_array() {
+                        if !order.is_empty() {
+                            let ords: Vec<Node> = order.iter().map(node_value_to_node).collect();
+                            wd_clauses.push(Clause {
+                                keyword: "ORDER BY".into(),
+                                body: Some(Box::new(Node::List {
+                                    items: ords,
+                                    separator: None,
+                                })),
+                            });
+                        }
+                    }
+                    if let Some(frame_clause) = window_frame_clause(wd) {
+                        wd_clauses.push(frame_clause);
+                    }
+                    let body = if wd_clauses.is_empty() {
+                        Node::Text {
+                            value: String::new(),
+                        }
+                    } else {
+                        Node::Clauses {
+                            items: wd_clauses,
+                        }
+                    };
+                    Node::Concat {
+                        items: vec![
+                            ident_node(name),
+                            Node::Text { value: " AS ".into() },
+                            Node::Wrap {
+                                keyword: None,
+                                open: "(".into(),
+                                content: Box::new(body),
+                                close: ")".into(),
+                            },
+                        ],
+                    }
+                })
+                .collect();
+            clauses.push(Clause {
+                keyword: "WINDOW".into(),
+                body: Some(Box::new(Node::List {
+                    items,
+                    separator: None,
+                })),
+            });
+        }
+    }
+
     // FOR UPDATE / FOR SHARE locking clauses.
     if let Some(locking) = s["lockingClause"].as_array() {
         for lc in locking {
@@ -642,8 +711,14 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
                 "LCS_FORNOKEYUPDATE" => "FOR NO KEY UPDATE",
                 _ => "FOR UPDATE",
             };
+            let wait = lc_inner["waitPolicy"].as_str().unwrap_or("");
+            let kw = match wait {
+                "LockWaitError" => format!("{kw} NOWAIT"),
+                "LockWaitSkip" => format!("{kw} SKIP LOCKED"),
+                _ => kw.to_string(),
+            };
             clauses.push(Clause {
-                keyword: kw.into(),
+                keyword: kw,
                 body: None,
             });
         }
@@ -790,9 +865,8 @@ fn range_var_to_node(rv: &Value) -> Node {
     };
 
     // Alias can be {"Alias": {"aliasname": "t"}} or {"aliasname": "t"}.
-    let alias_name = rv
-        .get("alias")
-        .filter(|a| !a.is_null())
+    let alias_val = rv.get("alias").filter(|a| !a.is_null());
+    let alias_name = alias_val
         .and_then(|a| {
             a["Alias"]["aliasname"]
                 .as_str()
@@ -800,18 +874,47 @@ fn range_var_to_node(rv: &Value) -> Node {
         })
         .unwrap_or("");
 
+    // Extract colnames from alias, e.g., t1(a, b, c).
+    let colnames: Vec<&str> = alias_val
+        .and_then(|a| {
+            a["Alias"]["colnames"]
+                .as_array()
+                .or_else(|| a["colnames"].as_array())
+        })
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
     if alias_name.is_empty() {
         base
     } else {
-        Node::Concat {
-            items: vec![
-                base,
-                Node::Text {
-                    value: " AS ".into(),
-                },
-                ident_node(alias_name),
-            ],
+        let mut items = vec![
+            base,
+            Node::Text {
+                value: " AS ".into(),
+            },
+            ident_node(alias_name),
+        ];
+        if !colnames.is_empty() {
+            let cols: Vec<Node> = colnames.iter().map(|&c| ident_node(c)).collect();
+            items.push(Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items: cols,
+                    separator: None,
+                }),
+                close: ")".into(),
+            });
         }
+        Node::Concat { items }
     }
 }
 
@@ -931,6 +1034,25 @@ fn a_expr_to_node(e: &Value) -> Node {
             return Node::Infix {
                 op: in_kw.to_string(),
                 items: vec![wrap_infix_in_parens(node_value_to_node(&e["lexpr"])), list],
+            };
+        }
+    }
+
+    // AEXPR_DISTINCT: lexpr IS DISTINCT FROM rexpr
+    // AEXPR_NOT_DISTINCT: lexpr IS NOT DISTINCT FROM rexpr
+    if kind == "AEXPR_DISTINCT" || kind == "AEXPR_NOT_DISTINCT" {
+        let kw = if kind == "AEXPR_DISTINCT" {
+            "IS DISTINCT FROM"
+        } else {
+            "IS NOT DISTINCT FROM"
+        };
+        if has_lexpr && has_rexpr {
+            return Node::Infix {
+                op: kw.to_string(),
+                items: vec![
+                    wrap_infix_in_parens(node_value_to_node(&e["lexpr"])),
+                    wrap_infix_in_parens(node_value_to_node(&e["rexpr"])),
+                ],
             };
         }
     }
@@ -1073,6 +1195,21 @@ fn bool_expr_to_node(b: &Value) -> Node {
         let inner = args.into_iter().next().unwrap_or(Node::Text {
             value: String::new(),
         });
+        // Wrap boolean sub-expressions in parens: NOT (a AND b) vs NOT a AND b.
+        let needs_parens = raw_args
+            .first()
+            .map(|a| a.get("BoolExpr").is_some())
+            .unwrap_or(false);
+        let inner = if needs_parens {
+            Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(inner),
+                close: ")".into(),
+            }
+        } else {
+            inner
+        };
         Node::Concat {
             items: vec![
                 Node::Keyword {
@@ -1124,6 +1261,19 @@ fn func_call_to_node(f: &Value) -> Node {
             let list = Node::List {
                 items: arg_nodes,
                 separator: None,
+            };
+            let list = if f["func_variadic"].as_bool().unwrap_or(false) {
+                Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "VARIADIC".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        list,
+                    ],
+                }
+            } else {
+                list
             };
             let with_distinct = if agg_distinct {
                 Node::Concat {
@@ -1277,6 +1427,21 @@ fn func_call_to_node(f: &Value) -> Node {
         over_clauses.push(frame_clause);
     }
 
+    let over_name = over["name"].as_str().unwrap_or("");
+
+    // Named window reference without any clauses: OVER name
+    if !over_name.is_empty() && over_clauses.is_empty() {
+        return Node::Concat {
+            items: vec![
+                base,
+                Node::Text {
+                    value: " OVER ".into(),
+                },
+                ident_node(over_name),
+            ],
+        };
+    }
+
     let over_content: Node = if over_clauses.is_empty() {
         Node::Text {
             value: String::new(),
@@ -1319,6 +1484,9 @@ const FRAMEOPTION_START_OFFSET_PRECEDING: u64 = 0x00800;
 const FRAMEOPTION_END_OFFSET_PRECEDING: u64 = 0x01000;
 const FRAMEOPTION_START_OFFSET_FOLLOWING: u64 = 0x02000;
 const FRAMEOPTION_END_OFFSET_FOLLOWING: u64 = 0x04000;
+const FRAMEOPTION_EXCLUDE_CURRENT_ROW: u64 = 0x08000;
+const FRAMEOPTION_EXCLUDE_GROUP: u64 = 0x10000;
+const FRAMEOPTION_EXCLUDE_TIES: u64 = 0x20000;
 
 fn frame_bound_str(
     opts: u64,
@@ -1397,6 +1565,16 @@ fn window_frame_clause(over: &Value) -> Option<Clause> {
         start_offset,
     );
 
+    let exclude = if opts & FRAMEOPTION_EXCLUDE_CURRENT_ROW != 0 {
+        Some("EXCLUDE CURRENT ROW")
+    } else if opts & FRAMEOPTION_EXCLUDE_GROUP != 0 {
+        Some("EXCLUDE GROUP")
+    } else if opts & FRAMEOPTION_EXCLUDE_TIES != 0 {
+        Some("EXCLUDE TIES")
+    } else {
+        None
+    };
+
     if opts & FRAMEOPTION_BETWEEN != 0 {
         let end_bound = frame_bound_str(
             opts,
@@ -1407,24 +1585,42 @@ fn window_frame_clause(over: &Value) -> Option<Clause> {
             FRAMEOPTION_END_OFFSET_FOLLOWING,
             end_offset,
         );
+        let mut between_items = vec![
+            start_bound,
+            Node::Text { value: " ".into() },
+            Node::Keyword {
+                value: "AND".into(),
+            },
+            Node::Text { value: " ".into() },
+            end_bound,
+        ];
+        if let Some(ex) = exclude {
+            between_items.push(Node::Text {
+                value: format!(" {ex}"),
+            });
+        }
         Some(Clause {
             keyword: format!("{frame_type} BETWEEN"),
             body: Some(Box::new(Node::Concat {
-                items: vec![
-                    start_bound,
-                    Node::Text { value: " ".into() },
-                    Node::Keyword {
-                        value: "AND".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    end_bound,
-                ],
+                items: between_items,
             })),
         })
     } else {
+        let body = if let Some(ex) = exclude {
+            Node::Concat {
+                items: vec![
+                    start_bound,
+                    Node::Text {
+                        value: format!(" {ex}"),
+                    },
+                ],
+            }
+        } else {
+            start_bound
+        };
         Some(Clause {
             keyword: frame_type.into(),
-            body: Some(Box::new(start_bound)),
+            body: Some(Box::new(body)),
         })
     }
 }
@@ -1453,6 +1649,28 @@ fn sort_by_to_node(sb: &Value) -> Node {
     } else {
         ""
     };
+
+    // SORTBY_USING: ORDER BY expr USING operator
+    let use_op = sb["useOp"]
+        .as_array()
+        .and_then(|arr| arr.first())
+        .and_then(|n| n["String"]["sval"].as_str().or_else(|| n["String"]["str"].as_str()))
+        .unwrap_or("");
+
+    if dir_str == "SORTBY_USING" {
+        let mut items = vec![inner];
+        if !use_op.is_empty() {
+            items.push(Node::Text {
+                value: format!(" USING {use_op}"),
+            });
+        }
+        if !nulls_suffix.is_empty() {
+            items.push(Node::Text {
+                value: nulls_suffix.to_string(),
+            });
+        }
+        return Node::Concat { items };
+    }
 
     if dir_str == "SORTBY_ASC" || dir_num == 1 {
         Node::Concat {

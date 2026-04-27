@@ -54,7 +54,8 @@ Edit the appropriate converter file and add or complete the conversion for the f
 cargo run -- --dialect <dialect> --stmt "<stmt>"
 
 # Run the rewriter to move now-passing statements from failing/ to success/
-cargo test -p sqlfmt-corpus-tests test_rewrite_corpus
+# (uses -- --ignored because the test is #[ignore]d — it mutates testdata files)
+cargo test -p sqlfmt-corpus-tests test_rewrite_corpus -- --ignored
 
 # Run permanent corpus test (fast, no network) to verify both dirs
 cargo test -p sqlfmt-corpus-tests test_permanent_corpus
@@ -112,5 +113,5 @@ Statements are separated by `\n\n-- sqlfmt-corpus-separator --\n\n`. Each statem
 | Test                    | Command                                                   | What it does                                                                                        |
 | ----------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `test_external_corpus`  | `cargo test -p sqlfmt-corpus-tests -- --ignored`          | Fetches live SQL from upstream repos, writes new failures to `failing/` and successes to `success/` |
-| `test_rewrite_corpus`   | `cargo test -p sqlfmt-corpus-tests test_rewrite_corpus`   | Scans `failing/`, moves passing statements to `success/`, panics on changes                         |
+| `test_rewrite_corpus`   | `cargo test -p sqlfmt-corpus-tests test_rewrite_corpus -- --ignored`   | Scans `failing/`, moves passing statements to `success/`, panics on changes                         |
 | `test_permanent_corpus` | `cargo test -p sqlfmt-corpus-tests test_permanent_corpus` | Verifies `success/` stays passing and `failing/` still fails                                        |
