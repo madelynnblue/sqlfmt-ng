@@ -4333,6 +4333,14 @@ SELECT * FROM collate_test1 WHERE b LIKE 'abc'
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM collate_test10 WHERE (x COLLATE "POSIX", y COLLATE "C") NOT IN (SELECT y, x FROM collate_test10)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM collate_test10 WHERE (x, y) NOT IN (SELECT y, x FROM collate_test10)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM empsalary WHERE row_number() OVER (ORDER BY salary) < 10
 
 -- sqlfmt-corpus-separator --
@@ -4469,6 +4477,10 @@ SELECT * FROM onek EXCEPT ALL SELECT * FROM onek_copy
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM onek_copy EXCEPT ALL SELECT * FROM onek
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM outer_text WHERE (f1, f2) NOT IN (SELECT * FROM inner_text)
 
 -- sqlfmt-corpus-separator --
 
@@ -6161,6 +6173,14 @@ SELECT a, CAST(b AS varchar) FROM collate_test3 ORDER BY 2
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, b COLLATE "C" FROM collate_test1 UNION SELECT a, b FROM collate_test2 ORDER BY 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b COLLATE "C" FROM collate_test1 UNION SELECT a, b FROM collate_test3 ORDER BY 2
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, b FROM collate_test1 EXCEPT SELECT a, b FROM collate_test2 ORDER BY 2
 
 -- sqlfmt-corpus-separator --
@@ -6469,6 +6489,10 @@ SELECT amname FROM pg_class c, pg_am am
 
 -- sqlfmt-corpus-separator --
 
+SELECT array_agg(a ORDER BY x COLLATE "C", y COLLATE "POSIX") FROM collate_test10
+
+-- sqlfmt-corpus-separator --
+
 SELECT array_agg(a ORDER BY x||y) FROM collate_test10
 
 -- sqlfmt-corpus-separator --
@@ -6482,6 +6506,10 @@ SELECT array_agg(b ORDER BY b) FROM collate_test2
 -- sqlfmt-corpus-separator --
 
 SELECT array_agg(b ORDER BY b) FROM collate_test3
+
+-- sqlfmt-corpus-separator --
+
+SELECT array_agg(id ORDER BY guid_encoded COLLATE "C") FROM guid3
 
 -- sqlfmt-corpus-separator --
 
@@ -19024,6 +19052,11 @@ select * from float_table
 
 -- sqlfmt-corpus-separator --
 
+select * from int4_tbl o where (f1, f1) in
+  (select f1, generate_series(1,50) / 10 g from int4_tbl i group by f1)
+
+-- sqlfmt-corpus-separator --
+
 select * from int8_tbl i where i.* in (values(i.*::int8_tbl))
 
 -- sqlfmt-corpus-separator --
@@ -19053,6 +19086,12 @@ select * from numrange_test2 where nr = 'empty'::numrange
 
 -- sqlfmt-corpus-separator --
 
+select * from onek
+    where (unique1,ten) in (values (1,1), (20,0), (99,9), (17,99))
+    order by unique1
+
+-- sqlfmt-corpus-separator --
+
 select * from only t1
 
 -- sqlfmt-corpus-separator --
@@ -19062,6 +19101,14 @@ select * from only t1_1
 -- sqlfmt-corpus-separator --
 
 select * from only t1_2
+
+-- sqlfmt-corpus-separator --
+
+select * from outer_7597 where (f1, f2) not in (select * from inner_7597)
+
+-- sqlfmt-corpus-separator --
+
+select * from outer_text where (f1, f2) not in (select * from inner_text)
 
 -- sqlfmt-corpus-separator --
 
@@ -19496,6 +19543,11 @@ where (exists(select 1 from tenk1 k where k.unique1 = t.unique2) or ten < 0)
 select count(*) from tenk1 t
 where (exists(select 1 from tenk1 k where k.unique1 = t.unique2) or ten < 0)
   and thousand = 1
+
+-- sqlfmt-corpus-separator --
+
+select count(*) from tenk1 where (two, four) not in
+	(select hundred, thousand from tenk2 where thousand > 100)
 
 -- sqlfmt-corpus-separator --
 
@@ -22624,6 +22676,13 @@ select unique1 from tenk1 except select unique2 from tenk1 where unique2 != 10
 
 select unique1, unique2 from onek2
   where (unique2 = 11 or unique1 = 0) and stringu1 < 'B'
+
+-- sqlfmt-corpus-separator --
+
+select unique1, unique2 from tenk1
+where (unique1, unique2) < any (select ten, ten from tenk1 where hundred < 3)
+      and unique1 <= 20
+order by 1
 
 -- sqlfmt-corpus-separator --
 

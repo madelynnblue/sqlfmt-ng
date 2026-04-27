@@ -25280,6 +25280,42 @@ SELECT (1 || '{2}'::int4_list_c)::text;
 
 -- sqlfmt-corpus-separator --
 
+SELECT (1, 2) = ALL(SELECT 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT * FROM abc)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT 1 AS a)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM abc WHERE false)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM abc)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM t ORDER BY 1 ASC, 2 ASC) AS r
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM t ORDER BY 1 DESC, 2 DESC) AS r
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2, 3) IN (SELECT 1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
 SELECT (1.4238790346995263e-40::DECIMAL / 6.011482313728436e+41::DECIMAL)
 
 -- sqlfmt-corpus-separator --
@@ -25617,6 +25653,10 @@ SELECT * FROM int WHERE a IS NOT DISTINCT FROM 2
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM kv GROUP BY v, count(DISTINCT w)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM kv WHERE (k,v) IN (SELECT * FROM kv)
 
 -- sqlfmt-corpus-separator --
 
@@ -28913,6 +28953,10 @@ SELECT DISTINCT ON (z, y, x) z FROM xyz
 
 -- sqlfmt-corpus-separator --
 
+SELECT DISTINCT ON(((x)), (x, y)) x, y FROM xyz
+
+-- sqlfmt-corpus-separator --
+
 SELECT DISTINCT ON(1 + lag(a, 1, 0) OVER (ORDER BY a)) *
 FROM foo
 ORDER BY 1 + lag(a, 1, 0) OVER (ORDER BY a), a ASC;
@@ -28954,6 +28998,14 @@ SELECT DISTINCT ON(min(x)) min(x) FROM xyz GROUP BY y HAVING min(x) = 1
 -- sqlfmt-corpus-separator --
 
 SELECT DISTINCT ON(pk1, pk2, x, y) x, y, z FROM xyz ORDER BY x, y
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY row_number() OVER(ORDER BY (pk1, pk2)) DESC
 
 -- sqlfmt-corpus-separator --
 
@@ -40789,6 +40841,10 @@ select * from notinouter where a not in (select b from notininner)
 
 -- sqlfmt-corpus-separator --
 
+select * from outer_7597 where (f1, f2) not in (select * from inner_7597)
+
+-- sqlfmt-corpus-separator --
+
 select 1 < 2.0::decimal, 1.0::decimal < 2, 2.0::decimal < 1, 2 < 1.0::decimal
 
 -- sqlfmt-corpus-separator --
@@ -40987,6 +41043,13 @@ select timezone('1 day'::interval, '1-12-31'::timestamptz+'262141 years'::interv
 -- sqlfmt-corpus-separator --
 
 select unique1 from tenk1 except select unique2 from tenk1 where unique2 != 10
+
+-- sqlfmt-corpus-separator --
+
+select unique1, unique2 from tenk1
+where (unique1, unique2) < any (select ten, ten from tenk1 where hundred < 3)
+      and unique1 <= 20
+order by 1;
 
 -- sqlfmt-corpus-separator --
 

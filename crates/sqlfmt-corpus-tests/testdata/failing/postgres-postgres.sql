@@ -1,31 +1,3 @@
-SELECT * FROM collate_test10 WHERE (x COLLATE "POSIX", y COLLATE "C") NOT IN (SELECT y, x FROM collate_test10)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM collate_test10 WHERE (x, y) NOT IN (SELECT y, x FROM collate_test10)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM outer_text WHERE (f1, f2) NOT IN (SELECT * FROM inner_text)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b COLLATE "C" FROM collate_test1 UNION SELECT a, b FROM collate_test2 ORDER BY 2
-
--- sqlfmt-corpus-separator --
-
-SELECT a, b COLLATE "C" FROM collate_test1 UNION SELECT a, b FROM collate_test3 ORDER BY 2
-
--- sqlfmt-corpus-separator --
-
-SELECT array_agg(a ORDER BY x COLLATE "C", y COLLATE "POSIX") FROM collate_test10
-
--- sqlfmt-corpus-separator --
-
-SELECT array_agg(id ORDER BY guid_encoded COLLATE "C") FROM guid3
-
--- sqlfmt-corpus-separator --
-
 SELECT f1 AS five FROM FLOAT8_TBL
   WHERE f1 BETWEEN -1e6 AND 1e6
 UNION
@@ -350,28 +322,9 @@ select (1 = any(array_agg(f1))) = any (select false) from int4_tbl
 
 -- sqlfmt-corpus-separator --
 
-select * from int4_tbl o where (f1, f1) in
-  (select f1, generate_series(1,50) / 10 g from int4_tbl i group by f1)
-
--- sqlfmt-corpus-separator --
-
 select * from int4_tbl where
   (case when f1 in (select unique1 from tenk1 a) then f1 else null end) in
   (select ten from tenk1 b)
-
--- sqlfmt-corpus-separator --
-
-select * from onek
-    where (unique1,ten) in (values (1,1), (20,0), (99,9), (17,99))
-    order by unique1
-
--- sqlfmt-corpus-separator --
-
-select * from outer_7597 where (f1, f2) not in (select * from inner_7597)
-
--- sqlfmt-corpus-separator --
-
-select * from outer_text where (f1, f2) not in (select * from inner_text)
 
 -- sqlfmt-corpus-separator --
 
@@ -383,19 +336,7 @@ select concat_ws(',', variadic NULL::int[])
 
 -- sqlfmt-corpus-separator --
 
-select count(*) from tenk1 where (two, four) not in
-	(select hundred, thousand from tenk2 where thousand > 100)
-
--- sqlfmt-corpus-separator --
-
 select format('Hello', variadic NULL::int[])
-
--- sqlfmt-corpus-separator --
-
-select unique1, unique2 from tenk1
-where (unique1, unique2) < any (select ten, ten from tenk1 where hundred < 3)
-      and unique1 <= 20
-order by 1
 
 -- sqlfmt-corpus-separator --
 

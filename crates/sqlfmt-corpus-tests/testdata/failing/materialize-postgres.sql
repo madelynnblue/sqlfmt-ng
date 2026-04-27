@@ -30,10 +30,6 @@ SELECT 'abc'::char(4) ~~ 'abc';
 
 -- sqlfmt-corpus-separator --
 
-SELECT (1, 2) = ALL(SELECT 1, 2)
-
--- sqlfmt-corpus-separator --
-
 SELECT (1, 2) = ANY(SELECT 1, 2)
 
 -- sqlfmt-corpus-separator --
@@ -42,47 +38,11 @@ SELECT (1, 2) = SOME(SELECT 1, 2)
 
 -- sqlfmt-corpus-separator --
 
-SELECT (1, 2) IN (SELECT * FROM abc)
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2) IN (SELECT 1 AS a)
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2) IN (SELECT 1, 2)
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2) IN (SELECT a, b FROM abc WHERE false)
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2) IN (SELECT a, b FROM abc)
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2) IN (SELECT a, b FROM t ORDER BY 1 ASC, 2 ASC) AS r
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2) IN (SELECT a, b FROM t ORDER BY 1 DESC, 2 DESC) AS r
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2, 3) IN (SELECT 1, 2, 3)
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM abc WHERE a = ANY(SELECT a FROM abc WHERE b = 10)
 
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM c WHERE bill = ANY(SELECT ship FROM o);
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM kv WHERE (k,v) IN (SELECT * FROM kv)
 
 -- sqlfmt-corpus-separator --
 
@@ -95,18 +55,6 @@ SELECT 1 = SOME(SELECT 1)
 -- sqlfmt-corpus-separator --
 
 SELECT ARRAY[1] UNION ALL SELECT ARRAY['foo']
-
--- sqlfmt-corpus-separator --
-
-SELECT DISTINCT ON(((x)), (x, y)) x, y FROM xyz
-
--- sqlfmt-corpus-separator --
-
-SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz
-
--- sqlfmt-corpus-separator --
-
-SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY row_number() OVER(ORDER BY (pk1, pk2)) DESC
 
 -- sqlfmt-corpus-separator --
 
@@ -173,17 +121,6 @@ FROM winning_points;
 select * from int4_tbl where
   (case when f1 in (select unique1 from tenk1 a) then f1 else null end) in
   (select ten from tenk1 b)
-
--- sqlfmt-corpus-separator --
-
-select * from outer_7597 where (f1, f2) not in (select * from inner_7597)
-
--- sqlfmt-corpus-separator --
-
-select unique1, unique2 from tenk1
-where (unique1, unique2) < any (select ten, ten from tenk1 where hundred < 3)
-      and unique1 <= 20
-order by 1;
 
 -- sqlfmt-corpus-separator --
 

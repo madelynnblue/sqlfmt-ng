@@ -159,6 +159,12 @@ fn node_value_to_node(v: &Value) -> Node {
         a_expr_to_node(inner)
     } else if let Some(inner) = obj.get("BoolExpr") {
         bool_expr_to_node(inner)
+    } else if let Some(inner) = obj.get("CoalesceExpr") {
+        coalesce_expr_to_node(inner)
+    } else if let Some(inner) = obj.get("CollateClause") {
+        collate_clause_to_node(inner)
+    } else if let Some(inner) = obj.get("RowExpr") {
+        row_expr_to_node(inner)
     } else if let Some(inner) = obj.get("FuncCall") {
         func_call_to_node(inner)
     } else if let Some(inner) = obj.get("SortBy") {
@@ -1710,6 +1716,80 @@ fn bool_expr_to_node(b: &Value) -> Node {
     }
 }
 
+fn coalesce_expr_to_node(ce: &Value) -> Node {
+    let args: Vec<Node> = ce["args"]
+        .as_array()
+        .map(|arr| arr.iter().map(node_value_to_node).collect())
+        .unwrap_or_default();
+    let items: Vec<Node> = args
+        .into_iter()
+        .fold(Vec::new(), |mut acc, a| {
+            if !acc.is_empty() {
+                acc.push(Node::Text {
+                    value: ", ".into(),
+                });
+            }
+            acc.push(a);
+            acc
+        });
+    Node::Wrap {
+        keyword: Some("COALESCE".into()),
+        open: "(".into(),
+        content: Box::new(Node::Concat { items }),
+        close: ")".into(),
+    }
+}
+
+fn collate_clause_to_node(cc: &Value) -> Node {
+    let arg = node_value_to_node(&cc["arg"]);
+    let coll_names: Vec<&str> = cc["collname"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    let coll_ident = qualified_ident_node(&coll_names);
+    Node::Concat {
+        items: vec![
+            arg,
+            Node::Text {
+                value: " COLLATE ".into(),
+            },
+            coll_ident,
+        ],
+    }
+}
+
+fn row_expr_to_node(re: &Value) -> Node {
+    let items: Vec<Node> = re["args"]
+        .as_array()
+        .map(|arr| arr.iter().map(node_value_to_node).collect())
+        .unwrap_or_default();
+    let mut concat_items: Vec<Node> = Vec::new();
+    for (i, item) in items.into_iter().enumerate() {
+        if i > 0 {
+            concat_items.push(Node::Text {
+                value: ", ".into(),
+            });
+        }
+        concat_items.push(item);
+    }
+    Node::Wrap {
+        keyword: None,
+        open: "(".into(),
+        content: Box::new(Node::Concat {
+            items: concat_items,
+        }),
+        close: ")".into(),
+    }
+}
+
 fn func_call_to_node(f: &Value) -> Node {
     let all_name_parts: Vec<&str> = f["funcname"]
         .as_array()
@@ -2292,6 +2372,22 @@ fn type_name_str(tn: &Value) -> String {
                 if let Some(iv) = m.get("Integer") {
                     let n = iv["ival"].as_i64().unwrap_or(0);
                     return n.to_string();
+                }
+                // ColumnRef in typmods, e.g. geography(geometry, 4004)
+                if let Some(colref) = m.get("ColumnRef") {
+                    let fields: Vec<&str> = colref["fields"]
+                        .as_array()
+                        .map(|arr| {
+                            arr.iter()
+                                .filter_map(|f| {
+                                    f["String"]["sval"]
+                                        .as_str()
+                                        .or_else(|| f["String"]["str"].as_str())
+                                })
+                                .collect()
+                        })
+                        .unwrap_or_default();
+                    return fields.join(".");
                 }
                 format!("{m}")
             })

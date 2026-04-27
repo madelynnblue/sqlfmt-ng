@@ -818,6 +818,28 @@ FROM information_schema.schema_privileges
 -- sqlfmt-corpus-separator --
 
 SELECT
+  id,
+  row_number() OVER (ORDER BY id NULLS LAST) AS row_num_using_nulls_last,
+  row_number() OVER (ORDER BY COALESCE(id, 999)) AS row_num_using_coalesce
+FROM
+  nulls_last_test
+ORDER BY
+  id NULLS LAST
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  id,
+  row_number() OVER (ORDER BY id) AS row_num_using_nulls_last,
+  row_number() OVER (ORDER BY COALESCE(id, 999)) AS row_num_using_coalesce
+FROM
+  nulls_last_test
+ORDER BY
+  id
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   lag(_int2, _int4, _int2) OVER w,
   lead(_int4, _int2, _int4) OVER w,
   first_value(_int2) OVER w,
@@ -2880,7 +2902,39 @@ SELECT 'PG46', ST_AsEWKT(ST_AsMVTGeom(
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'POINT(1.0 2.0)'::geometry::geography(geometry, 4004)
+
+-- sqlfmt-corpus-separator --
+
 SELECT 'SRID=3857;POINT(1.0 2.0)'::geography
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4004;POINT(2.0 3.0)'::geography::geography(linestring)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4004;POINT(2.0 3.0)'::geography::geometry(linestring)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4004;POINT(2.0 3.0)'::geography::geometry(point, 4326)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4004;POINT(2.0 3.0)'::geometry::geography(linestring)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4004;POINT(2.0 3.0)'::geometry::geography(point, 4326)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4004;POINT(2.0 3.0)'::geometry::geometry(linestring)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4004;POINT(2.0 3.0)'::geometry::geometry(point, 4326)
 
 -- sqlfmt-corpus-separator --
 
@@ -2889,6 +2943,14 @@ SELECT 'SRID=404;POINT(1.0 2.0)'::geography
 -- sqlfmt-corpus-separator --
 
 SELECT 'SRID=404;POINT(1.0 2.0)'::geometry
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4326;POINT(2.0 3.0)'::geography::geography(point, 4004)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'SRID=4326;POINT(2.0 3.0)'::geometry::geography(point, 4004)
 
 -- sqlfmt-corpus-separator --
 
@@ -4448,11 +4510,57 @@ SELECT (-129)::"char";
 
 -- sqlfmt-corpus-separator --
 
+SELECT (1, 2) = ALL(SELECT 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT * FROM abc)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT 1 AS a)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM abc WHERE false)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM abc)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM t ORDER BY 1 ASC, 2 ASC) AS r
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) IN (SELECT a, b FROM t ORDER BY 1 DESC, 2 DESC) AS r
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2, 3) IN (SELECT 1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
 SELECT (1.4238790346995263e-40::DECIMAL / 6.011482313728436e+41::DECIMAL)
 
 -- sqlfmt-corpus-separator --
 
 SELECT (1/3.0)::float4::text, (-1/3.0)::float8::text
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1::INT2, NULL)
+UNION
+SELECT (1::INT, NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (2, 2) IN (SELECT x+1, y+1 FROM xy)
 
 -- sqlfmt-corpus-separator --
 
@@ -4469,6 +4577,14 @@ SELECT (NULL, INTERVAL '1 day') overlaps (NULL, NULL);
 -- sqlfmt-corpus-separator --
 
 SELECT (NULL, NULL) overlaps (NULL, NULL);
+
+-- sqlfmt-corpus-separator --
+
+SELECT (SELECT (1, 2)) IN (SELECT 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (SELECT (2, 2), (3, 3)) IN (SELECT x+1, y+1 FROM xy)
 
 -- sqlfmt-corpus-separator --
 
@@ -4670,6 +4786,24 @@ SELECT * FROM a UNION ALL SELECT * FROM b
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM a WHERE (a1, a2) IN (SELECT c1, d1 FROM c, d WHERE c3 = d3 or c2 = d2 EXCEPT ALL
+                                   SELECT c1, d1 FROM c, d WHERE c3 = d3 or c2 = d2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM a WHERE (a1, a2) IN (SELECT c1, d1 FROM c, d WHERE c3 = d3 or c3 = d4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM a WHERE (a1, a2) NOT IN (SELECT c1, d1 FROM c, d WHERE c3 = d3 or c2 = d2 EXCEPT ALL
+                                       SELECT c1, d1 FROM c, d WHERE c3 = d3 or c2 = d2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM a WHERE (a1, a2) NOT IN (SELECT c1, d1 FROM c, d WHERE c3 = d3 or c3 = d4)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM a WHERE EXISTS (SELECT * FROM b WHERE a1 = b1 OR a2 = b2 OR a3 = b3 OR a4 = b4)
 
 -- sqlfmt-corpus-separator --
@@ -4731,6 +4865,10 @@ SELECT * FROM ab AS foo (foo1, foo2)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM ab AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab WHERE (a, b) IN (SELECT x+1, y+1 FROM xy);
 
 -- sqlfmt-corpus-separator --
 
@@ -5057,6 +5195,10 @@ SELECT * FROM kv GROUP BY v, count(w) OVER ()
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM kv WHERE (k,v) IN (SELECT * FROM kv)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM kv WHERE k = 5 FOR UPDATE;
 
 -- sqlfmt-corpus-separator --
@@ -5225,6 +5367,30 @@ SELECT * FROM t WHERE v = 9 FOR UPDATE NOWAIT
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t0 WHERE t0.c0 AND (c1 OR (c0 > false AND c0 < false))
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t1 WHERE (t1.c0 COLLATE en) > ('_' COLLATE en)
+UNION
+SELECT * FROM t1 WHERE NOT ((t1.c0 COLLATE en) > ('_' COLLATE en))
+UNION
+SELECT * FROM t1 WHERE ((t1.c0 COLLATE en) > ('_' COLLATE en)) IS NULL
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t1 WHERE (t1.c0 COLLATE en) > ('b' COLLATE en)
+UNION
+SELECT * FROM t1 WHERE NOT ((t1.c0 COLLATE en) > ('b' COLLATE en))
+UNION
+SELECT * FROM t1 WHERE ((t1.c0 COLLATE en) > ('b' COLLATE en)) IS NULL
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t1 WHERE (t1.c0 COLLATE en) > ('c' COLLATE en)
+UNION
+SELECT * FROM t1 WHERE NOT ((t1.c0 COLLATE en) > ('c' COLLATE en))
+UNION
+SELECT * FROM t1 WHERE ((t1.c0 COLLATE en) > ('c' COLLATE en)) IS NULL
 
 -- sqlfmt-corpus-separator --
 
@@ -6228,6 +6394,10 @@ SELECT DISTINCT ON (z, y, x) z FROM xyz
 
 -- sqlfmt-corpus-separator --
 
+SELECT DISTINCT ON(((x)), (x, y)) x, y FROM xyz
+
+-- sqlfmt-corpus-separator --
+
 SELECT DISTINCT ON(max(x)) y FROM xyz
 
 -- sqlfmt-corpus-separator --
@@ -6245,6 +6415,14 @@ SELECT DISTINCT ON(min(x)) min(x) FROM xyz GROUP BY y HAVING min(x) = 1
 -- sqlfmt-corpus-separator --
 
 SELECT DISTINCT ON(pk1, pk2, x, y) x, y, z FROM xyz ORDER BY x, y
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY row_number() OVER(ORDER BY (pk1, pk2)) DESC
 
 -- sqlfmt-corpus-separator --
 
@@ -8791,6 +8969,10 @@ SELECT d FROM s ORDER BY d, d::TEXT
 -- sqlfmt-corpus-separator --
 
 SELECT d, e, f FROM def EXCEPT SELECT a, b, c FROM abc ORDER by d, e
+
+-- sqlfmt-corpus-separator --
+
+SELECT d3,d1,d2 FROM d WHERE (d1,d3) NOT IN (SELECT b1,b2 FROM b WHERE EXISTS (SELECT 1 FROM c WHERE c2=b2 OR c2=b3))
 
 -- sqlfmt-corpus-separator --
 
@@ -16466,6 +16648,43 @@ primary_index AS (
 SELECT
     (primaryID = indexID) AS match_found
 FROM primary_index, subzone_indexes;
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (
+  VALUES
+    ((1, 1), 1),
+    ((NULL::RECORD), 2),
+    ((1, NULL::INT), 3),
+    ((NULL::INT, NULL::INT), 4)
+)
+SELECT *
+FROM t
+ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (
+  VALUES
+    ((1, 1), 1),
+    ((NULL::RECORD), 2),
+    ((1, NULL::INT), 3),
+    ((NULL::INT, NULL::INT), 4)
+)
+SELECT array_agg(x ORDER BY x NULLS FIRST)
+FROM t;
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (
+  VALUES
+    ((1, 1), 1),
+    ((NULL::RECORD), 2),
+    ((1, NULL::INT), 3),
+    ((NULL::INT, NULL::INT), 4)
+)
+SELECT array_agg(x ORDER BY x)
+FROM t;
 
 -- sqlfmt-corpus-separator --
 
