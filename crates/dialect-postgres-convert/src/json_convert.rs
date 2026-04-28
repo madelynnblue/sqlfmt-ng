@@ -976,13 +976,17 @@ fn table_elt_to_node(elt: &Value) -> Node {
 
 fn column_def_to_node(col: &Value) -> Node {
     let colname = col["colname"].as_str().unwrap_or("");
-    let type_str = type_name_str(&col["typeName"]);
 
-    let mut items: Vec<Node> = vec![
-        ident_node(colname),
-        Node::Text { value: " ".into() },
-        Node::Text { value: type_str },
-    ];
+    let mut items: Vec<Node> = vec![ident_node(colname)];
+
+    // Omit the type for typed tables (OF type_name) where the column inherits
+    // the type from the parent type and has no typeName of its own.
+    let type_str = type_name_str(&col["typeName"]);
+    let has_type = col["typeName"]["names"].as_array().map(|a| !a.is_empty()).unwrap_or(false);
+    if has_type {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Text { value: type_str });
+    }
 
     // COLLATE clause.
     if let Some(coll_vals) = col["collClause"]["collname"].as_array().filter(|a| !a.is_empty()) {
@@ -1252,14 +1256,29 @@ fn def_elem_to_node(e: &Value) -> Node {
         None => return Node::Unformatted { value: format!("{e}") },
     };
     let name = obj["defname"].as_str().unwrap_or("");
+    let namespace = obj["defnamespace"].as_str().unwrap_or("");
+    let full_name = if !namespace.is_empty() {
+        format!("{namespace}.{name}")
+    } else {
+        name.to_string()
+    };
+    // Storage parameter names are not SQL identifiers — emit as Text.
+    let name_node = Node::Text { value: full_name };
     if let Some(arg) = obj.get("arg") {
-        let arg_node = node_value_to_node(arg);
+        let arg_node = if let Some(s) = arg.get("String").filter(|v| v.is_object()) {
+            let sval = string_val(s);
+            Node::Literal {
+                value: format!("'{sval}'"),
+            }
+        } else {
+            node_value_to_node(arg)
+        };
         Node::Infix {
             op: "=".into(),
-            items: vec![ident_node(name), arg_node],
+            items: vec![name_node, arg_node],
         }
     } else {
-        ident_node(name)
+        name_node
     }
 }
 
@@ -2186,6 +2205,23 @@ fn index_elem_to_node(ie: &Value) -> Node {
 fn partition_elem_to_node(pe: &Value) -> Node {
     if let Some(name) = pe["name"].as_str().filter(|s| !s.is_empty()) {
         let mut items = vec![ident_node(name)];
+        // COLLATE clause on partition element.
+        if let Some(coll_vals) = pe["collation"].as_array().filter(|a| !a.is_empty()) {
+            let coll_parts: Vec<&str> = coll_vals
+                .iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect();
+            if !coll_parts.is_empty() {
+                items.push(Node::Text { value: " ".into() });
+                items.push(Node::Keyword { value: "COLLATE".into() });
+                items.push(Node::Text { value: " ".into() });
+                items.push(ident_node(&coll_parts.join(".")));
+            }
+        }
         // Operator class for the partition column.
         if let Some(opclass) = pe["opclass"].as_array().filter(|a| !a.is_empty()) {
             let opc_parts: Vec<&str> = opclass

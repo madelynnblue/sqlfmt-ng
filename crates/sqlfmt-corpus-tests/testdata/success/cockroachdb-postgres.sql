@@ -255,6 +255,10 @@ CREATE TABLE "MixedTable"(x INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE "Table-Name" (id INT PRIMARY KEY) WITH (ttl_expire_after = '10 hours')
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE "foo-bar".t(x INT)
 
 -- sqlfmt-corpus-separator --
@@ -395,6 +399,10 @@ CREATE TABLE T_FOR_FUNCTION (C1 INT, C2 INT);
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE T_TTL_W_DEFAULT (C1 INT PRIMARY KEY) WITH (ttl_expire_after='10 minutes');
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE T_WITH_COMPS (C1 INT PRIMARY KEY, SC1 SC1.COMP1, SC2 SC2.COMP1, FAMILY F1(C1, SC1, SC2));
 
 -- sqlfmt-corpus-separator --
@@ -472,6 +480,10 @@ CREATE TABLE a (b FLOAT[])
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE a (b INT ARRAY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b INT) WITH (autovacuum_enabled='11')
 
 -- sqlfmt-corpus-separator --
 
@@ -868,6 +880,14 @@ CREATE TABLE alltypes (
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE alter_column_crdb_internal_expiration() WITH (ttl_expire_after='10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_column_crdb_internal_expiration_rename() WITH (ttl_expire_after='10 minutes')
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE alter_db.t();
 
 -- sqlfmt-corpus-separator --
@@ -880,6 +900,14 @@ CREATE TABLE alter_table_alter_primary_key_duplicate_storage_params_a (
   a INT PRIMARY KEY,
   b TEXT NOT NULL
 );
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_table_crdb_internal_expiration_incorrect_explicit_default() WITH (ttl_expire_after='10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_table_crdb_internal_expiration_incorrect_explicit_on_update() WITH (ttl_expire_after='10 minutes')
 
 -- sqlfmt-corpus-separator --
 
@@ -1923,6 +1951,12 @@ CREATE TABLE crdb_internal.t (x INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE crdb_internal_functions_tbl (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE create_idx_drop_column (c0 INT PRIMARY KEY, c1 INT);
 
 -- sqlfmt-corpus-separator --
@@ -1948,6 +1982,12 @@ CREATE TABLE create_inverted_index_duplicate_storage_params_a (
 CREATE TABLE create_table_no_ttl_set_ttl_expire_after (
    id INT PRIMARY KEY
 ) WITH (schema_locked = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE create_table_ttl_expire_after_and_ttl_expiration_expression (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes', ttl_expiration_expression = 'crdb_internal_expiration')
 
 -- sqlfmt-corpus-separator --
 
@@ -2492,6 +2532,10 @@ CREATE TABLE dontwant (k CHAR PRIMARY KEY, v CHAR)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE drop_col_test_tbl (id INT PRIMARY KEY, foo INT DEFAULT nextval('drop_col_test_seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_column_crdb_internal_expiration() WITH (ttl_expire_after='10 minutes')
 
 -- sqlfmt-corpus-separator --
 
@@ -5394,6 +5438,10 @@ CREATE TABLE t (a INT PRIMARY KEY, b INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t (a INT PRIMARY KEY, b INT) WITH (sql_stats_canary_window = '15s')
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t (a INT PRIMARY KEY, b INT);
 
 -- sqlfmt-corpus-separator --
@@ -7564,6 +7612,10 @@ CREATE TABLE t_not_valid_src (i INT PRIMARY KEY, j INT);
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t_notice (a INT PRIMARY KEY) WITH (sql_stats_canary_window = '15s')
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t_notice_check (a INT);
 
 -- sqlfmt-corpus-separator --
@@ -7702,6 +7754,10 @@ CREATE TABLE t_tr_policy (id INT PRIMARY KEY, data INT);
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t_tr_udf_dep (k INT PRIMARY KEY, v INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_ttl_w_expire_at (c1 int, expire_at TIMESTAMPTZ) WITH (ttl_expiration_expression = 'expire_at');
 
 -- sqlfmt-corpus-separator --
 
@@ -7906,6 +7962,30 @@ CREATE TABLE tbad (x GEOGRAPHY[] PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE tbl (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (
+  id INT PRIMARY KEY,
+  crdb_internal_expiration INTERVAL
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (
+  id INT PRIMARY KEY,
+  crdb_internal_expiration TIMESTAMPTZ
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl () WITH (ttl_expire_after = '10 seconds', ttl_job_cron = 'bad expr')
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE tbl (a INT PRIMARY KEY, INDEX a_idx (a));
 
 -- sqlfmt-corpus-separator --
@@ -7930,7 +8010,27 @@ CREATE TABLE tbl (id INT PRIMARY KEY) WITH (ttl = 'on')
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE tbl (id INT PRIMARY KEY) WITH (ttl_expiration_expression = '; DROP DATABASE defaultdb')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (id INT PRIMARY KEY) WITH (ttl_expiration_expression = 'id')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (id INT PRIMARY KEY) WITH (ttl_expiration_expression = 'now(), now()')
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE tbl (id INT PRIMARY KEY) WITH (ttl_expiration_expression = 0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (id INT PRIMARY KEY) WITH (ttl_expire_after = ' xx invalid interval xx')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (id INT PRIMARY KEY) WITH (ttl_expire_after = '-10 minutes')
 
 -- sqlfmt-corpus-separator --
 
@@ -7965,6 +8065,38 @@ CREATE TABLE tbl_crdb_internal_expiration_already_defined (
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE tbl_create_ttl_job_cron (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes', ttl_job_cron = '@daily')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_drop_table (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_execute_schedule (
+  id INT PRIMARY KEY,
+  expire_at TIMESTAMPTZ NOT NULL DEFAULT now() - '1 day'
+) WITH (ttl_expiration_expression = 'expire_at', ttl_job_cron = '@daily')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_execute_schedule_2 (
+  id INT PRIMARY KEY,
+  expire_at TIMESTAMPTZ NOT NULL DEFAULT now() - '1 day'
+) WITH (ttl_expiration_expression = 'expire_at', ttl_job_cron = '@daily')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_existing_ttl_concurrent_schema_change (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes', schema_locked=false)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE tbl_for_row(i INT PRIMARY KEY);
 
 -- sqlfmt-corpus-separator --
@@ -7978,6 +8110,74 @@ CREATE TABLE tbl_owned_by_parent (a INT PRIMARY KEY)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE tbl_owned_by_root (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_reloptions (
+  id INT PRIMARY KEY
+) WITH (
+  ttl_expire_after = '10 minutes',
+  ttl_select_batch_size = 10,
+  ttl_delete_batch_size = 20,
+  ttl_select_rate_limit = 30,
+  ttl_delete_rate_limit = 40,
+  ttl_pause = true,
+  ttl_row_stats_poll_interval = '1 minute',
+  ttl_label_metrics = true,
+  ttl_disable_changefeed_replication = true
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_rename (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_rename_legacy_label (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_reset_ttl (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_reset_ttl_job_cron (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes', ttl_job_cron = '@daily')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_schedules (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_set_ttl_job_cron (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes', ttl_job_cron = '@daily')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_set_ttl_params (
+  id INT PRIMARY KEY
+) WITH (
+  ttl_expire_after = '10 minutes',
+  ttl_select_batch_size = 10,
+  ttl_delete_batch_size = 20,
+  ttl_select_rate_limit = 30,
+  ttl_delete_rate_limit = 40,
+  ttl_pause = true,
+  ttl_row_stats_poll_interval = '1 minute',
+  ttl_label_metrics = true,
+  ttl_disable_changefeed_replication = true
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -8009,6 +8209,26 @@ CREATE TABLE tbl_to_alter_2 (
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE tbl_ttl_automatic_column (id INT PRIMARY KEY) WITH (ttl_automatic_column = 'on')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_ttl_expiration_expression_renamed (
+  id INT PRIMARY KEY,
+  expires_at TIMESTAMPTZ,
+  FAMILY fam (id, expires_at)
+) WITH (ttl_expiration_expression = 'expires_at')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_ttl_on_noop (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_ttl_params_non_negative (
+  id INT PRIMARY KEY
+) WITH (ttl_expire_after = '10 minutes')
 
 -- sqlfmt-corpus-separator --
 
@@ -8548,6 +8768,14 @@ CREATE TABLE tt (a INT PRIMARY KEY)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE tt (x t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ttl_expiration_expression_required(expire_at TIMESTAMPTZ) WITH (ttl_expiration_expression='expire_at')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ttl_expire_after_required() WITH (ttl_expire_after='10 minutes')
 
 -- sqlfmt-corpus-separator --
 

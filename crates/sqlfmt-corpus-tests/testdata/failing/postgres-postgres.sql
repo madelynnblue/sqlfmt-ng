@@ -1,23 +1,3 @@
-CREATE TABLE itest12 OF itest_type (f1 WITH OPTIONS GENERATED ALWAYS AS IDENTITY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE pagg_tab3 (a text, c text collate case_insensitive) PARTITION BY LIST(c collate "C")
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE pagg_tab4 (c text collate case_insensitive, b text collate case_insensitive) PARTITION BY LIST (b collate "C")
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE pagg_tab5 (c text collate case_insensitive, b text collate case_insensitive) PARTITION BY LIST (c collate case_insensitive)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE pagg_tab6 (c text collate case_insensitive, b text collate case_insensitive) PARTITION BY LIST (b collate case_insensitive)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE pagg_tab_m (a int, b int, c int) PARTITION BY RANGE(a, ((a+b)/2))
 
 -- sqlfmt-corpus-separator --
@@ -80,10 +60,6 @@ CREATE TABLE partitioned2 (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE personsx OF person_type (myname WITH OPTIONS NOT NULL)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE prt1_e (a int, b int, c int) PARTITION BY RANGE(((a + b)/2))
 
 -- sqlfmt-corpus-separator --
@@ -104,37 +80,6 @@ CREATE TABLE range_parted3 (
 	a int,
 	b int
 ) PARTITION BY RANGE (a, (b+1))
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE reloptions_test (s VARCHAR)
-	WITH (toast.autovacuum_vacuum_cost_delay = 23)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE reloptions_test (s VARCHAR) WITH
-	(toast.autovacuum_vacuum_cost_delay = 23,
-	autovacuum_vacuum_cost_delay = 24, fillfactor = 40)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE reloptions_test2 (i int) WITH (toast.not_existing_option = 42)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE reloptions_test2(i INT) WITH (autovacuum_analyze_scale_factor='string')
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE reloptions_test2(i INT) WITH (autovacuum_enabled='string')
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE reloptions_test2(i INT) WITH (fillfactor='string')
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE reloptions_test2(i INT) WITH (not_existing_namespace.fillfactor=2)
 
 -- sqlfmt-corpus-separator --
 
@@ -1088,10 +1033,6 @@ create table range_parted (
 	a text,
 	b int
 ) partition by range (a, (b+0))
-
--- sqlfmt-corpus-separator --
-
-create table test_part_coll_posix (a text) partition by range (a collate "POSIX")
 
 -- sqlfmt-corpus-separator --
 
