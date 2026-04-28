@@ -179,12 +179,16 @@ fn node_value_to_node(v: &Value) -> Node {
         a_expr_to_node(inner)
     } else if let Some(inner) = obj.get("BoolExpr") {
         bool_expr_to_node(inner)
+    } else if let Some(inner) = obj.get("CaseExpr") {
+        case_expr_to_node(inner)
     } else if let Some(inner) = obj.get("CoalesceExpr") {
         coalesce_expr_to_node(inner)
     } else if let Some(inner) = obj.get("CollateClause") {
         collate_clause_to_node(inner)
     } else if let Some(inner) = obj.get("RowExpr") {
         row_expr_to_node(inner)
+    } else if let Some(inner) = obj.get("A_ArrayExpr") {
+        array_expr_to_node(inner)
     } else if let Some(inner) = obj.get("FuncCall") {
         func_call_to_node(inner)
     } else if let Some(inner) = obj.get("SortBy") {
@@ -2035,6 +2039,11 @@ fn a_expr_to_node(e: &Value) -> Node {
             let rexpr_items = e["rexpr"]
                 .as_array()
                 .map(|arr| arr.iter().map(node_value_to_node).collect::<Vec<_>>())
+                .or_else(|| {
+                    e["rexpr"]["List"]["items"]
+                        .as_array()
+                        .map(|arr| arr.iter().map(node_value_to_node).collect::<Vec<_>>())
+                })
                 .unwrap_or_default();
             let list = Node::Wrap {
                 keyword: None,
@@ -2087,6 +2096,11 @@ fn a_expr_to_node(e: &Value) -> Node {
             let bounds = e["rexpr"]
                 .as_array()
                 .map(|arr| arr.iter().map(node_value_to_node).collect::<Vec<_>>())
+                .or_else(|| {
+                    e["rexpr"]["List"]["items"]
+                        .as_array()
+                        .map(|arr| arr.iter().map(node_value_to_node).collect::<Vec<_>>())
+                })
                 .unwrap_or_default();
             if bounds.len() == 2 {
                 let range = Node::Infix {
@@ -2354,6 +2368,30 @@ fn collate_clause_to_node(cc: &Value) -> Node {
     }
 }
 
+fn array_expr_to_node(ae: &Value) -> Node {
+    let items: Vec<Node> = ae["elements"]
+        .as_array()
+        .map(|arr| arr.iter().map(node_value_to_node).collect())
+        .unwrap_or_default();
+    let mut concat_items: Vec<Node> = Vec::new();
+    for (i, item) in items.into_iter().enumerate() {
+        if i > 0 {
+            concat_items.push(Node::Text {
+                value: ", ".into(),
+            });
+        }
+        concat_items.push(item);
+    }
+    Node::Wrap {
+        keyword: Some("ARRAY".into()),
+        open: "[".into(),
+        content: Box::new(Node::Concat {
+            items: concat_items,
+        }),
+        close: "]".into(),
+    }
+}
+
 fn row_expr_to_node(re: &Value) -> Node {
     let items: Vec<Node> = re["args"]
         .as_array()
@@ -2380,6 +2418,75 @@ fn row_expr_to_node(re: &Value) -> Node {
             items: concat_items,
         }),
         close: ")".into(),
+    }
+}
+
+fn case_expr_to_node(ce: &Value) -> Node {
+    let when_clauses: Vec<Node> = ce["args"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .map(|w| {
+                    let cw = w.get("CaseWhen").unwrap_or(w);
+                    case_when_to_node(cw)
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    let mut items: Vec<Node> = Vec::new();
+
+    // CASE expr WHEN ... form vs CASE WHEN ... form
+    if !ce["arg"].is_null() {
+        items.push(Node::Keyword {
+            value: "CASE".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+        items.push(node_value_to_node(&ce["arg"]));
+        for cw in when_clauses {
+            items.push(Node::Line);
+            items.push(cw);
+        }
+    } else {
+        items.push(Node::Keyword {
+            value: "CASE".into(),
+        });
+        for cw in when_clauses {
+            items.push(Node::Line);
+            items.push(cw);
+        }
+    }
+
+    if !ce["defresult"].is_null() {
+        items.push(Node::Line);
+        items.push(Node::Clauses {
+            items: vec![Clause {
+                keyword: "ELSE".into(),
+                body: Some(Box::new(node_value_to_node(&ce["defresult"]))),
+            }],
+        });
+    }
+
+    items.push(Node::Line);
+    items.push(Node::Keyword { value: "END".into() });
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn case_when_to_node(cw: &Value) -> Node {
+    Node::Clauses {
+        items: vec![
+            Clause {
+                keyword: "WHEN".into(),
+                body: Some(Box::new(node_value_to_node(&cw["expr"]))),
+            },
+            Clause {
+                keyword: "THEN".into(),
+                body: Some(Box::new(node_value_to_node(&cw["result"]))),
+            },
+        ],
     }
 }
 
@@ -2411,23 +2518,24 @@ fn func_call_to_node(f: &Value) -> Node {
                 value: String::new(),
             }
         } else {
-            let arg_nodes: Vec<Node> = args.iter().map(node_value_to_node).collect();
+            let mut arg_nodes: Vec<Node> = args.iter().map(node_value_to_node).collect();
+            let is_variadic = f["func_variadic"].as_bool().unwrap_or(false);
+            if is_variadic {
+                if let Some(last) = arg_nodes.pop() {
+                    arg_nodes.push(Node::Concat {
+                        items: vec![
+                            Node::Keyword {
+                                value: "VARIADIC".into(),
+                            },
+                            Node::Text { value: " ".into() },
+                            last,
+                        ],
+                    });
+                }
+            }
             let list = Node::List {
                 items: arg_nodes,
                 separator: None,
-            };
-            let list = if f["func_variadic"].as_bool().unwrap_or(false) {
-                Node::Concat {
-                    items: vec![
-                        Node::Keyword {
-                            value: "VARIADIC".into(),
-                        },
-                        Node::Text { value: " ".into() },
-                        list,
-                    ],
-                }
-            } else {
-                list
             };
             let with_distinct = if agg_distinct {
                 Node::Concat {

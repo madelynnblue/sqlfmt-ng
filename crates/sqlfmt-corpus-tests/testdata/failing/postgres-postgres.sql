@@ -1,12 +1,3 @@
-SELECT f1 AS five FROM FLOAT8_TBL
-  WHERE f1 BETWEEN -1e6 AND 1e6
-UNION
-SELECT f1 FROM INT4_TBL
-  WHERE f1 BETWEEN 0 AND 1000000
-ORDER BY 1
-
--- sqlfmt-corpus-separator --
-
 SELECT sum((3 = ANY(SELECT generate_series(1,4)))::int)
 
 -- sqlfmt-corpus-separator --
@@ -143,40 +134,6 @@ select (1 = any(array_agg(f1))) = any (select false) from int4_tbl
 
 -- sqlfmt-corpus-separator --
 
-select * from int4_tbl where
-  (case when f1 in (select unique1 from tenk1 a) then f1 else null end) in
-  (select ten from tenk1 b)
-
--- sqlfmt-corpus-separator --
-
-select concat_ws(',', variadic 10)
-
--- sqlfmt-corpus-separator --
-
-select concat_ws(',', variadic NULL::int[])
-
--- sqlfmt-corpus-separator --
-
-select format('Hello', variadic NULL::int[])
-
--- sqlfmt-corpus-separator --
-
-select x from (values (array['10'::varbit]), (array['11'::varbit])) _(x) union select x from (values (array['10'::varbit]), (array['01'::varbit])) _(x)
-
--- sqlfmt-corpus-separator --
-
-select x from (values (array[1, 2]), (array[1, 3])) _(x) except select x from (values (array[1, 2]), (array[1, 4])) _(x)
-
--- sqlfmt-corpus-separator --
-
-select x from (values (array[1, 2]), (array[1, 3])) _(x) intersect select x from (values (array[1, 2]), (array[1, 4])) _(x)
-
--- sqlfmt-corpus-separator --
-
-select x from (values (array[1, 2]), (array[1, 3])) _(x) union select x from (values (array[1, 2]), (array[1, 4])) _(x)
-
--- sqlfmt-corpus-separator --
-
 with recursive search_graph(f, t, label) as (
 	select * from graph g
 	union all
@@ -184,37 +141,4 @@ with recursive search_graph(f, t, label) as (
 	from graph g, search_graph sg
 	where g.f = sg.t
 ) cycle f, t set is_cycle to point '(1,1)' default point '(0,0)' using path
-select * from search_graph
-
--- sqlfmt-corpus-separator --
-
-with recursive search_graph(f, t, label, is_cycle, path) as (
-	select *, false, array[row(g.f, g.t)] from graph g
-	union all
-	select g.*, row(g.f, g.t) = any(path), path || row(g.f, g.t)
-	from graph g, search_graph sg
-	where g.f = sg.t and not is_cycle
-)
-select * from search_graph
-
--- sqlfmt-corpus-separator --
-
-with recursive search_graph(f, t, label, is_cycle, path) as (
-	select *, false, array[row(g.f, g.t)] from graph g
-	union all
-	select g.*, row(g.f, g.t) = any(path), path || row(g.f, g.t)
-	from graph g, search_graph sg
-	where g.f = sg.t and not is_cycle
-)
-select * from search_graph order by path
-
--- sqlfmt-corpus-separator --
-
-with recursive search_graph(f, t, label, is_cycle, path) as (
-	select *, false, array[row(g.f, g.t)] from graph g
-	union distinct
-	select g.*, row(g.f, g.t) = any(path), path || row(g.f, g.t)
-	from graph g, search_graph sg
-	where g.f = sg.t and not is_cycle
-)
 select * from search_graph
