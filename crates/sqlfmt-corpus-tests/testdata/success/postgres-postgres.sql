@@ -387,6 +387,10 @@ CREATE TABLE DEFAULTEXPR_TBL (i1 int DEFAULT 100 + (200-199) * 2,
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE FKTABLE ( ftest1 int REFERENCES PKTABLE MATCH FULL, ftest2 int )
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE FKTABLE ( ftest1 int REFERENCES PKTABLE, ftest2 int )
 
 -- sqlfmt-corpus-separator --
@@ -613,6 +617,10 @@ CREATE TABLE TIME_TBL (f1 time(2))
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE UNIQUE_TBL (i int UNIQUE NULLS NOT DISTINCT, t text)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE UNIQUE_TBL (i int UNIQUE, t text)
 
 -- sqlfmt-corpus-separator --
@@ -716,6 +724,10 @@ CREATE TABLE alter_table_under_transition_tables
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE am_partitioned(x INT, y INT) PARTITION BY hash (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE am_partitioned(x INT, y INT) PARTITION BY hash (x) USING heap2
 
 -- sqlfmt-corpus-separator --
 
@@ -842,6 +854,10 @@ CREATE TABLE audit_tbls.schema_two_table_three(the_value text)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE b1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE badcompresstbl (a text COMPRESSION I_Do_Not_Exist_Compression)
 
 -- sqlfmt-corpus-separator --
 
@@ -1226,6 +1242,10 @@ CREATE TABLE clstr_3 (a INT PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE clstr_expression(id serial primary key, a int, b text COLLATE "C")
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE clstr_tst_s (rf_a SERIAL PRIMARY KEY,
 	b INT)
 
@@ -1243,7 +1263,27 @@ CREATE TABLE clustertest (key int PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE cmdata(f1 text COMPRESSION pglz)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmdata2 (f1 TEXT COMPRESSION pglz, f2 TEXT COMPRESSION lz4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmdata2 (f1 int COMPRESSION pglz)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE cmdata2 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmdata2 (f1 text COMPRESSION lz4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmdata2 (f1 text COMPRESSION pglz)
 
 -- sqlfmt-corpus-separator --
 
@@ -1251,11 +1291,103 @@ CREATE TABLE cmdata3(f1 text)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE cmdata_pglz(f1 text COMPRESSION pglz)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmmove2(f1 text COMPRESSION pglz)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmmove3(f1 text COMPRESSION pglz)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmpart(f1 text COMPRESSION lz4) PARTITION BY HASH(f1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmpart2(f1 text COMPRESSION pglz)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE cnn_pk (a int, b int)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE collate_dep_test1 (a int, b text COLLATE test0)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE collate_dep_test4t (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test1 (
+    a int,
+    b text COLLATE "C" NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test1 (
+    a int,
+    b text COLLATE "en-x-icu" NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test1 (
+    a int,
+    b text COLLATE "en_US" NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test10 (
+    a int,
+    x text COLLATE "C",
+    y text COLLATE "POSIX"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test10 (
+    a int,
+    x text COLLATE "en-x-icu",
+    y text COLLATE "tr-x-icu"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test10 (
+    a int,
+    x text COLLATE "en_US",
+    y text COLLATE "tr_TR"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test20 (f1 text COLLATE "C" PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test21 (f2 text COLLATE "POSIX" REFERENCES collate_test20)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test22 (f2 text COLLATE "POSIX")
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test23 (f1 text collate mycoll2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test3 (
+    a int,
+    b text COLLATE "C"
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -1269,6 +1401,69 @@ CREATE TABLE collate_test4 (
 CREATE TABLE collate_test4 (
     a int,
     b testdomain_sv
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test5 (
+    a int,
+    b testdomain_p COLLATE "C"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test5 (
+    a int,
+    b testdomain_sv COLLATE "en-x-icu"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test5 (
+    a int,
+    b testdomain_sv COLLATE "en_US"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test6 (
+    a int,
+    b text COLLATE "en-x-icu"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test6 (
+    a int,
+    b text COLLATE "en_US"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test_fail (
+    a int COLLATE "en-x-icu",
+    b text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test_fail (
+    a int COLLATE "en_US",
+    b text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test_fail (
+    a int,
+    b text COLLATE "foo"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test_fail (
+    a int,
+    b text COLLATE "foo-x-icu"
 )
 
 -- sqlfmt-corpus-separator --
@@ -1698,7 +1893,15 @@ CREATE TABLE eager_agg_t1 (a int, b int, c double precision)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE eager_agg_t1 (id int, val text COLLATE case_insensitive)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE eager_agg_t2 (a int, b int, c double precision)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eager_agg_t2 (val text COLLATE case_insensitive)
 
 -- sqlfmt-corpus-separator --
 
@@ -1719,6 +1922,10 @@ CREATE TABLE eager_agg_tab_ml(x int, y int) PARTITION BY RANGE(x)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE ec1 (ek1 int, ek2 int, eb text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ec2 (ek1 int, ek2 int, eb text COLLATE "POSIX")
 
 -- sqlfmt-corpus-separator --
 
@@ -1840,6 +2047,13 @@ CREATE TABLE expr_stats_incompatible_test (
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE ext_stats_test (x text, y int, z int, w xid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail_part (
+	b char(2) COLLATE "C",
+	a int NOT NULL
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -2379,6 +2593,18 @@ CREATE TABLE hobbies_r (
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE i_am_a_failure() USING "I do not exist AM"
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i_am_a_failure() USING "btree"
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i_am_a_failure() USING i_do_not_exist_am
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE idxpart (a INT, b TEXT, c INT) PARTITION BY RANGE(a)
 
 -- sqlfmt-corpus-separator --
@@ -2497,6 +2723,14 @@ CREATE TABLE list_part1(a numeric, b int, c int8)
 
 CREATE TABLE list_parted (
 	a int
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_parted (
+	a int NOT NULL,
+	b char(2) COLLATE "C",
+	CONSTRAINT check_a CHECK (a > 0)
 ) PARTITION BY LIST (a)
 
 -- sqlfmt-corpus-separator --
@@ -2988,6 +3222,14 @@ CREATE TABLE part3_self_fk (	-- a partitioned partition
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE part_1 (
+	a int NOT NULL,
+	b char(2) COLLATE "C",
+	CONSTRAINT check_a CHECK (a > 0)
+)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE part_attmp (a int primary key) partition by range (a)
 
 -- sqlfmt-corpus-separator --
@@ -3035,6 +3277,10 @@ CREATE TABLE parted (
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE parted_col_comment (a int, b text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parted_col_comment (a int, b text) PARTITION BY LIST (a) WITH (fillfactor=100)
 
 -- sqlfmt-corpus-separator --
 
@@ -4105,6 +4351,14 @@ CREATE TABLE t (i int) PARTITION BY RANGE (i)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t (i int) PARTITION BY RANGE (i) USING partition_split_heap
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i int) PARTITION BY RANGE (i) USING partitions_merge_heap
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t (id serial PRIMARY KEY, a int, b int, c int)
 
 -- sqlfmt-corpus-separator --
@@ -4253,7 +4507,15 @@ CREATE TABLE tableam_parted_heap2 (a text, b int) PARTITION BY list (a)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE tableam_parted_heap2 (a text, b int) PARTITION BY list (a) USING heap2
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE tableam_parted_heapx (a text, b int) PARTITION BY list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tableam_tbl_heap2(f1 int) USING heap2
 
 -- sqlfmt-corpus-separator --
 
@@ -4278,6 +4540,14 @@ CREATE TABLE tbl3 (e int, f int)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE tbl4 (g int, h int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_heap(f1 int, f2 char(100)) using heap
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_heap_psql(f1 int, f2 char(100)) using heap_psql
 
 -- sqlfmt-corpus-separator --
 
@@ -4318,6 +4588,10 @@ CREATE TABLE tc1 (a int, b text)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE tc2 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tc3 (a int, b text COLLATE "C")
 
 -- sqlfmt-corpus-separator --
 
@@ -4416,7 +4690,103 @@ CREATE TABLE test10b (a int[], b priv_testtype1[])
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE test10pk (x text COLLATE case_sensitive PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test11pk (x text COLLATE case_insensitive PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test12fk (a int, b text COLLATE case_insensitive REFERENCES test12pk (x) ON UPDATE NO ACTION)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test12pk (x text COLLATE case_insensitive PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test1bpci (x char(3) COLLATE case_insensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test1ci (x text COLLATE case_insensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test1cs (x text COLLATE case_sensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test20 (a int, b text COLLATE case_insensitive) PARTITION BY LIST (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test21 (a int, b text COLLATE case_insensitive) PARTITION BY RANGE (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test22 (a int, b text COLLATE case_sensitive) PARTITION BY HASH (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test22a (a int, b text[] COLLATE case_sensitive) PARTITION BY HASH (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test23 (a int, b text COLLATE case_insensitive) PARTITION BY HASH (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test23a (a int, b text[] COLLATE case_insensitive) PARTITION BY HASH (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test2bpci (x char(3) COLLATE case_insensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test2ci (x text COLLATE case_insensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test2cs (x text COLLATE case_sensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test30 (a int, b char(3) COLLATE case_insensitive) PARTITION BY LIST (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test31 (a int, b char(3) COLLATE case_insensitive) PARTITION BY RANGE (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test32 (a int, b char(3) COLLATE case_sensitive) PARTITION BY HASH (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test33 (a int, b char(3) COLLATE case_insensitive) PARTITION BY HASH (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test3bpci (x char(3) COLLATE case_insensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test3ci (x text COLLATE case_insensitive)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test3cs (x text COLLATE case_sensitive)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE test4 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test4c (x text COLLATE case_insensitive)
 
 -- sqlfmt-corpus-separator --
 
@@ -4537,6 +4907,18 @@ CREATE TABLE test_missing_target (a int, b int, c char(8), d char)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE test_multi (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_pg_c_utf8 (
+  t TEXT COLLATE PG_C_UTF8
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_pg_unicode_fast (
+  t TEXT COLLATE PG_UNICODE_FAST
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -4737,6 +5119,10 @@ CREATE TABLE testpub_tbl_parent (a int)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE testschema.dflt (a int PRIMARY KEY) PARTITION BY LIST (a) TABLESPACE regress_tblspace
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE testschema.dflt2 (a int PRIMARY KEY) PARTITION BY LIST (a)
 
 -- sqlfmt-corpus-separator --
@@ -4754,6 +5140,11 @@ CREATE TABLE testschema.tablespace_acl (c int)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE testschema.test_default_tab(id bigint) TABLESPACE regress_tblspace
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.test_default_tab_p(id bigint, val bigint)
+    PARTITION BY LIST (id) TABLESPACE regress_tblspace
 
 -- sqlfmt-corpus-separator --
 
@@ -5213,6 +5604,10 @@ CREATE TABLE varbit_table (a BIT VARYING(16), b BIT VARYING(16))
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE view_base_table (key int PRIMARY KEY, data varchar(20))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE viewtest_tbl (a int, b int, c numeric(10,1), d text COLLATE "C")
 
 -- sqlfmt-corpus-separator --
 
@@ -68219,6 +68614,10 @@ create table coercepart (a varchar) partition by list (a)
 
 -- sqlfmt-corpus-separator --
 
+create table coll_pruning (a text collate "C") partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
 create table comptable (c1 comptype, c2 comptype[])
 
 -- sqlfmt-corpus-separator --
@@ -69100,6 +69499,10 @@ create table p2(id2 int, name text, height int)
 
 -- sqlfmt-corpus-separator --
 
+create table parent (a float8, b numeric(10,4), c text collate "C")
+
+-- sqlfmt-corpus-separator --
+
 create table parent (a int primary key, f int references parent)
   partition by list (a)
 
@@ -69197,6 +69600,11 @@ create table parted2_stmt_trig (a int) partition by list (a)
 -- sqlfmt-corpus-separator --
 
 create table parted_boolean_col (a bool, b text) partition by list(a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_collate_must_match (a text collate "C", b text collate "C")
+  partition by range (a)
 
 -- sqlfmt-corpus-separator --
 

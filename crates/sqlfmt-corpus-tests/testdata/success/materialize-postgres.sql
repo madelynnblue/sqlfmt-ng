@@ -1904,6 +1904,12 @@ CREATE TABLE othertype (x TEXT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE p (
+  a TEXT COLLATE en_u_ks_level1 PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE pairs (a INT, b INT)
 
 -- sqlfmt-corpus-separator --

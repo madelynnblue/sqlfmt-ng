@@ -17,10 +17,6 @@ CREATE TABLE a (b INT) WITH (autovacuum_enabled='11')
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE a (b STRING[] COLLATE en)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE alter_column_crdb_internal_expiration() WITH (ttl_expire_after='10 minutes')
 
 -- sqlfmt-corpus-separator --
@@ -137,16 +133,6 @@ CREATE TABLE b2 (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE backfill_test (
-  id INT PRIMARY KEY,
-  username STRING COLLATE en_US_u_ks_level2,
-  data INT NOT NULL,
-  enc VECTOR(3),
-  prefix_enc VECTOR(3)
-)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE boundedtable (b INT[10], c INT ARRAY[10])
 
 -- sqlfmt-corpus-separator --
@@ -161,13 +147,6 @@ CREATE TABLE c (
 CREATE TABLE c (
   id STRING PRIMARY KEY REFERENCES a ON UPDATE CASCADE
 );
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE c1 (
-  a STRING COLLATE en_u_ks_level1 PRIMARY KEY,
-  b STRING COLLATE en_u_ks_level1
-)
 
 -- sqlfmt-corpus-separator --
 
@@ -286,14 +265,6 @@ CREATE TABLE child_cascade (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE collation_name_case (s STRING COLLATE en_us_u_ks_level2);
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE coltab (a STRING COLLATE en)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE crdb_internal_functions_tbl (
   id INT PRIMARY KEY
 ) WITH (ttl_expire_after = '10 minutes')
@@ -352,56 +323,6 @@ CREATE TABLE d2 (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE data_types (
-  a   INT,
-  a2  INT2,
-  a4  INT4,
-  a8  INT8,
-  b   FLOAT,
-  b4  FLOAT4,
-  br  REAL,
-  c   DECIMAL,
-  cp  DECIMAL(3),
-  cps DECIMAL(3,2),
-  d   STRING,
-  dl  STRING COLLATE en,
-  dc  CHAR,
-  dc2 CHAR(2),
-  dv  VARCHAR,
-  dv2 VARCHAR(2),
-  dq  "char",
-  e   BYTES,
-  f   TIMESTAMP,
-  f6  TIMESTAMP(6),
-  g   TIMESTAMPTZ,
-  g6  TIMESTAMPTZ(6),
-  h   BIT,
-  h2  BIT(2),
-  hv  VARBIT,
-  hv2 VARBIT(2),
-  i   INTERVAL,
-  j   BOOL,
-  k   OID,
-  k2  REGCLASS,
-  k3  REGNAMESPACE,
-  k4  REGPROC,
-  k5  REGPROCEDURE,
-  k6  REGROLE,
-  k7  REGTYPE,
-  l   UUID,
-  m   INT2[],
-  m2  STRING[],
-  m3  DECIMAL(3, 2)[],
-  m4  VARCHAR(2)[] COLLATE en,
-  n   INET,
-  o   TIME,
-  o6  TIME(6),
-  p   JSONB,
-  q   NAME
-)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE del_cascade_test (
   delete_cascade INT NOT NULL REFERENCES update_test ON DELETE CASCADE
  ,j JSONB
@@ -414,14 +335,6 @@ CREATE TABLE delete_no_default_table (
   id INT PRIMARY KEY
  ,delete_no_default INT REFERENCES a ON DELETE SET DEFAULT
 );
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE disallowed(a text COLLATE "C")
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE disallowed(a text COLLATE "POSIX")
 
 -- sqlfmt-corpus-separator --
 
@@ -451,18 +364,6 @@ CREATE TABLE e (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE e1 (
-  a STRING COLLATE e
-)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE e3 (
-  a INT COLLATE en
-)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE f (
   a INT REFERENCES a (a) ON UPDATE CASCADE,
   b INT REFERENCES b (b),
@@ -485,10 +386,6 @@ CREATE TABLE f (
   e_d_id STRING PRIMARY KEY REFERENCES e (d_id) ON UPDATE CASCADE
  ,e_c_id STRING REFERENCES e (c_id) ON UPDATE CASCADE
 );
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE foo(a STRING COLLATE en_u_ks_level2)
 
 -- sqlfmt-corpus-separator --
 
@@ -595,17 +492,6 @@ CREATE TABLE nocase_strings (s STRING COLLATE "en-US-u-ks-le""vel2");
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE nocase_strings (s STRING COLLATE "en-US-u-ks-level2");
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE nocase_strings2 (
-  i INT,
-  s STRING COLLATE "en-US-u-ks-level2"
-);
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE not_null_table (
   id INT PRIMARY KEY
  ,delete_not_nullable INT NOT NULL REFERENCES a ON DELETE SET NULL
@@ -624,12 +510,6 @@ CREATE TABLE orders (
     id INT PRIMARY KEY,
     customer_id INT REFERENCES customers(id) ON UPDATE CASCADE ON DELETE SET NULL
 );
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE p (
-  a STRING COLLATE en_u_ks_level1 PRIMARY KEY
-)
 
 -- sqlfmt-corpus-separator --
 
@@ -665,10 +545,6 @@ CREATE TABLE regression_72804 (
   a INT,
   b regression_72804_enum GENERATED ALWAYS AS IDENTITY
 )
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE s (c CITEXT COLLATE "en_US");
 
 -- sqlfmt-corpus-separator --
 
@@ -710,49 +586,7 @@ CREATE TABLE selfref (a INT PRIMARY KEY, b INT NOT NULL REFERENCES selfref(a) ON
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE str1 (a INT PRIMARY KEY, s STRING COLLATE en_u_ks_level1)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE str2 (a INT PRIMARY KEY, s STRING COLLATE en_u_ks_level1)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE str_arr (a STRING[], b STRING COLLATE "en_US_u_ks_level2")
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t (
-  a INT PRIMARY KEY,
-  b STRING COLLATE en
-)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t (
-  a STRING COLLATE en
-)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t (
-  a STRING COLLATE fr PRIMARY KEY
-)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE t (a INT PRIMARY KEY, b INT) WITH (sql_stats_canary_window = '15s')
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t147559 (
-    a INT,
-    b TEXT COLLATE en_u_ks_level1
-);
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t2 (c0 STRING COLLATE en PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
 
@@ -769,20 +603,12 @@ CREATE TABLE t4 (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE t45142(c STRING COLLATE en);
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE t54989(
   no_collation_str text,
   no_collation_str_array text[],
   collated_str text COLLATE en,
   default_collation text COLLATE "default"
 )
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t65631(a "char", b "char" COLLATE en)
 
 -- sqlfmt-corpus-separator --
 
@@ -1028,13 +854,6 @@ CREATE TABLE test_52552_desc (c1 int GENERATED ALWAYS AS IDENTITY);
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE test_52552_start (c1 int GENERATED ALWAYS AS IDENTITY);
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE test_collate (
-  id INT8 PRIMARY KEY,
-  "string_field" STRING COLLATE en_US_u_ks_level2 NULL
-)
 
 -- sqlfmt-corpus-separator --
 

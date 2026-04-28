@@ -848,6 +848,69 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
         body: Some(Box::new(create_body)),
     });
 
+    // INHERITS.
+    if let Some(inh) = stmt["inhRelations"].as_array() {
+        if !inh.is_empty() {
+            let inh_rels: Vec<Node> = inh.iter().map(range_var_to_node).collect();
+            clauses.push(Clause {
+                keyword: "INHERITS".into(),
+                body: Some(Box::new(Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::List {
+                        items: inh_rels,
+                        separator: None,
+                    }),
+                    close: ")".into(),
+                })),
+            });
+        }
+    }
+
+    // PARTITION BY.
+    if let Some(part) = stmt["partspec"].as_object() {
+        let kw = part["strategy"]
+            .as_str()
+            .unwrap_or("PARTITION_STRATEGY_LIST");
+        let strat = match kw {
+            "PARTITION_STRATEGY_HASH" => "HASH",
+            "PARTITION_STRATEGY_RANGE" => "RANGE",
+            _ => "LIST",
+        };
+        let part_exprs: Vec<Node> = part["partParams"]
+            .as_array()
+            .map(|arr| arr.iter().map(node_value_to_node).collect())
+            .unwrap_or_default();
+        clauses.push(Clause {
+            keyword: "PARTITION BY".into(),
+            body: Some(Box::new(Node::Concat {
+                items: vec![
+                    Node::Keyword {
+                        value: strat.into(),
+                    },
+                    Node::Text { value: " ".into() },
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(Node::List {
+                            items: part_exprs,
+                            separator: None,
+                        }),
+                        close: ")".into(),
+                    },
+                ],
+            })),
+        });
+    }
+
+    // USING.
+    if let Some(am) = stmt["accessMethod"].as_str().filter(|s| !s.is_empty()) {
+        clauses.push(Clause {
+            keyword: "USING".into(),
+            body: Some(Box::new(ident_node(am))),
+        });
+    }
+
     // WITH options (storage parameters).
     if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
         let opt_items: Vec<Node> = opts.iter().map(|o| def_elem_to_node(o)).collect();
@@ -893,61 +956,6 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
         }
     }
 
-    // PARTITION BY.
-    if let Some(part) = stmt["partspec"].as_object() {
-        let kw = part["strategy"]
-            .as_str()
-            .unwrap_or("PARTITION_STRATEGY_LIST");
-        let strat = match kw {
-            "PARTITION_STRATEGY_HASH" => "HASH",
-            "PARTITION_STRATEGY_RANGE" => "RANGE",
-            _ => "LIST",
-        };
-        let part_exprs: Vec<Node> = part["partParams"]
-            .as_array()
-            .map(|arr| arr.iter().map(node_value_to_node).collect())
-            .unwrap_or_default();
-        clauses.push(Clause {
-            keyword: "PARTITION BY".into(),
-            body: Some(Box::new(Node::Concat {
-                items: vec![
-                    Node::Keyword {
-                        value: strat.into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    Node::Wrap {
-                        keyword: None,
-                        open: "(".into(),
-                        content: Box::new(Node::List {
-                            items: part_exprs,
-                            separator: None,
-                        }),
-                        close: ")".into(),
-                    },
-                ],
-            })),
-        });
-    }
-
-    // INHERITS.
-    if let Some(inh) = stmt["inhRelations"].as_array() {
-        if !inh.is_empty() {
-            let inh_rels: Vec<Node> = inh.iter().map(range_var_to_node).collect();
-            clauses.push(Clause {
-                keyword: "INHERITS".into(),
-                body: Some(Box::new(Node::Wrap {
-                    keyword: None,
-                    open: "(".into(),
-                    content: Box::new(Node::List {
-                        items: inh_rels,
-                        separator: None,
-                    }),
-                    close: ")".into(),
-                })),
-            });
-        }
-    }
-
     Node::Clauses { items: clauses }
 }
 
@@ -976,6 +984,39 @@ fn column_def_to_node(col: &Value) -> Node {
         Node::Text { value: type_str },
     ];
 
+    // COLLATE clause.
+    if let Some(coll_vals) = col["collClause"]["collname"].as_array().filter(|a| !a.is_empty()) {
+        let coll_parts: Vec<&str> = coll_vals
+            .iter()
+            .filter_map(|n| {
+                n["String"]["sval"]
+                    .as_str()
+                    .or_else(|| n["String"]["str"].as_str())
+            })
+            .collect();
+        if !coll_parts.is_empty() {
+            let c_str = coll_parts.join(".");
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Keyword {
+                value: "COLLATE".into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(ident_node(&c_str));
+        }
+    }
+
+    // COMPRESSION clause.
+    if let Some(comp) = col["compression"].as_str().filter(|s| !s.is_empty()) {
+        items.push(Node::Text {
+            value: " ".into(),
+        });
+        items.push(Node::Keyword {
+            value: "COMPRESSION".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+        items.push(ident_node(comp));
+    }
+
     if let Some(constraints) = col["constraints"].as_array() {
         for c in constraints {
             items.push(Node::Text { value: " ".into() });
@@ -1001,9 +1042,18 @@ fn constraint_to_node(c: &Value) -> Node {
         "CONSTR_PRIMARY" => Node::Keyword {
             value: "PRIMARY KEY".into(),
         },
-        "CONSTR_UNIQUE" => Node::Keyword {
-            value: "UNIQUE".into(),
-        },
+        "CONSTR_UNIQUE" => {
+            let nulls_not_distinct = c["nulls_not_distinct"].as_bool().unwrap_or(false);
+            if nulls_not_distinct {
+                Node::Keyword {
+                    value: "UNIQUE NULLS NOT DISTINCT".into(),
+                }
+            } else {
+                Node::Keyword {
+                    value: "UNIQUE".into(),
+                }
+            }
+        }
         "CONSTR_DEFAULT" => {
             let expr = node_value_to_node(&c["raw_expr"]);
             Node::Concat {
@@ -1070,17 +1120,17 @@ fn constraint_to_node(c: &Value) -> Node {
             }
             // Foreign key match type.
             match c["fk_matchtype"].as_str().unwrap_or("") {
-                "FK_MATCH_FULL" => {
+                "f" => {
                     items.push(Node::Text {
                         value: " MATCH FULL".into(),
                     });
                 }
-                "FK_MATCH_PARTIAL" => {
+                "p" => {
                     items.push(Node::Text {
                         value: " MATCH PARTIAL".into(),
                     });
                 }
-                "FK_MATCH_SIMPLE" => {
+                "s" => {
                     items.push(Node::Text {
                         value: " MATCH SIMPLE".into(),
                     });

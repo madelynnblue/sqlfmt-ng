@@ -504,6 +504,10 @@ CREATE TABLE a (b SMALLINT[])
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE a (b STRING[] COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE a (b STRING[])
 
 -- sqlfmt-corpus-separator --
@@ -1167,6 +1171,16 @@ CREATE TABLE backfill_d (i INT, s enum, j JSON)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE backfill_test (
+  id INT PRIMARY KEY,
+  username STRING COLLATE en_US_u_ks_level2,
+  data INT NOT NULL,
+  enc VECTOR(3),
+  prefix_enc VECTOR(3)
+)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE bad (a INT CHECK(sum(a) > 1))
 
 -- sqlfmt-corpus-separator --
@@ -1381,6 +1395,13 @@ CREATE TABLE c.t (id INT PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE c1 (
+  a STRING COLLATE en_u_ks_level1 PRIMARY KEY,
+  b STRING COLLATE en_u_ks_level1
+)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE calls_func (a INT CHECK(abs(a) < 2))
 
 -- sqlfmt-corpus-separator --
@@ -1590,7 +1611,15 @@ CREATE TABLE col_cascade_t2 (id INT PRIMARY KEY, a INT, b INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE collation_name_case (s STRING COLLATE en_us_u_ks_level2);
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE colref (rename_c1 INT, rename_c2 INT, C3 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE coltab (a STRING COLLATE en)
 
 -- sqlfmt-corpus-separator --
 
@@ -1846,6 +1875,56 @@ CREATE TABLE data_test (
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE data_types (
+  a   INT,
+  a2  INT2,
+  a4  INT4,
+  a8  INT8,
+  b   FLOAT,
+  b4  FLOAT4,
+  br  REAL,
+  c   DECIMAL,
+  cp  DECIMAL(3),
+  cps DECIMAL(3,2),
+  d   STRING,
+  dl  STRING COLLATE en,
+  dc  CHAR,
+  dc2 CHAR(2),
+  dv  VARCHAR,
+  dv2 VARCHAR(2),
+  dq  "char",
+  e   BYTES,
+  f   TIMESTAMP,
+  f6  TIMESTAMP(6),
+  g   TIMESTAMPTZ,
+  g6  TIMESTAMPTZ(6),
+  h   BIT,
+  h2  BIT(2),
+  hv  VARBIT,
+  hv2 VARBIT(2),
+  i   INTERVAL,
+  j   BOOL,
+  k   OID,
+  k2  REGCLASS,
+  k3  REGNAMESPACE,
+  k4  REGPROC,
+  k5  REGPROCEDURE,
+  k6  REGROLE,
+  k7  REGTYPE,
+  l   UUID,
+  m   INT2[],
+  m2  STRING[],
+  m3  DECIMAL(3, 2)[],
+  m4  VARCHAR(2)[] COLLATE en,
+  n   INET,
+  o   TIME,
+  o6  TIME(6),
+  p   JSONB,
+  q   NAME
+)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE date_test (date_val date, time_val time, interval_val interval)
 
 -- sqlfmt-corpus-separator --
@@ -2080,6 +2159,14 @@ CREATE TABLE didx (i INT, v DECIMAL, INDEX vidx (v))
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE disallowed(a text COLLATE "C")
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE disallowed(a text COLLATE "POSIX")
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE dist_merge_idx (a INT NOT NULL PRIMARY KEY, b INT NOT NULL, c INT NOT NULL UNIQUE)
 
 -- sqlfmt-corpus-separator --
@@ -2200,7 +2287,19 @@ CREATE TABLE e.b (i INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE e1 (
+  a STRING COLLATE e
+)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE e104009(e INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e3 (
+  a INT COLLATE en
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -2454,6 +2553,10 @@ CREATE TABLE foo(a INT)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE foo(a INT, b CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(a STRING COLLATE en_u_ks_level2)
 
 -- sqlfmt-corpus-separator --
 
@@ -3443,6 +3546,17 @@ CREATE TABLE no_unique(
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE nocase_strings (s STRING COLLATE "en-US-u-ks-level2");
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nocase_strings2 (
+  i INT,
+  s STRING COLLATE "en-US-u-ks-level2"
+);
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE nocols()
 
 -- sqlfmt-corpus-separator --
@@ -3658,6 +3772,12 @@ CREATE TABLE owner(owner_col INT)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE owner_grant_option()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE p (
+  a STRING COLLATE en_u_ks_level1 PRIMARY KEY
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -4184,6 +4304,10 @@ CREATE TABLE root_test.t(a int)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE s (c CITEXT COLLATE "en_US");
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE s (x STRING)
 
 -- sqlfmt-corpus-separator --
@@ -4499,6 +4623,18 @@ CREATE TABLE store_columns_test (c1 INT, c2 INT, c3 INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE str1 (a INT PRIMARY KEY, s STRING COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE str2 (a INT PRIMARY KEY, s STRING COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE str_arr (a STRING[], b STRING COLLATE "en_US_u_ks_level2")
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE str_arr(j JSONB)
 
 -- sqlfmt-corpus-separator --
@@ -4595,6 +4731,13 @@ CREATE TABLE t (
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t (
+  a INT PRIMARY KEY,
+  b STRING COLLATE en
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
   a INT,
   b INT
 )
@@ -4612,6 +4755,18 @@ CREATE TABLE t (
   h INET[],
   i VARBIT[],
   j FLOAT[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a STRING COLLATE en
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a STRING COLLATE fr PRIMARY KEY
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -5504,6 +5659,13 @@ CREATE TABLE t147186 (a INT, b INT DEFAULT f147186());
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t147559 (
+    a INT,
+    b TEXT COLLATE en_u_ks_level1
+);
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t15 (x INT, y INT);
 
 -- sqlfmt-corpus-separator --
@@ -5670,6 +5832,10 @@ CREATE TABLE t2 (b INT PRIMARY KEY)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t2 (b TIMESTAMPTZ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (c0 STRING COLLATE en PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
 
@@ -6059,6 +6225,10 @@ CREATE TABLE t44746_1(c1 INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t45142(c STRING COLLATE en);
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t45453(c INT)
 
 -- sqlfmt-corpus-separator --
@@ -6208,6 +6378,10 @@ CREATE TABLE t64765 (x INT PRIMARY KEY, y INT, z INT)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t64793 (b TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t65631(a "char", b "char" COLLATE en)
 
 -- sqlfmt-corpus-separator --
 
@@ -7499,6 +7673,13 @@ CREATE TABLE test_alter (p STRING, k STRING)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE test_backfill_149236 (a INT PRIMARY KEY, b INT, vec1 VECTOR(3));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_collate (
+  id INT8 PRIMARY KEY,
+  "string_field" STRING COLLATE en_US_u_ks_level2 NULL
+)
 
 -- sqlfmt-corpus-separator --
 
