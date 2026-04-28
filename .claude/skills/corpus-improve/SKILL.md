@@ -47,6 +47,48 @@ A `Roundtrip` error means the rendered SQL re-parses to a different AST than the
 
 ### 3. Fix the converter
 
+#### Materialize: use `doc.rs` as a formatting template
+
+For the Materialize dialect, the upstream repo already has a reference pretty-printer at
+`src/sql-pretty/src/doc.rs` in `MaterializeInc/materialize`. Before writing any IR
+conversion code, check that file to see exactly how each statement and expression type
+is formatted — which clauses appear, in what order, what keywords prefix each, how
+options are bracketed, etc. The `doc.rs` code is authoritative ground truth for the
+expected output structure.
+
+The patterns in `doc.rs` translate directly to IR nodes:
+- `nest_title("FROM", ...)` → `Node::Keyword("FROM")` wrapping the inner node
+- `bracket("(", ..., ")")` → `Node::Wrap { open: "(", close: ")" }`
+- `comma_separate(...)` → `Node::List { .. }`
+- `RcDoc::intersperse(docs, Doc::line())` → `Node::Clauses(docs)`
+- `intersperse_line_nest(...)` → nested `Node::Clauses`
+
+Use `doc.rs` to understand the expected shape *before* writing the converter, so the
+IR you produce will round-trip correctly on the first attempt.
+
+#### Rust parsers: always destructure all fields — never use `..`
+
+For Rust-based parsers (Materialize, CockroachDB), always destructure AST structs and
+enum variants with every field named explicitly. Never use `..` to ignore the rest:
+
+```rust
+// BAD — silently drops new fields added upstream
+let MyStmt { name, query, .. } = v;
+
+// GOOD — compile error if upstream adds a field you haven't handled
+let MyStmt { name, query, options, if_not_exists } = v;
+```
+
+This turns "silently dropped field → round-trip failure" into a compile error caught
+before any test runs. If a field is intentionally unused (e.g., a span/location with
+no semantic content), bind it to `_`:
+
+```rust
+let MyStmt { name, query, span: _ } = v;
+```
+
+Apply this to every struct conversion and every enum variant match arm.
+
 Edit the appropriate converter file and add or complete the conversion for the failing node. After fixing:
 
 ```sh
