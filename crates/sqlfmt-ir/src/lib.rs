@@ -45,6 +45,9 @@ pub enum Node {
     Text {
         value: String,
     },
+    Unformatted {
+        value: String,
+    },
     Concat {
         items: Vec<Node>,
     },

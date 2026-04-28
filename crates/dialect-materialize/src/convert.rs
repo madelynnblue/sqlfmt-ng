@@ -7,7 +7,7 @@ use sqlfmt_ir::{Clause, Node};
 pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
     match stmt {
         Statement::Select(s) => select_stmt_to_node(s),
-        _ => Node::Text {
+        _ => Node::Unformatted {
             value: format!("{stmt}"),
         },
     }
@@ -20,7 +20,7 @@ fn select_stmt_to_node(s: &SelectStatement<Raw>) -> Node {
 fn query_to_node(query: &Query<Raw>) -> Node {
     match &query.body {
         SetExpr::Select(select) => select_to_node(select, query),
-        _ => Node::Text {
+        _ => Node::Unformatted {
             value: format!("{query}"),
         },
     }
@@ -128,7 +128,7 @@ fn table_with_joins_to_node(twj: &TableWithJoins<Raw>) -> Node {
         table_factor_to_node(&twj.relation)
     } else {
         // Joins: fall back to text formatting for now.
-        Node::Text {
+        Node::Unformatted {
             value: format!("{twj}"),
         }
     }
@@ -147,7 +147,7 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
             }
         }
         TableFactor::NestedJoin { join, alias } => {
-            let inner = Node::Text {
+            let inner = Node::Unformatted {
                 value: format!("{join}"),
             };
             let wrapped = Node::Wrap {
@@ -161,7 +161,7 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
                 Some(a) => with_alias(wrapped, a),
             }
         }
-        _ => Node::Text {
+        _ => Node::Unformatted {
             value: format!("{factor}"),
         },
     }
@@ -262,7 +262,7 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
                 },
             ],
         },
-        _ => Node::Text {
+        _ => Node::Unformatted {
             value: format!("{expr}"),
         },
     }

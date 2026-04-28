@@ -109,6 +109,7 @@ fn to_rdoc<'a>(node: &Node, opts: &RenderOpts) -> RcDoc<'a> {
         },
         Node::Literal { value } => RcDoc::text(value.clone()),
         Node::Text { value } => RcDoc::text(value.clone()),
+        Node::Unformatted { value } => RcDoc::text(value.clone()),
         Node::Concat { items } => {
             let docs: Vec<RcDoc> = items.iter().map(|n| to_rdoc(n, opts)).collect();
             RcDoc::concat(docs)

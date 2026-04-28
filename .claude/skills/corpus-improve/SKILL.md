@@ -41,7 +41,7 @@ A `Roundtrip` error means the rendered SQL re-parses to a different AST than the
 1. Look up the relevant AST node in the parser's JSON output (postgres: use `pg_query::parse_to_json(stmt)`)
 2. Search `json_convert.rs` (postgres) or `convert.rs` (materialize) for the node type
 3. Check whether any fields are missing from the IR construction — common causes:
-   - A `TODO` comment returning `Node::Text` instead of a real conversion
+   - A `format!("...")` fallback producing `Node::Unformatted` — search the converter for `Unformatted` to find unconverted AST nodes
    - A match arm that ignores fields (e.g., `OrderByClause` missing `NULLS FIRST/LAST`)
    - A new AST node variant added upstream that has no arm
 

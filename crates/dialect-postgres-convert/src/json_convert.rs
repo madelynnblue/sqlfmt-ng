@@ -157,7 +157,7 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
 
 fn node_value_to_node(v: &Value) -> Node {
     let Some(obj) = v.as_object() else {
-        return Node::Text {
+        return Node::Unformatted {
             value: v.to_string(),
         };
     };
@@ -232,7 +232,7 @@ fn node_value_to_node(v: &Value) -> Node {
     } else if obj.contains_key("A_Star") {
         Node::Text { value: "*".into() }
     } else {
-        Node::Text {
+        Node::Unformatted {
             value: format!("{v}"),
         }
     }
@@ -1005,7 +1005,7 @@ fn build_with_clause(s: &Value) -> Option<Clause> {
                 .map(|c| {
                     c.get("CommonTableExpr")
                         .map(common_table_expr_to_node)
-                        .unwrap_or(Node::Text {
+                        .unwrap_or(Node::Unformatted {
                             value: format!("{c}"),
                         })
                 })
@@ -2361,7 +2361,7 @@ fn bool_expr_to_node(b: &Value) -> Node {
             ],
         }
     } else {
-        Node::Text {
+        Node::Unformatted {
             value: format!("{b}"),
         }
     }
