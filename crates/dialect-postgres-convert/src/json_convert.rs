@@ -157,6 +157,8 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(create_table_as_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("DropStmt") {
         Some(drop_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("ViewStmt") {
+        Some(view_stmt_to_node(inner))
     } else {
         None
     }
@@ -1051,6 +1053,98 @@ fn drop_stmt_to_node(stmt: &Value) -> Node {
     Node::Group {
         content: Box::new(Node::Concat { items }),
     }
+}
+
+fn view_stmt_to_node(stmt: &Value) -> Node {
+    let view = range_var_to_node(&stmt["view"]);
+
+    let relpersistence = stmt["view"]["relpersistence"]
+        .as_str()
+        .unwrap_or("p");
+
+    let mut kw = String::from("CREATE");
+    if relpersistence == "t" {
+        kw.push_str(" TEMP");
+    }
+    if stmt["replace"].as_bool().unwrap_or(false) {
+        kw.push_str(" OR REPLACE");
+    }
+    kw.push_str(" VIEW");
+
+    // Column aliases.
+    let aliases: Vec<Node> = stmt["aliases"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .map(|a| {
+                    let s = a.get("String").map(string_val).unwrap_or("");
+                    ident_node(s)
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    // Build the CREATE VIEW part as a Clause with keyword and body.
+    // Body is: [IF NOT EXISTS] viewName [(colNames)] AS query [WITH CHECK OPTION]
+    let query = select_stmt_to_node(&stmt["query"]["SelectStmt"]);
+
+    let check_option = stmt["withCheckOption"]
+        .as_str()
+        .unwrap_or("NO_CHECK_OPTION");
+
+    let mut body_items: Vec<Node> = Vec::new();
+
+    // View name + optional column list
+    body_items.push(view);
+    if !aliases.is_empty() {
+        body_items.push(Node::Text { value: " ".into() });
+        body_items.push(Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(Node::List {
+                items: aliases,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    }
+
+    // AS + query
+    body_items.push(Node::Text { value: " ".into() });
+    body_items.push(Node::Keyword {
+        value: "AS".into(),
+    });
+    body_items.push(Node::Text { value: " ".into() });
+    body_items.push(query);
+
+    // WITH CHECK OPTION
+    if check_option != "NO_CHECK_OPTION" {
+        body_items.push(Node::Text { value: " ".into() });
+        let ck = if check_option == "CASCADED_CHECK_OPTION" {
+            "CASCADED"
+        } else {
+            "LOCAL"
+        };
+        body_items.push(Node::Keyword {
+            value: format!("WITH {ck} CHECK OPTION"),
+        });
+    }
+
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    // WITH clause (CTE) — can appear before CREATE VIEW.
+    if let Some(with_clause) = build_with_clause(stmt) {
+        clauses.push(with_clause);
+    }
+
+    clauses.push(Clause {
+        keyword: kw,
+        body: Some(Box::new(Node::Concat {
+            items: body_items,
+        })),
+    });
+
+    Node::Clauses { items: clauses }
 }
 
 fn create_stmt_to_node(stmt: &Value) -> Node {
