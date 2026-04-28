@@ -7985,6 +7985,14 @@ INSERT INTO itest1 DEFAULT VALUES
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO itest1 OVERRIDING SYSTEM VALUE VALUES (20, 'xyz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO itest1 OVERRIDING USER VALUE VALUES (30, 'xyz')
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO itest1 VALUES (10, 'xyz')
 
 -- sqlfmt-corpus-separator --
@@ -7997,6 +8005,14 @@ INSERT INTO itest2 DEFAULT VALUES
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO itest2 OVERRIDING SYSTEM VALUE VALUES (20, 'xyz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO itest2 OVERRIDING USER VALUE VALUES (30, 'xyz')
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO itest2 VALUES (10, 'xyz')
 
 -- sqlfmt-corpus-separator --
@@ -8006,6 +8022,22 @@ INSERT INTO itest3 DEFAULT VALUES
 -- sqlfmt-corpus-separator --
 
 INSERT INTO itest4 DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO itest5 OVERRIDING SYSTEM VALUE VALUES (-1, 'aa')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO itest5 OVERRIDING SYSTEM VALUE VALUES (-2, 'bb'), (-3, 'cc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO itest5 OVERRIDING USER VALUE VALUES (-1, 'aaa')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO itest5 OVERRIDING USER VALUE VALUES (-2, 'bbb'), (-3, 'ccc')
 
 -- sqlfmt-corpus-separator --
 
@@ -8041,11 +8073,19 @@ INSERT INTO itestv10 DEFAULT VALUES
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO itestv10 OVERRIDING USER VALUE VALUES (11, 'xyz')
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO itestv10 VALUES (10, 'xyz')
 
 -- sqlfmt-corpus-separator --
 
 INSERT INTO itestv11 DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO itestv11 OVERRIDING SYSTEM VALUE VALUES (11, 'xyz')
 
 -- sqlfmt-corpus-separator --
 

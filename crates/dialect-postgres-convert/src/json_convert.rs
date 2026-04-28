@@ -319,14 +319,14 @@ fn insert_stmt_to_node(stmt: &Value) -> Node {
         body: Some(Box::new(insert_into_body)),
     });
 
-    match stmt["override"].as_str().unwrap_or("OVERRIDING_NOT_SET") {
-        "OVERRIDING SYSTEM VALUE" => {
+    match stmt["override"].as_str().unwrap_or("") {
+        "OVERRIDING_SYSTEM_VALUE" => {
             clauses.push(Clause {
                 keyword: "OVERRIDING SYSTEM VALUE".into(),
                 body: None,
             });
         }
-        "OVERRIDING USER VALUE" => {
+        "OVERRIDING_USER_VALUE" => {
             clauses.push(Clause {
                 keyword: "OVERRIDING USER VALUE".into(),
                 body: None,
