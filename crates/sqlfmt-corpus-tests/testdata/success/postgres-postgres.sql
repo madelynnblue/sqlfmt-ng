@@ -59516,6 +59516,11 @@ UPDATE arrtest_s SET a[3:] = '{23, 24, 25}', b[2:][2:] = '{{25,26}, {28,29}}'
 
 -- sqlfmt-corpus-separator --
 
+UPDATE arrtest_s SET a[:3] = '{11, 12, 13}', b[:2][:2] = '{{11,12}, {14,15}}'
+  WHERE array_lower(a,1) = 1
+
+-- sqlfmt-corpus-separator --
+
 UPDATE atest1 SET a = 1 WHERE a = 2
 
 -- sqlfmt-corpus-separator --

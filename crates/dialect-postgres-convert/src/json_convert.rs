@@ -1539,7 +1539,7 @@ fn append_indirection(items: &mut Vec<Node>, indirection: &Value) {
                         ],
                     }
                 }
-                (Some(l), _) if is_slice => {
+                (Some(l), None) if is_slice => {
                     Node::Concat {
                         items: vec![
                             node_value_to_node(l),
@@ -1549,7 +1549,18 @@ fn append_indirection(items: &mut Vec<Node>, indirection: &Value) {
                         ],
                     }
                 }
-                (_, Some(u)) => node_value_to_node(u),
+                (None, Some(u)) if is_slice => {
+                    Node::Concat {
+                        items: vec![
+                            Node::Text {
+                                value: ":".into(),
+                            },
+                            node_value_to_node(u),
+                        ],
+                    }
+                }
+                (Some(_l), Some(u)) => node_value_to_node(u),
+                (None, Some(u)) => node_value_to_node(u),
                 _ => continue,
             };
             items.push(Node::Wrap {
