@@ -17313,11 +17313,43 @@ WHEN NOT MATCHED THEN
 
 -- sqlfmt-corpus-separator --
 
+MERGE INTO itest15 t
+USING (SELECT 20 AS s_a, 'inserted by merge' AS s_b) s
+ON t.a = s.s_a
+WHEN NOT MATCHED THEN
+	INSERT (a, b) OVERRIDING USER VALUE VALUES (s.s_a, s.s_b)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO itest15 t
+USING (SELECT 30 AS s_a, 'inserted by merge' AS s_b) s
+ON t.a = s.s_a
+WHEN NOT MATCHED THEN
+	INSERT (a, b) OVERRIDING SYSTEM VALUE VALUES (s.s_a, s.s_b)
+
+-- sqlfmt-corpus-separator --
+
 MERGE INTO itest16 t
 USING (SELECT 10 AS s_a, 'inserted by merge' AS s_b) s
 ON t.a = s.s_a
 WHEN NOT MATCHED THEN
 	INSERT (a, b) VALUES (s.s_a, s.s_b)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO itest16 t
+USING (SELECT 20 AS s_a, 'inserted by merge' AS s_b) s
+ON t.a = s.s_a
+WHEN NOT MATCHED THEN
+	INSERT (a, b) OVERRIDING USER VALUE VALUES (s.s_a, s.s_b)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO itest16 t
+USING (SELECT 30 AS s_a, 'inserted by merge' AS s_b) s
+ON t.a = s.s_a
+WHEN NOT MATCHED THEN
+	INSERT (a, b) OVERRIDING SYSTEM VALUE VALUES (s.s_a, s.s_b)
 
 -- sqlfmt-corpus-separator --
 

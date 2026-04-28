@@ -719,6 +719,20 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
                         });
                     }
                 }
+                // OVERRIDING clause
+                match mwc["override"].as_str().unwrap_or("") {
+                    "OVERRIDING_SYSTEM_VALUE" => {
+                        body_items.push(Node::Text {
+                            value: " OVERRIDING SYSTEM VALUE".into(),
+                        });
+                    }
+                    "OVERRIDING_USER_VALUE" => {
+                        body_items.push(Node::Text {
+                            value: " OVERRIDING USER VALUE".into(),
+                        });
+                    }
+                    _ => {}
+                }
                 if let Some(vals) = mwc["values"].as_array() {
                     if !vals.is_empty() {
                         let val_items: Vec<Node> =
