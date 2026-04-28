@@ -1130,12 +1130,20 @@ fn constraint_to_node(c: &Value) -> Node {
                         value: " MATCH PARTIAL".into(),
                     });
                 }
-                "s" => {
-                    items.push(Node::Text {
-                        value: " MATCH SIMPLE".into(),
-                    });
-                }
-                _ => {}
+                _ => {} // MATCH SIMPLE is the default, skip it
+            }
+            // FK actions: ON DELETE/UPDATE.
+            let del_action = fk_action_str(c["fk_del_action"].as_str().unwrap_or(""));
+            if !del_action.is_empty() {
+                items.push(Node::Text {
+                    value: format!(" ON DELETE {del_action}"),
+                });
+            }
+            let upd_action = fk_action_str(c["fk_upd_action"].as_str().unwrap_or(""));
+            if !upd_action.is_empty() {
+                items.push(Node::Text {
+                    value: format!(" ON UPDATE {upd_action}"),
+                });
             }
             Node::Concat { items }
         }
@@ -1181,19 +1189,17 @@ fn constraint_generated_identity(c: &Value) -> Vec<Node> {
     let mut items: Vec<Node> = Vec::new();
 
     let contype = c["contype"].as_str().unwrap_or("");
+    // generated_when can be 'a' (always) or 'd' (by default) in pg_query.
+    let gen_when = c["generated_when"].as_str().unwrap_or("d");
+    let is_always = gen_when == "a" || gen_when == "ATTRIBUTE_IDENTITY_ALWAYS";
     match contype {
         "CONSTR_IDENTITY" => {
             items.push(Node::Keyword {
                 value: "GENERATED".into(),
             });
             items.push(Node::Text { value: " ".into() });
-            let gen_when = c["generated_when"].as_str().unwrap_or("");
-            let kw = match gen_when {
-                "ATTRIBUTE_IDENTITY_ALWAYS" => "ALWAYS",
-                _ => "BY DEFAULT",
-            };
             items.push(Node::Keyword {
-                value: kw.into(),
+                value: if is_always { "ALWAYS" } else { "BY DEFAULT" }.into(),
             });
             items.push(Node::Text { value: " ".into() });
             items.push(Node::Keyword {
@@ -1201,17 +1207,12 @@ fn constraint_generated_identity(c: &Value) -> Vec<Node> {
             });
         }
         "CONSTR_GENERATED" => {
-            let gen_when = c["generated_when"].as_str().unwrap_or("");
-            let kw = match gen_when {
-                "ATTRIBUTE_IDENTITY_ALWAYS" => "ALWAYS",
-                _ => "BY DEFAULT",
-            };
             items.push(Node::Keyword {
                 value: "GENERATED".into(),
             });
             items.push(Node::Text { value: " ".into() });
             items.push(Node::Keyword {
-                value: kw.into(),
+                value: if is_always { "ALWAYS" } else { "BY DEFAULT" }.into(),
             });
             items.push(Node::Text { value: " ".into() });
             items.push(Node::Keyword {
@@ -1259,6 +1260,18 @@ fn def_elem_to_node(e: &Value) -> Node {
         }
     } else {
         ident_node(name)
+    }
+}
+
+/// Convert FK action code to SQL keyword.
+fn fk_action_str(action: &str) -> &'static str {
+    match action {
+        "a" => "", // FKCONSTR_ACTION_NOACTION — implicit, don't emit
+        "r" => "RESTRICT",
+        "c" => "CASCADE",
+        "n" => "SET NULL",
+        "d" => "SET DEFAULT",
+        _ => "",
     }
 }
 
@@ -2172,7 +2185,27 @@ fn index_elem_to_node(ie: &Value) -> Node {
 
 fn partition_elem_to_node(pe: &Value) -> Node {
     if let Some(name) = pe["name"].as_str().filter(|s| !s.is_empty()) {
-        ident_node(name)
+        let mut items = vec![ident_node(name)];
+        // Operator class for the partition column.
+        if let Some(opclass) = pe["opclass"].as_array().filter(|a| !a.is_empty()) {
+            let opc_parts: Vec<&str> = opclass
+                .iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect();
+            if !opc_parts.is_empty() {
+                items.push(Node::Text { value: " ".into() });
+                items.push(ident_node(&opc_parts.join(".")));
+            }
+        }
+        if items.len() == 1 {
+            items.remove(0)
+        } else {
+            Node::Concat { items }
+        }
     } else if let Some(expr) = pe.get("expr").filter(|e| !e.is_null()) {
         node_value_to_node(expr)
     } else {
