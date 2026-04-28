@@ -1986,15 +1986,6 @@ fn a_expr_to_node(e: &Value) -> Node {
         .unwrap_or("?")
         .to_string();
 
-    // Map internal pg operator names to SQL keywords for LIKE/ILIKE variants.
-    let op = match op_raw.as_str() {
-        "~~" => "LIKE".to_string(),
-        "!~~" => "NOT LIKE".to_string(),
-        "~~*" => "ILIKE".to_string(),
-        "!~~*" => "NOT ILIKE".to_string(),
-        other => other.to_string(),
-    };
-
     let has_lexpr = !e["lexpr"].is_null();
     let has_rexpr = !e["rexpr"].is_null();
 
@@ -2011,6 +2002,28 @@ fn a_expr_to_node(e: &Value) -> Node {
                 separator: None,
             }),
             close: ")".into(),
+        };
+    }
+
+    // LIKE / NOT LIKE / ILIKE / NOT ILIKE:
+    // pg_query uses AEXPR_LIKE / AEXPR_ILIKE when the keyword form is used,
+    // and AEXPR_OP with the internal operator name (~~, !~~, etc.) when the
+    // symbolic form is used. Translate to keywords for the keyword forms;
+    // preserve the raw operator for AEXPR_OP.
+    if (kind == "AEXPR_LIKE" || kind == "AEXPR_ILIKE") && has_lexpr && has_rexpr {
+        let kw = match (kind, op_raw.as_str()) {
+            ("AEXPR_LIKE", "~~") => "LIKE",
+            ("AEXPR_LIKE", _) => "NOT LIKE",
+            ("AEXPR_ILIKE", "~~*") => "ILIKE",
+            ("AEXPR_ILIKE", _) => "NOT ILIKE",
+            _ => unreachable!(),
+        };
+        return Node::Infix {
+            op: kw.to_string(),
+            items: vec![
+                wrap_infix_in_parens(node_value_to_node(&e["lexpr"])),
+                node_value_to_node(&e["rexpr"]),
+            ],
         };
     }
 
@@ -2176,7 +2189,7 @@ fn a_expr_to_node(e: &Value) -> Node {
                 }
             };
             Node::Infix {
-                op,
+                op: op_raw,
                 items: vec![
                     wrap_side(&e["lexpr"]),
                     wrap_side(&e["rexpr"]),
@@ -2187,7 +2200,7 @@ fn a_expr_to_node(e: &Value) -> Node {
             items: vec![
                 node_value_to_node(&e["lexpr"]),
                 Node::Text { value: " ".into() },
-                Node::Text { value: op },
+                Node::Text { value: op_raw },
             ],
         },
         (false, true) => {
@@ -2211,10 +2224,10 @@ fn a_expr_to_node(e: &Value) -> Node {
                 rhs
             };
             Node::Concat {
-                items: vec![Node::Text { value: format!("{op} ") }, rhs],
+                items: vec![Node::Text { value: format!("{op_raw}") }, rhs],
             }
         }
-        (false, false) => Node::Text { value: op },
+        (false, false) => Node::Text { value: op_raw },
     }
 }
 
