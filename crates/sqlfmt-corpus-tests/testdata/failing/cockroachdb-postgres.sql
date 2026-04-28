@@ -15,15 +15,6 @@ CREATE TABLE t4 (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE t54989(
-  no_collation_str text,
-  no_collation_str_array text[],
-  collated_str text COLLATE en,
-  default_collation text COLLATE "default"
-)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE t_bad_param (
   a INT PRIMARY KEY WITH (bucket_count=5)
 );
@@ -51,126 +42,6 @@ CREATE TABLE tbl_ttl_expiration_expression_volatility_stable (
   id INT PRIMARY KEY,
   expire_at timestamptz
 ) WITH (ttl_expiration_expression = $$expire_at + '10 minutes'$$)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE a (a int)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE a(a INT)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE a_temp(a INT PRIMARY KEY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE myschema.tmp (x int)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE ref_temp_table (a SERIAL)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE regression_48233(a int)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE t(a INT)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE t_102964 (i INT PRIMARY KEY);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE t_tmp(X int);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE tbl (a int)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp1 (a int);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp2 (a int);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp_priv_t (a INT PRIMARY KEY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp_priv_t2 (a INT PRIMARY KEY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp_table_142780 (a int primary key, b int);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp_table_142783 (a int primary key);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp_table_ref (a timetz PRIMARY KEY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE temp_table_test (a timetz PRIMARY KEY) ON COMMIT PRESERVE ROWS
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE tempy (a int)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE tempy (a int);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE test (a int);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE test2 (a uuid);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMP TABLE users (userid INT PRIMARY KEY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMPORARY TABLE from_other_session(i INT PRIMARY KEY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMPORARY TABLE root_temp (i INT PRIMARY KEY);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMPORARY TABLE t (i INT PRIMARY KEY);
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMPORARY TABLE t()
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMPORARY TABLE temp()
-
--- sqlfmt-corpus-separator --
-
-CREATE TEMPORARY TABLE temp1()
-
--- sqlfmt-corpus-separator --
-
-CREATE UNLOGGED TABLE unlogged_tbl (col int PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
 
@@ -285,7 +156,3 @@ SELECT
   crdb_internal.validate_session_revival_token(a.token)
 FROM
   c, a
-
--- sqlfmt-corpus-separator --
-
-create temporary table tmp_table (id int primary key);

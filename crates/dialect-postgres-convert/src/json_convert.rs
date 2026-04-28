@@ -17,6 +17,7 @@ const PG_RESERVED_TYPE_KEYWORDS: &[&str] = &[
     "user",              // SQLValueFunction keyword
     "localtime",         // SQLValueFunction keyword
     "localtimestamp",    // SQLValueFunction keyword
+    "default",           // reserved keyword
 ];
 
 fn pg_needs_quoting(s: &str) -> bool {
@@ -843,8 +844,16 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
     create_items.push(body_content);
     let create_body = Node::Concat { items: create_items };
 
+    let create_kw = match stmt["relation"]["relpersistence"]
+        .as_str()
+        .unwrap_or("")
+    {
+        "t" => "CREATE TEMP TABLE",
+        "u" => "CREATE UNLOGGED TABLE",
+        _ => "CREATE TABLE",
+    };
     clauses.push(Clause {
-        keyword: "CREATE TABLE".into(),
+        keyword: create_kw.into(),
         body: Some(Box::new(create_body)),
     });
 
