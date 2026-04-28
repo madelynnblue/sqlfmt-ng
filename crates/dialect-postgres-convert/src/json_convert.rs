@@ -628,9 +628,9 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
             let matched = mwc["matched"].as_bool().unwrap_or(false);
             let cmd_type = mwc["commandType"].as_str().unwrap_or("");
             let when_kw = if matched {
-                "WHEN MATCHED THEN"
+                "WHEN MATCHED"
             } else {
-                "WHEN NOT MATCHED THEN"
+                "WHEN NOT MATCHED"
             };
             let action_kw = match cmd_type {
                 "CMD_INSERT" => "INSERT",
@@ -639,9 +639,31 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
                 _ => "DO NOTHING",
             };
 
-            let mut body_items: Vec<Node> = vec![Node::Keyword {
+            // Build body items: [AND <condition>] THEN <action>
+            let mut body_items: Vec<Node> = Vec::new();
+
+            if !mwc["condition"].is_null() {
+                body_items.push(Node::Concat {
+                    items: vec![
+                        Node::Keyword { value: "AND".into() },
+                        Node::Text { value: " ".into() },
+                        node_value_to_node(&mwc["condition"]),
+                        Node::Text { value: " ".into() },
+                    ],
+                });
+            }
+
+            body_items.push(Node::Keyword {
+                value: "THEN".into(),
+            });
+
+            body_items.push(Node::Text {
+                value: " ".into(),
+            });
+
+            body_items.push(Node::Keyword {
                 value: action_kw.into(),
-            }];
+            });
 
             if cmd_type == "CMD_UPDATE" {
                 if let Some(targets) = mwc["targetList"].as_array() {
@@ -719,17 +741,6 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
                         });
                     }
                 }
-            }
-
-            if !mwc["condition"].is_null() {
-                body_items.push(Node::Concat {
-                    items: vec![
-                        Node::Text {
-                            value: " AND ".into(),
-                        },
-                        node_value_to_node(&mwc["condition"]),
-                    ],
-                });
             }
 
             clauses.push(Clause {

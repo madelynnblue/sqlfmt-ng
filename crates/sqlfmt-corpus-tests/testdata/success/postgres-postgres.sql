@@ -17246,6 +17246,36 @@ WHEN MATCHED THEN
 -- sqlfmt-corpus-separator --
 
 MERGE INTO document d
+USING (SELECT 4 as sdid) s
+ON did = s.sdid
+WHEN MATCHED AND dnotes <> '' THEN
+	UPDATE SET dnotes = dnotes || ' notes added by merge '
+WHEN MATCHED THEN
+	DELETE
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO document d
+USING (SELECT 4 as sdid) s
+ON did = s.sdid
+WHEN MATCHED AND dnotes <> '' THEN
+	UPDATE SET dnotes = dnotes || ' notes added by merge '
+WHEN MATCHED THEN
+	DO NOTHING
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO document d
+USING (SELECT 4 as sdid) s
+ON did = s.sdid
+WHEN MATCHED AND dnotes = '' THEN
+	UPDATE SET dnotes = dnotes || ' notes added by merge '
+WHEN MATCHED THEN
+	DELETE
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO document d
 USING (SELECT 7 as sdid) s
 ON did = s.sdid
 WHEN MATCHED THEN
@@ -17306,6 +17336,22 @@ MERGE INTO measurement m
 WHEN NOT MATCHED THEN INSERT
      (city_id, logdate, peaktemp, unitsales)
    VALUES (city_id - 1, logdate, NULL, 100)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO mtarget t USING msource s ON t.a = s.a
+WHEN MATCHED AND s.b = 'x' THEN
+	UPDATE SET b = 'x'
+WHEN NOT MATCHED THEN
+	INSERT VALUES (a, NULL)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO mtarget t USING msource s ON t.a = s.a
+WHEN MATCHED AND t.b IS NOT NULL THEN
+	UPDATE SET b = s.b
+WHEN NOT MATCHED THEN
+	INSERT VALUES (a, b)
 
 -- sqlfmt-corpus-separator --
 
@@ -17458,6 +17504,12 @@ MERGE INTO rw_view1 t
 
 -- sqlfmt-corpus-separator --
 
+MERGE INTO rw_view1 t
+  USING (VALUES ('Tom'), ('Dick'), ('Harry')) AS v(person) ON t.person = v.person
+  WHEN MATCHED AND snoop(t.person) THEN UPDATE SET person = v.person
+
+-- sqlfmt-corpus-separator --
+
 MERGE INTO rw_view1 t USING (VALUES (-200), (10)) AS v(a) ON t.a = v.a
   WHEN MATCHED THEN UPDATE SET a = t.a+1
 
@@ -17564,6 +17616,12 @@ MERGE INTO rw_view2 t
 
 -- sqlfmt-corpus-separator --
 
+MERGE INTO rw_view2 t
+  USING (VALUES ('Tom'), ('Dick'), ('Harry')) AS v(person) ON t.person = v.person
+  WHEN MATCHED AND snoop(t.person) THEN UPDATE SET person = v.person
+
+-- sqlfmt-corpus-separator --
+
 MERGE INTO rw_view2 t USING (VALUES (-40), (3)) AS v(a) ON t.a = v.a
   WHEN MATCHED THEN UPDATE SET a = t.a+1
 
@@ -17644,6 +17702,22 @@ USING v
 ON tid = sid
 WHEN MATCHED THEN
     UPDATE SET balance = v.balance + delta
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO sq_target t
+USING (SELECT * FROM sq_source) s
+ON tid = sid
+WHEN MATCHED AND t.balance > delta THEN
+	UPDATE SET balance = t.balance + delta
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO sq_target t
+USING v
+ON tid = sid
+WHEN MATCHED AND (SELECT count(*) > 0 FROM sq_target) THEN
+    UPDATE SET balance = 42
 
 -- sqlfmt-corpus-separator --
 
@@ -17744,6 +17818,18 @@ USING source AS s
 ON (SELECT true)
 WHEN NOT MATCHED THEN
 	INSERT (tid, balance) VALUES (t.tid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING source AS s
+ON t.tid = s.sid
+WHEN MATCHED AND t.balance > s.delta THEN
+	UPDATE SET balance = t.balance - s.delta
+WHEN MATCHED THEN
+	DELETE
+WHEN NOT MATCHED THEN
+	INSERT VALUES (s.sid, s.delta)
 
 -- sqlfmt-corpus-separator --
 
@@ -17906,6 +17992,82 @@ MERGE INTO testpub_merge_no_ri USING testpub_merge_pk s ON s.a >= 1
 
 MERGE INTO testpub_merge_no_ri USING testpub_merge_pk s ON s.a >= 1
  WHEN MATCHED THEN UPDATE SET b = s.b
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO testpub_merge_pk USING testpub_merge_no_ri s ON s.a >= 1
+ WHEN MATCHED AND s.a > 0 THEN UPDATE SET b = s.b
+ WHEN MATCHED THEN DELETE
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON (t.tid = s.sid)
+WHEN matched and t = s or t.tid = s.sid THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND s.balance = 100 THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.balance = 100 THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.balance = 199 OR s.balance > 100 THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.balance = 99 AND s.balance = 100 THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.balance = 99 AND s.balance > 100 THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.balance = 99 OR s.balance > 100 THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.balance > (SELECT max(balance) FROM target) THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.tableoid >= 0 THEN
+	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN MATCHED AND t.xmin = t.xmax THEN
+	UPDATE SET balance = t.balance + s.balance
 
 -- sqlfmt-corpus-separator --
 
@@ -68142,6 +68304,11 @@ merge into parent p using (values (1)) as v(id) on p.aid = v.id
 
 merge into parent p using (values (1)) as v(id) on p.aid = v.id
   when matched then update set val1 = 'b'
+
+-- sqlfmt-corpus-separator --
+
+merge into parted_trig using (select 1) as ss on true
+  when matched and a = 2 then update set a = 1
 
 -- sqlfmt-corpus-separator --
 
