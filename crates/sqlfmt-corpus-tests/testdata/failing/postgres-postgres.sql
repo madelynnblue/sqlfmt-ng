@@ -106,30 +106,6 @@ SELECT * FROM iter
 
 -- sqlfmt-corpus-separator --
 
-WITH RECURSIVE foo(x) AS
-   (SELECT x FROM (VALUES('a' COLLATE "C"),('b')) t(x)
-   UNION ALL
-   SELECT (x || 'c') COLLATE "POSIX" FROM foo WHERE length(x) < 10)
-SELECT * FROM foo
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE foo(x) AS
-   (SELECT x FROM (VALUES('a' COLLATE "en-x-icu"),('b')) t(x)
-   UNION ALL
-   SELECT (x || 'c') COLLATE "de-x-icu" FROM foo WHERE length(x) < 10)
-SELECT * FROM foo
-
--- sqlfmt-corpus-separator --
-
-WITH RECURSIVE foo(x) AS
-   (SELECT x FROM (VALUES('a' COLLATE "en_US"),('b')) t(x)
-   UNION ALL
-   SELECT (x || 'c') COLLATE "de_DE" FROM foo WHERE length(x) < 10)
-SELECT * FROM foo
-
--- sqlfmt-corpus-separator --
-
 select (1 = any(array_agg(f1))) = any (select false) from int4_tbl
 
 -- sqlfmt-corpus-separator --

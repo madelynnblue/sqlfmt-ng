@@ -5,7 +5,18 @@ use sqlfmt_ir::{Clause, Node};
 // PostgreSQL reserved keywords that need quoting when used as identifiers.
 // Kept minimal — only add words that appear in actual corpus failures.
 const PG_RESERVED_TYPE_KEYWORDS: &[&str] = &[
-    "char", // pseudo-type "char" vs the SQL char/character(1) type
+    "char",          // pseudo-type "char" vs the SQL char/character(1) type
+    "current_user",  // SQLValueFunction keyword
+    "current_date",  // SQLValueFunction keyword
+    "current_time",  // SQLValueFunction keyword
+    "current_timestamp", // SQLValueFunction keyword
+    "current_role",  // SQLValueFunction keyword
+    "current_schema", // SQLValueFunction keyword
+    "current_catalog", // SQLValueFunction keyword
+    "session_user",  // SQLValueFunction keyword
+    "user",           // SQLValueFunction keyword
+    "localtime",      // SQLValueFunction keyword
+    "localtimestamp", // SQLValueFunction keyword
 ];
 
 fn pg_needs_quoting(s: &str) -> bool {
@@ -187,6 +198,8 @@ fn node_value_to_node(v: &Value) -> Node {
         collate_clause_to_node(inner)
     } else if let Some(inner) = obj.get("RowExpr") {
         row_expr_to_node(inner)
+    } else if let Some(inner) = obj.get("SQLValueFunction") {
+        sql_value_function_to_node(inner)
     } else if let Some(inner) = obj.get("A_ArrayExpr") {
         array_expr_to_node(inner)
     } else if let Some(inner) = obj.get("FuncCall") {
@@ -1667,6 +1680,21 @@ fn range_function_to_node(rf: &Value) -> Node {
         })
         .unwrap_or_default();
 
+    let is_lateral = rf["lateral"].as_bool().unwrap_or(false);
+    let funcs_node = if is_lateral {
+        Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "LATERAL".into(),
+                },
+                Node::Text { value: " ".into() },
+                funcs_node,
+            ],
+        }
+    } else {
+        funcs_node
+    };
+
     if alias_name.is_empty() && colnames.is_empty() && coldeflist_items.is_empty() {
         return funcs_node;
     }
@@ -1728,12 +1756,20 @@ fn range_subselect_to_node(rs: &Value) -> Node {
         })
         .unwrap_or_default();
 
-    let mut items = vec![Node::Wrap {
+    let is_lateral = rs["lateral"].as_bool().unwrap_or(false);
+    let mut items = Vec::new();
+    if is_lateral {
+        items.push(Node::Keyword {
+            value: "LATERAL".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+    }
+    items.push(Node::Wrap {
         keyword: None,
         open: "(".into(),
         content: Box::new(subquery),
         close: ")".into(),
-    }];
+    });
     if !alias_name.is_empty() {
         items.push(Node::Text { value: " ".into() });
         items.push(ident_node(alias_name));
@@ -2343,7 +2379,20 @@ fn coalesce_expr_to_node(ce: &Value) -> Node {
 }
 
 fn collate_clause_to_node(cc: &Value) -> Node {
-    let arg = node_value_to_node(&cc["arg"]);
+    let arg_node = node_value_to_node(&cc["arg"]);
+    // Wrap compound expressions in parens so COLLATE binds correctly.
+    // Without parens, `x || 'c' COLLATE "POSIX"` parses as
+    // `x || ('c' COLLATE "POSIX")` because COLLATE has higher precedence than ||.
+    let arg = if needs_collate_parens(&cc["arg"]) {
+        Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(arg_node),
+            close: ")".into(),
+        }
+    } else {
+        arg_node
+    };
     let coll_names: Vec<&str> = cc["collname"]
         .as_array()
         .map(|arr| {
@@ -2365,6 +2414,48 @@ fn collate_clause_to_node(cc: &Value) -> Node {
             },
             coll_ident,
         ],
+    }
+}
+
+fn needs_collate_parens(arg: &Value) -> bool {
+    // These nodes are "atomic" — they don't need parens around them.
+    // Everything else (A_Expr, SubLink, etc.) needs parens to ensure
+    // COLLATE binds to the whole expression.
+    let key = arg.as_object().and_then(|o| o.keys().next()).map(String::as_str);
+    !matches!(
+        key,
+        Some("A_Const")
+            | Some("ColumnRef")
+            | Some("FuncCall")
+            | Some("CaseExpr")
+            | Some("CoalesceExpr")
+            | Some("RowExpr")
+            | Some("CollateClause")
+    )
+}
+
+fn sql_value_function_to_node(svf: &Value) -> Node {
+    let op = svf["op"].as_str().unwrap_or("");
+    let kw = match op {
+        "SVFOP_CURRENT_DATE" => "CURRENT_DATE",
+        "SVFOP_CURRENT_TIME" => "CURRENT_TIME",
+        "SVFOP_CURRENT_TIME_N" => "CURRENT_TIME",
+        "SVFOP_CURRENT_TIMESTAMP" => "CURRENT_TIMESTAMP",
+        "SVFOP_CURRENT_TIMESTAMP_N" => "CURRENT_TIMESTAMP",
+        "SVFOP_LOCALTIME" => "LOCALTIME",
+        "SVFOP_LOCALTIME_N" => "LOCALTIME",
+        "SVFOP_LOCALTIMESTAMP" => "LOCALTIMESTAMP",
+        "SVFOP_LOCALTIMESTAMP_N" => "LOCALTIMESTAMP",
+        "SVFOP_CURRENT_ROLE" => "CURRENT_ROLE",
+        "SVFOP_CURRENT_USER" => "CURRENT_USER",
+        "SVFOP_USER" => "USER",
+        "SVFOP_SESSION_USER" => "SESSION_USER",
+        "SVFOP_CURRENT_CATALOG" => "CURRENT_CATALOG",
+        "SVFOP_CURRENT_SCHEMA" => "CURRENT_SCHEMA",
+        _ => op,
+    };
+    Node::Keyword {
+        value: kw.to_string(),
     }
 }
 

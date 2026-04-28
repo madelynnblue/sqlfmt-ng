@@ -16344,6 +16344,74 @@ SELECT sum(n) FROM t
 
 -- sqlfmt-corpus-separator --
 
+WITH RECURSIVE temp (i) AS (
+  (SELECT n FROM ints ORDER BY n ASC LIMIT 1)
+UNION ALL (
+  SELECT n FROM temp,
+    LATERAL (
+      SELECT n
+      FROM ints
+      WHERE n > i
+      ORDER BY n ASC
+      LIMIT 1
+    ) sub
+  )
+)
+SELECT * FROM temp;
+
+-- sqlfmt-corpus-separator --
+
+WITH RECURSIVE temp (i) AS (
+  (SELECT n FROM ints ORDER BY n ASC LIMIT 1)
+UNION ALL (
+  SELECT n FROM temp,
+    LATERAL (
+      SELECT n
+      FROM ints
+      WHERE n > i
+      ORDER BY n ASC
+      LIMIT 1
+    ) sub
+  )
+)
+SELECT count(*) FROM temp;
+
+-- sqlfmt-corpus-separator --
+
+WITH RECURSIVE temp (i) AS (
+  (SELECT n FROM ints ORDER BY n ASC LIMIT 1)
+UNION ALL (
+  SELECT n FROM temp,
+    LATERAL (
+      SELECT n
+      FROM ints
+      WHERE n > i
+      ORDER BY n ASC
+      LIMIT 1
+    ) sub LIMIT 1
+  )
+)
+SELECT * FROM temp;
+
+-- sqlfmt-corpus-separator --
+
+WITH RECURSIVE temp (i) AS (
+  (SELECT n FROM ints ORDER BY n ASC LIMIT 1)
+UNION ALL (
+  SELECT n FROM temp,
+    LATERAL (
+      SELECT n
+      FROM ints
+      WHERE n > i
+      ORDER BY n ASC
+      LIMIT 1
+    ) sub LIMIT 1
+  )
+)
+SELECT count(*) FROM temp;
+
+-- sqlfmt-corpus-separator --
+
 WITH RECURSIVE x(a) AS (
     VALUES ('a'), ('b')
   UNION ALL
@@ -16590,6 +16658,20 @@ WITH settings AS (
 )
 SELECT *
 FROM settings;
+
+-- sqlfmt-corpus-separator --
+
+WITH spans AS (
+  SELECT span_id
+  FROM crdb_internal.node_inflight_trace_spans
+  WHERE trace_id = crdb_internal.trace_id()
+), payloads AS (
+  SELECT *
+  FROM spans, LATERAL crdb_internal.payloads_for_span(spans.span_id)
+) SELECT count(*) > 0
+  FROM payloads
+  WHERE payload_type = 'roachpb.ContentionEvent'
+  AND crdb_internal.pretty_key(decode(payload_jsonb->>'key', 'base64'), 1) LIKE '/1/"k"/%'
 
 -- sqlfmt-corpus-separator --
 
