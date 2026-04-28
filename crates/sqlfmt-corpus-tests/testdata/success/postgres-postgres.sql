@@ -3255,6 +3255,10 @@ CREATE TABLE pagg_tab6 (c text collate case_insensitive, b text collate case_ins
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE pagg_tab_m (a int, b int, c int) PARTITION BY RANGE(a, ((a+b)/2))
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE pagg_tab_ml (a int, b int, c text) PARTITION BY RANGE(a)
 
 -- sqlfmt-corpus-separator --
@@ -3381,6 +3385,27 @@ CREATE TABLE parted_col_comment (a int, b text) PARTITION BY LIST (a) WITH (fill
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE parted_si (
+  id int not null,
+  data text not null,
+  rand float8 not null default random()
+)
+PARTITION BY LIST((id % 2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY LIST ((a LIKE (SELECT 1)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY RANGE ((42))
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE partitioned (
 	a int
 ) PARTITION BY RANGE ((avg(a)))
@@ -3425,6 +3450,27 @@ CREATE TABLE partitioned (
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE partitioned (
+	a int,
+	b int
+) PARTITION BY RANGE (((a, b)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int,
+	b int
+) PARTITION BY RANGE ((avg(a) OVER (PARTITION BY b)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int,
+	b int
+) PARTITION BY RANGE (a, ('unknown'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
 	a point
 ) PARTITION BY LIST (a point_ops)
 
@@ -3452,6 +3498,13 @@ CREATE TABLE partitioned (
 	a1 int,
 	a2 int
 ) PARTITION BY LIST (a1, a2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned2 (
+	a int,
+	b text
+) PARTITION BY RANGE ((a+1), substr(b, 1, 5))
 
 -- sqlfmt-corpus-separator --
 
@@ -3676,7 +3729,15 @@ CREATE TABLE prt1_adv (a int, b int, c varchar) PARTITION BY RANGE (a)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE prt1_e (a int, b int, c int) PARTITION BY RANGE(((a + b)/2))
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE prt1_l (a int, b int, c varchar) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt1_m (a int, b int, c int) PARTITION BY RANGE(a, ((a + b)/2))
 
 -- sqlfmt-corpus-separator --
 
@@ -3692,7 +3753,15 @@ CREATE TABLE prt2_adv (a int, b int, c varchar) PARTITION BY RANGE (b)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE prt2_e (a int, b int, c int) PARTITION BY RANGE(((b + a)/2))
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE prt2_l (a int, b int, c varchar) PARTITION BY RANGE(b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt2_m (a int, b int, c int) PARTITION BY RANGE(((b + a)/2), b)
 
 -- sqlfmt-corpus-separator --
 
@@ -3882,6 +3951,13 @@ CREATE TABLE range_parted2 (
 CREATE TABLE range_parted2 (
     a int
 ) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_parted3 (
+	a int,
+	b int
+) PARTITION BY RANGE (a, (b+1))
 
 -- sqlfmt-corpus-separator --
 
@@ -4539,6 +4615,11 @@ CREATE TABLE t (i INT PRIMARY KEY) PARTITION BY RANGE (i)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t (i int PRIMARY KEY USING INDEX TABLESPACE regress_tblspace)
+  PARTITION BY RANGE (i) TABLESPACE regress_tblspace
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t (i int) PARTITION BY HASH(i)
 
 -- sqlfmt-corpus-separator --
@@ -5086,6 +5167,10 @@ CREATE TABLE test_alone (a int) WITH (autovacuum_enabled = false)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE test_chunk_id (a TEXT, b TEXT STORAGE EXTERNAL)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE test_exists (a int, b text)
 
 -- sqlfmt-corpus-separator --
@@ -5332,6 +5417,18 @@ CREATE TABLE testpub_tbl8_1 (a int, b text, c text)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE testpub_tbl_parent (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.dflt (a int PRIMARY KEY USING INDEX TABLESPACE pg_default) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.dflt (a int PRIMARY KEY USING INDEX TABLESPACE regress_tblspace) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.dflt (a int PRIMARY KEY USING INDEX TABLESPACE regress_tblspace) PARTITION BY LIST (a) TABLESPACE regress_tblspace
 
 -- sqlfmt-corpus-separator --
 
@@ -5787,6 +5884,10 @@ CREATE TABLE v3 (
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE vac_option_tab (a INT, t TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vac_rewrite_toast (id int, f1 TEXT STORAGE plain)
 
 -- sqlfmt-corpus-separator --
 
@@ -69170,7 +69271,15 @@ create table i8r_array (f1 int, f2 int8range[])
 
 -- sqlfmt-corpus-separator --
 
+create table iboolpart (a bool) partition by list ((not a))
+
+-- sqlfmt-corpus-separator --
+
 create table id (id serial primary key, name text)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int primary key, b int) partition by range ((b + a))
 
 -- sqlfmt-corpus-separator --
 
@@ -69179,6 +69288,10 @@ create table idxpart (a int primary key, b int) partition by range (a)
 -- sqlfmt-corpus-separator --
 
 create table idxpart (a int primary key, b int) partition by range (b, a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int unique, b int) partition by range ((b + a))
 
 -- sqlfmt-corpus-separator --
 
@@ -69523,6 +69636,10 @@ create table join_ut1 (a int, b int, c varchar)
 
 -- sqlfmt-corpus-separator --
 
+create table key_desc (a int, b int) partition by list ((a+0))
+
+-- sqlfmt-corpus-separator --
+
 create table like_op_noprune (a text) partition by list (a)
 
 -- sqlfmt-corpus-separator --
@@ -69625,6 +69742,10 @@ create table minmaxtest(f1 int)
 -- sqlfmt-corpus-separator --
 
 create table mlparted (a int, b int) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table mlparted1 (b int not null, a int not null) partition by range ((b+0))
 
 -- sqlfmt-corpus-separator --
 
@@ -69834,6 +69955,10 @@ create table part_pa_test(a int, b int) partition by range(a)
 
 -- sqlfmt-corpus-separator --
 
+create table parted (a int, b int, c text) partition by list ((a + b))
+
+-- sqlfmt-corpus-separator --
+
 create table parted (a int, b int, c text) partition by list (a)
 
 -- sqlfmt-corpus-separator --
@@ -70010,6 +70135,16 @@ create table partitioned (
 
 -- sqlfmt-corpus-separator --
 
+create table partitioned (a int, b int)
+  partition by list ((partitioned))
+
+-- sqlfmt-corpus-separator --
+
+create table partitioned (a int, b int)
+  partition by list ((row(a, b)::partitioned))
+
+-- sqlfmt-corpus-separator --
+
 create table pc_list_parted (a int) partition by list(a)
 
 -- sqlfmt-corpus-separator --
@@ -70137,6 +70272,13 @@ create table range_list_parted (
 	a	int,
 	b	char(2)
 ) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table range_parted (
+	a text,
+	b int
+) partition by range (a, (b+0))
 
 -- sqlfmt-corpus-separator --
 
@@ -70581,6 +70723,14 @@ create table test_range_immutable(r range_int, m multirange_int)
 -- sqlfmt-corpus-separator --
 
 create table test_range_spgist(ir int4range)
+
+-- sqlfmt-corpus-separator --
+
+create table test_storage (a text, c text storage plain)
+
+-- sqlfmt-corpus-separator --
+
+create table test_storage_failed (a text, b int storage extended)
 
 -- sqlfmt-corpus-separator --
 

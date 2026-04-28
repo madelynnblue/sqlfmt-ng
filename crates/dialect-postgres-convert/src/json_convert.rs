@@ -1009,6 +1009,19 @@ fn column_def_to_node(col: &Value) -> Node {
         }
     }
 
+    // STORAGE clause (e.g. STORAGE EXTERNAL).
+    let storage = col["storage_name"].as_str().unwrap_or("");
+    if !storage.is_empty() {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "STORAGE".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: storage.to_uppercase(),
+        });
+    }
+
     // COMPRESSION clause.
     if let Some(comp) = col["compression"].as_str().filter(|s| !s.is_empty()) {
         items.push(Node::Text {
@@ -1043,12 +1056,15 @@ fn constraint_to_node(c: &Value) -> Node {
         "CONSTR_NULL" => Node::Keyword {
             value: "NULL".into(),
         },
-        "CONSTR_PRIMARY" => Node::Keyword {
-            value: "PRIMARY KEY".into(),
-        },
+        "CONSTR_PRIMARY" => {
+            let base = Node::Keyword {
+                value: "PRIMARY KEY".into(),
+            };
+            indexspace_suffix(c, base)
+        }
         "CONSTR_UNIQUE" => {
             let nulls_not_distinct = c["nulls_not_distinct"].as_bool().unwrap_or(false);
-            if nulls_not_distinct {
+            let base = if nulls_not_distinct {
                 Node::Keyword {
                     value: "UNIQUE NULLS NOT DISTINCT".into(),
                 }
@@ -1056,7 +1072,8 @@ fn constraint_to_node(c: &Value) -> Node {
                 Node::Keyword {
                     value: "UNIQUE".into(),
                 }
-            }
+            };
+            indexspace_suffix(c, base)
         }
         "CONSTR_DEFAULT" => {
             let expr = node_value_to_node(&c["raw_expr"]);
@@ -1186,6 +1203,23 @@ fn constraint_to_node(c: &Value) -> Node {
     };
 
     result
+}
+
+/// Append USING INDEX TABLESPACE if the constraint specifies one.
+fn indexspace_suffix(c: &Value, base: Node) -> Node {
+    let indexspace = c["indexspace"].as_str().unwrap_or("");
+    if indexspace.is_empty() {
+        base
+    } else {
+        Node::Concat {
+            items: vec![
+                base,
+                Node::Text {
+                    value: format!(" USING INDEX TABLESPACE {indexspace}"),
+                },
+            ],
+        }
+    }
 }
 
 /// Build the GENERATED / IDENTITY constraint suffix.
@@ -2243,7 +2277,12 @@ fn partition_elem_to_node(pe: &Value) -> Node {
             Node::Concat { items }
         }
     } else if let Some(expr) = pe.get("expr").filter(|e| !e.is_null()) {
-        node_value_to_node(expr)
+        Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(node_value_to_node(expr)),
+            close: ")".into(),
+        }
     } else {
         Node::Text {
             value: String::new(),
