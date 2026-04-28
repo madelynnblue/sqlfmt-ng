@@ -2436,16 +2436,19 @@ fn needs_collate_parens(arg: &Value) -> bool {
 
 fn sql_value_function_to_node(svf: &Value) -> Node {
     let op = svf["op"].as_str().unwrap_or("");
+    let is_n_variant = matches!(
+        op,
+        "SVFOP_CURRENT_TIME_N"
+            | "SVFOP_CURRENT_TIMESTAMP_N"
+            | "SVFOP_LOCALTIME_N"
+            | "SVFOP_LOCALTIMESTAMP_N"
+    );
     let kw = match op {
         "SVFOP_CURRENT_DATE" => "CURRENT_DATE",
-        "SVFOP_CURRENT_TIME" => "CURRENT_TIME",
-        "SVFOP_CURRENT_TIME_N" => "CURRENT_TIME",
-        "SVFOP_CURRENT_TIMESTAMP" => "CURRENT_TIMESTAMP",
-        "SVFOP_CURRENT_TIMESTAMP_N" => "CURRENT_TIMESTAMP",
-        "SVFOP_LOCALTIME" => "LOCALTIME",
-        "SVFOP_LOCALTIME_N" => "LOCALTIME",
-        "SVFOP_LOCALTIMESTAMP" => "LOCALTIMESTAMP",
-        "SVFOP_LOCALTIMESTAMP_N" => "LOCALTIMESTAMP",
+        "SVFOP_CURRENT_TIME" | "SVFOP_CURRENT_TIME_N" => "CURRENT_TIME",
+        "SVFOP_CURRENT_TIMESTAMP" | "SVFOP_CURRENT_TIMESTAMP_N" => "CURRENT_TIMESTAMP",
+        "SVFOP_LOCALTIME" | "SVFOP_LOCALTIME_N" => "LOCALTIME",
+        "SVFOP_LOCALTIMESTAMP" | "SVFOP_LOCALTIMESTAMP_N" => "LOCALTIMESTAMP",
         "SVFOP_CURRENT_ROLE" => "CURRENT_ROLE",
         "SVFOP_CURRENT_USER" => "CURRENT_USER",
         "SVFOP_USER" => "USER",
@@ -2454,6 +2457,26 @@ fn sql_value_function_to_node(svf: &Value) -> Node {
         "SVFOP_CURRENT_SCHEMA" => "CURRENT_SCHEMA",
         _ => op,
     };
+    if is_n_variant {
+        let typmod = svf["typmod"].as_i64().unwrap_or(-1);
+        if typmod >= 0 {
+            return Node::Concat {
+                items: vec![
+                    Node::Keyword {
+                        value: kw.to_string(),
+                    },
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(Node::Literal {
+                            value: typmod.to_string(),
+                        }),
+                        close: ")".into(),
+                    },
+                ],
+            };
+        }
+    }
     Node::Keyword {
         value: kw.to_string(),
     }
