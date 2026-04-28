@@ -153,6 +153,8 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(merge_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("CreateStmt") {
         Some(create_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CreateTableAsStmt") {
+        Some(create_table_as_stmt_to_node(inner))
     } else {
         None
     }
@@ -772,6 +774,123 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
     Node::Clauses { items: clauses }
 }
 
+fn create_table_as_stmt_to_node(stmt: &Value) -> Node {
+    let into = &stmt["into"];
+    let rel = range_var_to_node(&into["rel"]);
+
+    let objtype = stmt["objtype"].as_str().unwrap_or("OBJECT_TABLE");
+    let (base_kw, is_matview) = match objtype {
+        "OBJECT_MATVIEW" => ("CREATE MATERIALIZED VIEW", true),
+        _ => ("CREATE TABLE", false),
+    };
+
+    let relpersistence = into["rel"]["relpersistence"].as_str().unwrap_or("");
+    let create_kw = if is_matview {
+        base_kw.to_string()
+    } else {
+        match relpersistence {
+            "t" => "CREATE TEMP TABLE",
+            "u" => "CREATE UNLOGGED TABLE",
+            _ => "CREATE TABLE",
+        }
+        .to_string()
+    };
+
+    // Build the CREATE TABLE ... AS body.
+    let mut body_items: Vec<Node> = Vec::new();
+
+    if stmt["if_not_exists"].as_bool().unwrap_or(false) {
+        body_items.push(Node::Keyword {
+            value: "IF NOT EXISTS".into(),
+        });
+        body_items.push(Node::Text { value: " ".into() });
+    }
+    body_items.push(rel);
+
+    // Column names: (a, b)
+    if let Some(cols) = into["colNames"].as_array().filter(|a| !a.is_empty()) {
+        let col_nodes: Vec<Node> = cols
+            .iter()
+            .map(|c| {
+                let s = c.get("String").map(string_val).unwrap_or("");
+                ident_node(s)
+            })
+            .collect();
+        body_items.push(Node::Wrap {
+            keyword: None,
+            open: " (".into(),
+            content: Box::new(Node::List {
+                items: col_nodes,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    }
+
+    // WITH options
+    if let Some(opts) = into["options"].as_array().filter(|a| !a.is_empty()) {
+        let opt_nodes: Vec<Node> = opts.iter().map(def_elem_to_node).collect();
+        body_items.push(Node::Text { value: " ".into() });
+        body_items.push(Node::Wrap {
+            keyword: Some("WITH".into()),
+            open: " (".into(),
+            content: Box::new(Node::List {
+                items: opt_nodes,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    }
+
+    let query_node = node_value_to_node(&stmt["query"]);
+    let mut items = vec![
+        Clause {
+            keyword: create_kw.into(),
+            body: Some(Box::new(Node::Concat {
+                items: body_items,
+            })),
+        },
+        Clause {
+            keyword: "AS".into(),
+            body: Some(Box::new(query_node)),
+        },
+    ];
+
+    // WITH NO DATA
+    if into["skipData"].as_bool().unwrap_or(false) {
+        items.push(Clause {
+            keyword: "WITH NO DATA".into(),
+            body: None,
+        });
+    }
+
+    // ON COMMIT (for temp tables)
+    let on_commit = into["onCommit"].as_str().unwrap_or("");
+    match on_commit {
+        "ONCOMMIT_DELETE_ROWS" => {
+            items.push(Clause {
+                keyword: "ON COMMIT DELETE ROWS".into(),
+                body: None,
+            });
+        }
+        "ONCOMMIT_PRESERVE_ROWS" => {
+            items.push(Clause {
+                keyword: "ON COMMIT PRESERVE ROWS".into(),
+                body: None,
+            });
+        }
+        "ONCOMMIT_DROP" => {
+            items.push(Clause {
+                keyword: "ON COMMIT DROP".into(),
+                body: None,
+            });
+        }
+        _ => {}
+    }
+
+    Node::Clauses { items }
+}
+
 fn create_stmt_to_node(stmt: &Value) -> Node {
     let mut clauses: Vec<Clause> = Vec::new();
 
@@ -997,6 +1116,24 @@ fn column_def_to_node(col: &Value) -> Node {
         items.push(Node::Text { value: type_str });
     }
 
+    // ARRAY[N] dimension suffix on the type (e.g. integer ARRAY[4]).
+    // Only present in CREATE TABLE type declarations, not in type casts.
+    // type_name_str already handles empty arrayBounds for [] suffix;
+    // here we handle non-empty arrayBounds entries as ARRAY[N].
+    if let Some(bounds) = col["typeName"]["arrayBounds"].as_array() {
+        for b in bounds {
+            if let Some(int_obj) = b["Integer"].as_object().filter(|o| !o.is_empty()) {
+                let ival = int_obj.get("ival");
+                let n = ival
+                    .and_then(|v| v.as_i64().or_else(|| v["ival"].as_i64()))
+                    .unwrap_or(0);
+                items.push(Node::Text {
+                    value: format!(" ARRAY[{n}]"),
+                });
+            }
+        }
+    }
+
     // COLLATE clause.
     if let Some(coll_vals) = col["collClause"]["collname"].as_array().filter(|a| !a.is_empty()) {
         let coll_parts: Vec<&str> = coll_vals
@@ -1113,6 +1250,11 @@ fn constraint_to_node(c: &Value) -> Node {
             if c["is_no_inherit"].as_bool().unwrap_or(false) {
                 items.push(Node::Text {
                     value: " NO INHERIT".into(),
+                });
+            }
+            if c["skip_validation"].as_bool().unwrap_or(false) {
+                items.push(Node::Text {
+                    value: " NOT VALID".into(),
                 });
             }
             Node::Concat { items }
@@ -2286,10 +2428,35 @@ fn partition_elem_to_node(pe: &Value) -> Node {
             Node::Concat { items }
         }
     } else if let Some(expr) = pe.get("expr").filter(|e| !e.is_null()) {
+        let mut content = node_value_to_node(expr);
+        // COLLATE clause on expression-based partition elements.
+        if let Some(coll_vals) = pe["collation"].as_array().filter(|a| !a.is_empty()) {
+            let coll_parts: Vec<&str> = coll_vals
+                .iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect();
+            if !coll_parts.is_empty() {
+                content = Node::Concat {
+                    items: vec![
+                        content,
+                        Node::Text { value: " ".into() },
+                        Node::Keyword {
+                            value: "COLLATE".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        ident_node(&coll_parts.join(".")),
+                    ],
+                };
+            }
+        }
         Node::Wrap {
             keyword: None,
             open: "(".into(),
-            content: Box::new(node_value_to_node(expr)),
+            content: Box::new(content),
             close: ")".into(),
         }
     } else {
@@ -4222,7 +4389,7 @@ pub fn json_ast_equal(json1: &str, json2: &str) -> bool {
     let Ok(v2) = serde_json::from_str::<Value>(json2) else {
         return false;
     };
-    strip_locations(v1) == strip_locations(v2)
+    normalize_ast(strip_locations(v1)) == normalize_ast(strip_locations(v2))
 }
 
 fn strip_locations(v: Value) -> Value {
@@ -4244,6 +4411,51 @@ fn strip_locations(v: Value) -> Value {
                 .collect(),
         ),
         Value::Array(arr) => Value::Array(arr.into_iter().map(strip_locations).collect()),
+        other => other,
+    }
+}
+
+/// Normalize PartitionElem: when collation is on the PartitionElem directly,
+/// wrap the expression in a CollateClause to match the re-parsed structure.
+fn normalize_ast(v: Value) -> Value {
+    match v {
+        Value::Object(mut map) => {
+            // Normalize PartitionElem: move collation into expr as CollateClause.
+            if map.contains_key("PartitionElem") {
+                if let Some(pe) = map.get_mut("PartitionElem")
+                    .and_then(|v| v.as_object_mut())
+                {
+                    if let Some(coll_vals) = pe.get("collation").filter(|c| !c.is_null()) {
+                        let coll_val = normalize_ast(coll_vals.clone());
+                        let expr = pe
+                            .get("expr")
+                            .filter(|e| !e.is_null())
+                            .cloned()
+                            .unwrap_or(Value::Null);
+                        let expr_norm = normalize_ast(expr);
+                        let mut collate = serde_json::Map::new();
+                        collate.insert("arg".to_string(), expr_norm);
+                        collate.insert(
+                            "collname".to_string(),
+                            coll_val,
+                        );
+                        let mut inner = serde_json::Map::new();
+                        inner.insert(
+                            "CollateClause".to_string(),
+                            Value::Object(collate),
+                        );
+                        pe.insert("expr".to_string(), Value::Object(inner));
+                        pe.remove("collation");
+                    }
+                }
+            }
+            Value::Object(
+                map.into_iter()
+                    .map(|(k, v)| (k, normalize_ast(v)))
+                    .collect(),
+            )
+        }
+        Value::Array(arr) => Value::Array(arr.into_iter().map(normalize_ast).collect()),
         other => other,
     }
 }

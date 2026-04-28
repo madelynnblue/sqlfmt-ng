@@ -1,7 +1,3 @@
-CREATE TABLE boundedtable (b INT[10], c INT ARRAY[10])
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE nocase_strings (s STRING COLLATE "en-US-u-ks-le""vel2");
 
 -- sqlfmt-corpus-separator --

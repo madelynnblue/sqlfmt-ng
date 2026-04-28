@@ -1471,6 +1471,10 @@ CREATE TABLE bools (b BOOL)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE boundedtable (b INT[10], c INT ARRAY[10])
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE box2d_encoding_test(
   id int primary key,
   box_a box2d,

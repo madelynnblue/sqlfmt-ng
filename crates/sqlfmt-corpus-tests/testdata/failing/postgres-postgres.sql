@@ -1,7 +1,3 @@
-CREATE TEMP TABLE arrtest2 (i integer ARRAY[4], f float8[], n numeric[], t text[], d timestamp[])
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM sj j1, sj j2
 WHERE j1.b = j2.b
   AND (j1.a*j1.a) = (EXTRACT(DOW FROM current_timestamp(0))/15 + 3)::int
@@ -140,14 +136,6 @@ SELECT * FROM iter
 WITH rand_value AS (SELECT string_agg(fipshash((-i)::text),'') AS val FROM generate_series(1,60) s(i))
 INSERT INTO brintest_3
 SELECT val, val, val, val FROM rand_value
-
--- sqlfmt-corpus-separator --
-
-create table coll_pruning_multi (a text) partition by range (substr(a, 1) collate "POSIX", substr(a, 1) collate "C")
-
--- sqlfmt-corpus-separator --
-
-create table nv_parent (d date, check (false) no inherit not valid)
 
 -- sqlfmt-corpus-separator --
 

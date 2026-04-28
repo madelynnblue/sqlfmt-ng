@@ -6108,6 +6108,10 @@ CREATE TEMP TABLE arrtest1 (i int[], t text[])
 
 -- sqlfmt-corpus-separator --
 
+CREATE TEMP TABLE arrtest2 (i integer ARRAY[4], f float8[], n numeric[], t text[], d timestamp[])
+
+-- sqlfmt-corpus-separator --
+
 CREATE TEMP TABLE arrtest_f (f0 int, f1 text, f2 float8)
 
 -- sqlfmt-corpus-separator --
@@ -69682,6 +69686,10 @@ create table coll_pruning (a text collate "C") partition by list (a)
 
 -- sqlfmt-corpus-separator --
 
+create table coll_pruning_multi (a text) partition by range (substr(a, 1) collate "POSIX", substr(a, 1) collate "C")
+
+-- sqlfmt-corpus-separator --
+
 create table comptable (c1 comptype, c2 comptype[])
 
 -- sqlfmt-corpus-separator --
@@ -70555,6 +70563,10 @@ create table nummultirange_test2(nmr nummultirange)
 -- sqlfmt-corpus-separator --
 
 create table numrange_test2(nr numrange)
+
+-- sqlfmt-corpus-separator --
+
+create table nv_parent (d date, check (false) no inherit not valid)
 
 -- sqlfmt-corpus-separator --
 
