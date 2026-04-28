@@ -71,6 +71,116 @@
 -- sqlfmt-corpus-separator --
 
 /*
+ * 1.1. test CREATE INDEX with buffered build
+ */
+
+CREATE TABLE tbl_gist (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 1.2. test CREATE INDEX with inserts
+ */
+
+CREATE TABLE tbl_gist (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 1.test CREATE INDEX
+ *
+ * Deliberately avoid dropping objects in this section, to get some pg_dump
+ * coverage.
+ */
+
+CREATE TABLE tbl_include_reg (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 10. Test coverage for names stored as cstrings in indexes
+ */
+CREATE TABLE nametbl (c1 int, c2 name, c3 float)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 2. CREATE INDEX CONCURRENTLY
+ */
+CREATE TABLE tbl_gist (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 3. REINDEX
+ */
+CREATE TABLE tbl_gist (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 3.0 Test ALTER TABLE DROP COLUMN.
+ * Any column deletion leads to index deletion.
+ */
+CREATE TABLE tbl (c1 int,c2 int, c3 int, c4 int)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 3.1 Test ALTER TABLE DROP COLUMN.
+ * Included column deletion leads to the index deletion,
+ * AS well AS key columns deletion. It's explained in documentation.
+ */
+CREATE TABLE tbl (c1 int,c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 3.3 Test ALTER TABLE SET STATISTICS
+ */
+CREATE TABLE tbl (c1 int, c2 int)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 4. Update, delete values in indexed table.
+ */
+CREATE TABLE tbl_gist (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 5. Alter column type.
+ */
+CREATE TABLE tbl_gist (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 7. Check various AMs. All but btree, gist and spgist must fail.
+ */
+CREATE TABLE tbl (c1 int,c2 int, c3 box, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * 8. Update, delete values in indexed table.
+ */
+CREATE TABLE tbl (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+/*
+ * Test double inheritance
+ *
+ * Ensure that defaults are NOT included unless
+ * INCLUDING DEFAULTS is specified
+ */
+CREATE TABLE ctla (aa TEXT)
+
+-- sqlfmt-corpus-separator --
+
+/*
  * format
  */
 select format(NULL)
@@ -104,6 +214,20 @@ SELECT * FROM ctlb
 
 -- sqlfmt-corpus-separator --
 
+/* End test case for bug #17409 */
+
+/* Test case for bug #18970 */
+
+create table attbl(a int)
+
+-- sqlfmt-corpus-separator --
+
+/* End test case for bug #18970 */
+
+create table alttype_cluster (a int)
+
+-- sqlfmt-corpus-separator --
+
 /* Has ee entry */
 SELECT * FROM ctla
 
@@ -113,6 +237,12 @@ SELECT * FROM ctla
 
 
 SELECT to_regoper('||//')
+
+-- sqlfmt-corpus-separator --
+
+/* LIKE with other relation kinds */
+
+CREATE TABLE ctlt4 (a int, b text)
 
 -- sqlfmt-corpus-separator --
 
@@ -126,13 +256,4925 @@ INSERT INTO inhg VALUES ('x', 'foo',  'y')
 
 -- sqlfmt-corpus-separator --
 
+/* Test case for bug #16242 */
+
+create table bar1 (a integer, b integer not null default 1)
+  partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+/* Test inheritance of structure (LIKE) */
+CREATE TABLE inhx (xx text DEFAULT 'text')
+
+-- sqlfmt-corpus-separator --
+
+/* Test multiple inheritance of column defaults */
+
+CREATE TABLE firstparent (tomorrow date default now()::date + 1)
+
+-- sqlfmt-corpus-separator --
+
 /* copies indexes */
 INSERT INTO inhg VALUES (5, 10)
 
 -- sqlfmt-corpus-separator --
 
+/* fails */
+CREATE TABLE inhz (xx text DEFAULT 'text', yy int UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
 /* fails due to constraint */
 SELECT * FROM inhg
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "CURRENT_SCHEMA"."CURRENT_SCHEMA"(id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ATACC1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE BIT_SHIFT_TABLE(b BIT(16))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE BIT_TABLE(b BIT(11))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE BOOLTBL1 (f1 bool)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE BOOLTBL2 (f1 bool)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE BOOLTBL3 (d text, b bool, o int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE BOX_TBL (f1 box)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE CASE2_TBL (
+  i integer,
+  j integer
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE CASE_TBL (
+  i integer,
+  f double precision
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE CHAR_TBL(f1 char(4))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE CIRCLE_TBL (f1 circle)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE DATE_TBL (f1 date)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE DEFAULTEXPR_TBL (i1 int DEFAULT 100 + (200-199) * 2,
+	i2 int DEFAULT nextval('default_seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE ( ftest1 int REFERENCES PKTABLE, ftest2 int )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE ( ftest1 int, ftest2 int )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE (ftest1 inet REFERENCES pktable(ptest1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE (ftest1 inet REFERENCES pktable)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE (ftest1 int REFERENCES pktable)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE (ftest1 int8 REFERENCES pktable)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE (ftest1 numeric REFERENCES pktable)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FKTABLE_FAIL1 (ftest1 int REFERENCES pktable(ptest1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FLOAT4_TBL (f1  float4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE FLOAT8_TBL(f1 float8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS persons OF person_type
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS testcase(
+	id int PRIMARY KEY,
+	balance numeric
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE INET_TBL (c cidr, i inet)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE INFINITE_INTERVAL_TBL (i interval)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE INT2_TBL(f1 int2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE INT4_TBL(f1 int4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE INT8_TBL(q1 int8, q2 int8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE INTERVAL_MULDIV_TBL (span interval)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE INTERVAL_TBL (f1 interval)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE J1_TBL (
+  i integer,
+  j integer,
+  t text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE J2_TBL (
+  i integer,
+  k integer
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE LINE_TBL (s line)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE LSEG_TBL (s lseg)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE NAME_TBL(f1 name)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE OID8_TBL(f1 oid8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE OID_TBL(f1 oid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PATH_TBL (f1 path)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PG_LSN_TBL (f1 pg_lsn)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PKTABLE ( ptest1 int PRIMARY KEY, ptest2 text )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PKTABLE (ptest1 int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PKTABLE (ptest1 int PRIMARY KEY, someoid oid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PKTABLE (ptest1 numeric PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE POINT_TBL(f1 point)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE POLYGON_TBL(f1 polygon)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PRIMARY_TBL (i int PRIMARY KEY, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE SUBSELECT_TBL (
+  f1 integer,
+  f2 integer,
+  f3 float
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE SYS_COL_CHECK_TBL (city text, state text, is_capital bool,
+                  altitude int,
+				  CHECK (NOT (is_capital AND ctid::text = 'sys_col_check_tbl')))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE SYS_COL_CHECK_TBL (city text, state text, is_capital bool,
+                  altitude int,
+                  CHECK (NOT (is_capital AND tableoid::regclass::text = 'sys_col_check_tbl')))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE T (pk INT NOT NULL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE T(pk INT NOT NULL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE T(pk INT NOT NULL PRIMARY KEY, c_int INT DEFAULT 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE T(pk INT NOT NULL PRIMARY KEY, c_int INT DEFAULT LENGTH(foo(6)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEMP_FLOAT (f1 FLOAT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEMP_GROUP (f1 INT4, f2 INT4, f3 FLOAT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEMP_INT2 (f1 INT2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEMP_INT4 (f1 INT4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEMP_TIMESTAMP (f1 timestamp with time zone)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TIMESTAMPTZ_TBL (d1 timestamp(2) with time zone)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TIMESTAMPTZ_TST (a int , b timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TIMESTAMP_TBL (d1 timestamp(2) without time zone)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TIMETZ_TBL (f1 time(2) with time zone)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TIME_TBL (f1 time(2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE UNIQUE_TBL (i int UNIQUE, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE VARBIT_SHIFT_TABLE(v BIT VARYING(20))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE VARBIT_TABLE(v BIT VARYING(11))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE VARCHAR_TBL(f1 varchar(4))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (aa TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a_star (
+	class		char,
+	a 			int4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab1 (a INTEGER, b INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab1 (a INTEGER, b INTEGER, c INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab1 (a INTEGER, b INTEGER, c TIMESTAMP, d TIMESTAMPTZ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ac (aa TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE accessed (
+    aid int,
+    uid int,
+    did int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE addr_nsp.parttable (
+    a int PRIMARY KEY
+) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE agg_sort_order (c1 int PRIMARY KEY, c2 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE aggtest (
+	a 			int2,
+	b			float4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alpha (a double precision, b int, c text) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alt_regress_1 (a INTEGER, b INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alt_regress_2 (a INTEGER, b INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_idx_rename_test (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_idx_rename_test_parted (a INT) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_table_under_transition_tables
+(
+  id int PRIMARY KEY,
+  name text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE am_partitioned(x INT, y INT) PARTITION BY hash (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE array_gin_test (a int[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE array_index_op_test (
+	seqno		int4,
+	i			int4[],
+	t			text[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE array_op_test (
+	seqno		int4,
+	i			int4[],
+	t			text[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arrlp (a int[]) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ataddindex(f1 VARCHAR(10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ataddindex(id int, ref_id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atest1 ( a int, b text )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atest2 (col1 varchar(10), col2 boolean)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atest3 (one int, two int, three int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atest4 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atest5 (one int, two int unique, three int, four int unique)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atest6 (one int, two int, blue int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atestp1 (f1 int, f2 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atestp2 (fx int, fy int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atnnpart1 (col1 int, id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atnnparted (id int, col1 int) PARTITION BY LIST (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atnotnull1 ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp (
+	initial 	int4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp (initial int4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp (regtable int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp(i integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp2 (a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp3 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp5 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp_array (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE attmp_array2 (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE audit_tbls.schema_one_table_two(the_value text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE audit_tbls.schema_two_table_three(the_value text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE badcompresstbl (a text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bar (i int) TABLESPACE regress_nosuchspace
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (a int PRIMARY KEY, b text DEFAULT 'Unspecified')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (a int PRIMARY KEY, b text DEFAULT 'Unspecified', c serial)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (a int, arr int[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (a int, b int DEFAULT 10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (a int, b int[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl (person text, visibility text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl(a float)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl(a int, b text, c float)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl(id int PRIMARY KEY, data text, deleted boolean)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl_hist(ts timestamptz default now(), a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_tbl_parent (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE beta (a double precision, b int, c text) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE big5_inputs (inbytes bytea, description text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bigintp (
+	a bigint
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bit_defaults(
+  b1 bit(4) DEFAULT '1001',
+  b2 bit(4) DEFAULT B'0101',
+  b3 bit varying(5) DEFAULT '1001',
+  b4 bit varying(5) DEFAULT B'0101'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bit_table (a BIT(16), b BIT(16))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bitmap_split_or (a int NOT NULL, b int NOT NULL, c int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bla(s NO_SUCH_TYPE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bla(s TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blog (id integer, author text, post text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bmscantest (a int, b int, t text) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bool_tab (id int, flag_nn boolean NOT NULL, flag_null boolean)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bools (
+	a bool
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE booltbl4(isfalse bool, istrue bool, isnul bool)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_date_test(a DATE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_hot_2 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_hot_3 (a int, filler text) WITH (fillfactor = 10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_insert_optimization (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_interval_test(a INTERVAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_large_range (a int4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_summarize (
+    value int
+) WITH (fillfactor=10, autovacuum_enabled=false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_summarize_bloom (
+    value int
+) WITH (fillfactor=10, autovacuum_enabled=false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_summarize_multi (
+    value int
+) WITH (fillfactor=10, autovacuum_enabled=false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_test (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_test_bloom (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_test_inet (a inet)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_test_multi (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_test_multi_1 (a INT, b BIGINT) WITH (fillfactor=10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_test_multi_2 (a UUID) WITH (fillfactor=10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_timestamp_test(a TIMESTAMP)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brin_timestamp_test(a TIMESTAMPTZ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brinopers (colname name, typ text,
+	op text[], value text[], matches int[],
+	check (cardinality(op) = cardinality(value)),
+	check (cardinality(op) = cardinality(matches)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brinopers_bloom (colname name, typ text,
+	op text[], value text[], matches int[],
+	check (cardinality(op) = cardinality(value)),
+	check (cardinality(op) = cardinality(matches)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brinopers_multi (colname name, typ text,
+	op text[], value text[], matches int[],
+	check (cardinality(op) = cardinality(value)),
+	check (cardinality(op) = cardinality(matches)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brintest_2 (n numrange)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brintest_3 (a text, b text, c text, d text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brintest_bloom (byteacol bytea,
+	charcol "char",
+	namecol name,
+	int8col bigint,
+	int2col smallint,
+	int4col integer,
+	textcol text,
+	oidcol oid,
+	float4col real,
+	float8col double precision,
+	macaddrcol macaddr,
+	inetcol inet,
+	cidrcol cidr,
+	bpcharcol character,
+	datecol date,
+	timecol time without time zone,
+	timestampcol timestamp without time zone,
+	timestamptzcol timestamp with time zone,
+	intervalcol interval,
+	timetzcol time with time zone,
+	numericcol numeric,
+	uuidcol uuid,
+	lsncol pg_lsn
+) WITH (fillfactor=10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brintest_expr (n int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE brintest_multi (
+	int8col bigint,
+	int2col smallint,
+	int4col integer,
+	oidcol oid,
+	tidcol tid,
+	float4col real,
+	float8col double precision,
+	macaddrcol macaddr,
+	macaddr8col macaddr8,
+	inetcol inet,
+	cidrcol cidr,
+	datecol date,
+	timecol time without time zone,
+	timestampcol timestamp without time zone,
+	timestamptzcol timestamp with time zone,
+	intervalcol interval,
+	timetzcol time with time zone,
+	numericcol numeric,
+	uuidcol uuid,
+	lsncol pg_lsn
+) WITH (fillfactor=10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bt_f8_heap (
+	seqno 		float8,
+	random 		int4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bt_name_heap (
+	seqno 		name,
+	random 		int4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bt_txt_heap (
+	seqno 		text,
+	random 		int4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE btree_part (id int4) PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE btree_test_expr (n int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bug18634s (a int, b int, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bug18634t (a int, b int, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE byteatest (a bytea PRIMARY KEY, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE category (
+    cid        int primary key,
+    cname      text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ceil_floor_round (a numeric)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_fk_presence_1 (id int PRIMARY KEY, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_fk_presence_2 (id int REFERENCES check_fk_presence_1, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_ign_err (n int, m int[], k int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_ign_err2 (n int, m int[], k int, l dcheck_ign_err2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE city (
+	name		name,
+	location 	box,
+	budget 		city_budget
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE city_table (
+    city_id        serial primary key,
+    city_name    text not null,
+    population    bigint,
+    country_id    int references country_table
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clean_aborted_self(key int, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clstr_1 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clstr_2 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clstr_3 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clstr_tst_s (rf_a SERIAL PRIMARY KEY,
+	b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clstrpart (a int) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clustertest (f1 int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE clustertest (key int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmdata2 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cmdata3(f1 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cnn_pk (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_dep_test4t (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test4 (
+    a int,
+    b testdomain_p
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collate_test4 (
+    a int,
+    b testdomain_sv
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE comment (blog_id integer, message text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE compositetable(a text, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_appclass_tab(i tsvector, j tsvector, k tsvector)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_clustered(i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_exprs_tab (c1 int , c2 boolean)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_heap (f1 text, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_reindex_part (c1 int, c2 int) PARTITION BY RANGE (c1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_reindex_part (id int) PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_reindex_schema.tab (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_reindex_tab (c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_reindex_tab2 (c1 int REFERENCES concur_reindex_tab)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_reindex_tab4 (c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concur_replident(i int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE copy_rel_to (a integer, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE copy_t (a integer, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE country_table (
+    country_id        serial primary key,
+    country_name    text unique not null,
+    continent        text not null
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE covering_index_heap (f1 int, f2 int, f3 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cp_test (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE credit_card (
+       cid      int references customer(cid),
+       cnum     text,
+       climit   int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE credit_usage (
+       cid      int references customer(cid),
+       ymd      date,
+       usage    int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ctas_base (i int, j int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ctlt2 (c text NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ctlt3 (a text CHECK (length(a) < 5), c text CHECK (length(c) < 7))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ctlt4 (a text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ctv_data (x int, y int, v text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE current_check (currentid int, payload text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE current_check (currentid int, payload text, rlsuser text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE current_check_2 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cursor (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customer (
+       cid      int primary key,
+       name     text not null,
+       tel      text,
+       passwd	text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customer_orders (
+    customer_orders_id integer PRIMARY KEY,
+    customer_id integer REFERENCES customers (customer_id),
+    order_id integer REFERENCES orders (order_id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customer_wishlists (
+    customer_wishlist_id integer PRIMARY KEY,
+    customer_id integer REFERENCES customers (customer_id),
+    wishlist_id integer REFERENCES wishlists (wishlist_id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customers (
+    customer_id integer PRIMARY KEY,
+    name varchar,
+    address varchar
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cwi_test( a int , b varchar(10), c char)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cwi_test(a int) PARTITION BY hash (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cwi_test(a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE datdba_only ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dedup_unique_test_table (a int) WITH (autovacuum_enabled=false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_expr_agg (a int DEFAULT (avg(1)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_expr_agg (a int DEFAULT (generate_series(1,3)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_expr_agg (a int DEFAULT (select 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_expr_agg_column (id int DEFAULT (avg(id)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_expr_column (id int DEFAULT (bar.id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_expr_column (id int DEFAULT (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_expr_non_column (a int DEFAULT (avg(non_existent)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_test (f1 text_w_default, f2 int42)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE defprivs (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE delete_test (
+    id SERIAL PRIMARY KEY,
+    a INT,
+    b text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE delete_test_table (a bigint, b bigint, c bigint, d bigint)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dep1 (c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dep2 (c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dependee (x integer, y integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dependent (x integer, y integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE deptest (a serial primary key, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE deptest (f1 serial primary key, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE deptest1 (f1 int unique)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE deptest2 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE disappear (a int4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dist_tab (id int, val_nn int NOT NULL, val_null int, row_nn dist_row_t NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE distinct_on_tbl (x int, y int, z int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE distinct_tbl (x int, y int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dob_t1 (c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dob_t2 (c1 int) PARTITION BY RANGE (c1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE document (
+    did         int primary key,
+    cid         int references category(cid),
+    dlevel      int not null,
+    dauthor     name,
+    dtitle      text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE document (
+    did int,
+    dlevel int,
+    dtitle text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE document (
+    did int,
+    dlevel int,
+    dtitle text,
+    category text) PARTITION BY LIST (category)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE document_people (
+    did int,
+    dlevel int,
+    dtitle text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE document_places (
+    did int,
+    dlevel int,
+    dtitle text,
+    category text DEFAULT 'Places')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_stats_test()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropfk (a int REFERENCES droppk)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropped_objects (
+	object_type text,
+	schema_name text,
+	object_name text,
+	object_identity text,
+	address_names text[],
+	address_args text[],
+	is_temporary bool,
+	original bool,
+	normal bool
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE droppk (a int PRIMARY KEY) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e(k1 text, k2 text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e1_2 (
+    id_1 int,
+    id_2_1 int,
+    id_2_2 int,
+    ename varchar(10),
+    eprop1 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e2 (a int, x int, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e2_1 (
+    id_2_1 int,
+    id_2_2 int,
+    id_1 int,
+    ename varchar(10),
+    eprop1 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e2_3 (
+    id_2_1 int,
+    id_2_2 int,
+    id_3 int,
+    ename varchar(10),
+    eprop1 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e3_2 (
+    id_3 int,
+    id_2_1 int,
+    id_2_2 int,
+    ename varchar(10),
+    eprop1 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e3_3 (
+    src_id int,
+    dest_id int,
+    ename varchar(10),
+    eprop1 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eager_agg_t1 (a int, b int, c double precision)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eager_agg_t2 (a int, b int, c double precision)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eager_agg_t3 (a int, b int, c double precision)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eager_agg_tab1(x int, y int) PARTITION BY RANGE(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eager_agg_tab2(x int, y int) PARTITION BY RANGE(y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eager_agg_tab_ml(x int, y int) PARTITION BY RANGE(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ec1 (ek1 int, ek2 int, eb text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE emp1 (id SERIAL PRIMARY KEY NOT NULL, code int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE encoding_tests (encoding text, description text, input bytea)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enumtest (col rainbow)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enumtest_bogus_child(parent bogus REFERENCES enumtest_parent)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enumtest_child (parent rainbow REFERENCES enumtest_parent)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enumtest_parent (id rainbow PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE equipment_r (
+	name 		text,
+	hobby		text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE errtst(a text, b text NOT NULL, c text, secret1 text, secret2 text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE errtst_part_1(secret2 text, c text, a text, b text NOT NULL, secret1 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE errtst_part_2(secret1 text, secret2 text, a text, c text, b text NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE euc_jis_2004_inputs (inbytes bytea, description text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE event_trigger_test (a integer, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE evtrg_nontemp_table (f1 int primary key, f2 int default 42)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE evttrig.parted (
+    id int PRIMARY KEY)
+    PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE expr_key (x numeric, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE expr_stats (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE expr_stats (a int, b name, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE expr_stats_incompatible_test (
+    c0 double precision,
+    c1 boolean NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ext_stats_test (x text, y int, z int, w xid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail_part (
+	b char(3),
+	a int NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail_part (a int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail_part OF mytype
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fast_emp4000 (
+	home_base	 box
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fd_pt1 (
+	c1 integer NOT NULL,
+	c2 text,
+	c3 date
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fd_pt2 (
+	c1 integer NOT NULL,
+	c2 text,
+	c3 date
+) PARTITION BY LIST (c1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE few(id int, dataa text, datab text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ffk (a int, b int REFERENCES pk) PARTITION BY list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk (a int DEFAULT 50) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk (a int) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk (a int) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk (id int, a int DEFAULT 50) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk2 (b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk3 (b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_notpartitioned_fk (b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk (a INT REFERENCES fk_notpartitioned_pk(a) PRIMARY KEY) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk (a int default 2501, b int default 142857) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk (b int, a int) PARTITION BY RANGE (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk (b int, fdrop1 int, a int) PARTITION BY RANGE (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_1 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_1 (fdrop1 int, fdrop2 int, a int, fdrop3 int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_2 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_2 (b int, fdrop1 int, fdrop2 int, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_3 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_3 (a int, b int) PARTITION BY RANGE (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_3 (fdrop1 int, fdrop2 int, fdrop3 int, fdrop4 int, b int, a int)
+  PARTITION BY HASH (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_3_1 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_6 (a int REFERENCES fk_partitioned_pk_6) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_6 (a int REFERENCES fk_partitioned_pk_61) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_fk_full (x int, y int) PARTITION BY RANGE (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_pk_6 (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_partitioned_pk_6 (a int PRIMARY KEY) PARTITION BY list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fkpart10.tbl5(f1 int REFERENCES fkpart10.tbl3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fkpart11.pk11 (b text, a int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fkpart11.pk12 (b text, c int, a int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fkpart13_t1 (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fkpart7.fk (a int REFERENCES fkpart7.pkpart)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE flt (f float)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo_part_d1 (c text, a int, b float8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo_part_d2 (b float8, c text, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo_parted (a int, b float8, c text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fooarr(f1 text, f2 int[], f3 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test (
+  id int4range,
+  valid1_at daterange,
+  valid2_at daterange,
+  name text NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test (
+  id int4range,
+  valid_at daterange,
+  name text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test (
+  id int4range,
+  valid_at daterange,
+  name text NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test2 (
+  id integer,
+  valid_at box,
+  name text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test2 (
+  id integer,
+  valid_at date,
+  name text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test2 (
+  id integer,
+  valid_at datemultirange_d,
+  name text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test2 (
+  id integer,
+  valid_at daterange_d,
+  name text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_portion_of_test2 (
+  id integer,
+  valid_at point,
+  name text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE found_test_tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_fk_alter (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_fk_alter2 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_fk_cci (a int REFERENCES fp_pk_cci)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_fk_cross (a int8 REFERENCES fp_pk_cross)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_fk_dup (a int REFERENCES fp_pk_dup)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_fk_subxact (a int REFERENCES fp_pk_subxact)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_multi_fk (
+    a int REFERENCES fp_pk1,
+    b int REFERENCES fp_pk2
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk1 (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk2 (b int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_alter (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_alter2 (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_cci (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_commit (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_cross (a int4 PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_defer (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_dup (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fp_pk_subxact (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fract_only (id int, val numeric(4,4))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE func_index_heap (f1 text, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE functest1 (i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE functest2 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE functest3 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gb18030_inputs (inbytes bytea, description text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gpt_test_sch.tbl_sch (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE grantor_test ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE grantor_test1 ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE grantor_test2 ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE grantor_test3 ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE group_tbl (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE grouping_unique (x integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest23a (x int PRIMARY KEY, y int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest23q (a int PRIMARY KEY, b int REFERENCES gtest23p (y))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest24at (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest25 (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest31_2 (x int, y gtest31_1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest_child3 (f1 date NOT NULL, f2 bigint, f3 bigint DEFAULT 42)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest_child3 (f1 date NOT NULL, f2 bigint, f3 bigint)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest_normal (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest_parent (f1 date NOT NULL, f2 bigint, f3 bigint) PARTITION BY RANGE (f1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtest_rule_log (op text, old_b int, new_b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtestx (x int, y int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtestxx_1 (a int NOT NULL, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtesty (x int, b int DEFAULT 55)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE gtesty (x int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE guid1
+(
+	guid_field UUID,
+	text_field TEXT DEFAULT(now())
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE guid2
+(
+	guid_field UUID,
+	text_field TEXT DEFAULT(now())
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hard_err(foo widget)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_cleanup_heap(keycol INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_f8_heap (
+	seqno		int4,
+	random 		float8
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_heap_float4 (x float4, y int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_name_heap (
+	seqno 		int4,
+	random 		name
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_parted (
+	a int
+) PARTITION BY HASH (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_parted2 (
+	a varchar
+) PARTITION BY HASH (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_parted2 (a int) PARTITION BY HASH(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_split_heap (keycol INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hash_txt_heap (
+	seqno 		int4,
+	random 		text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hat_data (
+	hat_name    char(10),
+	hat_color   char(10)      -- hat color
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hats (
+	hat_name    char(10) primary key,
+	hat_color   char(10)      -- hat color
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hjtest_1 (a text, b int, id int, c bool)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hjtest_2 (a bool, id int, b text, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hjtest_matchbits_t1(id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hjtest_matchbits_t2(id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hobbies_r (
+	name		text,
+	person 		text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE idxpart (a INT, b TEXT, c INT) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE idxpart (c1 INT PRIMARY KEY, c2 INT, c3 VARCHAR(10)) PARTITION BY RANGE(c1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE idxpart (col1 INT) PARTITION BY RANGE (col1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE idxpart_two (col2 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE indtoasttest(descr text, cnt int DEFAULT 0, f1 text, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inh_nn1 (a int not null)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inh_nn_lvl1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inh_parent ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inhs1 (b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inht1 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inhta ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE instead_of_insert_tbl(id serial, name text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE iso8859_5_inputs (inbytes bytea, description text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest1 (a int generated by default as identity, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest10 (a int generated by default as identity, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest13 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest14 (id serial)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest16 (a int GENERATED BY DEFAULT AS IDENTITY, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest5 (a serial, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest7b (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest7d (a int not null)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest8 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest_err_1 (a text generated by default as identity)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest_err_3 (a int default 5 generated by default as identity)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE itest_err_4 (a serial generated by default as identity)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE koju (a INT UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE large_tuple_test (a int, b text) WITH (fillfactor = 10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE leader (a int PRIMARY KEY, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_part1(a numeric, b int, c int8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_parted (
+	a int
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_parted (
+	a text,
+	b int
+) PARTITION BY list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_parted (a numeric, b int, c int8) PARTITION BY list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_parted2 (
+	a int,
+	b char
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_parted2 (
+	a varchar
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE list_parted3 (a int NOT NULL) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE lock_table (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE lock_tbl1 (a BIGINT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE lock_tbl1a (a BIGINT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE log_table (tstamp timestamp default timeofday()::timestamp)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE logged1(f1 SERIAL PRIMARY KEY, f2 TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE logged2(f1 SERIAL PRIMARY KEY, f2 INTEGER REFERENCES logged1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE logged3(f1 SERIAL PRIMARY KEY, f2 INTEGER REFERENCES logged3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE lt1 (a INT) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE m(id OID)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE macaddr8_data (a int, b macaddr8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE macaddr_data (a int, b macaddr)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE main_table (a int unique, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE maintain_test (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mcv_lists_partial (
+    a INT,
+    b INT,
+    c INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE merge_actions(action text, abbrev text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE min_updates_test (
+	f1	text,
+	f2 int,
+	f3 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mintab(c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE money_data (m money)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE moneyp (
+	a money
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE msource (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mtarget (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multi_test (i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvtest_boxes (id serial primary key, b box)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvtest_t (id int NOT NULL PRIMARY KEY, type text NOT NULL, amt numeric NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvtest_v (i int, j int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_system_table(id serial primary key, othercol text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE no_index_cleanup (i INT PRIMARY KEY, t TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE non_parted (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nonpartitioned (
+	a int,
+	b int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE not_a_part (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_inhparent (i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_parent_upg (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_part1_3_upg (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_part1_upg (a int, b int) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl1 (a INTEGER NOT NULL NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl1 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl1 (a int, b int) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl1_3(a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl1_child2 (c int, b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl1_upg (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl2 (a INTEGER PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE notnull_tbl3 (a INTEGER NOT NULL, CHECK (a IS NOT NULL))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_data (id int4, val numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_data (id int4, val numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_add (id1 int4, id2 int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_add (id1 int4, id2 int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_div (id1 int4, id2 int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_div (id1 int4, id2 int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_ln (id int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_ln (id int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_log10 (id int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_log10 (id int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_mul (id1 int4, id2 int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_mul (id1 int4, id2 int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_power_10_ln (id int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_power_10_ln (id int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_sqrt (id int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_sqrt (id int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_sub (id1 int4, id2 int4, expected numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_exp_sub (id1 int4, id2 int4, expected numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_input_test (n1 numeric)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_result (id1 int4, id2 int4, result numeric(1000,800))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_result (id1 int4, id2 int4, result numeric(210,10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_typemod_test (
+  millions numeric(3, -6),
+  thousands numeric(3, -3),
+  units numeric(3, 0),
+  thousandths numeric(3, 3),
+  millionths numeric(3, 6)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_variance (a numeric)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nummultirange_test (nmr NUMMULTIRANGE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE numrange_test (nr NUMRANGE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE of_tt_enum_type OF tt_enum_type
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE onek (
+	unique1		int4,
+	unique2		int4,
+	two			int4,
+	four		int4,
+	ten			int4,
+	twenty		int4,
+	hundred		int4,
+	thousand	int4,
+	twothousand	int4,
+	fivethous	int4,
+	tenthous	int4,
+	odd			int4,
+	even		int4,
+	stringu1	name,
+	stringu2	name,
+	string4		name
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE only_inh_parent (a int primary key, b TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE only_parted (a int, b text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE order_items (
+    order_items_id integer PRIMARY KEY,
+    order_id integer REFERENCES orders (order_id),
+    product_no integer REFERENCES products (product_no),
+    quantity integer
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE orders (
+    order_id integer PRIMARY KEY,
+    ordered_when date
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE orderstest (
+    approver_ref integer,
+    po_ref integer,
+    ordercanceled boolean
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other_tbl_parent (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE owned_by_me (
+	a int
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pa_source (sid integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pa_source (sid integer, delta float)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pa_target (logts timestamp, tid integer, balance float, val text)
+	PARTITION BY RANGE (logts)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pa_target (tid integer PRIMARY KEY) PARTITION BY LIST (tid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pa_target (tid integer, balance float, val text)
+	PARTITION BY LIST (tid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pagg_tab (a int, b int, c text, d int) PARTITION BY LIST(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pagg_tab1(x int, y int) PARTITION BY RANGE(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pagg_tab2(x int, y int) PARTITION BY RANGE(y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pagg_tab_ml (a int, b int, c text) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pagg_tab_ml_p3(b int, c text, a int) PARTITION BY RANGE (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pagg_tab_ml_p3_s1(c text, a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pagg_tab_para(x int, y int) PARTITION BY RANGE(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parallel_hang (i int4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parallel_tidrangescan (id integer, data text)
+WITH (fillfactor = 10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part (a INT, b INT) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part1 (
+	a int NOT NULL CHECK (a = 1),
+	b int NOT NULL CHECK (b >= 1 AND b <= 10)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part1_self_fk (
+    id bigint NOT NULL PRIMARY KEY,
+    id_abc bigint
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part2 (
+	a int NOT NULL CHECK (a = 1),
+	b int NOT NULL CHECK (b >= 10 AND b < 18)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part33_self_fk (
+	id bigint NOT NULL PRIMARY KEY,
+	id_abc bigint
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part3_self_fk (	-- a partitioned partition
+	id bigint NOT NULL PRIMARY KEY,
+	id_abc bigint
+) PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_attmp (a int primary key) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_b_10_b_20 (e varchar, c numeric, a text, b bigint, d int) PARTITION BY RANGE (c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_b_20_b_30 (e varchar, c numeric, a text, b bigint, d int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_c_100_200 (e varchar, c numeric, a text, b bigint, d int) PARTITION BY range (abs(d))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_c_1_100 (e varchar, d int, c numeric, b bigint, a text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_document (
+    did         int,
+    cid         int,
+    dlevel      int not null,
+    dauthor     name,
+    dtitle      text
+) PARTITION BY RANGE (cid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_rev (b INT, c INT, a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE part_test (id int) PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parted_col_comment (a int, b text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY RANGE ((avg(a)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY RANGE (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY RANGE (const_func())
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY RANGE (immut_func(a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY RANGE (retset(a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int
+) PARTITION BY RANGE (xmin)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a point
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a point
+) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a1 int,
+	a2 int
+) PARTITION BY LIST (a1, a2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned_table (a int, b text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE past_inh_parent ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE past_parted (i int) PARTITION BY LIST(i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pe (id int, src int, dest int, val int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE perm_part (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE person (
+	name 		text,
+	age			int4,
+	location 	point
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE persons OF person_type
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE persons5 OF stuff
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_catalog.new_system_table()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_temp.implicitly_temp (a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pht1 (a int, b int, c text) PARTITION BY HASH(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pht1_e (a int, b int, c text) PARTITION BY HASH(ltrim(c, 'A'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pht2 (a int, b int, c text) PARTITION BY HASH(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pitest1_p2 (f3 bigint, f2 text, f1 date NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pitest2 (f1 date NOT NULL, f2 text) PARTITION BY RANGE (f1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pitest3 (f1 date NOT NULL, f2 text, f3 int) PARTITION BY RANGE (f1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk (a int PRIMARY KEY) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk (a int PRIMARY KEY) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk2 (b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk3 (a int NOT NULL) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk32 (b int, a int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk5 (c int, b int, a int NOT NULL) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pktable (
+	id		INT4 PRIMARY KEY,
+	other	INT4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE plt1 (a int, b int, c text) PARTITION BY LIST(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE plt1_adv (a int, b int, c text) PARTITION BY LIST (c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE plt1_e (a int, b int, c text) PARTITION BY LIST(ltrim(c, 'A'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE plt2 (a int, b int, c text) PARTITION BY LIST(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE plt2_adv (a int, b int, c text) PARTITION BY LIST (c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE plt3_adv (a int, b int, c text) PARTITION BY LIST (c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pp (id int,val int) PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pp_1 (val int, id int) PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pp_2 (id int, val int) PARTITION BY RANGE (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pp_nn (a int) PARTITION BY HASH (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pp_nn_1(a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_parent (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_tab (a int NOT NULL, b int, c int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_tab (a int NOT NULL, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_tab (a int, b int NOT NULL, c int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_tab (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_tab_notnull (a int, b int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE price (
+    id SERIAL PRIMARY KEY,
+    active BOOLEAN NOT NULL,
+    price NUMERIC
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE products (
+    product_no integer PRIMARY KEY,
+    name varchar,
+    price numeric
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt (a int) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt1 (a int, b int, c varchar) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt1_adv (a int, b int, c varchar) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt1_l (a int, b int, c varchar) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt1_n (a int, b int, c varchar) PARTITION BY RANGE(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt2 (a int, b int, c varchar) PARTITION BY RANGE(b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt2_adv (a int, b int, c varchar) PARTITION BY RANGE (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt2_l (a int, b int, c varchar) PARTITION BY RANGE(b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt2_n (a int, b int, c text) PARTITION BY LIST(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt3_adv (a int, b int, c varchar) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt3_n (a int, b int, c text) PARTITION BY LIST(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prt4_n (a int, b int, c text) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE psql_pipeline(a INTEGER PRIMARY KEY, s TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pt (a int PRIMARY KEY) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ptif_li_parent ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ptif_normal_table(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ptif_test (a int, b int) PARTITION BY range (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ptne (id int PRIMARY KEY, src int REFERENCES ptnv(id), dest int REFERENCES ptnv(id), val int) PARTITION BY LIST(id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ptnowner(i int unique not null) PARTITION BY LIST (i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ptnv (id int PRIMARY KEY, val int) PARTITION BY LIST(id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pub_test.testpub_nopk (foo int, bar int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pub_test1.tbl (id int, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pub_test1.tbl1 (id serial primary key, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pub_test2.tbl1 (id serial primary key, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pub_testpart1.parent1 (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pub_testpart2.parent2 (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.tt(a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pv (id int, val int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pxtest2 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pxtest3(fff int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pxtest4 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pxtest_rowlock (id int PRIMARY KEY, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE quad_box_tbl (id int, b box)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE quad_poly_tbl (id int, p polygon)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE query ( expr TEXT )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE quuux (a int, b text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE quuux1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE quuux2 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE r1 (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE r1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE r2 (a int REFERENCES r1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE r2 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_parted (
+	a date
+) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_parted (
+	a int,
+	b int
+) PARTITION BY RANGE (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_parted (
+	a text,
+	b bigint,
+	c numeric,
+	d int,
+	e varchar
+) PARTITION BY RANGE (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_parted2 (
+	a int
+) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_parted2 (
+	a int
+) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_parted2 (
+    a int
+) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE real_city (
+	pop			int4,
+	cname		text,
+	outline 	path
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rec1 (x integer, y integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rec2 (a integer, b integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref (ab int, cd int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref(f1 int, f2 int, f3 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref(f1 int, f2 int, f3 int)
+  PARTITION BY list(f1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref_table (id integer PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref_tbl (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref_tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regdatabase_test (datid OID DEFAULT 'template1'::regdatabase)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regr_test (x float8, y float8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_constr_partitioned (a integer) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_encoding(good text, truncated text, with_nul text, truncated_with_nul text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_notnull1 (a integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_roleoption.t1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_roleoption.t2 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_roleoption.t3 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_roleoption.t4 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regress_tblspace_test_tbl (num1 bigint, num2 double precision, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regrole_test (rolid OID DEFAULT 'regress_regrole_test'::regrole)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regular_table (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reindex_verbose(id integer primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test(i INT) WITH (FiLLFaCToR=30,
+	autovacuum_enabled = false, autovacuum_analyze_scale_factor = 0.2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test(i INT) WITH (vacuum_truncate)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (autovacuum_analyze_scale_factor = -10.0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (autovacuum_analyze_scale_factor = 110.0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (autovacuum_analyze_scale_factor=true)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (autovacuum_enabled=12)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (autovacuum_enabled=30.5)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (fillfactor)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (fillfactor=-30.1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (fillfactor=110)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (fillfactor=2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (fillfactor=30, fillfactor=40)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (fillfactor=true)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reloptions_test2(i INT) WITH (not_existing_option=2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE remember_create_subid (c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE remember_node_subid (c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rewrite_test(col text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rf_bug (id serial, description text, status rf_bug_status)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rf_tbl_abcd_nopk(a int, b int, c int, d int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rf_tbl_abcd_part_pk (a int PRIMARY KEY, b int) PARTITION by RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rf_tbl_abcd_part_pk_1 (b int, a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_ptbl (a int) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_t1 (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_tbl (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_tbl (c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_tbl_force (c1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_test_src (a int PRIMARY KEY, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_test_tgt (a int PRIMARY KEY, b text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rngfunc2(rngfuncid int, f2 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE road (
+	name		text,
+	thepath 	path
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rule_merge1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rule_merge2 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rule_t1 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rule_t1(a int, b text DEFAULT 'xxx', c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rules_parted_table (a int) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ruletest1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ruletest2 (b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ruletest_t1 (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ruletest_t2 (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ruletest_t3 (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ruletest_tbl2 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s (js jsonb)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s2 (x int, y text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales (salesperson_id INT REFERENCES salespeople(salesperson_id), sales_amount INT, sales_date DATE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_apr2022 (salesperson_id INT, salesperson_name VARCHAR(30), sales_amount INT, sales_date DATE) PARTITION BY RANGE (sales_date)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_external2 (vch VARCHAR(5))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_list
+(salesperson_id SERIAL,
+ salesperson_name VARCHAR(30),
+ sales_state VARCHAR(20),
+ sales_amount INT,
+ sales_date DATE)
+PARTITION BY LIST (sales_state)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_list (sales_state VARCHAR(20)) PARTITION BY LIST (sales_state)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_list(sales_state VARCHAR(20)) PARTITION BY LIST (sales_state)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_range (
+salesperson_id INT REFERENCES salespeople(salesperson_id),
+sales_amount INT CHECK (sales_amount > 1),
+sales_date DATE) PARTITION BY RANGE (sales_date)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_range (sales_date date) PARTITION BY RANGE (sales_date)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_range (salesperson_id INT, sales_date date) PARTITION BY RANGE (sales_date)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_range (salesperson_id INT, salesperson_name VARCHAR(30), sales_amount INT, sales_date DATE) PARTITION BY RANGE (sales_date)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sales_range (salesperson_id int, sales_date date) PARTITION BY RANGE (sales_date)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE salespeople(salesperson_id INT PRIMARY KEY, salesperson_name VARCHAR(30))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE salespeople(salesperson_id INT PRIMARY KEY, salesperson_name VARCHAR(30)) PARTITION BY RANGE (salesperson_id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE salespeople10_20(d1 VARCHAR(30), salesperson_id INT PRIMARY KEY, salesperson_name VARCHAR(30))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE salespeople10_40(d1 VARCHAR(30), salesperson_id INT PRIMARY KEY, d2 INT, d3 DATE, salesperson_name VARCHAR(30))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE salespeople20_30(salesperson_id INT PRIMARY KEY, d2 INT,  salesperson_name VARCHAR(30))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE salespeople2_5(salesperson_id INT NOT NULL, salesperson_name VARCHAR(30))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE salespeople30_40(salesperson_id INT PRIMARY KEY, d3 DATE, salesperson_name VARCHAR(30))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE savepoints (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sch1.tbl1 (a int) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sch1.tbl1_part3 (a int) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE schema_one."table two"(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE schema_one.table_one(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE schema_one.table_three(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE schema_two.table_three(a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE schema_two.table_two(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE seclabel_tbl1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE seclabel_tbl2 (x int, y text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE secondparent (tomorrow date default  now() :: date  +  1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sequence_test_table (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serialTest1 (f1 text, f2 serial)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serialTest2 (f1 text, f2 serial, f3 smallserial, f4 serial2,
+  f5 bigserial, f6 serial8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serializable_update_tab (
+	id int,
+	filler  text,
+	description text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sf_target(id int, data text, filling int[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shiftjis2004_inputs (inbytes bytea, description text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shoe_data (
+	shoename   char(10),      -- primary key
+	sh_avail   integer,       -- available # of pairs
+	slcolor    char(10),      -- preferred shoelace color
+	slminlen   float,         -- minimum shoelace length
+	slmaxlen   float,         -- maximum shoelace length
+	slunit     char(8)        -- length unit
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shoelace_arrive (
+        arr_name    char(10),
+        arr_quant   integer
+    )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shoelace_data (
+	sl_name    char(10),      -- primary key
+	sl_avail   integer,       -- available # of pairs
+	sl_color   char(10),      -- shoelace color
+	sl_len     float,         -- shoelace length
+	sl_unit    char(8)        -- length unit
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shoelace_log (
+        sl_name    char(10),      -- shoelace changed
+        sl_avail   integer,       -- new available value
+        log_who    name,          -- who did it
+        log_when   timestamp      -- when
+    )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shoelace_ok (
+        ok_name     char(10),
+        ok_quant    integer
+    )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sj_t1 (id serial, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sj_t2 (id serial, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sj_t3 (id serial, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sj_t4 (id serial, a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE slow_emp4000 (
+	home_base	 box
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE some_t (some_col boolean NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE someparent (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sq_target_merge_log (tid integer NOT NULL, last_change text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE src (a int, b int, c int, d int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE src (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sro_ptab (a int) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sro_tab (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sro_trojan_table ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stats_ext_tbl (id INT PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY, col TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stats_ext_tbl_range(name text, irange int4range)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stats_import.part_parent ( i integer ) PARTITION BY RANGE(i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stats_import.test(
+    id INTEGER PRIMARY KEY,
+    name text,
+    comp stats_import.complex_type,
+    arange int4range,
+    tags text[]
+) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stats_import.test_mr(
+    id INTEGER PRIMARY KEY,
+    name text,
+    mrange int4multirange
+) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE strtest (n name, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stuff (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stxdinh(a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stxdinp(i int, a int, b int) PARTITION BY RANGE (i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sub_part1(b int, c int8, a numeric)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sub_part2(b int, c int8, a numeric)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE syscol_table (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a numeric) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i INT PRIMARY KEY) PARTITION BY RANGE (i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i int) PARTITION BY HASH(i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i int) PARTITION BY RANGE (i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (id serial PRIMARY KEY, a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a int, b float, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a int, b text, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a integer, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (i int, a int, b int, c int) PARTITION BY RANGE (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (id int not null primary key, a int, junk1 text, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (name TEXT, n INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (num int, name text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(i int, t text) PARTITION BY LIST (t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t11 (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t12 (b int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t13 (
+    c int PRIMARY KEY,
+    d int REFERENCES t11,
+    e int REFERENCES t12
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1x (a int, b varchar(10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (a domain1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (a integer, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (cc int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (i int PRIMARY KEY, j int, k int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (i int, t text) PARTITION BY RANGE (t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (name TEXT, n INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (num2 int, value text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2x (i int, j varchar(15))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (i int, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (name TEXT, n INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (x int, y text, z text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_fk (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_on_error_null (a d_int_not_null, b d_int_positive_maybe_null, c integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab_anti (a int, b boolean)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab_main (a int) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab_with_flag ( id INT PRIMARY KEY, is_flag SMALLINT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table1(col1 SERIAL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table2(col1 SERIAL PRIMARY KEY, col2 TEXT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tableam_parted_heap2 (a text, b int) PARTITION BY list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tableam_parted_heapx (a text, b int) PARTITION BY list (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tableam_tbl_heapx(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tablespace_table (i int) TABLESPACE regress_tblspace
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl1 ( a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl2 (c int, d int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl3 (e int, f int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl4 (g int, h int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_include_box (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_include_box_pk (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_include_pk (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_include_unique2 (c1 int, c2 int, c3 int, c4 box)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_normal (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_parent (id1 int, id2 int, id3 int) PARTITION BY RANGE (id1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_phv(x int, y int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbspace_reindex_part (c1 int, c2 int) PARTITION BY RANGE (c1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tc1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tc2 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temp_view_test.tt1 (y1 int, f2 int, f3 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temporal3 (
+  id int4range
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temporal3 (
+  id int4range,
+  valid_at daterange
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temporal_mltrng ( id int4range, valid_at datemultirange)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temporal_mltrng3 (
+  id int4range,
+  valid_at datemultirange
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temporal_rng (
+  id int4range,
+  valid_at daterange
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temporal_rng (id int4range, valid_at daterange)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temporal_rng3 (
+  id int4range,
+  valid_at daterange
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temptest(col int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temptest(col int) ON COMMIT DELETE ROWS
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tenant2_table (i integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tenant_table (i integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tenk1 (
+	unique1		int4,
+	unique2		int4,
+	two			int4,
+	four		int4,
+	ten			int4,
+	twenty		int4,
+	hundred		int4,
+	thousand	int4,
+	twothousand	int4,
+	fivethous	int4,
+	tenthous	int4,
+	odd			int4,
+	even		int4,
+	stringu1	name,
+	stringu2	name,
+	string4		name
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test10a (a int[], b priv_testtype1[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test10b (a int[], b priv_testtype1[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test4 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test4nfd (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test5a (a int, b priv_testdomain1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test5b (a int, b priv_testdomain1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test6 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test6a (a int, b text[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test6a OF priv_testtype1
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test6b OF priv_testtype1
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test7 (a text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test9a (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test9b (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_2pc (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_2pc_abort (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_2pc_multi (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_2pc_rewrite_alone (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_2pc_rewrite_alone_abort (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_2pc_savepoint (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_2pc_timestamp (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_abort (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_add_column(c1 integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_add_domain_col(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_alone (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_exists (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_foreign_constraints(id1 int REFERENCES test_primary_constraints(id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_having (a int, b int, c char(8), d char)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_is_json (js text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_jsonb_mutability(js jsonb, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_like_5 (x point, y point, z point)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_maint(i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_missing_target (a int, b int, c char(8), d char)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_multi (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_primary_constraints(id int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_qual_pushdown (
+    abc text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_replica_identity2 (id int UNIQUE NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_replica_identity4(id integer NOT NULL) PARTITION BY LIST (id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_replica_identity4_1(id integer NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_replica_identity_othertable (id serial primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_rewrite_alone_abort (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_savepoint (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_tablesample (id int, name text) WITH (fillfactor=10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_tbl1 (x int, y test_type1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_tbl1 (x int, y text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_tbl2 OF test_type2
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_tbs (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_timestamp (a int) WITH (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_tsquery (txtkeyword TEXT, txtsample TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_tsvector(
+	t text,
+	a tsvector
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_type_diff (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_type_diff2 (int_two int2, int_four int4, int_eight int8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_type_diff2_c1 (int_four int4, int_eight int8, int_two int2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_type_diff2_c2 (int_eight int8, int_two int2, int_four int4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_type_diff2_c3 (int_two int2, int_four int4, int_eight int8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testcomment (i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testns.acltest1 (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testns.t1 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testns.t2 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_insert_onconfl_no_ri (a int unique, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_insert_onconfl_parted (a int unique, b int) PARTITION by RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_merge_no_ri (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_merge_pk (a int primary key, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_parted (a int) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_rf_schema1.testpub_rf_tbl5 (h integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_rf_schema2.testpub_rf_tbl6 (i integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_rf_tbl1 (a integer, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_rf_tbl2 (c text, d integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_rf_tbl3 (e integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_rf_tbl4 (g text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_rf_tbl5 (a xml)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_root(a int) PARTITION BY RANGE(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl1 (id serial primary key, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl2 (id serial primary key, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl3 (id serial primary key, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl4(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl6 (a int, b text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl7 (a int primary key, b text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl8 (a int, b text, c text) PARTITION BY HASH (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl8_0 (a int, b text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl8_1 (a int, b text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testpub_tbl_parent (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.dflt2 (a int PRIMARY KEY) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.foo (i int) TABLESPACE regress_tblspace
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.part (a int) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.tablespace_acl (c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.test_default_tab(id bigint) TABLESPACE regress_tblspace
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.test_tab(a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testschema.test_tab(id int) TABLESPACE regress_tblspace
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testxmlschema.test1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testxmlschema.test2 (z int, y varchar(500), x char(6),
+    w numeric(9,2), v smallint, u bigint, t real,
+    s time, stz timetz, r timestamp, rtz timestamptz, q date,
+    p xml, o testxmldomain, n bool, m bytea, aaa text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE textrange_test (tr textrange)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE texttest (a text PRIMARY KEY, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tgt (a int, b int, c int, d int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tgt (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE thethings (stuff things)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE thirdparent (tomorrow date default now()::date - 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tid_part (a int) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tid_tab (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tidrangescan(id integer, data text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tidscan(id integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE toasttest (c char(4096))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE toasttest (f1 text, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE toasttest(f1 bytea)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE toasttest(f1 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tp_0_1(i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tp_0_2(i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tp_1_2(i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trans_abc (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trans_bar (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trans_barbaz (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trans_baz (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trans_foo (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trans_foobar (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE transition_table_base (id int PRIMARY KEY, val text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trgfire (i int) PARTITION BY RANGE (i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_test (
+        i int,
+        v varchar
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_test (f1 int, f2 text, f3 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_a (a INT PRIMARY KEY) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_b (a int REFERENCES truncate_a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_c (a serial PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_d (a int REFERENCES trunc_c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_e (a int REFERENCES truncate_a, b int REFERENCES trunc_c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_f (col1 integer primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_stats_test(id serial)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_stats_test1(id serial, stuff text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_stats_test2(id serial)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_stats_test3(id serial, stuff text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_stats_test4(id serial)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_trigger_log (tgop text, tglevel text, tgwhen text,
+        tgargv text, tgtable name, rowcount bigint)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trunc_trigger_test (f1 int, f2 text, f3 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE truncate_a (col1 integer primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE truncate_a (id serial,
+                         id1 integer default nextval('truncate_a_id1'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE truncpart (a int REFERENCES truncprim)
+  PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE truncparted (a int, b char) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE truncprim (a int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tststats.priv_test_parent_tbl (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tststats.priv_test_tbl (
+    a int,
+    b int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tststats.pt (a int, b int, c text) PARTITION BY RANGE (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tststats.t (a int, b int, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt0 (x int NOT NULL, y numeric(8,2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt1 (f1 int, f2 int, f3 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt1 (x int, y bigint)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt2 (x int, y numeric(9,2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt3 (y numeric(8,2), x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt4 (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt5 (x int, y numeric(8,2), z int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt7 (x int, q text, y numeric(8,2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt8(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt9(c integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ttable1 OF nothing
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx1 (a integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx1 (a integer, b integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx1 (x1 int, x2 int, x3 text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx2 (b integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx2 (b integer, c integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx3 (c integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx3 (c integer, d integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uaccount (
+    pguser      name primary key,
+    seclv       int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE undroppable_objs (
+	object_type text,
+	object_identity text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unique_tbl (i int, t text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unit (
+	un_name    char(8),       -- the primary key
+	un_fact    float          -- factor to transform to cm
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unknowntab (
+	u unknown    -- fail
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unlogged1 (a int) PARTITION BY RANGE (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unparted (
+	a int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE update_test (
+    a   INT DEFAULT 10,
+    b   INT,
+    c   TEXT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE upsert_test (
+    a   INT PRIMARY KEY,
+    b   TEXT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE upsert_test (
+    a   INT PRIMARY KEY,
+    b   TEXT
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE upsert_test_2 (b TEXT, a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE user_logins(id serial, who text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE users (uid int PRIMARY KEY, pguser name, seclv int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE utf8_inputs (inbytes bytea, description text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE utf8_verification_inputs (inbytes bytea, description text PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v1 (
+    id int PRIMARY KEY,
+    vname varchar(10),
+    vprop1 int,
+    vprop2 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v1 (a int primary key, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v2 (
+    id1 int,
+    id2 int,
+    vname varchar(10),
+    vprop1 int,
+    vprop2 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v2 (m text, n text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v3 (
+    id int PRIMARY KEY,
+    vname varchar(10),
+    vprop1 int,
+    vprop2 int
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vac_option_tab (a INT, t TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vaccluster (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vacowned (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vacowned_parted (a int) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vacparted (a int, b char) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vacparted_i (a int primary key, b varchar(100))
+  PARTITION BY HASH (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vactst (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE varbit_table (a BIT VARYING(16), b BIT VARYING(16))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE view_base_table (key int PRIMARY KEY, data varchar(20))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vtype( a integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vtype2 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE width_bucket_test (operand_num numeric, operand_f8 float8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE wishlist_items (
+    wishlist_items_id integer PRIMARY KEY,
+    wishlist_id integer REFERENCES wishlists (wishlist_id),
+    product_no integer REFERENCES products (product_no)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE wishlists (
+    wishlist_id integer PRIMARY KEY,
+    wishlist_name varchar
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE withoid() WITH (oids = true)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE withoid() WITH (oids)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE writetest (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x1 (a int, address text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x1 (a int, b text, c text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xacttest (a smallint, b real)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xmldata(data xml)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xmltest (
+    id int,
+    data xml
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xmltest2(x xml, _path text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE y1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE y2 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE z1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE z1_blacklist (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE z2 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE zerocol()
 
 -- sqlfmt-corpus-separator --
 
@@ -17381,6 +22423,12 @@ WHEN NOT MATCHED THEN
 
 MERGE INTO mtarget t USING msource s ON t.a = s.a
 WHEN MATCHED AND t.b IS NOT NULL THEN
+	DELETE
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO mtarget t USING msource s ON t.a = s.a
+WHEN MATCHED AND t.b IS NOT NULL THEN
 	UPDATE SET b = s.b
 WHEN NOT MATCHED THEN
 	INSERT VALUES (a, b)
@@ -17530,6 +22578,28 @@ MERGE INTO ro_view18 AS t USING (VALUES (1, 'Row 1')) AS v(a,b) ON t.a = v.a
 
 -- sqlfmt-corpus-separator --
 
+MERGE INTO rule_merge1 t USING (SELECT 1 AS a) s
+	ON t.a = s.a
+	WHEN MATCHED AND t.a < 2 THEN
+		UPDATE SET b = b || ' updated by merge'
+	WHEN MATCHED AND t.a > 2 THEN
+		DELETE
+	WHEN NOT MATCHED THEN
+		INSERT VALUES (s.a, '')
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO rule_merge2 t USING (SELECT 1 AS a) s
+	ON t.a = s.a
+	WHEN MATCHED AND t.a < 2 THEN
+		UPDATE SET b = b || ' updated by merge'
+	WHEN MATCHED AND t.a > 2 THEN
+		DELETE
+	WHEN NOT MATCHED THEN
+		INSERT VALUES (s.a, '')
+
+-- sqlfmt-corpus-separator --
+
 MERGE INTO rw_view1 t
   USING (VALUES ('Row 3', 3.0, 3)) AS v(b,c,a) ON t.aa = v.a
   WHEN NOT MATCHED THEN INSERT VALUES (v.b, v.c, v.a)
@@ -17554,6 +22624,11 @@ MERGE INTO rw_view1 t USING (VALUES (1)) AS v(a) ON t.a = v.a
 
 MERGE INTO rw_view1 t USING (VALUES (1)) AS v(a) ON t.a = v.a
   WHEN MATCHED THEN UPDATE SET b = 'foo'
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO rw_view1 t USING (VALUES (1)) AS v(a) ON t.aa = v.a
+  WHEN MATCHED AND bb = 'xxx' THEN DELETE
 
 -- sqlfmt-corpus-separator --
 
@@ -17631,6 +22706,13 @@ MERGE INTO rw_view14  AS t
 
 -- sqlfmt-corpus-separator --
 
+MERGE INTO rw_view14  AS t
+  USING (VALUES (2, 'Row 2'), (3, 'Row 3')) AS v(a,b) ON t.a = v.a
+  WHEN MATCHED AND t.a = 2 THEN UPDATE SET b = v.b  -- should be OK
+  WHEN MATCHED AND t.a = 3 THEN DELETE
+
+-- sqlfmt-corpus-separator --
+
 MERGE INTO rw_view16 AS t USING (VALUES (3, 'Row 3')) AS v(a,b) ON t.a = v.a
   WHEN NOT MATCHED THEN INSERT VALUES (v.a, v.b)
 
@@ -17638,7 +22720,22 @@ MERGE INTO rw_view16 AS t USING (VALUES (3, 'Row 3')) AS v(a,b) ON t.a = v.a
 
 MERGE INTO rw_view2 t
   USING (SELECT x, 'R'||x FROM generate_series(0,3) x) AS s(a,b) ON t.a = s.a
+  WHEN MATCHED AND t.a <= 1 THEN DELETE
   WHEN MATCHED THEN UPDATE SET b = s.b
+  WHEN NOT MATCHED AND s.a > 0 THEN INSERT VALUES (s.a, s.b)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO rw_view2 t
+  USING (SELECT x, 'R'||x FROM generate_series(0,3) x) AS s(a,b) ON t.a = s.a
+  WHEN MATCHED THEN UPDATE SET b = s.b
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO rw_view2 t
+  USING (SELECT x, 'R'||x FROM generate_series(0,3) x) AS s(a,b) ON t.a = s.a
+  WHEN MATCHED THEN UPDATE SET b = s.b
+  WHEN NOT MATCHED AND s.a > 0 THEN INSERT VALUES (s.a, s.b)
 
 -- sqlfmt-corpus-separator --
 
@@ -17676,6 +22773,11 @@ MERGE INTO rw_view2 t USING (VALUES (1)) AS v(a) ON t.a = v.a
 
 MERGE INTO rw_view2 t USING (VALUES (1)) AS v(a) ON t.a = v.a
   WHEN MATCHED THEN UPDATE SET b = 'fud'
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO rw_view2 t USING (VALUES (1)) AS v(a) ON t.aa = v.a
+  WHEN MATCHED AND bb = 'xxx' THEN DELETE
 
 -- sqlfmt-corpus-separator --
 
@@ -17732,6 +22834,18 @@ MERGE INTO rw_view2 t USING (VALUES (60)) AS v(a) ON t.a = v.a
 MERGE INTO sq_target
 USING v
 ON tid = sid
+WHEN MATCHED AND tid >= 2 THEN
+    UPDATE SET balance = balance + delta
+WHEN NOT MATCHED THEN
+	INSERT (balance, tid) VALUES (balance + delta, sid)
+WHEN MATCHED AND tid < 2 THEN
+	DELETE
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO sq_target
+USING v
+ON tid = sid
 WHEN MATCHED THEN
     UPDATE SET balance = v.balance + delta
 
@@ -17750,6 +22864,18 @@ USING v
 ON tid = sid
 WHEN MATCHED AND (SELECT count(*) > 0 FROM sq_target) THEN
     UPDATE SET balance = 42
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO sq_target t
+USING v
+ON tid = sid
+WHEN MATCHED AND tid >= 2 THEN
+    UPDATE SET balance = t.balance + delta
+WHEN NOT MATCHED THEN
+	INSERT (balance, tid) VALUES (balance + delta, sid)
+WHEN MATCHED AND tid < 2 THEN
+	DELETE
 
 -- sqlfmt-corpus-separator --
 
@@ -18100,6 +23226,34 @@ MERGE INTO wq_target t
 USING wq_source s ON t.tid = s.sid
 WHEN MATCHED AND t.xmin = t.xmax THEN
 	UPDATE SET balance = t.balance + s.balance
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN NOT MATCHED AND FALSE THEN
+	INSERT (tid) VALUES (s.sid)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN NOT MATCHED AND s.balance <> 100 THEN
+	INSERT (tid) VALUES (s.sid)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN NOT MATCHED AND s.balance = 100 THEN
+	INSERT (tid) VALUES (s.sid)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN NOT MATCHED AND t.balance = 100 THEN
+	INSERT (tid) VALUES (s.sid)
 
 -- sqlfmt-corpus-separator --
 
@@ -62408,6 +67562,21 @@ WITH t4 AS (INSERT INTO id_alw4 DEFAULT VALUES RETURNING i)
 
 -- sqlfmt-corpus-separator --
 
+WITH targq AS (
+	SELECT * FROM v
+)
+MERGE INTO sq_target t
+USING v
+ON tid = sid
+WHEN MATCHED AND tid >= 2 THEN
+    UPDATE SET balance = t.balance + delta
+WHEN NOT MATCHED THEN
+	INSERT (balance, tid) VALUES (balance + delta, sid)
+WHEN MATCHED AND tid < 2 THEN
+	DELETE
+
+-- sqlfmt-corpus-separator --
+
 WITH tzs (tz) AS (VALUES
     ('+1'), ('+1:'), ('+1:0'), ('+100'), ('+1:00'), ('+01:00'),
     ('+10'), ('+1000'), ('+10:'), ('+10:0'), ('+10:00'), ('+10:00:'),
@@ -62557,6 +67726,2230 @@ WITH with_test AS (SELECT 42) INSERT INTO with_test VALUES (1)
 
 WITH x(n, b) AS (SELECT 1)
 SELECT * FROM x
+
+-- sqlfmt-corpus-separator --
+
+create table HSlot (
+    slotname	char(20),
+    hubname	char(14),
+    slotno	integer,
+    slotlink	char(20)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table Hub (
+    name	char(14),
+    comment	text,
+    nslots	integer
+)
+
+-- sqlfmt-corpus-separator --
+
+create table IFace (
+    slotname	char(20),
+    sysname	text,
+    ifname	text,
+    slotlink	char(20)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table PField (
+    name	text,
+    comment	text
+)
+
+-- sqlfmt-corpus-separator --
+
+create table PHone (
+    slotname	char(20),
+    comment	text,
+    slotlink	char(20)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table PLine (
+    slotname	char(20),
+    phonenumber	char(20),
+    comment	text,
+    backlink	char(20)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table PSlot (
+    slotname	char(20),
+    pfname	text,
+    slotlink	char(20),
+    backlink	char(20)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table Room (
+    roomno	char(8),
+    comment	text
+)
+
+-- sqlfmt-corpus-separator --
+
+create table System (
+    name	text,
+    comment	text
+)
+
+-- sqlfmt-corpus-separator --
+
+create table WSlot (
+    slotname	char(20),
+    roomno	char(8),
+    slotlink	char(20),
+    backlink	char(20)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table ab (a int not null, b int not null) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table agg_simplify (a int, not_null_col int not null, nullable_col int)
+
+-- sqlfmt-corpus-separator --
+
+create table alter1.t1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table alter1.t1(f1 serial primary key, f2 int check (f2 > 0))
+
+-- sqlfmt-corpus-separator --
+
+create table alterlock (f1 int primary key, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+create table alterlock2 (f3 int primary key, f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table another (f1 int, f2 text, f3 text)
+
+-- sqlfmt-corpus-separator --
+
+create table anothertab(f1 int primary key, f2 int unique,
+                        f3 int, f4 int, f5 int)
+
+-- sqlfmt-corpus-separator --
+
+create table asptab (id int primary key) partition by range (id)
+
+-- sqlfmt-corpus-separator --
+
+create table at_base_table(id int, stuff text)
+
+-- sqlfmt-corpus-separator --
+
+create table at_part_2 (b text, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table at_partitioned (a int, b text) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table at_tab1 (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table at_tab1 (a int, b text) partition by list(a)
+
+-- sqlfmt-corpus-separator --
+
+create table at_tab2 (x int, y at_tab1)
+
+-- sqlfmt-corpus-separator --
+
+create table at_tab2 (x int, y text, check((x,y)::at_tab1 = (1,'42')::at_tab1))
+
+-- sqlfmt-corpus-separator --
+
+create table at_test_sql_partop_1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 ( id serial, test int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 ( test int )
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 ( test int, test2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 ( test int, test2 int, test3 int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (a bigint, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (a int4 not null, b int4, c int4 not null, d int4)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (id serial primary key, value int check (value < 10))
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (test int check (test>3), test2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (test int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (test int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc1 (test_a int, test_b int)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc2 (id int4 unique)
+
+-- sqlfmt-corpus-separator --
+
+create table atacc2 (test2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table atref (c1 int references attbl(p1))
+
+-- sqlfmt-corpus-separator --
+
+create table attach_parted (a int, b int) partition by list (b)
+
+-- sqlfmt-corpus-separator --
+
+create table attest (a int4, b int4, c int4)
+
+-- sqlfmt-corpus-separator --
+
+create table bar2 (a integer)
+
+-- sqlfmt-corpus-separator --
+
+create table base (i integer)
+
+-- sqlfmt-corpus-separator --
+
+create table base_tab (a serial, b int[], c text, d text default 'Table default')
+
+-- sqlfmt-corpus-separator --
+
+create table base_tab_def (a int, b text default 'Table default',
+                           c text default 'Table default', d text, e text)
+
+-- sqlfmt-corpus-separator --
+
+create table base_tbl(a int unique, b text, c float)
+
+-- sqlfmt-corpus-separator --
+
+create table basictest
+           ( testint4 domainint4
+           , testtext domaintext
+           , testvarchar domainvarchar
+           , testnumeric domainnumeric
+           )
+
+-- sqlfmt-corpus-separator --
+
+create table bmscantest (a int, t text)
+
+-- sqlfmt-corpus-separator --
+
+create table bool_lp (b bool) partition by list(b)
+
+-- sqlfmt-corpus-separator --
+
+create table bool_rp (b bool, a int) partition by range(b,a)
+
+-- sqlfmt-corpus-separator --
+
+create table boolp (a bool) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table boolpart (a bool) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table boolrangep (a bool, b bool, c int) partition by range (a,b,c)
+
+-- sqlfmt-corpus-separator --
+
+create table boolspart (a bool) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table boolvalues (value bool not null)
+
+-- sqlfmt-corpus-separator --
+
+create table bpchar_tbl (f1 character(16) unique, f2 bpchar)
+
+-- sqlfmt-corpus-separator --
+
+create table brtrigpartcon (a int, b text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table btree_tall_tbl(id int4, t text)
+
+-- sqlfmt-corpus-separator --
+
+create table bug_16784(i int, j int)
+
+-- sqlfmt-corpus-separator --
+
+create table bytea_test_table(v bytea)
+
+-- sqlfmt-corpus-separator --
+
+create table cchild (pid int, descrip text)
+
+-- sqlfmt-corpus-separator --
+
+create table child2 (b int, a text)
+
+-- sqlfmt-corpus-separator --
+
+create table child2 (x int, a text, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table child3 (b int, a text)
+
+-- sqlfmt-corpus-separator --
+
+create table cities (
+	name		text,
+	population	float8,
+	altitude	int		-- (in ft)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table cnn2_parted(a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table cnn_uq (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table cnullparent (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table coercepart (a varchar) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table comptable (c1 comptype, c2 comptype[])
+
+-- sqlfmt-corpus-separator --
+
+create table constr_parent (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table constr_parent2 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table constr_parent3 (a int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table convslot_test_parent (col1 text primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table convslot_test_parent (id int primary key, val int)
+partition by range (id)
+
+-- sqlfmt-corpus-separator --
+
+create table convslot_test_part (val int, id int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table copydml_test (id serial, t text)
+
+-- sqlfmt-corpus-separator --
+
+create table covidxpart (a int, b int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table covidxpart3 (b int, c int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table covidxpart4 (b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table dcomptable (d1 dcomptype unique)
+
+-- sqlfmt-corpus-separator --
+
+create table dcomptable (d1 dcomptypea unique)
+
+-- sqlfmt-corpus-separator --
+
+create table dcomptable (f1 dcomptype[])
+
+-- sqlfmt-corpus-separator --
+
+create table ddtest2(f1 ddtest1)
+
+-- sqlfmt-corpus-separator --
+
+create table ddtest2(f1 ddtest1[])
+
+-- sqlfmt-corpus-separator --
+
+create table ddtest2(f1 ddtest1d)
+
+-- sqlfmt-corpus-separator --
+
+create table ddtest2(f1 posint2)
+
+-- sqlfmt-corpus-separator --
+
+create table ddtest2(f1 rposint)
+
+-- sqlfmt-corpus-separator --
+
+create table def_test (
+	c1	int4 default 5,
+	c2	text default 'initial_default'
+)
+
+-- sqlfmt-corpus-separator --
+
+create table defaulttest
+            ( col1 ddef1
+            , col2 ddef2
+            , col3 ddef3
+            , col4 ddef4 PRIMARY KEY
+            , col5 ddef1 NOT NULL DEFAULT NULL
+            , col6 ddef2 DEFAULT '88'
+            , col7 ddef4 DEFAULT 8000
+            , col8 ddef5
+            )
+
+-- sqlfmt-corpus-separator --
+
+create table defcheck (a int, b int) partition by list (b)
+
+-- sqlfmt-corpus-separator --
+
+create table defcheck_def (a int, c int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table defer_trig (id integer)
+
+-- sqlfmt-corpus-separator --
+
+create table defpart_attach_test (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table defpart_attach_test_d (b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table dep_priv_test (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table depth0()
+
+-- sqlfmt-corpus-separator --
+
+create table depth_a (id int not null primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table depth_b (id int not null primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table depth_c (id int not null primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table dom_table (x inotnull)
+
+-- sqlfmt-corpus-separator --
+
+create table domain_test (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table domarrtest
+           ( testint4arr domainint4arr
+           , testchar4arr domainchar4arr
+            )
+
+-- sqlfmt-corpus-separator --
+
+create table domconnotnulltest
+( col1 connotnull
+, col2 connotnull
+)
+
+-- sqlfmt-corpus-separator --
+
+create table domcontest (col1 con)
+
+-- sqlfmt-corpus-separator --
+
+create table domdeftest (col1 ddef1)
+
+-- sqlfmt-corpus-separator --
+
+create table domnotnull
+( col1 dnotnulltest
+, col2 dnotnulltest
+)
+
+-- sqlfmt-corpus-separator --
+
+create table domtab (col1 integer)
+
+-- sqlfmt-corpus-separator --
+
+create table donothingbrtrig_test (a int, b text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table donothingbrtrig_test1 (b text, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table donothingbrtrig_test2 (c text, b text, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table dposintatable (f1 dposinta[])
+
+-- sqlfmt-corpus-separator --
+
+create table dropColumn (a int, b int, e int)
+
+-- sqlfmt-corpus-separator --
+
+create table dropColumnExists ()
+
+-- sqlfmt-corpus-separator --
+
+create table dropcol(key int primary key, drop1 int, keep1 text, drop2 numeric, keep2 float)
+
+-- sqlfmt-corpus-separator --
+
+create table ec0 (ff int8 primary key, f1 int8, f2 int8)
+
+-- sqlfmt-corpus-separator --
+
+create table ec1 (ff int8 primary key, f1 int8alias1, f2 int8alias2)
+
+-- sqlfmt-corpus-separator --
+
+create table ec2 (xf int8 primary key, x1 int8alias1, x2 int8alias2)
+
+-- sqlfmt-corpus-separator --
+
+create table eifoo (i integer, y integer)
+
+-- sqlfmt-corpus-separator --
+
+create table event_trigger_fire1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table event_trigger_fire2 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table event_trigger_fire3 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table event_trigger_fire4 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table event_trigger_fire5 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table events (event_id int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table excluded(key int primary key, data text)
+
+-- sqlfmt-corpus-separator --
+
+create table extremely_skewed (id int, t text)
+
+-- sqlfmt-corpus-separator --
+
+create table fkest (x integer, x10 integer, x10b integer, x100 integer)
+
+-- sqlfmt-corpus-separator --
+
+create table fktable (ftest1 int references pktable(base1))
+
+-- sqlfmt-corpus-separator --
+
+create table float8multirange_test(f8mr float8multirange, i int)
+
+-- sqlfmt-corpus-separator --
+
+create table float8range_test(f8r float8range, i int)
+
+-- sqlfmt-corpus-separator --
+
+create table gen_part (
+  key1 integer not null,
+  key2 integer not null
+) partition by list (key1)
+
+-- sqlfmt-corpus-separator --
+
+create table gist_point_tbl(id int4, p point)
+
+-- sqlfmt-corpus-separator --
+
+create table gist_tbl (b box, p point, c circle)
+
+-- sqlfmt-corpus-separator --
+
+create table has_fast_default(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table header_copytest (
+	a int,
+	b int,
+	c text
+)
+
+-- sqlfmt-corpus-separator --
+
+create table i8mr_array (f1 int, f2 int8multirange[])
+
+-- sqlfmt-corpus-separator --
+
+create table i8r_array (f1 int, f2 int8range[])
+
+-- sqlfmt-corpus-separator --
+
+create table id (id serial primary key, name text)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int primary key, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int primary key, b int) partition by range (b, a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int unique, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int unique, b int) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int primary key) partition by range (b, a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int unique) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int, c int) partition by range(a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int, c text) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int, c text) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b int, c text, d bool) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int, b text, c int[]) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int4range, b int4range) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int4range, b int4range) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int4range, b int4range, c int4range) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a int4range, b int4range, c int4range) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (a text) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (col1 int, a int, col2 int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (col1 int, a int, col3 int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (col1 int, col2 int, a int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart (col_keep int) partition by range (col_keep)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart(drop_1 int, drop_2 int, col_keep int, drop_3 int) partition by range (col_keep)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (a int not null, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (a int not null, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (b int, col1 int, col2 int, col3 int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (c text, a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (col1 int, col2 int, col3 int, col4 int, b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (col2 int, b int, col1 int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (col_keep int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart1 (drop_1 int, drop_2 int, col_keep int, drop_3 int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart11 (a int not null, b int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart2 (c text, a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart2 (col1 int, col2 int, b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart3 (b int not null, a int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table idxpart3 (c int, b int, a int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_child (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_child1(f1 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_child2(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_fk_1 (a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_lp (a int, value int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_nn1 (f1 int check(f1 > 5) primary key references inh_nn1, f2 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_nn2 (f2 text, f3 int, f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_nn4 (f5 int, f4 float, f2 text, f3 int, f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_nn_parent(a int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_p1(f1 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_p2(f1 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_p3(f2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_p4(f1 int not null, f3 text not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_parent (a int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_parent (a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_parent(f1 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_parent(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_parent_1(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_parent_2(f2 text)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_perm_parent (a1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_pp1 (f1 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_pp1 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inhcld(f2 name, f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inhcld1(f2 name, f1 int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table inhcld2(f1 int primary key, f2 name)
+
+-- sqlfmt-corpus-separator --
+
+create table inhpar(f1 int primary key, f2 name) partition by range (f1)
+
+-- sqlfmt-corpus-separator --
+
+create table inhpar(f1 int, f2 name)
+
+-- sqlfmt-corpus-separator --
+
+create table insertconflict (a bigint, b bigint)
+
+-- sqlfmt-corpus-separator --
+
+create table insertconflict (f1 int primary key, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+create table insertconflicttest(key int4, fruit text)
+
+-- sqlfmt-corpus-separator --
+
+create table inserttest (col1 int4, col2 int4 NOT NULL, col3 text default 'testing')
+
+-- sqlfmt-corpus-separator --
+
+create table inserttest (f1 int, f2 int[],
+                         f3 insert_test_type, f4 insert_test_type[])
+
+-- sqlfmt-corpus-separator --
+
+create table inserttest2 (f1 bigint, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+create table inserttest3 (f1 text default 'foo', f2 text default 'bar', f3 int)
+
+-- sqlfmt-corpus-separator --
+
+create table inserttesta (f1 insert_nnarray)
+
+-- sqlfmt-corpus-separator --
+
+create table inserttesta (f1 int, f2 insert_pos_ints)
+
+-- sqlfmt-corpus-separator --
+
+create table inserttestb (f1 insert_test_domain)
+
+-- sqlfmt-corpus-separator --
+
+create table inserttestb (f3 insert_test_domain, f4 insert_test_domain[])
+
+-- sqlfmt-corpus-separator --
+
+create table inttest (a myint)
+
+-- sqlfmt-corpus-separator --
+
+create table invalid_check_con(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table iocdu_tt_parted (a int primary key, b text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table j1 (id int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table j2 (id int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table j3 (id int)
+
+-- sqlfmt-corpus-separator --
+
+create table join_pt1 (a int, b int, c varchar) partition by range(a)
+
+-- sqlfmt-corpus-separator --
+
+create table join_ut1 (a int, b int, c varchar)
+
+-- sqlfmt-corpus-separator --
+
+create table like_op_noprune (a text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table list_part (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table list_parted (
+	a	varchar
+) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table list_parted (
+	a text,
+	b int
+) partition by list (lower(a))
+
+-- sqlfmt-corpus-separator --
+
+create table list_parted (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table list_parted_tbl (a int,b int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table listp (a int) partition by list(a)
+
+-- sqlfmt-corpus-separator --
+
+create table listp (a int, b int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table lp (a char) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table lparted_by_int2 (a smallint) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table lparted_nonullpart (a int, b char) partition by list (b)
+
+-- sqlfmt-corpus-separator --
+
+create table lprt_a (a int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table ma_test (a int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table matest0 (a int, b int, c int, d int)
+
+-- sqlfmt-corpus-separator --
+
+create table matest0 (id serial primary key, name text)
+
+-- sqlfmt-corpus-separator --
+
+create table matest0(a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table mc2p (a int, b int) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table mc3p (a int, b int, c int) partition by range (a, abs(b), c)
+
+-- sqlfmt-corpus-separator --
+
+create table mclparted (a int) partition by list(a)
+
+-- sqlfmt-corpus-separator --
+
+create table mcrparted (a int, b int, c int) partition by range (a, abs(b), c)
+
+-- sqlfmt-corpus-separator --
+
+create table mcrparted (a text, b int) partition by range(a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table merge_source_table (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table merge_target_table (a int primary key, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table minmaxtest(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table mlparted (a int, b int) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table mlparted2 (b int not null, a int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table mlparted5 (c text, a int not null, b int not null) partition by list (c)
+
+-- sqlfmt-corpus-separator --
+
+create table mlparted5_b (d int, b int, c text, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table mlparted5a (a int not null, c text, b int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table mlparted_tab (a int, b char, c text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table my_table (a int primary key, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table my_table (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table my_table (i int)
+
+-- sqlfmt-corpus-separator --
+
+create table my_table (id integer)
+
+-- sqlfmt-corpus-separator --
+
+create table nulltest
+           ( col1 dnotnull
+           , col2 dnotnull NULL  -- NOT NULL in the domain cannot be overridden
+           , col3 dnull    NOT NULL
+           , col4 dnull
+           , col5 dcheck CHECK (col5 IN ('c', 'd'))
+           )
+
+-- sqlfmt-corpus-separator --
+
+create table numeric_tbl (f1 numeric(18,3), f2 numeric)
+
+-- sqlfmt-corpus-separator --
+
+create table nummultirange_test2(nmr nummultirange)
+
+-- sqlfmt-corpus-separator --
+
+create table numrange_test2(nr numrange)
+
+-- sqlfmt-corpus-separator --
+
+create table other_events (event_id int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table other_partitioned_fk(a int, b int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table p (a int, b int) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table p1 (b int, a int not null) partition by range (b)
+
+-- sqlfmt-corpus-separator --
+
+create table p1 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table p1 (f1 int, f2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table p1(f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table p1(ff1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table p1(id int, name text)
+
+-- sqlfmt-corpus-separator --
+
+create table p2(f1 text)
+
+-- sqlfmt-corpus-separator --
+
+create table p2(f2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table p2(id2 int, name text, height int)
+
+-- sqlfmt-corpus-separator --
+
+create table parent (a int primary key, f int references parent)
+  partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parent (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table parent (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parent (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+create table parent (a text, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table parent (a text, b int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parent_noinh_convalid (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table parent_tab (id int) partition by range (id)
+
+-- sqlfmt-corpus-separator --
+
+create table part_abc (a int not null, b int not null, c int not null) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table part_abc (a int, b text, c bool) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table part_abc_1 (b text, a int, c bool)
+
+-- sqlfmt-corpus-separator --
+
+create table part_abc_2 (a int, c bool, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table part_abc_log (action text, a int, b text, c bool)
+
+-- sqlfmt-corpus-separator --
+
+create table part_abc_p1 (a int not null, b int not null, c int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table part_bac (b int not null, a int not null, c int not null) partition by list (b)
+
+-- sqlfmt-corpus-separator --
+
+create table part_cab (c int not null, a int not null, b int not null) partition by list (c)
+
+-- sqlfmt-corpus-separator --
+
+create table part_column_drop (
+  useless_1 int,
+  id int,
+  useless_2 int,
+  d int,
+  b int,
+  useless_3 int
+) partition by range (id)
+
+-- sqlfmt-corpus-separator --
+
+create table part_pa_test(a int, b int) partition by range(a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted (a int, b int, c text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted1_constr (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table parted1_irreg (b text, fd int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table parted2_stmt_trig (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_boolean_col (a bool, b text) partition by list(a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_conflict (a int primary key, b text) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_conflict (a int, b text) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_conflict (a int, b text, c int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_conflict_1 (drp text, c int, a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_conflict_test (a int unique, b char) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_conflict_test_2 (b char, a int unique)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_constr (a int, b text)
+  partition by range (b)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_constr_ancestor (a int, b text)
+  partition by range (b)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_copytest (
+	a int,
+	b int,
+	c text
+) partition by list (b)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_copytest_a1 (c text, b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_copytest_a2 (a int, c text, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_index_col_drop(a int, b int, c int)
+  partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_inval_tab (a int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_inval_tab_1 (a int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_irreg (fd int, a int, fd2 int, b text)
+  partition by range (b)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_irreg_ancestor (fd text, b text, fd2 int, fd3 int, a int)
+  partition by range (b)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_isvalid_tab (a int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_minmax (a int, b varchar(16)) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_notnull_inh_test (a int default 1, b int not null default 0) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_pk_detach_test (a int primary key) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_referenced (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_replica_tab (id int not null) partition by range (id)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_sample (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_stmt_trig (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_tab (a int, b char) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_trig (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_trig (a int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_trigger (a int, b text) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_trigger_2 (drp int, a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_trigger_3 (b text, a int) partition by range (length(b))
+
+-- sqlfmt-corpus-separator --
+
+create table parted_uniq_detach_test (a int unique) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table parted_validate_test (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table partitioned (
+	a intdom1,
+	b text
+) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table partitioned (
+	a intdom1,
+	b text
+) partition by range (plusone(a))
+
+-- sqlfmt-corpus-separator --
+
+create table pc_list_parted (a int) partition by list(a)
+
+-- sqlfmt-corpus-separator --
+
+create table perform_test (
+	a	INT,
+	b	INT
+)
+
+-- sqlfmt-corpus-separator --
+
+create table perm_part_child (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table perm_part_parent (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table perm_parted (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table permtest_child (b text, c text, a int) partition by list (b)
+
+-- sqlfmt-corpus-separator --
+
+create table permtest_grandchild (c text, b text, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table permtest_parent (a int, b text, c text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table phv_boolpart (a bool, b text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table phv_part (a int, b text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table pitable (f1 posint[])
+
+-- sqlfmt-corpus-separator --
+
+create table pk (a int primary key) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table pk2 (b int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table pktable1 (a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table pktable2(f1 int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table pktable_base (base1 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table pktable_base(base1 int not null)
+
+-- sqlfmt-corpus-separator --
+
+create table pktable_base(base1 int not null, base2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table point_table (a point, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table pp1 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table pp_arrpart (a int[]) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table pp_enumpart (a pp_colors) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table pp_intrangepart (a int4range) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table pp_lp (a int, value int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table pp_recpart (a pp_rectype) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table pparent (pid int, txt text)
+
+-- sqlfmt-corpus-separator --
+
+create table pph_arrpart (a int[]) partition by hash (a)
+
+-- sqlfmt-corpus-separator --
+
+create table prt_tbl (a int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table public.stuffs (stuff text)
+
+-- sqlfmt-corpus-separator --
+
+create table public.whereami (f1 text)
+
+-- sqlfmt-corpus-separator --
+
+create table range_list_parted (
+	a	int,
+	b	char(2)
+) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table range_parted (a int, b int, c int) partition by range(a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table rangep (a int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table rc_test (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table refd_table (a int primary key, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table refd_table (id int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table renameColumn (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table reservations ( room_id integer not null, booked_during daterange )
+
+-- sqlfmt-corpus-separator --
+
+create table returningwrtest (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table returningwrtest2 (b text, c int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table revalidate_bug (c float8 unique)
+
+-- sqlfmt-corpus-separator --
+
+create table rewriteme (id serial primary key, foo float, bar timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+create table rewritemetoo1 of rewritetype
+
+-- sqlfmt-corpus-separator --
+
+create table rewritemetoo2 of rewritetype
+
+-- sqlfmt-corpus-separator --
+
+create table rewritemetoo3 (a rewritetype)
+
+-- sqlfmt-corpus-separator --
+
+create table rlp (a int, b varchar) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table rls_t (c text)
+
+-- sqlfmt-corpus-separator --
+
+create table rp (a int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table rp_prefix_test1 (a int, b varchar) partition by range(a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table rp_prefix_test2 (a int, b int, c int) partition by range(a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+create table rp_prefix_test3 (a int, b int, c int, d int) partition by range(a, b, c, d)
+
+-- sqlfmt-corpus-separator --
+
+create table rparted_by_int2 (a smallint) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_admin (pname text, sysname text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_comp (
+	part	text,
+	unit	char(4),
+	size	float
+)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_emp (ename char(20), salary numeric)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_emplog (ename char(20), who name, action char(10), newsal numeric, oldsal numeric)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_empmass (ename char(20), salary numeric)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_interface (sysname text, ifname text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_nothn1 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_nothn2 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_nothn3 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_nothn4 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_order1 (a int4)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_order2 (a int4, b int4, c text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_person (pname text, pdesc text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_system (sysname text, sysdesc text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t1 (a int4, b int4)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t2 (a int4, b int4)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t3 (a int4, b int4)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t4 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t5 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t6 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t7 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t8 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_t9 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_unitfact (
+	unit	char(4),
+	factor	float
+)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_view1 (a int4, b text, v bool)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_view2 (a int4)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_view3 (a int4, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table rtest_view4 (a int4, b text, c int4)
+
+-- sqlfmt-corpus-separator --
+
+create table rule_dest(f1 int, f2 int[], tag text)
+
+-- sqlfmt-corpus-separator --
+
+create table rules_base(f1 int, f2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table rules_foo (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table rules_foo2 (f1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table rules_fooview (x int, y text)
+
+-- sqlfmt-corpus-separator --
+
+create table rules_fooview (x int, y text) partition by list (x)
+
+-- sqlfmt-corpus-separator --
+
+create table rules_log(f1 int, f2 int, tag text, id serial)
+
+-- sqlfmt-corpus-separator --
+
+create table rules_src(f1 int, f2 int default 0)
+
+-- sqlfmt-corpus-separator --
+
+create table selfconflict (f1 int primary key, f2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table semijoin_unique_tbl (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table sj (a int unique, b int, c int unique)
+
+-- sqlfmt-corpus-separator --
+
+create table sk (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table skip_wal_skip_rewrite_index (c varchar(10) primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table sl(a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+create table some_tab (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table some_tab (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table sometable (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table spgist_box_tbl(id serial, b box)
+
+-- sqlfmt-corpus-separator --
+
+create table spgist_domain_tbl (f1 spgist_text)
+
+-- sqlfmt-corpus-separator --
+
+create table spgist_point_tbl(id int4, p point)
+
+-- sqlfmt-corpus-separator --
+
+create table spgist_text_tbl(id int4, t text)
+
+-- sqlfmt-corpus-separator --
+
+create table sq_limit (pk int primary key, c1 int, c2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table stable_qual_pruning (a timestamp) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table stmt_trig_on_empty_upd (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table stts_t1 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table stts_t2 (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+create table stts_t3 (col1 int, col2 int, col3 int)
+
+-- sqlfmt-corpus-separator --
+
+create table syscolconflicttest(key int4, data text)
+
+-- sqlfmt-corpus-separator --
+
+create table t (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+create table t(a integer, b integer)
+
+-- sqlfmt-corpus-separator --
+
+create table tab_part_attach (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table tab_part_create (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table tab_progress_reporting (
+	name text,
+	age int4,
+	location point,
+	salary int4,
+	manager name
+)
+
+-- sqlfmt-corpus-separator --
+
+create table table1 (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table table2 (a text)
+
+-- sqlfmt-corpus-separator --
+
+create table table_with_oids(a int)
+
+-- sqlfmt-corpus-separator --
+
+create table tabwithcols(a int, b int, c int, d int)
+
+-- sqlfmt-corpus-separator --
+
+create table target_parted (a int, b int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table tbl1(col1 int)
+
+-- sqlfmt-corpus-separator --
+
+create table tbl_nocom(a int8, b int8alias1)
+
+-- sqlfmt-corpus-separator --
+
+create table test1 (id serial, t text)
+
+-- sqlfmt-corpus-separator --
+
+create table test2 (id serial, t text)
+
+-- sqlfmt-corpus-separator --
+
+create table test3 (c int)
+
+-- sqlfmt-corpus-separator --
+
+create table test_01(a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+create table test_mode (a int) with (autovacuum_enabled = false)
+
+-- sqlfmt-corpus-separator --
+
+create table test_multirange_gist(mr int4multirange)
+
+-- sqlfmt-corpus-separator --
+
+create table test_mutability(
+	a text[], b timestamp, c timestamptz,
+	d date, f1 comp1[], f2 timestamp[],
+	f3 d_comp1[],
+	f4 mydomainrange[],
+	f5 comp3,
+	f6 mydomainmultirange)
+
+-- sqlfmt-corpus-separator --
+
+create table test_pg_index_toast_table (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table test_pg_wholerow_index (a int, b text, c numeric)
+
+-- sqlfmt-corpus-separator --
+
+create table test_range_elem(i int4)
+
+-- sqlfmt-corpus-separator --
+
+create table test_range_gist(ir int4range)
+
+-- sqlfmt-corpus-separator --
+
+create table test_range_immutable(r range_int, m multirange_int)
+
+-- sqlfmt-corpus-separator --
+
+create table test_range_spgist(ir int4range)
+
+-- sqlfmt-corpus-separator --
+
+create table test_t (c text)
+
+-- sqlfmt-corpus-separator --
+
+create table testpart_apple(logdate date) partition by range(logdate)
+
+-- sqlfmt-corpus-separator --
+
+create table testpart_orange(logdate date) partition by range(logdate)
+
+-- sqlfmt-corpus-separator --
+
+create table testtable_apple(logdate date)
+
+-- sqlfmt-corpus-separator --
+
+create table testtable_orange(logdate date)
+
+-- sqlfmt-corpus-separator --
+
+create table text_hashp (a text) partition by hash (a)
+
+-- sqlfmt-corpus-separator --
+
+create table toasted_data (f1 int[])
+
+-- sqlfmt-corpus-separator --
+
+create table tprt (col1 int) partition by range (col1)
+
+-- sqlfmt-corpus-separator --
+
+create table trans_abc (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table trans_tab_parent (a text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table trg_clone (a int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table trigger_ddl_table (
+   col1 integer,
+   col2 integer
+)
+
+-- sqlfmt-corpus-separator --
+
+create table trigger_parted (a int primary key) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table trigpart (a int, b int) partition by range (a)
+
+-- sqlfmt-corpus-separator --
+
+create table trigtest (
+  a integer,
+  b bool default true not null,
+  c text default 'xyzzy' not null)
+
+-- sqlfmt-corpus-separator --
+
+create table trigtest (f1 int, f2 text)
+
+-- sqlfmt-corpus-separator --
+
+create table trigtest (i serial primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table tt10 (x int, z int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt11 (x int, y int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt12 (x int, z int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt13 (z int, q int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt14t (f1 text, f2 text, f3 text, f4 text)
+
+-- sqlfmt-corpus-separator --
+
+create table tt15v_log(o tt15v, n tt15v, incr bool)
+
+-- sqlfmt-corpus-separator --
+
+create table tt2 (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt27v_tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt3 (ax int8, b int2, c numeric)
+
+-- sqlfmt-corpus-separator --
+
+create table tt4 (ay int, b int, q int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt5 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt6 (c int, d int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt7 (x int, xx int, y int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt7a (x date, xx int, y int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt8 (x int, z int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt8a (x timestamptz, z int)
+
+-- sqlfmt-corpus-separator --
+
+create table tt9 (x int, xx int, y int)
+
+-- sqlfmt-corpus-separator --
+
+create table tuplesest_parted (a int, b int, c float) partition by range(a)
+
+-- sqlfmt-corpus-separator --
+
+create table tuplesest_tab (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table unique_tbl_p (a int, b int) partition by range(a)
+
+-- sqlfmt-corpus-separator --
+
+create table unparted_trigger (a int, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table upsert (key int4 primary key, color text)
+
+-- sqlfmt-corpus-separator --
+
+create table utr1 (a int check (a in (1)), q text, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table utr2 (a int check (a in (2)), b text)
+
+-- sqlfmt-corpus-separator --
+
+create table utrtest (a int, b text) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table uv_iocu_tab (a int unique, b text)
+
+-- sqlfmt-corpus-separator --
+
+create table uv_iocu_tab (a text unique, b float)
+
+-- sqlfmt-corpus-separator --
+
+create table uv_pt (a int, b int, v varchar) partition by range (a, b)
+
+-- sqlfmt-corpus-separator --
+
+create table uv_pt1 (b int not null, v varchar, a int not null) partition by range (b)
+
+-- sqlfmt-corpus-separator --
+
+create table vc4table (f1 vc4[])
+
+-- sqlfmt-corpus-separator --
+
+create table volatile_partbound_test (partkey timestamp) partition by range (partkey)
+
+-- sqlfmt-corpus-separator --
+
+create table wcowrtest (a int) partition by list (a)
+
+-- sqlfmt-corpus-separator --
+
+create table wcowrtest2 (b text, c int, a int)
+
+-- sqlfmt-corpus-separator --
+
+create table xid8_t1 (x xid8)
+
+-- sqlfmt-corpus-separator --
+
+create table xy_1 (x int, y int)
 
 -- sqlfmt-corpus-separator --
 
@@ -68587,6 +75980,30 @@ insert into zt1 values(53)
 -- sqlfmt-corpus-separator --
 
 insert into zt2 values(53)
+
+-- sqlfmt-corpus-separator --
+
+merge into merge_target_table t
+using merge_source_table s
+on t.a = s.a
+when matched and s.a <= 2 then
+	update set b = t.b || ' updated again by merge'
+when matched and s.a > 2 then
+	delete
+when not matched then
+  insert values (a, b)
+
+-- sqlfmt-corpus-separator --
+
+merge into merge_target_table t
+using merge_source_table s
+on t.a = s.a
+when matched and s.a <= 2 then
+	update set b = t.b || ' updated by merge'
+when matched and s.a > 2 then
+	delete
+when not matched then
+  insert values (a, b)
 
 -- sqlfmt-corpus-separator --
 

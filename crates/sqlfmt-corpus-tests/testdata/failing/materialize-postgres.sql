@@ -1,3 +1,9 @@
+CREATE TABLE p (
+  a TEXT COLLATE en_u_ks_level1 PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (SELECT 1 f1) s1 CROSS JOIN ((SELECT 2 f1) s2 CROSS JOIN LATERAL (SELECT f1) s3)
 
 -- sqlfmt-corpus-separator --

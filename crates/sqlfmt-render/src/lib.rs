@@ -246,7 +246,7 @@ mod tests {
             ..RenderOpts::default()
         };
         let result = render(&node, &wide);
-        assert_eq!(result, "SELECT a, b\nFROM t");
+        assert_eq!(result, "SELECT a, b FROM t");
     }
 
     #[test]

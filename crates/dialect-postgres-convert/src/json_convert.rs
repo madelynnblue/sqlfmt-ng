@@ -150,6 +150,8 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(delete_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("MergeStmt") {
         Some(merge_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CreateStmt") {
+        Some(create_stmt_to_node(inner))
     } else {
         None
     }
@@ -214,6 +216,8 @@ fn node_value_to_node(v: &Value) -> Node {
         null_test_to_node(inner)
     } else if let Some(inner) = obj.get("IndexElem") {
         index_elem_to_node(inner)
+    } else if let Some(inner) = obj.get("PartitionElem") {
+        partition_elem_to_node(inner)
     } else if let Some(inner) = obj.get("Integer") {
         let ival = inner["ival"].as_i64().unwrap_or(0);
         Node::Literal {
@@ -765,6 +769,404 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
     }
 
     Node::Clauses { items: clauses }
+}
+
+fn create_stmt_to_node(stmt: &Value) -> Node {
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    // WITH clause (CTE) can appear before CREATE TABLE.
+    if let Some(with_clause) = build_with_clause(stmt) {
+        clauses.push(with_clause);
+    }
+
+    // Table name.
+    let relation = range_var_to_node(&stmt["relation"]);
+
+    // OF type_name (typed tables).
+    let is_of_type = !stmt["ofTypename"].is_null();
+
+    // Table elements: columns and constraints.
+    let elts_result: Vec<Node> = stmt["tableElts"]
+        .as_array()
+        .map(|arr| arr.iter().map(table_elt_to_node).collect())
+        .unwrap_or_default();
+
+    let body_content = if is_of_type {
+        let of_type_str = type_name_str(&stmt["ofTypename"]);
+        let of_body = Node::Concat {
+            items: vec![
+                Node::Keyword { value: "OF".into() },
+                Node::Text { value: " ".into() },
+                Node::Text { value: of_type_str },
+            ],
+        };
+        if elts_result.is_empty() {
+            of_body
+        } else {
+            Node::Concat {
+                items: vec![
+                    of_body,
+                    Node::Text { value: " ".into() },
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(Node::List {
+                            items: elts_result,
+                            separator: None,
+                        }),
+                        close: ")".into(),
+                    },
+                ],
+            }
+        }
+    } else {
+        Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(Node::List {
+                items: elts_result,
+                separator: None,
+            }),
+            close: ")".into(),
+        }
+    };
+
+    let mut create_items: Vec<Node> = Vec::new();
+    if stmt["if_not_exists"].as_bool().unwrap_or(false) {
+        create_items.push(Node::Keyword {
+            value: "IF NOT EXISTS".into(),
+        });
+        create_items.push(Node::Text { value: " ".into() });
+    }
+    create_items.push(relation);
+    create_items.push(Node::Text { value: " ".into() });
+    create_items.push(body_content);
+    let create_body = Node::Concat { items: create_items };
+
+    clauses.push(Clause {
+        keyword: "CREATE TABLE".into(),
+        body: Some(Box::new(create_body)),
+    });
+
+    // WITH options (storage parameters).
+    if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
+        let opt_items: Vec<Node> = opts.iter().map(|o| def_elem_to_node(o)).collect();
+        clauses.push(Clause {
+            keyword: "WITH".into(),
+            body: Some(Box::new(Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items: opt_items,
+                    separator: None,
+                }),
+                close: ")".into(),
+            })),
+        });
+    }
+
+    // ON COMMIT.
+    let oncommit = stmt["oncommit"].as_str().unwrap_or("ONCOMMIT_NOOP");
+    if oncommit != "ONCOMMIT_NOOP" {
+        let kw = match oncommit {
+            "ONCOMMIT_PRESERVE_ROWS" => "ON COMMIT PRESERVE ROWS",
+            "ONCOMMIT_DELETE_ROWS" => "ON COMMIT DELETE ROWS",
+            "ONCOMMIT_DROP" => "ON COMMIT DROP",
+            _ => "",
+        };
+        if !kw.is_empty() {
+            clauses.push(Clause {
+                keyword: kw.into(),
+                body: None,
+            });
+        }
+    }
+
+    // TABLESPACE.
+    if !stmt["tablespacename"].is_null() {
+        let ts = stmt["tablespacename"].as_str().unwrap_or("");
+        if !ts.is_empty() {
+            clauses.push(Clause {
+                keyword: "TABLESPACE".into(),
+                body: Some(Box::new(ident_node(ts))),
+            });
+        }
+    }
+
+    // PARTITION BY.
+    if let Some(part) = stmt["partspec"].as_object() {
+        let kw = part["strategy"]
+            .as_str()
+            .unwrap_or("PARTITION_STRATEGY_LIST");
+        let strat = match kw {
+            "PARTITION_STRATEGY_HASH" => "HASH",
+            "PARTITION_STRATEGY_RANGE" => "RANGE",
+            _ => "LIST",
+        };
+        let part_exprs: Vec<Node> = part["partParams"]
+            .as_array()
+            .map(|arr| arr.iter().map(node_value_to_node).collect())
+            .unwrap_or_default();
+        clauses.push(Clause {
+            keyword: "PARTITION BY".into(),
+            body: Some(Box::new(Node::Concat {
+                items: vec![
+                    Node::Keyword {
+                        value: strat.into(),
+                    },
+                    Node::Text { value: " ".into() },
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(Node::List {
+                            items: part_exprs,
+                            separator: None,
+                        }),
+                        close: ")".into(),
+                    },
+                ],
+            })),
+        });
+    }
+
+    // INHERITS.
+    if let Some(inh) = stmt["inhRelations"].as_array() {
+        if !inh.is_empty() {
+            let inh_rels: Vec<Node> = inh.iter().map(range_var_to_node).collect();
+            clauses.push(Clause {
+                keyword: "INHERITS".into(),
+                body: Some(Box::new(Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::List {
+                        items: inh_rels,
+                        separator: None,
+                    }),
+                    close: ")".into(),
+                })),
+            });
+        }
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn table_elt_to_node(elt: &Value) -> Node {
+    let obj = match elt.as_object() {
+        Some(o) => o,
+        None => return Node::Unformatted { value: format!("{elt}") },
+    };
+
+    if let Some(col) = obj.get("ColumnDef") {
+        column_def_to_node(col)
+    } else if let Some(c) = obj.get("Constraint") {
+        constraint_to_node(c)
+    } else {
+        Node::Unformatted { value: format!("{elt}") }
+    }
+}
+
+fn column_def_to_node(col: &Value) -> Node {
+    let colname = col["colname"].as_str().unwrap_or("");
+    let type_str = type_name_str(&col["typeName"]);
+
+    let mut items: Vec<Node> = vec![
+        ident_node(colname),
+        Node::Text { value: " ".into() },
+        Node::Text { value: type_str },
+    ];
+
+    if let Some(constraints) = col["constraints"].as_array() {
+        for c in constraints {
+            items.push(Node::Text { value: " ".into() });
+            items.push(constraint_to_node(
+                &c["Constraint"],
+            ));
+        }
+    }
+
+    Node::Concat { items }
+}
+
+fn constraint_to_node(c: &Value) -> Node {
+    let contype = c["contype"].as_str().unwrap_or("");
+
+    match contype {
+        "CONSTR_NOTNULL" => Node::Keyword {
+            value: "NOT NULL".into(),
+        },
+        "CONSTR_NULL" => Node::Keyword {
+            value: "NULL".into(),
+        },
+        "CONSTR_PRIMARY" => Node::Keyword {
+            value: "PRIMARY KEY".into(),
+        },
+        "CONSTR_UNIQUE" => Node::Keyword {
+            value: "UNIQUE".into(),
+        },
+        "CONSTR_DEFAULT" => {
+            let expr = node_value_to_node(&c["raw_expr"]);
+            Node::Concat {
+                items: vec![
+                    Node::Keyword {
+                        value: "DEFAULT".into(),
+                    },
+                    Node::Text { value: " ".into() },
+                    expr,
+                ],
+            }
+        }
+        "CONSTR_CHECK" => {
+            let expr = node_value_to_node(&c["raw_expr"]);
+            Node::Concat {
+                items: vec![
+                    Node::Keyword {
+                        value: "CHECK".into(),
+                    },
+                    Node::Text { value: " ".into() },
+                    Node::Wrap {
+                        keyword: None,
+                        open: "(".into(),
+                        content: Box::new(expr),
+                        close: ")".into(),
+                    },
+                ],
+            }
+        }
+        "CONSTR_FOREIGN" => {
+            let pktable = range_var_to_node(&c["pktable"]);
+            let mut items = vec![
+                Node::Keyword {
+                    value: "REFERENCES".into(),
+                },
+                Node::Text { value: " ".into() },
+                pktable,
+            ];
+            if let Some(fk_cols) = c["pk_attrs"].as_array().filter(|a| !a.is_empty()) {
+                let col_nodes: Vec<Node> = fk_cols
+                    .iter()
+                    .map(|a| {
+                        let s = a["String"]
+                            .get("sval")
+                            .or_else(|| a["String"].get("str"))
+                            .and_then(|v| v.as_str())
+                            .unwrap_or("");
+                        ident_node(s)
+                    })
+                    .collect();
+                items.push(Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::List {
+                        items: col_nodes,
+                        separator: None,
+                    }),
+                    close: ")".into(),
+                });
+            }
+            Node::Concat { items }
+        }
+        "CONSTR_IDENTITY" => {
+            let ident_items = constraint_generated_identity(c);
+            Node::Concat { items: ident_items }
+        }
+        "CONSTR_GENERATED" => {
+            let gen_items = constraint_generated_identity(c);
+            Node::Concat { items: gen_items }
+        }
+        _ => {
+            // Unrecognized constraint — fall back to raw text.
+            Node::Unformatted {
+                value: format!("{c}"),
+            }
+        }
+    }
+}
+
+/// Build the GENERATED / IDENTITY constraint suffix.
+fn constraint_generated_identity(c: &Value) -> Vec<Node> {
+    let mut items: Vec<Node> = Vec::new();
+
+    let contype = c["contype"].as_str().unwrap_or("");
+    match contype {
+        "CONSTR_IDENTITY" => {
+            items.push(Node::Keyword {
+                value: "GENERATED".into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            let gen_when = c["generated_when"].as_str().unwrap_or("");
+            let kw = match gen_when {
+                "ATTRIBUTE_IDENTITY_ALWAYS" => "ALWAYS",
+                _ => "BY DEFAULT",
+            };
+            items.push(Node::Keyword {
+                value: kw.into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Keyword {
+                value: "AS IDENTITY".into(),
+            });
+        }
+        "CONSTR_GENERATED" => {
+            let gen_when = c["generated_when"].as_str().unwrap_or("");
+            let kw = match gen_when {
+                "ATTRIBUTE_IDENTITY_ALWAYS" => "ALWAYS",
+                _ => "BY DEFAULT",
+            };
+            items.push(Node::Keyword {
+                value: "GENERATED".into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Keyword {
+                value: kw.into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Keyword {
+                value: "AS".into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(node_value_to_node(&c["raw_expr"])),
+                close: ")".into(),
+            });
+        }
+        _ => {}
+    }
+
+    // Sequence options for IDENTITY columns.
+    if let Some(opts) = c["options"].as_array().filter(|a| !a.is_empty()) {
+        let opt_strs: Vec<String> = opts
+            .iter()
+            .map(|o| format!("{o}"))
+            .collect();
+        let opt_text = opt_strs.join(" ");
+        if !opt_text.is_empty() {
+            items.push(Node::Text {
+                value: format!(" ({opt_text})"),
+            });
+        }
+    }
+
+    items
+}
+
+fn def_elem_to_node(e: &Value) -> Node {
+    let obj = match e.as_object().and_then(|o| o.get("DefElem")) {
+        Some(o) => o,
+        None => return Node::Unformatted { value: format!("{e}") },
+    };
+    let name = obj["defname"].as_str().unwrap_or("");
+    if let Some(arg) = obj.get("arg") {
+        let arg_node = node_value_to_node(arg);
+        Node::Infix {
+            op: "=".into(),
+            items: vec![ident_node(name), arg_node],
+        }
+    } else {
+        ident_node(name)
+    }
 }
 
 fn set_op_to_node(s: &Value) -> Node {
@@ -1672,6 +2074,18 @@ fn index_elem_to_node(ie: &Value) -> Node {
     }
     Node::Text {
         value: String::new(),
+    }
+}
+
+fn partition_elem_to_node(pe: &Value) -> Node {
+    if let Some(name) = pe["name"].as_str().filter(|s| !s.is_empty()) {
+        ident_node(name)
+    } else if let Some(expr) = pe.get("expr").filter(|e| !e.is_null()) {
+        node_value_to_node(expr)
+    } else {
+        Node::Text {
+            value: String::new(),
+        }
     }
 }
 
