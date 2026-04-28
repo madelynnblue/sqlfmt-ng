@@ -891,14 +891,30 @@ fn create_table_as_stmt_to_node(stmt: &Value) -> Node {
     Node::Clauses { items }
 }
 
-fn create_stmt_to_node(stmt: &Value) -> Node {
-    let mut clauses: Vec<Clause> = Vec::new();
-
-    // WITH clause (CTE) can appear before CREATE TABLE.
-    if let Some(with_clause) = build_with_clause(stmt) {
-        clauses.push(with_clause);
+fn parens_block(elts: Vec<Node>) -> Node {
+    Node::Concat {
+        items: vec![
+            Node::Text { value: " (".into() },
+            Node::Group {
+                content: Box::new(Node::Nest {
+                    content: Box::new(Node::Concat {
+                        items: vec![
+                            Node::Softline,
+                            Node::List {
+                                items: elts,
+                                separator: None,
+                            },
+                            Node::Softline,
+                        ],
+                    }),
+                }),
+            },
+            Node::Text { value: ")".into() },
+        ],
     }
+}
 
+fn create_stmt_to_node(stmt: &Value) -> Node {
     // Table name.
     let relation = range_var_to_node(&stmt["relation"]);
 
@@ -927,42 +943,15 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
                 items: vec![
                     of_body,
                     Node::Text { value: " ".into() },
-                    Node::Wrap {
-                        keyword: None,
-                        open: "(".into(),
-                        content: Box::new(Node::List {
-                            items: elts_result,
-                            separator: None,
-                        }),
-                        close: ")".into(),
-                    },
+                    parens_block(elts_result),
                 ],
             }
         }
     } else {
-        Node::Wrap {
-            keyword: None,
-            open: "(".into(),
-            content: Box::new(Node::List {
-                items: elts_result,
-                separator: None,
-            }),
-            close: ")".into(),
-        }
+        parens_block(elts_result)
     };
 
-    let mut create_items: Vec<Node> = Vec::new();
-    if stmt["if_not_exists"].as_bool().unwrap_or(false) {
-        create_items.push(Node::Keyword {
-            value: "IF NOT EXISTS".into(),
-        });
-        create_items.push(Node::Text { value: " ".into() });
-    }
-    create_items.push(relation);
-    create_items.push(Node::Text { value: " ".into() });
-    create_items.push(body_content);
-    let create_body = Node::Concat { items: create_items };
-
+    // CREATE TABLE [IF NOT EXISTS] tablename ...
     let create_kw = match stmt["relation"]["relpersistence"]
         .as_str()
         .unwrap_or("")
@@ -971,16 +960,35 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
         "u" => "CREATE UNLOGGED TABLE",
         _ => "CREATE TABLE",
     };
-    clauses.push(Clause {
-        keyword: create_kw.into(),
-        body: Some(Box::new(create_body)),
+
+    let mut header_items: Vec<Node> = Vec::new();
+    header_items.push(Node::Keyword {
+        value: create_kw.into(),
     });
+    header_items.push(Node::Text { value: " ".into() });
+    if stmt["if_not_exists"].as_bool().unwrap_or(false) {
+        header_items.push(Node::Keyword {
+            value: "IF NOT EXISTS".into(),
+        });
+        header_items.push(Node::Text { value: " ".into() });
+    }
+    header_items.push(relation);
+    header_items.push(body_content);
+
+    let main_part = Node::Group {
+        content: Box::new(Node::Concat {
+            items: header_items,
+        }),
+    };
+
+    // Collect additional clauses.
+    let mut additional_clauses: Vec<Clause> = Vec::new();
 
     // INHERITS.
     if let Some(inh) = stmt["inhRelations"].as_array() {
         if !inh.is_empty() {
             let inh_rels: Vec<Node> = inh.iter().map(range_var_to_node).collect();
-            clauses.push(Clause {
+            additional_clauses.push(Clause {
                 keyword: "INHERITS".into(),
                 body: Some(Box::new(Node::Wrap {
                     keyword: None,
@@ -1009,7 +1017,7 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
             .as_array()
             .map(|arr| arr.iter().map(node_value_to_node).collect())
             .unwrap_or_default();
-        clauses.push(Clause {
+        additional_clauses.push(Clause {
             keyword: "PARTITION BY".into(),
             body: Some(Box::new(Node::Concat {
                 items: vec![
@@ -1033,7 +1041,7 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
 
     // USING.
     if let Some(am) = stmt["accessMethod"].as_str().filter(|s| !s.is_empty()) {
-        clauses.push(Clause {
+        additional_clauses.push(Clause {
             keyword: "USING".into(),
             body: Some(Box::new(ident_node(am))),
         });
@@ -1042,7 +1050,7 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
     // WITH options (storage parameters).
     if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
         let opt_items: Vec<Node> = opts.iter().map(|o| def_elem_to_node(o)).collect();
-        clauses.push(Clause {
+        additional_clauses.push(Clause {
             keyword: "WITH".into(),
             body: Some(Box::new(Node::Wrap {
                 keyword: None,
@@ -1066,7 +1074,7 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
             _ => "",
         };
         if !kw.is_empty() {
-            clauses.push(Clause {
+            additional_clauses.push(Clause {
                 keyword: kw.into(),
                 body: None,
             });
@@ -1077,14 +1085,34 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
     if !stmt["tablespacename"].is_null() {
         let ts = stmt["tablespacename"].as_str().unwrap_or("");
         if !ts.is_empty() {
-            clauses.push(Clause {
+            additional_clauses.push(Clause {
                 keyword: "TABLESPACE".into(),
                 body: Some(Box::new(ident_node(ts))),
             });
         }
     }
 
-    Node::Clauses { items: clauses }
+    // Build final output.
+    let mut items: Vec<Node> = Vec::new();
+
+    // WITH clause (CTE) can appear before CREATE TABLE.
+    if let Some(with_clause) = build_with_clause(stmt) {
+        items.push(Node::Clauses {
+            items: vec![with_clause],
+        });
+        items.push(Node::Line);
+    }
+
+    items.push(main_part);
+
+    if !additional_clauses.is_empty() {
+        items.push(Node::Line);
+        items.push(Node::Clauses {
+            items: additional_clauses,
+        });
+    }
+
+    Node::Concat { items }
 }
 
 fn table_elt_to_node(elt: &Value) -> Node {

@@ -58,6 +58,7 @@ pub enum Node {
         content: Box<Node>,
     },
     Line,
+    Softline,
 }
 
 #[cfg(test)]

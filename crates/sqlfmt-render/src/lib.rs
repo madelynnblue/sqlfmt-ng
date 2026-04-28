@@ -117,6 +117,7 @@ fn to_rdoc<'a>(node: &Node, opts: &RenderOpts) -> RcDoc<'a> {
         Node::Group { content } => to_rdoc(content, opts).group(),
         Node::Nest { content } => to_rdoc(content, opts).nest(opts.tab_width as isize),
         Node::Line => RcDoc::line(),
+        Node::Softline => RcDoc::line_(),
     }
 }
 
