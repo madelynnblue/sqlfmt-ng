@@ -6141,6 +6141,14 @@ INSERT INTO kv (k,v) VALUES ('a', transaction_timestamp())
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO kv (k.v) VALUES ('hello')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (kv.k) VALUES ('hello')
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO kv (v) VALUES ('a')
 
 -- sqlfmt-corpus-separator --
@@ -64107,6 +64115,14 @@ UPDATE kv SET k = 3 WHERE k = 2 RETURNING NOTHING
 -- sqlfmt-corpus-separator --
 
 UPDATE kv SET k = 9 WHERE k = 1 RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET k.v = 9
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET kv.k = 9
 
 -- sqlfmt-corpus-separator --
 

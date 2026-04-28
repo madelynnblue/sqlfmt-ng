@@ -12,14 +12,6 @@ INSERT INTO kv (k.*) VALUES ('hello')
 
 -- sqlfmt-corpus-separator --
 
-INSERT INTO kv (k.v) VALUES ('hello')
-
--- sqlfmt-corpus-separator --
-
-INSERT INTO kv (kv.k) VALUES ('hello')
-
--- sqlfmt-corpus-separator --
-
 SELECT "reportingID",
        (info::JSONB - 'Timestamp' - 'DescriptorID' - 'TxnReadTimestamp')
        || (
@@ -83,14 +75,6 @@ SELECT i, random() FROM ROWS FROM (generate_series(1, 5)) AS i ORDER by i
 -- sqlfmt-corpus-separator --
 
 UPDATE kv SET k.* = 9
-
--- sqlfmt-corpus-separator --
-
-UPDATE kv SET k.v = 9
-
--- sqlfmt-corpus-separator --
-
-UPDATE kv SET kv.k = 9
 
 -- sqlfmt-corpus-separator --
 

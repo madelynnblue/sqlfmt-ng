@@ -61267,6 +61267,10 @@ UPDATE update_test t SET b = t.b + 10 WHERE t.a = 10
 
 -- sqlfmt-corpus-separator --
 
+UPDATE update_test t SET t.b = t.b + 10 WHERE t.a = 10
+
+-- sqlfmt-corpus-separator --
+
 UPDATE upview set a = 'b', b = 15 WHERE b = 4
 
 -- sqlfmt-corpus-separator --
@@ -64447,7 +64451,39 @@ insert into datetimes values
 
 -- sqlfmt-corpus-separator --
 
+insert into dcomptable (d1.r) values(11)
+
+-- sqlfmt-corpus-separator --
+
+insert into dcomptable (d1.r) values(99)
+
+-- sqlfmt-corpus-separator --
+
+insert into dcomptable (d1.r, d1.i) values(100, 99)
+
+-- sqlfmt-corpus-separator --
+
+insert into dcomptable (d1.r, d1.i) values(99, 100)
+
+-- sqlfmt-corpus-separator --
+
 insert into dcomptable (d1[1]) values(row(9,10))
+
+-- sqlfmt-corpus-separator --
+
+insert into dcomptable (d1[1].r) values(11)
+
+-- sqlfmt-corpus-separator --
+
+insert into dcomptable (d1[1].r) values(99)
+
+-- sqlfmt-corpus-separator --
+
+insert into dcomptable (d1[1].r, d1[1].i) values(100, 99)
+
+-- sqlfmt-corpus-separator --
+
+insert into dcomptable (d1[1].r, d1[1].i) values(99, 100)
 
 -- sqlfmt-corpus-separator --
 
@@ -65357,6 +65393,10 @@ insert into insertconflicttest values (3, 'Kiwi') on conflict (key, fruit) do up
 
 -- sqlfmt-corpus-separator --
 
+insert into insertconflicttest values (3, 'Kiwi') on conflict (key, fruit) do update set insertconflicttest.fruit = 'Mango'
+
+-- sqlfmt-corpus-separator --
+
 insert into insertconflicttest values (4, 'Mango') on conflict (fruit, key) do update set fruit = excluded.fruit
 
 -- sqlfmt-corpus-separator --
@@ -65415,6 +65455,42 @@ insert into inserttest (f2[1], f2[2]) values (3,4), (5,6)
 
 -- sqlfmt-corpus-separator --
 
+insert into inserttest (f3.if1, f3.if2) select 3, '{baz,quux}'
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f3.if1, f3.if2) values (1,'{foo}'), (2,'{bar}')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f3.if1, f3.if2) values (1,array['foo'])
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f3.if2[1], f3.if2[2]) select 'bear', 'beer'
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f3.if2[1], f3.if2[2]) values ('foo', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f3.if2[1], f3.if2[2]) values ('foo', 'bar'), ('baz', 'quux')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f4[1].if2[1], f4[1].if2[2]) select 'bear', 'beer'
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f4[1].if2[1], f4[1].if2[2]) values ('foo', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttest (f4[1].if2[1], f4[1].if2[2]) values ('foo', 'bar'), ('baz', 'quux')
+
+-- sqlfmt-corpus-separator --
+
 insert into inserttest values(30, 50, repeat('x', 10000))
 
 -- sqlfmt-corpus-separator --
@@ -65448,6 +65524,62 @@ insert into inserttesta (f2[1], f2[2]) values (3,4), (0,6)
 -- sqlfmt-corpus-separator --
 
 insert into inserttesta (f2[1], f2[2]) values (3,4), (5,6)
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f1.if1) values (1)
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f1.if1, f1.if2) values (1, '{foo}')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3, f4[1].if2[1], f4[1].if2[2]) select row(1,'{x}')::insert_test_domain, 'bear', 'beer'
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3, f4[1].if2[1], f4[1].if2[2]) values (row(1,'{x}'), 'foo', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3, f4[1].if2[1], f4[1].if2[2]) values (row(1,'{x}'), 'foo', 'bar'), (row(2,'{y}'), 'baz', 'quux')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if1, f3.if2) select 3, '{baz,quux}'
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if1, f3.if2) select 3, '{null,quux}'
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if1, f3.if2) values (1,'{foo}'), (2,'{bar}')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if1, f3.if2) values (1,'{null}'), (2,'{bar}')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if1, f3.if2) values (1,array['foo'])
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if1, f3.if2) values (1,array[null])
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if2[1], f3.if2[2]) select 'bear', 'beer'
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if2[1], f3.if2[2]) values ('foo', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+insert into inserttestb (f3.if2[1], f3.if2[2]) values ('foo', 'bar'), ('baz', 'quux')
 
 -- sqlfmt-corpus-separator --
 
@@ -66573,6 +66705,10 @@ insert into q22 values (2, 2, 3)
 
 -- sqlfmt-corpus-separator --
 
+insert into quadtable (f1, q.c1.r, q.c2.i) values(44,55,66)
+
+-- sqlfmt-corpus-separator --
+
 insert into quadtable values (1, ((3.3,4.4),(5.5,6.6)))
 
 -- sqlfmt-corpus-separator --
@@ -67597,6 +67733,10 @@ insert into t(a, b) select i/100 + 1, i + 1 from generate_series(0, 999) n(i)
 -- sqlfmt-corpus-separator --
 
 insert into t(a, b) select i/50 + 1, i + 1 from generate_series(0, 999) n(i)
+
+-- sqlfmt-corpus-separator --
+
+insert into t1 (f1[5].q1) values(42)
 
 -- sqlfmt-corpus-separator --
 
@@ -88788,6 +88928,18 @@ update convslot_test_parent set val = 3
 
 -- sqlfmt-corpus-separator --
 
+update dcomptable set f1[1].cf1 = -1
+
+-- sqlfmt-corpus-separator --
+
+update dcomptable set f1[1].cf1 = 1
+
+-- sqlfmt-corpus-separator --
+
+update dcomptable set f1[1].cf2 = 5
+
+-- sqlfmt-corpus-separator --
+
 update domconnotnulltest set col1 = 5
 
 -- sqlfmt-corpus-separator --
@@ -88941,6 +89093,14 @@ update parted_trigger set b = b || 'b'
 
 -- sqlfmt-corpus-separator --
 
+update people set fn.first = 'Jack'
+
+-- sqlfmt-corpus-separator --
+
+update people set fn.suffix = 'Jr'
+
+-- sqlfmt-corpus-separator --
+
 update pg_class
   set reltuples = 2, relpages = pg_relation_size('extremely_skewed') / 8192
   where relname = 'extremely_skewed'
@@ -88988,6 +89148,14 @@ update planets set orbit=null where name='jupiter'
 -- sqlfmt-corpus-separator --
 
 update pp set f1=f1+1
+
+-- sqlfmt-corpus-separator --
+
+update quadtable set q.c1 = 12
+
+-- sqlfmt-corpus-separator --
+
+update quadtable set q.c1.r = 12 where f1 = 2
 
 -- sqlfmt-corpus-separator --
 
@@ -89107,6 +89275,10 @@ update stmt_trig_on_empty_upd1 set a = a where false returning a+1 as aa
 -- sqlfmt-corpus-separator --
 
 update t1 set a = 4 where a = 5
+
+-- sqlfmt-corpus-separator --
+
+update t1 set f1[5].q2 = 43
 
 -- sqlfmt-corpus-separator --
 

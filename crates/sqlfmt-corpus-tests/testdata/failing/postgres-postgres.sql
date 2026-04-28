@@ -37,10 +37,6 @@ UPDATE arrtest_s SET a[:] = '{23, 24, 25}'
 
 -- sqlfmt-corpus-separator --
 
-UPDATE update_test t SET t.b = t.b + 10 WHERE t.a = 10
-
--- sqlfmt-corpus-separator --
-
 WITH
    x AS (SELECT proname, proowner, procost::numeric, pronargs,
                 array_to_string(proargnames,',') as proargnames,
@@ -151,38 +147,6 @@ SELECT val, val, val, val FROM rand_value
 
 -- sqlfmt-corpus-separator --
 
-insert into dcomptable (d1.r) values(11)
-
--- sqlfmt-corpus-separator --
-
-insert into dcomptable (d1.r) values(99)
-
--- sqlfmt-corpus-separator --
-
-insert into dcomptable (d1.r, d1.i) values(100, 99)
-
--- sqlfmt-corpus-separator --
-
-insert into dcomptable (d1.r, d1.i) values(99, 100)
-
--- sqlfmt-corpus-separator --
-
-insert into dcomptable (d1[1].r) values(11)
-
--- sqlfmt-corpus-separator --
-
-insert into dcomptable (d1[1].r) values(99)
-
--- sqlfmt-corpus-separator --
-
-insert into dcomptable (d1[1].r, d1[1].i) values(100, 99)
-
--- sqlfmt-corpus-separator --
-
-insert into dcomptable (d1[1].r, d1[1].i) values(99, 100)
-
--- sqlfmt-corpus-separator --
-
 insert into insertconflicttest values (1) on conflict (key asc) do nothing
 
 -- sqlfmt-corpus-separator --
@@ -195,148 +159,12 @@ insert into insertconflicttest values (1) on conflict (key nulls last) do nothin
 
 -- sqlfmt-corpus-separator --
 
-insert into insertconflicttest values (3, 'Kiwi') on conflict (key, fruit) do update set insertconflicttest.fruit = 'Mango'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f3.if1, f3.if2) select 3, '{baz,quux}'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f3.if1, f3.if2) values (1,'{foo}'), (2,'{bar}')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f3.if1, f3.if2) values (1,array['foo'])
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f3.if2[1], f3.if2[2]) select 'bear', 'beer'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f3.if2[1], f3.if2[2]) values ('foo', 'bar')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f3.if2[1], f3.if2[2]) values ('foo', 'bar'), ('baz', 'quux')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f4[1].if2[1], f4[1].if2[2]) select 'bear', 'beer'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f4[1].if2[1], f4[1].if2[2]) values ('foo', 'bar')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttest (f4[1].if2[1], f4[1].if2[2]) values ('foo', 'bar'), ('baz', 'quux')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f1.if1) values (1)
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f1.if1, f1.if2) values (1, '{foo}')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3, f4[1].if2[1], f4[1].if2[2]) select row(1,'{x}')::insert_test_domain, 'bear', 'beer'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3, f4[1].if2[1], f4[1].if2[2]) values (row(1,'{x}'), 'foo', 'bar')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3, f4[1].if2[1], f4[1].if2[2]) values (row(1,'{x}'), 'foo', 'bar'), (row(2,'{y}'), 'baz', 'quux')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if1, f3.if2) select 3, '{baz,quux}'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if1, f3.if2) select 3, '{null,quux}'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if1, f3.if2) values (1,'{foo}'), (2,'{bar}')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if1, f3.if2) values (1,'{null}'), (2,'{bar}')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if1, f3.if2) values (1,array['foo'])
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if1, f3.if2) values (1,array[null])
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if2[1], f3.if2[2]) select 'bear', 'beer'
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if2[1], f3.if2[2]) values ('foo', 'bar')
-
--- sqlfmt-corpus-separator --
-
-insert into inserttestb (f3.if2[1], f3.if2[2]) values ('foo', 'bar'), ('baz', 'quux')
-
--- sqlfmt-corpus-separator --
-
-insert into quadtable (f1, q.c1.r, q.c2.i) values(44,55,66)
-
--- sqlfmt-corpus-separator --
-
-insert into t1 (f1[5].q1) values(42)
-
--- sqlfmt-corpus-separator --
-
 select * from
   int8_tbl x cross join (int4_tbl x cross join lateral (select x.f1) ss)
 
 -- sqlfmt-corpus-separator --
 
 select * from rows from(unnest(array[10,20],array['foo','bar'],array[1.0])) with ordinality as z(a,b,c,ord)
-
--- sqlfmt-corpus-separator --
-
-update dcomptable set f1[1].cf1 = -1
-
--- sqlfmt-corpus-separator --
-
-update dcomptable set f1[1].cf1 = 1
-
--- sqlfmt-corpus-separator --
-
-update dcomptable set f1[1].cf2 = 5
-
--- sqlfmt-corpus-separator --
-
-update people set fn.first = 'Jack'
-
--- sqlfmt-corpus-separator --
-
-update people set fn.suffix = 'Jr'
-
--- sqlfmt-corpus-separator --
-
-update quadtable set q.c1 = 12
-
--- sqlfmt-corpus-separator --
-
-update quadtable set q.c1.r = 12 where f1 = 2
-
--- sqlfmt-corpus-separator --
-
-update t1 set f1[5].q2 = 43
 
 -- sqlfmt-corpus-separator --
 

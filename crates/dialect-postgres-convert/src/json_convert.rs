@@ -1569,6 +1569,15 @@ fn append_indirection(items: &mut Vec<Node>, indirection: &Value) {
                 content: Box::new(content),
                 close,
             });
+        } else if let Some(field) = elem.get("String") {
+            // Field selection: .fieldname
+            let name = field["sval"]
+                .as_str()
+                .or_else(|| field["str"].as_str())
+                .unwrap_or("");
+            items.push(Node::Text {
+                value: format!(".{name}"),
+            });
         }
     }
 }
