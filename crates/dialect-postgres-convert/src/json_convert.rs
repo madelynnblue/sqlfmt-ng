@@ -991,7 +991,7 @@ fn column_def_to_node(col: &Value) -> Node {
 fn constraint_to_node(c: &Value) -> Node {
     let contype = c["contype"].as_str().unwrap_or("");
 
-    match contype {
+    let body = match contype {
         "CONSTR_NOTNULL" => Node::Keyword {
             value: "NOT NULL".into(),
         },
@@ -1018,20 +1018,24 @@ fn constraint_to_node(c: &Value) -> Node {
         }
         "CONSTR_CHECK" => {
             let expr = node_value_to_node(&c["raw_expr"]);
-            Node::Concat {
-                items: vec![
-                    Node::Keyword {
-                        value: "CHECK".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    Node::Wrap {
-                        keyword: None,
-                        open: "(".into(),
-                        content: Box::new(expr),
-                        close: ")".into(),
-                    },
-                ],
+            let mut items = vec![
+                Node::Keyword {
+                    value: "CHECK".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(expr),
+                    close: ")".into(),
+                },
+            ];
+            if c["is_no_inherit"].as_bool().unwrap_or(false) {
+                items.push(Node::Text {
+                    value: " NO INHERIT".into(),
+                });
             }
+            Node::Concat { items }
         }
         "CONSTR_FOREIGN" => {
             let pktable = range_var_to_node(&c["pktable"]);
@@ -1064,6 +1068,25 @@ fn constraint_to_node(c: &Value) -> Node {
                     close: ")".into(),
                 });
             }
+            // Foreign key match type.
+            match c["fk_matchtype"].as_str().unwrap_or("") {
+                "FK_MATCH_FULL" => {
+                    items.push(Node::Text {
+                        value: " MATCH FULL".into(),
+                    });
+                }
+                "FK_MATCH_PARTIAL" => {
+                    items.push(Node::Text {
+                        value: " MATCH PARTIAL".into(),
+                    });
+                }
+                "FK_MATCH_SIMPLE" => {
+                    items.push(Node::Text {
+                        value: " MATCH SIMPLE".into(),
+                    });
+                }
+                _ => {}
+            }
             Node::Concat { items }
         }
         "CONSTR_IDENTITY" => {
@@ -1080,7 +1103,27 @@ fn constraint_to_node(c: &Value) -> Node {
                 value: format!("{c}"),
             }
         }
-    }
+    };
+
+    // Wrap with CONSTRAINT <name> if named.
+    let conname = c["conname"].as_str().unwrap_or("");
+    let result = if !conname.is_empty() {
+        Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "CONSTRAINT".into(),
+                },
+                Node::Text { value: " ".into() },
+                ident_node(conname),
+                Node::Text { value: " ".into() },
+                body,
+            ],
+        }
+    } else {
+        body
+    };
+
+    result
 }
 
 /// Build the GENERATED / IDENTITY constraint suffix.

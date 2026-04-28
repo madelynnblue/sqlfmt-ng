@@ -214,6 +214,14 @@ SELECT * FROM ctlb
 
 -- sqlfmt-corpus-separator --
 
+/* End test case for bug #16242 */
+
+/* Test case for bug #17409 */
+
+create table attbl (p1 int constraint pk_attbl primary key)
+
+-- sqlfmt-corpus-separator --
+
 /* End test case for bug #17409 */
 
 /* Test case for bug #18970 */
@@ -293,6 +301,16 @@ CREATE TABLE "CURRENT_SCHEMA"."CURRENT_SCHEMA"(id int)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE ATACC1 (TEST INT
+	CHECK (TEST > 0) NO INHERIT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ATACC1 (TEST INT, TEST2 INT
+	CHECK (TEST > 0), CHECK (TEST2 > 10) NO INHERIT)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE ATACC1 (a int)
 
 -- sqlfmt-corpus-separator --
@@ -339,7 +357,24 @@ CREATE TABLE CHAR_TBL(f1 char(4))
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE CHECK2_TBL (x int, y text, z int,
+	CONSTRAINT SEQUENCE_CON
+	CHECK (x > 3 and y <> 'check failed' and z < 8))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE CHECK_TBL (x int,
+	CONSTRAINT CHECK_CON CHECK (x > 3))
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE CIRCLE_TBL (f1 circle)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE COPY_TBL (x INT, y TEXT, z INT,
+	CONSTRAINT COPY_CON
+	CHECK (x > 3 AND y <> 'check failed' AND x < 7 ))
 
 -- sqlfmt-corpus-separator --
 
@@ -625,6 +660,13 @@ CREATE TABLE accessed (
     aid int,
     uid int,
     did int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE addr_nsp.gentable (
+    a serial primary key CONSTRAINT a_chk CHECK (a > 0),
+    b text DEFAULT 'hello'
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -1235,6 +1277,11 @@ CREATE TABLE comment (blog_id integer, message text)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE comment_test_child (
+  id text CONSTRAINT comment_test_child_fk REFERENCES comment_test)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE compositetable(a text, b text)
 
 -- sqlfmt-corpus-separator --
@@ -1280,6 +1327,14 @@ CREATE TABLE concur_reindex_tab4 (c1 int)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE concur_replident(i int NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE constraint_comments_tbl (a int CONSTRAINT the_constraint CHECK (a > 0))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE constraint_rename_test (a int CONSTRAINT con1 CHECK (a > 0), b int, c int)
 
 -- sqlfmt-corpus-separator --
 
@@ -1699,6 +1754,43 @@ CREATE TABLE equipment_r (
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE errtst(a text, b text NOT NULL, c text, secret1 text, secret2 text) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE errtst_child_fastdef (
+    partid int not null,
+    shdata int not null,
+    CONSTRAINT shdata_small CHECK(shdata < 3)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE errtst_child_plaindef (
+    partid int not null,
+    shdata int not null,
+    data int NOT NULL DEFAULT 0,
+    CONSTRAINT shdata_small CHECK(shdata < 3),
+    CHECK(data < 10)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE errtst_child_reorder (
+    data int NOT NULL DEFAULT 0,
+    shdata int not null,
+    partid int not null,
+    CONSTRAINT shdata_small CHECK(shdata < 3),
+    CHECK(data < 10)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE errtst_parent (
+    partid int not null,
+    shdata int not null,
+    data int NOT NULL DEFAULT 0,
+    CONSTRAINT shdata_small CHECK(shdata < 3)
+) PARTITION BY RANGE (partid)
 
 -- sqlfmt-corpus-separator --
 
@@ -2613,6 +2705,10 @@ CREATE TABLE notnull_tbl1_upg (a int, b int)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE notnull_tbl2 (a INTEGER CONSTRAINT blah NOT NULL, b INTEGER CONSTRAINT blah NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE notnull_tbl2 (a INTEGER PRIMARY KEY)
 
 -- sqlfmt-corpus-separator --
@@ -2930,6 +3026,14 @@ CREATE TABLE part_test (id int) PARTITION BY RANGE (id)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE parted (
+	a text,
+	b int NOT NULL DEFAULT 0,
+	CONSTRAINT check_a CHECK (length(a) > 0)
+) PARTITION BY LIST (a)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE parted_col_comment (a int, b text) PARTITION BY LIST (a)
 
 -- sqlfmt-corpus-separator --
@@ -2967,6 +3071,13 @@ CREATE TABLE partitioned (
 CREATE TABLE partitioned (
 	a int
 ) PARTITION BY RANGE (xmin)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned (
+	a int,
+	CONSTRAINT check_a CHECK (a > 0) NO INHERIT
+) PARTITION BY RANGE (a)
 
 -- sqlfmt-corpus-separator --
 
@@ -3149,6 +3260,16 @@ CREATE TABLE pred_tab (a int, b int NOT NULL, c int NOT NULL)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE pred_tab (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_tab1 (a int NOT NULL, b int,
+	CONSTRAINT check_tab1 CHECK (a IS NULL OR b > 2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pred_tab2 (a int, b int,
+	CONSTRAINT check_a CHECK (a IS NOT NULL))
 
 -- sqlfmt-corpus-separator --
 
@@ -4901,6 +5022,13 @@ CREATE TABLE tt9(c integer)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE ttable1 OF nothing
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE two_not_null_constraints (
+   col integer NOT NULL,
+   CONSTRAINT two_not_null_constraints_col_not_null CHECK (col IS NOT NULL)
+)
 
 -- sqlfmt-corpus-separator --
 
@@ -67815,6 +67943,10 @@ create table ab (a int not null, b int not null) partition by list (a)
 
 -- sqlfmt-corpus-separator --
 
+create table ac (a int constraint check_a check (a <> 0))
+
+-- sqlfmt-corpus-separator --
+
 create table agg_simplify (a int, not_null_col int not null, nullable_col int)
 
 -- sqlfmt-corpus-separator --
@@ -67836,6 +67968,11 @@ create table alterlock2 (f3 int primary key, f1 int)
 -- sqlfmt-corpus-separator --
 
 create table another (f1 int, f2 text, f3 text)
+
+-- sqlfmt-corpus-separator --
+
+create table anothertab (atcol1 serial8, atcol2 boolean,
+	constraint anothertab_chk check (atcol1 <= 3))
 
 -- sqlfmt-corpus-separator --
 
@@ -67948,6 +68085,10 @@ create table attach_parted (a int, b int) partition by list (b)
 
 -- sqlfmt-corpus-separator --
 
+create table attbl (p1 int constraint pk_attbl primary key)
+
+-- sqlfmt-corpus-separator --
+
 create table attest (a int4, b int4, c int4)
 
 -- sqlfmt-corpus-separator --
@@ -67979,6 +68120,10 @@ create table basictest
            , testvarchar domainvarchar
            , testnumeric domainnumeric
            )
+
+-- sqlfmt-corpus-separator --
+
+create table bc (b int constraint check_b check (b <> 0))
 
 -- sqlfmt-corpus-separator --
 
@@ -68603,6 +68748,14 @@ create table inh_parent(f1 int)
 
 -- sqlfmt-corpus-separator --
 
+create table inh_parent1(a int constraint nn not null)
+
+-- sqlfmt-corpus-separator --
+
+create table inh_parent2(b int constraint nn not null)
+
+-- sqlfmt-corpus-separator --
+
 create table inh_parent_1(f1 int)
 
 -- sqlfmt-corpus-separator --
@@ -68861,6 +69014,14 @@ create table my_table (id integer)
 
 -- sqlfmt-corpus-separator --
 
+create table notnull_tbl1 (a int primary key constraint foo not null)
+
+-- sqlfmt-corpus-separator --
+
+create table notnull_tbl_fail (a serial constraint foo not null constraint bar not null)
+
+-- sqlfmt-corpus-separator --
+
 create table nulltest
            ( col1 dnotnull
            , col2 dnotnull NULL  -- NOT NULL in the domain cannot be overridden
@@ -68907,6 +69068,10 @@ create table p1 (f1 int, f2 int)
 
 -- sqlfmt-corpus-separator --
 
+create table p1(f1 int constraint f1_pos CHECK (f1 > 0))
+
+-- sqlfmt-corpus-separator --
+
 create table p1(f1 int)
 
 -- sqlfmt-corpus-separator --
@@ -68916,6 +69081,10 @@ create table p1(ff1 int)
 -- sqlfmt-corpus-separator --
 
 create table p1(id int, name text)
+
+-- sqlfmt-corpus-separator --
+
+create table p2(f1 int constraint f1_pos CHECK (f1 > 0))
 
 -- sqlfmt-corpus-separator --
 
@@ -69576,6 +69745,10 @@ create table some_tab (a int)
 -- sqlfmt-corpus-separator --
 
 create table some_tab (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+create table some_tab (f1 int, f2 int, f3 int, check (f1 < 10) no inherit)
 
 -- sqlfmt-corpus-separator --
 

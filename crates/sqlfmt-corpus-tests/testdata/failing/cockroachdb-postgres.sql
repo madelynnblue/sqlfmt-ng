@@ -294,14 +294,6 @@ CREATE TABLE coltab (a STRING COLLATE en)
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE constraint_db.t1 (
-  p FLOAT PRIMARY KEY,
-  a INT UNIQUE CHECK (a > 4),
-  CONSTRAINT c2 CHECK (a < 99)
-)
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE crdb_internal_functions_tbl (
   id INT PRIMARY KEY
 ) WITH (ttl_expire_after = '10 minutes')
@@ -468,10 +460,6 @@ CREATE TABLE e1 (
 CREATE TABLE e3 (
   a INT COLLATE en
 )
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE error (a INT CHECK (a > 5), CONSTRAINT check_a CHECK (a > 5))
 
 -- sqlfmt-corpus-separator --
 
@@ -757,16 +745,6 @@ CREATE TABLE t (a INT PRIMARY KEY, b INT) WITH (sql_stats_canary_window = '15s')
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE t(
-  a INT PRIMARY KEY,
-  b INT NOT NULL,
-  CONSTRAINT ckb CHECK (b > 1),
-  INDEX idxb (b),
-  FAMILY fam_0_b_a (a, b)
-);
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE t147559 (
     a INT,
     b TEXT COLLATE en_u_ks_level1
@@ -774,19 +752,7 @@ CREATE TABLE t147559 (
 
 -- sqlfmt-corpus-separator --
 
-CREATE TABLE t158154 (a INT, b INT, CONSTRAINT foo CHECK (b > 0));
-
--- sqlfmt-corpus-separator --
-
 CREATE TABLE t2 (c0 STRING COLLATE en PRIMARY KEY)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t2(
-  a INT PRIMARY KEY,
-  b INT CHECK (f1(b) > 1),
-  CONSTRAINT cka CHECK (f1(a) > 1)
-);
 
 -- sqlfmt-corpus-separator --
 
@@ -833,10 +799,6 @@ CREATE TABLE t_bad_param (
 CREATE TABLE t_bad_param (
   a INT PRIMARY KEY WITH (s2_max_level=20)
 );
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE t_name_check (a INT NOT NULL, CONSTRAINT ctcheck CHECK (a > 0))
 
 -- sqlfmt-corpus-separator --
 
@@ -1053,29 +1015,6 @@ CREATE TABLE tbl_with_fk(
   id1 INT PRIMARY KEY,
   name STRING,
   id INT REFERENCES tbl_to_add_ttl(id) ON DELETE CASCADE
-)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE test.dupe_named_constraints (
-  id        INT CONSTRAINT pk PRIMARY KEY,
-  title     VARCHAR CONSTRAINT one CHECK (1>1) CONSTRAINT one CHECK (1<1)
-)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE test.dupe_named_constraints (
-  id        INT CONSTRAINT pk PRIMARY KEY,
-  title     VARCHAR CONSTRAINT one CHECK (1>1),
-  name      VARCHAR CONSTRAINT one UNIQUE
-)
-
--- sqlfmt-corpus-separator --
-
-CREATE TABLE test.dupe_named_constraints (
-  id        INT CONSTRAINT pk PRIMARY KEY,
-  title     VARCHAR CONSTRAINT one CHECK (1>1),
-  name      VARCHAR CONSTRAINT pk UNIQUE
 )
 
 -- sqlfmt-corpus-separator --

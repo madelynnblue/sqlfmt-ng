@@ -1621,6 +1621,14 @@ CREATE TABLE conflict (x INT)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE constraint_db.t1 (
+  p FLOAT PRIMARY KEY,
+  a INT UNIQUE CHECK (a > 4),
+  CONSTRAINT c2 CHECK (a < 99)
+)
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE corr (
   k INT PRIMARY KEY,
   i INT
@@ -2241,6 +2249,10 @@ CREATE TABLE enum_table (id SERIAL PRIMARY KEY, elem enum_test);
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE err (i INT DEFAULT p())
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE error (a INT CHECK (a > 5), CONSTRAINT check_a CHECK (a > 5))
 
 -- sqlfmt-corpus-separator --
 
@@ -4988,6 +5000,16 @@ CREATE TABLE t (x int, y varchar(10), z int2);
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t(
+  a INT PRIMARY KEY,
+  b INT NOT NULL,
+  CONSTRAINT ckb CHECK (b > 1),
+  INDEX idxb (b),
+  FAMILY fam_0_b_a (a, b)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(
 a INT PRIMARY KEY,
 b INT,
 C INT,
@@ -5512,6 +5534,10 @@ CREATE TABLE t158154 (a INT, b INT);
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t158154 (a INT, b INT, CONSTRAINT foo CHECK (b > 0));
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t158154 (a INT, b typ158154);
 
 -- sqlfmt-corpus-separator --
@@ -5724,6 +5750,14 @@ CREATE TABLE t2 (y INT)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t2 (y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2(
+  a INT PRIMARY KEY,
+  b INT CHECK (f1(b) > 1),
+  CONSTRAINT cka CHECK (f1(a) > 1)
+);
 
 -- sqlfmt-corpus-separator --
 
@@ -6788,6 +6822,10 @@ CREATE TABLE t_multi_idx2 (id INT PRIMARY KEY, category INT, path LTREE, name ST
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE t_name_check (a INT NOT NULL, CONSTRAINT ctcheck CHECK (a > 0))
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE t_name_check (a INT NOT NULL, INDEX idx (a))
 
 -- sqlfmt-corpus-separator --
@@ -7346,6 +7384,29 @@ CREATE TABLE test.dupe_generated (
   bar INT CHECK (bar > 2),
   CHECK (foo > 2),
   CHECK (foo < 10)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.dupe_named_constraints (
+  id        INT CONSTRAINT pk PRIMARY KEY,
+  title     VARCHAR CONSTRAINT one CHECK (1>1) CONSTRAINT one CHECK (1<1)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.dupe_named_constraints (
+  id        INT CONSTRAINT pk PRIMARY KEY,
+  title     VARCHAR CONSTRAINT one CHECK (1>1),
+  name      VARCHAR CONSTRAINT one UNIQUE
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.dupe_named_constraints (
+  id        INT CONSTRAINT pk PRIMARY KEY,
+  title     VARCHAR CONSTRAINT one CHECK (1>1),
+  name      VARCHAR CONSTRAINT pk UNIQUE
 )
 
 -- sqlfmt-corpus-separator --
