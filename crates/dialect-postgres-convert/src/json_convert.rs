@@ -1606,9 +1606,31 @@ fn column_ref_to_node(cr: &Value) -> Node {
 }
 
 fn index_elem_to_node(ie: &Value) -> Node {
-    // Simple column name: just return the identifier
+    // Simple column name
     if let Some(name) = ie["name"].as_str().filter(|s| !s.is_empty()) {
-        return ident_node(name);
+        let mut items = vec![ident_node(name)];
+        match ie["ordering"].as_str().unwrap_or("SORTBY_DEFAULT") {
+            "SORTBY_ASC" => {
+                items.push(Node::Text { value: " ASC".into() });
+            }
+            "SORTBY_DESC" => {
+                items.push(Node::Text { value: " DESC".into() });
+            }
+            _ => {}
+        }
+        match ie["nulls_ordering"].as_str().unwrap_or("SORTBY_NULLS_DEFAULT") {
+            "SORTBY_NULLS_FIRST" => {
+                items.push(Node::Text { value: " NULLS FIRST".into() });
+            }
+            "SORTBY_NULLS_LAST" => {
+                items.push(Node::Text { value: " NULLS LAST".into() });
+            }
+            _ => {}
+        }
+        if items.len() == 1 {
+            return items.remove(0);
+        }
+        return Node::Concat { items };
     }
     // Expression-based index element: e.g., (expr COLLATE coll) or function
     if let Some(expr) = ie.get("expr").filter(|e| !e.is_null()) {

@@ -147,15 +147,7 @@ SELECT val, val, val, val FROM rand_value
 
 -- sqlfmt-corpus-separator --
 
-insert into insertconflicttest values (1) on conflict (key asc) do nothing
-
--- sqlfmt-corpus-separator --
-
 insert into insertconflicttest values (1) on conflict (key int4_ops (fillfactor=10)) do nothing
-
--- sqlfmt-corpus-separator --
-
-insert into insertconflicttest values (1) on conflict (key nulls last) do nothing
 
 -- sqlfmt-corpus-separator --
 

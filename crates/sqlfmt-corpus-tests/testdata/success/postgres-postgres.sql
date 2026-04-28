@@ -65265,6 +65265,14 @@ insert into insertconflicttest as t values (23, 'Blackberry') on conflict (key) 
 
 -- sqlfmt-corpus-separator --
 
+insert into insertconflicttest values (1) on conflict (key asc) do nothing
+
+-- sqlfmt-corpus-separator --
+
+insert into insertconflicttest values (1) on conflict (key nulls last) do nothing
+
+-- sqlfmt-corpus-separator --
+
 insert into insertconflicttest values (1, 'Apple') on conflict (key) do update set fruit = excluded.fruit
 
 -- sqlfmt-corpus-separator --
