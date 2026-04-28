@@ -12,7 +12,7 @@ for arg in "$@"; do
     esac
 done
 
-wasm-pack build web --target web --out-dir ../docs/wasm
+wasm-pack build web --target web --out-dir ../docs/wasm --release
 
 if [[ $SERVE -eq 1 ]]; then
     echo "Serving on http://localhost:$PORT"
