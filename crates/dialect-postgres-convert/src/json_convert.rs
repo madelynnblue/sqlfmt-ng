@@ -155,6 +155,8 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(create_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("CreateTableAsStmt") {
         Some(create_table_as_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("DropStmt") {
+        Some(drop_stmt_to_node(inner))
     } else {
         None
     }
@@ -914,6 +916,143 @@ fn parens_block(elts: Vec<Node>) -> Node {
     }
 }
 
+fn drop_stmt_to_node(stmt: &Value) -> Node {
+    let remove_type = stmt["removeType"].as_str().unwrap_or("OBJECT_TABLE");
+    let obj_kw = match remove_type {
+        "OBJECT_TABLE" => "TABLE",
+        "OBJECT_INDEX" => "INDEX",
+        "OBJECT_SCHEMA" => "SCHEMA",
+        "OBJECT_VIEW" => "VIEW",
+        "OBJECT_SEQUENCE" => "SEQUENCE",
+        "OBJECT_TYPE" => "TYPE",
+        "OBJECT_FUNCTION" => "FUNCTION",
+        "OBJECT_ROUTINE" => "ROUTINE",
+        "OBJECT_FOREIGN_TABLE" => "FOREIGN TABLE",
+        "OBJECT_MATVIEW" => "MATERIALIZED VIEW",
+        "OBJECT_STATISTIC_EXT" => "STATISTICS",
+        "OBJECT_TABLESPACE" => "TABLESPACE",
+        "OBJECT_EXTENSION" => "EXTENSION",
+        "OBJECT_EVENT_TRIGGER" => "EVENT TRIGGER",
+        "OBJECT_POLICY" => "POLICY",
+        "OBJECT_TRANSFORM" => "TRANSFORM",
+        "OBJECT_ACCESS_METHOD" => "ACCESS METHOD",
+        "OBJECT_OPCLASS" => "OPERATOR CLASS",
+        "OBJECT_OPFAMILY" => "OPERATOR FAMILY",
+        "OBJECT_COLLATION" => "COLLATION",
+        "OBJECT_CONVERSION" => "CONVERSION",
+        "OBJECT_DOMAIN" => "DOMAIN",
+        "OBJECT_LANGUAGE" => "LANGUAGE",
+        "OBJECT_LARGEOBJECT" => "LARGE OBJECT",
+        "OBJECT_OPERATOR" => "OPERATOR",
+        "OBJECT_AGGREGATE" => "AGGREGATE",
+        "OBJECT_CAST" => "CAST",
+        "OBJECT_RULE" => "RULE",
+        "OBJECT_TRIGGER" => "TRIGGER",
+        "OBJECT_PUBLICATION" => "PUBLICATION",
+        "OBJECT_SUBSCRIPTION" => "SUBSCRIPTION",
+        _ => "TABLE",
+    };
+
+    // Objects can be List (qualified names) or bare String (unqualified).
+    let objects: Vec<Node> = stmt["objects"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .map(|obj| {
+                    if let Some(list) = obj.get("List") {
+                        let items: Vec<Node> = list["items"]
+                            .as_array()
+                            .map(|a| {
+                                a.iter()
+                                    .map(|item| {
+                                        let s = item
+                                            .get("String")
+                                            .and_then(|v| v.get("sval"))
+                                            .and_then(|v| v.as_str())
+                                            .unwrap_or("");
+                                        ident_node(s)
+                                    })
+                                    .collect()
+                            })
+                            .unwrap_or_default();
+                        Node::Concat {
+                            items: items
+                                .into_iter()
+                                .fold(Vec::new(), |mut acc, n| {
+                                    if !acc.is_empty() {
+                                        acc.push(Node::Text {
+                                            value: ".".into(),
+                                        });
+                                    }
+                                    acc.push(n);
+                                    acc
+                                }),
+                        }
+                    } else {
+                        let s = obj
+                            .get("String")
+                            .and_then(|v| v.get("sval"))
+                            .and_then(|v| v.as_str())
+                            .unwrap_or("");
+                        ident_node(s)
+                    }
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    // Build DROP keyword parts.
+    let mut drop_keyword = String::from("DROP ");
+    drop_keyword.push_str(obj_kw);
+
+    let mut items: Vec<Node> = Vec::new();
+    items.push(Node::Keyword {
+        value: drop_keyword,
+    });
+    items.push(Node::Text { value: " ".into() });
+
+    // IF EXISTS
+    if stmt["missing_ok"].as_bool().unwrap_or(false) {
+        items.push(Node::Keyword {
+            value: "IF EXISTS".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+    }
+
+    // CONCURRENTLY (for indexes)
+    if stmt["concurrent"].as_bool().unwrap_or(false) {
+        items.push(Node::Keyword {
+            value: "CONCURRENTLY".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+    }
+
+    // Object names
+    let obj_list = Node::List {
+        items: objects,
+        separator: Some(",".into()),
+    };
+    items.push(obj_list);
+
+    // CASCADE / RESTRICT
+    let behavior = stmt["behavior"].as_str().unwrap_or("DROP_RESTRICT");
+    if behavior == "DROP_CASCADE" {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "CASCADE".into(),
+        });
+    } else if behavior == "DROP_RESTRICT" {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "RESTRICT".into(),
+        });
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
 fn create_stmt_to_node(stmt: &Value) -> Node {
     // Table name.
     let relation = range_var_to_node(&stmt["relation"]);
@@ -973,6 +1112,9 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
         header_items.push(Node::Text { value: " ".into() });
     }
     header_items.push(relation);
+    if is_of_type {
+        header_items.push(Node::Text { value: " ".into() });
+    }
     header_items.push(body_content);
 
     let main_part = Node::Group {
