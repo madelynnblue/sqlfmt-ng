@@ -125,12 +125,17 @@ mod tests {
         };
         let result = format_sql(&d, "SELECT 1 = ANY(SELECT 1)", &opts);
         assert!(result.is_ok(), "roundtrip failed: {:?}", result);
-        assert!(result.unwrap().contains("= ANY"), "should preserve = ANY, not convert to IN");
+        assert!(
+            result.unwrap().contains("= ANY"),
+            "should preserve = ANY, not convert to IN"
+        );
     }
 
     #[test]
     fn test_diag_json() {
-        let json = pg_query_parse_json("SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)").unwrap();
+        let json =
+            pg_query_parse_json("SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)")
+                .unwrap();
         if let Some(pos) = json.find("fromClause") {
             let start = if pos > 10 { pos - 10 } else { 0 };
             let end = (pos + 800).min(json.len());

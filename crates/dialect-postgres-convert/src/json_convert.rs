@@ -5,18 +5,18 @@ use sqlfmt_ir::{Clause, Node};
 // PostgreSQL reserved keywords that need quoting when used as identifiers.
 // Kept minimal — only add words that appear in actual corpus failures.
 const PG_RESERVED_TYPE_KEYWORDS: &[&str] = &[
-    "char",          // pseudo-type "char" vs the SQL char/character(1) type
-    "current_user",  // SQLValueFunction keyword
-    "current_date",  // SQLValueFunction keyword
-    "current_time",  // SQLValueFunction keyword
+    "char",              // pseudo-type "char" vs the SQL char/character(1) type
+    "current_user",      // SQLValueFunction keyword
+    "current_date",      // SQLValueFunction keyword
+    "current_time",      // SQLValueFunction keyword
     "current_timestamp", // SQLValueFunction keyword
-    "current_role",  // SQLValueFunction keyword
-    "current_schema", // SQLValueFunction keyword
-    "current_catalog", // SQLValueFunction keyword
-    "session_user",  // SQLValueFunction keyword
-    "user",           // SQLValueFunction keyword
-    "localtime",      // SQLValueFunction keyword
-    "localtimestamp", // SQLValueFunction keyword
+    "current_role",      // SQLValueFunction keyword
+    "current_schema",    // SQLValueFunction keyword
+    "current_catalog",   // SQLValueFunction keyword
+    "session_user",      // SQLValueFunction keyword
+    "user",              // SQLValueFunction keyword
+    "localtime",         // SQLValueFunction keyword
+    "localtimestamp",    // SQLValueFunction keyword
 ];
 
 fn pg_needs_quoting(s: &str) -> bool {
@@ -262,8 +262,7 @@ fn locking_clause_parts(lc: &Value) -> (&'static str, &'static str, Option<Vec<N
         _ => "",
     };
     let rel_nodes = lc_inner["lockedRels"].as_array().map(|rels| {
-        rels
-            .iter()
+        rels.iter()
             .map(|r| {
                 let rv = r.get("RangeVar").unwrap_or(r);
                 range_var_to_node(rv)
@@ -355,12 +354,16 @@ fn insert_stmt_to_node(stmt: &Value) -> Node {
     }
 
     // ON CONFLICT clause
-    if stmt["onConflictClause"].get("OnConflictClause").or_else(|| {
-        stmt["onConflictClause"]
-            .as_object()
-            .filter(|o| !o.is_empty())
-            .map(|_| &stmt["onConflictClause"])
-    }).is_some() {
+    if stmt["onConflictClause"]
+        .get("OnConflictClause")
+        .or_else(|| {
+            stmt["onConflictClause"]
+                .as_object()
+                .filter(|o| !o.is_empty())
+                .map(|_| &stmt["onConflictClause"])
+        })
+        .is_some()
+    {
         let oc = stmt["onConflictClause"]
             .get("OnConflictClause")
             .unwrap_or(&stmt["onConflictClause"]);
@@ -377,10 +380,8 @@ fn insert_stmt_to_node(stmt: &Value) -> Node {
                 conflict_body_items.push(Node::Text {
                     value: format!("ON CONSTRAINT {con}"),
                 });
-            } else if let Some(elems) = infer["indexElems"].as_array().filter(|a| !a.is_empty())
-            {
-                let elem_nodes: Vec<Node> =
-                    elems.iter().map(node_value_to_node).collect();
+            } else if let Some(elems) = infer["indexElems"].as_array().filter(|a| !a.is_empty()) {
+                let elem_nodes: Vec<Node> = elems.iter().map(node_value_to_node).collect();
                 conflict_body_items.push(Node::Wrap {
                     keyword: None,
                     open: "(".into(),
@@ -405,9 +406,7 @@ fn insert_stmt_to_node(stmt: &Value) -> Node {
 
         conflict_body_items.push(Node::Concat {
             items: vec![
-                Node::Text {
-                    value: " ".into(),
-                },
+                Node::Text { value: " ".into() },
                 Node::Keyword {
                     value: action.into(),
                 },
@@ -418,9 +417,10 @@ fn insert_stmt_to_node(stmt: &Value) -> Node {
         if action == "DO UPDATE" {
             if let Some(targets) = oc["targetList"].as_array() {
                 if !targets.is_empty() {
-                    let set_items: Vec<Node> = targets.iter().map(|t| {
-                        set_target_to_node(t.get("ResTarget").unwrap_or(t))
-                    }).collect();
+                    let set_items: Vec<Node> = targets
+                        .iter()
+                        .map(|t| set_target_to_node(t.get("ResTarget").unwrap_or(t)))
+                        .collect();
                     conflict_body_items.push(Node::Concat {
                         items: vec![
                             Node::Text {
@@ -485,9 +485,10 @@ fn update_stmt_to_node(stmt: &Value) -> Node {
 
     if let Some(targets) = stmt["targetList"].as_array() {
         if !targets.is_empty() {
-            let set_items: Vec<Node> = targets.iter().map(|t| {
-                set_target_to_node(t.get("ResTarget").unwrap_or(t))
-            }).collect();
+            let set_items: Vec<Node> = targets
+                .iter()
+                .map(|t| set_target_to_node(t.get("ResTarget").unwrap_or(t)))
+                .collect();
             clauses.push(Clause {
                 keyword: "SET".into(),
                 body: Some(Box::new(Node::List {
@@ -645,7 +646,9 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
             if !mwc["condition"].is_null() {
                 body_items.push(Node::Concat {
                     items: vec![
-                        Node::Keyword { value: "AND".into() },
+                        Node::Keyword {
+                            value: "AND".into(),
+                        },
                         Node::Text { value: " ".into() },
                         node_value_to_node(&mwc["condition"]),
                         Node::Text { value: " ".into() },
@@ -657,9 +660,7 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
                 value: "THEN".into(),
             });
 
-            body_items.push(Node::Text {
-                value: " ".into(),
-            });
+            body_items.push(Node::Text { value: " ".into() });
 
             body_items.push(Node::Keyword {
                 value: action_kw.into(),
@@ -668,10 +669,10 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
             if cmd_type == "CMD_UPDATE" {
                 if let Some(targets) = mwc["targetList"].as_array() {
                     if !targets.is_empty() {
-                        let set_items: Vec<Node> =
-                            targets.iter().map(|t| {
-                                set_target_to_node(t.get("ResTarget").unwrap_or(t))
-                            }).collect();
+                        let set_items: Vec<Node> = targets
+                            .iter()
+                            .map(|t| set_target_to_node(t.get("ResTarget").unwrap_or(t)))
+                            .collect();
                         body_items.push(Node::Concat {
                             items: vec![
                                 Node::Text {
@@ -735,8 +736,7 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
                 }
                 if let Some(vals) = mwc["values"].as_array() {
                     if !vals.is_empty() {
-                        let val_items: Vec<Node> =
-                            vals.iter().map(node_value_to_node).collect();
+                        let val_items: Vec<Node> = vals.iter().map(node_value_to_node).collect();
                         body_items.push(Node::Concat {
                             items: vec![
                                 Node::Text {
@@ -759,9 +759,7 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
 
             clauses.push(Clause {
                 keyword: when_kw.into(),
-                body: Some(Box::new(Node::Concat {
-                    items: body_items,
-                })),
+                body: Some(Box::new(Node::Concat { items: body_items })),
             });
         }
     }
@@ -977,13 +975,9 @@ fn common_table_expr_to_node(cte: &Value) -> Node {
     // Search and cycle clauses for recursive CTEs.
     // pg_query uses search_clause / cycle_clause (newer) or searchclause / cycleclause (older).
     let mut cte_items = vec![header, body];
-    let search = cte
-        .get("search_clause")
-        .or_else(|| cte.get("searchclause"));
+    let search = cte.get("search_clause").or_else(|| cte.get("searchclause"));
     if let Some(search) = search.filter(|s| !s.is_null()) {
-        cte_items.push(Node::Text {
-            value: " ".into(),
-        });
+        cte_items.push(Node::Text { value: " ".into() });
         let search_col = search["search_seq_column"]
             .as_str()
             .or_else(|| search["search_col_name"].as_str())
@@ -1015,13 +1009,9 @@ fn common_table_expr_to_node(cte: &Value) -> Node {
         };
         cte_items.push(search_body);
     }
-    let cycle = cte
-        .get("cycle_clause")
-        .or_else(|| cte.get("cycleclause"));
+    let cycle = cte.get("cycle_clause").or_else(|| cte.get("cycleclause"));
     if let Some(cycle) = cycle.filter(|c| !c.is_null()) {
-        cte_items.push(Node::Text {
-            value: " ".into(),
-        });
+        cte_items.push(Node::Text { value: " ".into() });
         let cycle_cols: Vec<Node> = cycle["cycle_col_list"]
             .as_array()
             .or_else(|| cycle["cycle_cols"].as_array())
@@ -1305,7 +1295,8 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
                     let mut wd_clauses: Vec<Clause> = Vec::new();
                     if let Some(partition) = wd["partitionClause"].as_array() {
                         if !partition.is_empty() {
-                            let parts: Vec<Node> = partition.iter().map(node_value_to_node).collect();
+                            let parts: Vec<Node> =
+                                partition.iter().map(node_value_to_node).collect();
                             wd_clauses.push(Clause {
                                 keyword: "PARTITION BY".into(),
                                 body: Some(Box::new(Node::List {
@@ -1335,14 +1326,14 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
                             value: String::new(),
                         }
                     } else {
-                        Node::Clauses {
-                            items: wd_clauses,
-                        }
+                        Node::Clauses { items: wd_clauses }
                     };
                     Node::Concat {
                         items: vec![
                             ident_node(name),
-                            Node::Text { value: " AS ".into() },
+                            Node::Text {
+                                value: " AS ".into(),
+                            },
                             Node::Wrap {
                                 keyword: None,
                                 open: "(".into(),
@@ -1383,9 +1374,7 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
                 body: Some(Box::new(Node::Concat {
                     items: vec![
                         node_value_to_node(&s["limitCount"]),
-                        Node::Text {
-                            value: " ".into(),
-                        },
+                        Node::Text { value: " ".into() },
                         Node::Keyword {
                             value: "ROWS WITH TIES".into(),
                         },
@@ -1423,9 +1412,7 @@ fn finish_select(s: &Value, mut clauses: Vec<Clause>) -> Node {
                 }
                 (
                     format!("{base_kw} OF"),
-                    Some(Box::new(Node::Concat {
-                        items: body_items,
-                    })),
+                    Some(Box::new(Node::Concat { items: body_items })),
                 )
             } else {
                 (
@@ -1464,9 +1451,7 @@ fn set_target_to_node(rt: &Value) -> Node {
         let name_node = if name_items.len() == 1 {
             name_items.remove(0)
         } else {
-            Node::Concat {
-                items: name_items,
-            }
+            Node::Concat { items: name_items }
         };
         Node::Concat {
             items: vec![
@@ -1498,9 +1483,7 @@ fn res_target_to_node(rt: &Value) -> Node {
         let name_node = if name_items.len() == 1 {
             name_items.remove(0)
         } else {
-            Node::Concat {
-                items: name_items,
-            }
+            Node::Concat { items: name_items }
         };
         Node::Concat {
             items: vec![
@@ -1528,34 +1511,20 @@ fn append_indirection(items: &mut Vec<Node>, indirection: &Value) {
             let open = "[".to_string();
             let close = "]".to_string();
             let content: Node = match (lidx, uidx) {
-                (Some(l), Some(u)) if is_slice => {
-                    Node::Concat {
-                        items: vec![
-                            node_value_to_node(l),
-                            Node::Text { value: ":".into() },
-                            node_value_to_node(u),
-                        ],
-                    }
-                }
-                (Some(l), None) if is_slice => {
-                    Node::Concat {
-                        items: vec![
-                            node_value_to_node(l),
-                            Node::Text { value: ":".into() },
-                        ],
-                    }
-                }
-                (None, Some(u)) if is_slice => {
-                    Node::Concat {
-                        items: vec![
-                            Node::Text { value: ":".into() },
-                            node_value_to_node(u),
-                        ],
-                    }
-                }
-                (None, None) if is_slice => {
-                    Node::Text { value: ":".into() }
-                }
+                (Some(l), Some(u)) if is_slice => Node::Concat {
+                    items: vec![
+                        node_value_to_node(l),
+                        Node::Text { value: ":".into() },
+                        node_value_to_node(u),
+                    ],
+                },
+                (Some(l), None) if is_slice => Node::Concat {
+                    items: vec![node_value_to_node(l), Node::Text { value: ":".into() }],
+                },
+                (None, Some(u)) if is_slice => Node::Concat {
+                    items: vec![Node::Text { value: ":".into() }, node_value_to_node(u)],
+                },
+                (None, None) if is_slice => Node::Text { value: ":".into() },
                 (Some(_l), Some(u)) => node_value_to_node(u),
                 (None, Some(u)) => node_value_to_node(u),
                 _ => continue,
@@ -1608,19 +1577,30 @@ fn index_elem_to_node(ie: &Value) -> Node {
         let mut items = vec![ident_node(name)];
         match ie["ordering"].as_str().unwrap_or("SORTBY_DEFAULT") {
             "SORTBY_ASC" => {
-                items.push(Node::Text { value: " ASC".into() });
+                items.push(Node::Text {
+                    value: " ASC".into(),
+                });
             }
             "SORTBY_DESC" => {
-                items.push(Node::Text { value: " DESC".into() });
+                items.push(Node::Text {
+                    value: " DESC".into(),
+                });
             }
             _ => {}
         }
-        match ie["nulls_ordering"].as_str().unwrap_or("SORTBY_NULLS_DEFAULT") {
+        match ie["nulls_ordering"]
+            .as_str()
+            .unwrap_or("SORTBY_NULLS_DEFAULT")
+        {
             "SORTBY_NULLS_FIRST" => {
-                items.push(Node::Text { value: " NULLS FIRST".into() });
+                items.push(Node::Text {
+                    value: " NULLS FIRST".into(),
+                });
             }
             "SORTBY_NULLS_LAST" => {
-                items.push(Node::Text { value: " NULLS LAST".into() });
+                items.push(Node::Text {
+                    value: " NULLS LAST".into(),
+                });
             }
             _ => {}
         }
@@ -1632,10 +1612,7 @@ fn index_elem_to_node(ie: &Value) -> Node {
     // Expression-based index element: e.g., (expr COLLATE coll) or function
     if let Some(expr) = ie.get("expr").filter(|e| !e.is_null()) {
         let mut items = vec![node_value_to_node(expr)];
-        if let Some(coll) = ie["collation"]
-            .as_array()
-            .filter(|a| !a.is_empty())
-        {
+        if let Some(coll) = ie["collation"].as_array().filter(|a| !a.is_empty()) {
             let coll_parts: Vec<&str> = coll
                 .iter()
                 .filter_map(|n| {
@@ -1649,10 +1626,7 @@ fn index_elem_to_node(ie: &Value) -> Node {
             });
             items.push(qualified_ident_node(&coll_parts));
         }
-        if let Some(opclass) = ie["opclass"]
-            .as_array()
-            .filter(|a| !a.is_empty())
-        {
+        if let Some(opclass) = ie["opclass"].as_array().filter(|a| !a.is_empty()) {
             let oc_parts: Vec<&str> = opclass
                 .iter()
                 .filter_map(|n| {
@@ -1678,7 +1652,10 @@ fn index_elem_to_node(ie: &Value) -> Node {
             }
             _ => {}
         }
-        match ie["nulls_ordering"].as_str().unwrap_or("SORTBY_NULLS_DEFAULT") {
+        match ie["nulls_ordering"]
+            .as_str()
+            .unwrap_or("SORTBY_NULLS_DEFAULT")
+        {
             "SORTBY_NULLS_FIRST" => {
                 items.push(Node::Text {
                     value: " NULLS FIRST".into(),
@@ -1839,12 +1816,8 @@ fn range_function_to_node(rf: &Value) -> Node {
                     Node::Concat {
                         items: vec![
                             ident_node(name),
-                            Node::Text {
-                                value: " ".into(),
-                            },
-                            Node::Text {
-                                value: type_name,
-                            },
+                            Node::Text { value: " ".into() },
+                            Node::Text { value: type_name },
                         ],
                     }
                 })
@@ -2021,14 +1994,18 @@ fn join_expr_to_node(je: &Value) -> Node {
 
     // ON clause
     if !je["quals"].is_null() {
-        items.push(Node::Text { value: " ON ".into() });
+        items.push(Node::Text {
+            value: " ON ".into(),
+        });
         items.push(node_value_to_node(&je["quals"]));
     }
 
     // USING clause
     if let Some(using) = je["usingClause"].as_array() {
         if !using.is_empty() {
-            items.push(Node::Text { value: " USING ".into() });
+            items.push(Node::Text {
+                value: " USING ".into(),
+            });
             items.push(Node::Wrap {
                 keyword: None,
                 open: "(".into(),
@@ -2092,9 +2069,7 @@ fn join_expr_to_node(je: &Value) -> Node {
                 close: ")".into(),
             });
         }
-        Node::Concat {
-            items: alias_items,
-        }
+        Node::Concat { items: alias_items }
     } else {
         join_node
     }
@@ -2294,10 +2269,7 @@ fn a_expr_to_node(e: &Value) -> Node {
             };
             return Node::Infix {
                 op: similar_kw.to_string(),
-                items: vec![
-                    wrap_infix_in_parens(node_value_to_node(&e["lexpr"])),
-                    rhs,
-                ],
+                items: vec![wrap_infix_in_parens(node_value_to_node(&e["lexpr"])), rhs],
             };
         }
     }
@@ -2428,10 +2400,7 @@ fn a_expr_to_node(e: &Value) -> Node {
             };
             Node::Infix {
                 op: op_raw,
-                items: vec![
-                    wrap_side(&e["lexpr"]),
-                    wrap_side(&e["rexpr"]),
-                ],
+                items: vec![wrap_side(&e["lexpr"]), wrap_side(&e["rexpr"])],
             }
         }
         (true, false) => Node::Concat {
@@ -2462,7 +2431,12 @@ fn a_expr_to_node(e: &Value) -> Node {
                 rhs
             };
             Node::Concat {
-                items: vec![Node::Text { value: format!("{op_raw}") }, rhs],
+                items: vec![
+                    Node::Text {
+                        value: format!("{op_raw}"),
+                    },
+                    rhs,
+                ],
             }
         }
         (false, false) => Node::Text { value: op_raw },
@@ -2490,7 +2464,6 @@ fn a_const_value_str(v: &Value) -> Option<String> {
     }
     None
 }
-
 
 fn wrap_infix_in_parens(node: Node) -> Node {
     if matches!(node, Node::Infix { .. }) {
@@ -2610,17 +2583,13 @@ fn coalesce_expr_to_node(ce: &Value) -> Node {
         .as_array()
         .map(|arr| arr.iter().map(node_value_to_node).collect())
         .unwrap_or_default();
-    let items: Vec<Node> = args
-        .into_iter()
-        .fold(Vec::new(), |mut acc, a| {
-            if !acc.is_empty() {
-                acc.push(Node::Text {
-                    value: ", ".into(),
-                });
-            }
-            acc.push(a);
-            acc
-        });
+    let items: Vec<Node> = args.into_iter().fold(Vec::new(), |mut acc, a| {
+        if !acc.is_empty() {
+            acc.push(Node::Text { value: ", ".into() });
+        }
+        acc.push(a);
+        acc
+    });
     Node::Wrap {
         keyword: Some("COALESCE".into()),
         open: "(".into(),
@@ -2672,7 +2641,10 @@ fn needs_collate_parens(arg: &Value) -> bool {
     // These nodes are "atomic" — they don't need parens around them.
     // Everything else (A_Expr, SubLink, etc.) needs parens to ensure
     // COLLATE binds to the whole expression.
-    let key = arg.as_object().and_then(|o| o.keys().next()).map(String::as_str);
+    let key = arg
+        .as_object()
+        .and_then(|o| o.keys().next())
+        .map(String::as_str);
     !matches!(
         key,
         Some("A_Const")
@@ -2741,9 +2713,7 @@ fn array_expr_to_node(ae: &Value) -> Node {
     let mut concat_items: Vec<Node> = Vec::new();
     for (i, item) in items.into_iter().enumerate() {
         if i > 0 {
-            concat_items.push(Node::Text {
-                value: ", ".into(),
-            });
+            concat_items.push(Node::Text { value: ", ".into() });
         }
         concat_items.push(item);
     }
@@ -2765,9 +2735,7 @@ fn row_expr_to_node(re: &Value) -> Node {
     let mut concat_items: Vec<Node> = Vec::new();
     for (i, item) in items.into_iter().enumerate() {
         if i > 0 {
-            concat_items.push(Node::Text {
-                value: ", ".into(),
-            });
+            concat_items.push(Node::Text { value: ", ".into() });
         }
         concat_items.push(item);
     }
@@ -2833,7 +2801,9 @@ fn case_expr_to_node(ce: &Value) -> Node {
     }
 
     items.push(Node::Line);
-    items.push(Node::Keyword { value: "END".into() });
+    items.push(Node::Keyword {
+        value: "END".into(),
+    });
 
     Node::Group {
         content: Box::new(Node::Concat { items }),
@@ -3110,9 +3080,7 @@ fn func_call_to_node(f: &Value) -> Node {
     } else if !over_name.is_empty() {
         // Named window with frame/order/partition override: OVER (w RANGE ...)
         let mut items = vec![ident_node(over_name)];
-        items.push(Node::Text {
-            value: " ".into(),
-        });
+        items.push(Node::Text { value: " ".into() });
         items.push(Node::Clauses {
             items: over_clauses,
         });
@@ -3325,7 +3293,11 @@ fn sort_by_to_node(sb: &Value) -> Node {
     let use_op = sb["useOp"]
         .as_array()
         .and_then(|arr| arr.first())
-        .and_then(|n| n["String"]["sval"].as_str().or_else(|| n["String"]["str"].as_str()))
+        .and_then(|n| {
+            n["String"]["sval"]
+                .as_str()
+                .or_else(|| n["String"]["str"].as_str())
+        })
         .unwrap_or("");
 
     if dir_str == "SORTBY_USING" {
