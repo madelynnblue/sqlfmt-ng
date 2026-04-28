@@ -286,7 +286,14 @@ fn insert_stmt_to_node(stmt: &Value) -> Node {
             .iter()
             .map(|c| {
                 let rv = c.get("ResTarget").unwrap_or(c);
-                ident_node(rv["name"].as_str().unwrap_or(""))
+                let name = rv["name"].as_str().unwrap_or("");
+                let mut items = vec![ident_node(name)];
+                append_indirection(&mut items, &rv["indirection"]);
+                if items.len() == 1 {
+                    items.remove(0)
+                } else {
+                    Node::Concat { items }
+                }
             })
             .collect();
         Node::Concat {
@@ -1393,9 +1400,19 @@ fn set_target_to_node(rt: &Value) -> Node {
     if name.is_empty() {
         val
     } else {
+        // Include any indirection (array subscripts) on the column name.
+        let mut name_items = vec![ident_node(name)];
+        append_indirection(&mut name_items, &rt["indirection"]);
+        let name_node = if name_items.len() == 1 {
+            name_items.remove(0)
+        } else {
+            Node::Concat {
+                items: name_items,
+            }
+        };
         Node::Concat {
             items: vec![
-                ident_node(name),
+                name_node,
                 Node::Text {
                     value: " = ".into(),
                 },
@@ -1417,14 +1434,72 @@ fn res_target_to_node(rt: &Value) -> Node {
     if name.is_empty() {
         val
     } else {
+        // Append any indirection (array subscripts like [1:2]) to the column name.
+        let mut name_items = vec![ident_node(name)];
+        append_indirection(&mut name_items, &rt["indirection"]);
+        let name_node = if name_items.len() == 1 {
+            name_items.remove(0)
+        } else {
+            Node::Concat {
+                items: name_items,
+            }
+        };
         Node::Concat {
             items: vec![
                 val,
                 Node::Text {
                     value: " AS ".into(),
                 },
-                ident_node(name),
+                name_node,
             ],
+        }
+    }
+}
+
+/// Append array subscript nodes for indirection (A_Indices) entries.
+fn append_indirection(items: &mut Vec<Node>, indirection: &Value) {
+    let arr = indirection.as_array();
+    if arr.is_none() {
+        return;
+    }
+    for elem in arr.unwrap() {
+        if let Some(ai) = elem.get("A_Indices") {
+            let lidx = ai.get("lidx");
+            let uidx = ai.get("uidx");
+            let is_slice = ai["is_slice"].as_bool().unwrap_or(false);
+            let open = "[".to_string();
+            let close = "]".to_string();
+            let content: Node = match (lidx, uidx) {
+                (Some(l), Some(u)) if is_slice => {
+                    Node::Concat {
+                        items: vec![
+                            node_value_to_node(l),
+                            Node::Text {
+                                value: ":".into(),
+                            },
+                            node_value_to_node(u),
+                        ],
+                    }
+                }
+                (Some(l), _) if is_slice => {
+                    Node::Concat {
+                        items: vec![
+                            node_value_to_node(l),
+                            Node::Text {
+                                value: ":".into(),
+                            },
+                        ],
+                    }
+                }
+                (_, Some(u)) => node_value_to_node(u),
+                _ => continue,
+            };
+            items.push(Node::Wrap {
+                keyword: None,
+                open,
+                content: Box::new(content),
+                close,
+            });
         }
     }
 }

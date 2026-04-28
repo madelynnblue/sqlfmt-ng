@@ -116,7 +116,6 @@ mod tests {
     }
 
     #[test]
-    #[test]
     fn test_any_subquery_roundtrip() {
         // = ANY(subquery) should render as = ANY(subquery), not be rewritten to IN.
         let d = PostgresDialect;
