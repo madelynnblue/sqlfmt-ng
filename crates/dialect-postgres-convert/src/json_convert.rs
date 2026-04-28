@@ -159,6 +159,8 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(drop_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("ViewStmt") {
         Some(view_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("IndexStmt") {
+        Some(index_stmt_to_node(inner))
     } else {
         None
     }
@@ -1145,6 +1147,102 @@ fn view_stmt_to_node(stmt: &Value) -> Node {
     });
 
     Node::Clauses { items: clauses }
+}
+
+fn index_stmt_to_node(stmt: &Value) -> Node {
+    let mut kw = String::from("CREATE");
+    if stmt["unique"].as_bool().unwrap_or(false) {
+        kw.push_str(" UNIQUE");
+    }
+    kw.push_str(" INDEX");
+
+    if stmt["concurrent"].as_bool().unwrap_or(false) {
+        kw.push_str(" CONCURRENTLY");
+    }
+
+    // Build body: [IF NOT EXISTS] name ON relation [USING method] (indexParams) [WHERE whereClause]
+    let mut body_items: Vec<Node> = Vec::new();
+
+    if stmt["if_not_exists"].as_bool().unwrap_or(false) {
+        body_items.push(Node::Keyword {
+            value: "IF NOT EXISTS".into(),
+        });
+        body_items.push(Node::Text { value: " ".into() });
+    }
+
+    // Index name
+    let idxname = stmt["idxname"]
+        .as_str()
+        .map(|s| ident_node(s))
+        .unwrap_or(Node::Unformatted {
+            value: "UNKNOWN_INDEX".into(),
+        });
+    body_items.push(idxname);
+    body_items.push(Node::Text { value: " ".into() });
+
+    // ON
+    body_items.push(Node::Keyword {
+        value: "ON".into(),
+    });
+    body_items.push(Node::Text { value: " ".into() });
+    body_items.push(range_var_to_node(&stmt["relation"]));
+
+    // USING method (skip if default btree — but easier to preserve reparse)
+    let am = stmt["accessMethod"].as_str().unwrap_or("");
+    if !am.is_empty() {
+        body_items.push(Node::Text { value: " ".into() });
+        body_items.push(Node::Keyword {
+            value: "USING".into(),
+        });
+        body_items.push(Node::Text { value: " ".into() });
+        body_items.push(ident_node(am));
+    }
+
+    // Column/expression list
+    let index_params: Vec<Node> = stmt["indexParams"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .map(|p| {
+                    p.get("IndexElem")
+                        .map(index_elem_to_node)
+                        .unwrap_or(Node::Unformatted {
+                            value: format!("{p}"),
+                        })
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    body_items.push(Node::Text { value: " ".into() });
+    body_items.push(Node::Wrap {
+        keyword: None,
+        open: "(".into(),
+        content: Box::new(Node::List {
+            items: index_params,
+            separator: None,
+        }),
+        close: ")".into(),
+    });
+
+    // WHERE clause
+    if !stmt["whereClause"].is_null() {
+        body_items.push(Node::Text { value: " ".into() });
+        body_items.push(Node::Keyword {
+            value: "WHERE".into(),
+        });
+        body_items.push(Node::Text { value: " ".into() });
+        body_items.push(node_value_to_node(&stmt["whereClause"]));
+    }
+
+    Node::Clauses {
+        items: vec![Clause {
+            keyword: kw,
+            body: Some(Box::new(Node::Concat {
+                items: body_items,
+            })),
+        }],
+    }
 }
 
 fn create_stmt_to_node(stmt: &Value) -> Node {
