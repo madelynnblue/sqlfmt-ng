@@ -23,7 +23,14 @@ impl Dialect for MaterializeDialect {
         if sql_stmts.is_empty() || rendered_stmts.is_empty() {
             return Err(SqlfmtError::Parse("empty input".into()));
         }
-        if sql_stmts[0].ast != rendered_stmts[0].ast {
+        // Compare canonical Display output rather than structural PartialEq.
+        // DeclareStatement and PrepareStatement store the original raw SQL in a
+        // `sql: String` field included in their PartialEq, so whitespace-only
+        // reformatting (e.g. `1/a` → `1 / a`) would cause spurious failures.
+        // Display ignores that field and writes only the semantic AST.
+        let sql_display = format!("{}", sql_stmts[0].ast);
+        let rendered_display = format!("{}", rendered_stmts[0].ast);
+        if sql_display != rendered_display {
             return Err(SqlfmtError::Roundtrip {
                 input: sql.to_owned(),
                 output: rendered.to_owned(),

@@ -1,11 +1,3 @@
 .claude/settings.local.json
 /target-ra/
 /target/
-
-# Large cross-dialect corpus files (not useful for testing)
-crates/sqlfmt-corpus-tests/testdata/success/cockroachdb-materialize.sql
-crates/sqlfmt-corpus-tests/testdata/success/materialize-materialize.sql
-crates/sqlfmt-corpus-tests/testdata/success/postgres-materialize.sql
-crates/sqlfmt-corpus-tests/testdata/failing/cockroachdb-materialize.sql
-crates/sqlfmt-corpus-tests/testdata/failing/materialize-materialize.sql
-crates/sqlfmt-corpus-tests/testdata/failing/postgres-materialize.sql
