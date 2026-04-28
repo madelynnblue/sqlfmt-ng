@@ -664,6 +664,39 @@ fn merge_stmt_to_node(stmt: &Value) -> Node {
                     }
                 }
             } else if cmd_type == "CMD_INSERT" {
+                // Column list (e.g., INSERT (tid, balance))
+                if let Some(targets) = mwc["targetList"].as_array() {
+                    if !targets.is_empty() {
+                        let col_items: Vec<Node> = targets
+                            .iter()
+                            .map(|t| {
+                                let rt = t.get("ResTarget").unwrap_or(t);
+                                let name = rt["name"].as_str().unwrap_or("");
+                                let mut items = vec![ident_node(name)];
+                                append_indirection(&mut items, &rt["indirection"]);
+                                if items.len() == 1 {
+                                    items.remove(0)
+                                } else {
+                                    Node::Concat { items }
+                                }
+                            })
+                            .collect();
+                        body_items.push(Node::Concat {
+                            items: vec![
+                                Node::Text { value: " ".into() },
+                                Node::Wrap {
+                                    keyword: None,
+                                    open: "(".into(),
+                                    content: Box::new(Node::List {
+                                        items: col_items,
+                                        separator: None,
+                                    }),
+                                    close: ")".into(),
+                                },
+                            ],
+                        });
+                    }
+                }
                 if let Some(vals) = mwc["values"].as_array() {
                     if !vals.is_empty() {
                         let val_items: Vec<Node> =

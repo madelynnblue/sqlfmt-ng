@@ -17090,6 +17090,15 @@ MERGE INTO ONLY rw_view2 t USING (VALUES (-30), (4)) AS v(a) ON t.a = v.a
 -- sqlfmt-corpus-separator --
 
 MERGE INTO cj_target t
+USING (SELECT *, 'join input'::text AS phv FROM cj_source1) fj
+	FULL JOIN cj_source2 fj2 ON fj.scat = fj2.sid2 * 10
+ON t.tid = fj.scat
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance, val) VALUES (fj.scat, fj.delta, fj.phv)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO cj_target t
 USING cj_source1 s1
 	INNER JOIN cj_source2 s2 ON s1.sid = s2.sid
 ON t.tid = s1.sid
@@ -17263,6 +17272,40 @@ WHEN MATCHED THEN
 	UPDATE SET b = b + id, c = 'updated '|| id.*::text
 WHEN NOT MATCHED THEN
 	INSERT VALUES (id, -1, 'inserted ' || id.*::text)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO itest15 t
+USING (SELECT 10 AS s_a, 'inserted by merge' AS s_b) s
+ON t.a = s.s_a
+WHEN NOT MATCHED THEN
+	INSERT (a, b) VALUES (s.s_a, s.s_b)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO itest16 t
+USING (SELECT 10 AS s_a, 'inserted by merge' AS s_b) s
+ON t.a = s.s_a
+WHEN NOT MATCHED THEN
+	INSERT (a, b) VALUES (s.s_a, s.s_b)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO measurement m
+ USING (VALUES (1, '01-17-2007'::date)) nm(city_id, logdate) ON
+      (m.city_id = nm.city_id and m.logdate=nm.logdate)
+WHEN NOT MATCHED THEN INSERT
+     (city_id, logdate, peaktemp, unitsales)
+   VALUES (city_id - 1, logdate, 25, 100)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO measurement m
+ USING (VALUES (1, '01-17-2007'::date)) nm(city_id, logdate) ON
+      (m.city_id = nm.city_id and m.logdate=nm.logdate)
+WHEN NOT MATCHED THEN INSERT
+     (city_id, logdate, peaktemp, unitsales)
+   VALUES (city_id - 1, logdate, NULL, 100)
 
 -- sqlfmt-corpus-separator --
 
@@ -17485,6 +17528,18 @@ MERGE INTO rw_view1 t USING (VALUES (3)) AS v(a) ON t.aa = v.a
 
 -- sqlfmt-corpus-separator --
 
+MERGE INTO rw_view1 t USING (VALUES (6)) AS v(a) ON t.aa = v.a
+  WHEN NOT MATCHED THEN INSERT (aa) VALUES (v.a)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO rw_view14  AS t
+  USING (VALUES (2, 'Merged row 2'), (3, 'Merged row 3')) AS v(a,b) ON t.a = v.a
+  WHEN MATCHED THEN UPDATE SET b = v.b  -- should be OK
+  WHEN NOT MATCHED THEN INSERT (a,b) VALUES (v.a, v.b)
+
+-- sqlfmt-corpus-separator --
+
 MERGE INTO rw_view14  AS t
   USING (VALUES (2, 'Merged row 2'), (3, 'Merged row 3')) AS v(a,b) ON t.a = v.a
   WHEN MATCHED THEN UPDATE SET b = v.b  -- should be OK, except...
@@ -17640,6 +17695,59 @@ WHEN MATCHED THEN DO NOTHING
 -- sqlfmt-corpus-separator --
 
 MERGE INTO target t
+USING
+(SELECT sid, max(delta) AS delta
+ FROM source
+ GROUP BY sid
+ HAVING count(*) = 1
+ ORDER BY sid ASC) AS s
+ON t.tid = s.sid
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (s.sid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING (SELECT 9 AS sid, 57 AS delta) AS s
+ON t.tid = s.sid
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (s.sid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING (SELECT sid, delta FROM source WHERE delta > 0) AS s
+ON t.tid = s.sid
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (s.sid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING (SELECT sid, delta as newname FROM source WHERE delta > 0) AS s
+ON t.tid = s.sid
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (s.sid, s.newname)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING (SELECT tid as sid, balance as delta FROM target WHERE balance > 0) AS s
+ON t.tid = s.sid
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (s.sid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING source AS s
+ON (SELECT true)
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (t.tid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
 USING source AS s
 ON t.tid = s.sid
 WHEN MATCHED THEN
@@ -17713,6 +17821,22 @@ MERGE INTO target t
 USING source AS s
 ON t.tid = s.sid
 WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (s.sid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING source AS s
+ON t.tid = s.sid
+WHEN NOT MATCHED THEN
+	INSERT (tid, balance) VALUES (t.tid, s.delta)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO target t
+USING source AS s
+ON t.tid = s.sid
+WHEN NOT MATCHED THEN
 	INSERT VALUES (4, 4)
 WHEN MATCHED THEN
 	UPDATE SET balance = 0
@@ -17775,7 +17899,20 @@ MERGE INTO testpub_merge_no_ri USING testpub_merge_pk s ON s.a >= 1
 -- sqlfmt-corpus-separator --
 
 MERGE INTO testpub_merge_no_ri USING testpub_merge_pk s ON s.a >= 1
+ WHEN MATCHED THEN DO NOTHING
+ WHEN NOT MATCHED THEN INSERT (a, b) VALUES (0, 0)
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO testpub_merge_no_ri USING testpub_merge_pk s ON s.a >= 1
  WHEN MATCHED THEN UPDATE SET b = s.b
+
+-- sqlfmt-corpus-separator --
+
+MERGE INTO wq_target t
+USING wq_source s ON t.tid = s.sid
+WHEN NOT MATCHED THEN
+	INSERT (tid) VALUES (s.sid)
 
 -- sqlfmt-corpus-separator --
 
