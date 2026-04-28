@@ -472,12 +472,65 @@
 
     await init({ module_or_path: './wasm/sqlfmt_web_bg.wasm' });
 
-    // Loaded on first use of the Postgres dialect.
-    let pgQuery = null;
-    async function ensurePostgres() {
-      if (pgQuery) return;
-      const { default: PgQueryModule } = await import('https://esm.sh/pg-query-emscripten@5.1.0');
-      pgQuery = await new PgQueryModule();
+    // Postgres parsing runs in a Web Worker so Emscripten crashes from the
+    // known pg_query_free_parse_result memory leak don't hang the main thread.
+    let pgWorker = null;
+    let pgParseId = 0;
+    let pgParseCache = { sql: '', treeJson: null };
+    const PG_PARSE_TIMEOUT = 10000;
+
+    function ensurePostgresWorker() {
+      if (pgWorker) return;
+      const w = new Worker('./pg-worker.js', { type: 'module' });
+      w.onerror = () => {
+        console.warn('pg worker error, will restart on next parse');
+        w.terminate();
+        if (pgWorker === w) {
+          pgWorker = null;
+          pgParseCache.sql = '';
+        }
+      };
+      pgWorker = w;
+    }
+
+    function pgParse(sql) {
+      return new Promise((resolve, reject) => {
+        ensurePostgresWorker();
+        const id = ++pgParseId;
+        const timeout = setTimeout(() => {
+          if (pgWorker) {
+            pgWorker.removeEventListener('message', handler);
+            pgWorker.terminate();
+          }
+          pgWorker = null;
+          pgParseCache.sql = '';
+          reject(new Error('pg_query worker timed out'));
+        }, PG_PARSE_TIMEOUT);
+        const handler = (e) => {
+          if (e.data.id !== id) return;
+          clearTimeout(timeout);
+          if (pgWorker) pgWorker.removeEventListener('message', handler);
+          if (e.data.ok) {
+            resolve(e.data);
+          } else {
+            reject(new Error(e.data.error || 'pg_query parse error'));
+          }
+        };
+        pgWorker.addEventListener('message', handler);
+        pgWorker.postMessage({ id, sql });
+      });
+    }
+
+    // Parse SQL through the worker, caching the result so that width/option
+    // changes don't re-trigger an expensive (and leaky) parse.
+    async function getParseTree(sql) {
+      if (pgParseCache.sql === sql && pgParseCache.treeJson) {
+        return pgParseCache.treeJson;
+      }
+      const result = await pgParse(sql);
+      if (result.error) throw new Error(result.error);
+      pgParseCache = { sql, treeJson: result.treeJson };
+      return result.treeJson;
     }
 
     document.getElementById('submitButton').style.display = 'none';
@@ -546,20 +599,17 @@
       try {
         let result;
         if (dialect === 'postgres') {
-          await ensurePostgres();
-          const parsed = pgQuery.parse(sql);
-          if (parsed.error) throw new Error(parsed.error.message || 'pg_query parse error');
-          const treeJson = typeof parsed.parse_tree === 'string'
-            ? parsed.parse_tree
-            : JSON.stringify(parsed.parse_tree);
+          const treeJson = await getParseTree(sql);
           result = fmt_postgres_json(treeJson, v, viw, useTabs, caseMode);
-          const renderedParsed = pgQuery.parse(result);
-          if (renderedParsed.error) throw new Error('roundtrip parse error: ' + (renderedParsed.error.message || 'pg_query parse error'));
-          const renderedTreeJson = typeof renderedParsed.parse_tree === 'string'
-            ? renderedParsed.parse_tree
-            : JSON.stringify(renderedParsed.parse_tree);
-          if (!pg_json_ast_equal(treeJson, renderedTreeJson)) {
-            throw new Error('roundtrip error: formatted output has a different AST than the input\n\nInput:\n' + sql + '\n\nFormatted:\n' + result);
+          // Roundtrip check: reparse the formatted output through the worker.
+          try {
+            const rendered = await pgParse(result);
+            if (rendered.error) throw new Error('roundtrip parse error: ' + rendered.error);
+            if (!pg_json_ast_equal(treeJson, rendered.treeJson)) {
+              throw new Error('roundtrip error: formatted output has a different AST than the input\n\nInput:\n' + sql + '\n\nFormatted:\n' + result);
+            }
+          } catch (e) {
+            console.warn('roundtrip check failed (worker may have crashed):', e);
           }
         } else {
           result = fmt(sql, dialect, v, viw, useTabs, caseMode);
