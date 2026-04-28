@@ -161,6 +161,12 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(view_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("IndexStmt") {
         Some(index_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CreateSchemaStmt") {
+        Some(create_schema_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CreateSeqStmt") {
+        Some(create_seq_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("TruncateStmt") {
+        Some(truncate_stmt_to_node(inner))
     } else {
         None
     }
@@ -1242,6 +1248,124 @@ fn index_stmt_to_node(stmt: &Value) -> Node {
                 items: body_items,
             })),
         }],
+    }
+}
+
+fn create_schema_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![
+        Node::Keyword {
+            value: "CREATE SCHEMA".into(),
+        },
+        Node::Text { value: " ".into() },
+    ];
+    if stmt["if_not_exists"].as_bool().unwrap_or(false) {
+        items.push(Node::Keyword {
+            value: "IF NOT EXISTS".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+    }
+    let name = stmt["schemaname"]
+        .as_str()
+        .map(|s| ident_node(s))
+        .unwrap_or(Node::Unformatted {
+            value: "UNKNOWN_SCHEMA".into(),
+        });
+    items.push(name);
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn create_seq_stmt_to_node(stmt: &Value) -> Node {
+    let relpersistence = stmt["sequence"]["relpersistence"]
+        .as_str()
+        .unwrap_or("p");
+    let kw = if relpersistence == "t" {
+        "CREATE TEMPORARY SEQUENCE"
+    } else {
+        "CREATE SEQUENCE"
+    };
+
+    let seq = range_var_to_node(&stmt["sequence"]);
+
+    let mut body_items = vec![seq];
+
+    // Options (START, INCREMENT, etc.) — use space, not =, separator.
+    if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
+        for opt in opts {
+            if let Some(defelem) = opt.as_object().and_then(|o| o.get("DefElem")) {
+                body_items.push(Node::Text { value: " ".into() });
+                let name = defelem["defname"].as_str().unwrap_or("");
+                body_items.push(Node::Text {
+                    value: name.to_uppercase(),
+                });
+                if let Some(arg) = defelem.get("arg") {
+                    body_items.push(Node::Text { value: " ".into() });
+                    body_items.push(node_value_to_node(arg));
+                }
+            }
+        }
+    }
+
+    Node::Clauses {
+        items: vec![Clause {
+            keyword: kw.into(),
+            body: Some(Box::new(Node::Concat {
+                items: body_items,
+            })),
+        }],
+    }
+}
+
+fn truncate_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![Node::Keyword {
+        value: "TRUNCATE".into(),
+    }];
+
+    // TABLE keyword
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: "TABLE".into(),
+    });
+
+    // Relation list (each element is RangeVar or bare object)
+    let relations: Vec<Node> = stmt["relations"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .map(|r| {
+                    if let Some(rv) = r.get("RangeVar") {
+                        range_var_to_node(rv)
+                    } else {
+                        range_var_to_node(r)
+                    }
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::List {
+        items: relations,
+        separator: Some(",".into()),
+    });
+
+    // CASCADE / RESTRICT
+    let behavior = stmt["behavior"].as_str().unwrap_or("DROP_RESTRICT");
+    if behavior == "DROP_CASCADE" {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "CASCADE".into(),
+        });
+    } else if behavior == "DROP_RESTRICT" {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "RESTRICT".into(),
+        });
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
     }
 }
 
