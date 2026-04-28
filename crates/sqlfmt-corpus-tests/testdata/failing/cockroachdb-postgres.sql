@@ -1,27 +1,3 @@
-SELECT (1, 2) = ANY(SELECT 1, 2)
-
--- sqlfmt-corpus-separator --
-
-SELECT (1, 2) = SOME(SELECT 1, 2)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM abc WHERE a = ANY(SELECT a FROM abc WHERE b = 10)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM c WHERE bill = ANY(SELECT ship FROM o);
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 = ANY(SELECT 1)
-
--- sqlfmt-corpus-separator --
-
-SELECT 1 = SOME(SELECT 1)
-
--- sqlfmt-corpus-separator --
-
 WITH
   a AS (SELECT crdb_internal.create_session_revival_token() AS token),
   b AS (

@@ -4514,6 +4514,14 @@ SELECT (1, 2) = ALL(SELECT 1, 2)
 
 -- sqlfmt-corpus-separator --
 
+SELECT (1, 2) = ANY(SELECT 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1, 2) = SOME(SELECT 1, 2)
+
+-- sqlfmt-corpus-separator --
+
 SELECT (1, 2) IN (SELECT * FROM abc)
 
 -- sqlfmt-corpus-separator --
@@ -4968,6 +4976,10 @@ SELECT * FROM abc WHERE a = 6 FOR UPDATE
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM abc WHERE a = ANY(SELECT a FROM abc WHERE b = 10)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM abc WHERE a > ANY(SELECT a FROM abc WHERE b = 30)
 
 -- sqlfmt-corpus-separator --
@@ -5016,6 +5028,10 @@ SELECT * FROM c WHERE bill < ANY(SELECT ship FROM o WHERE o.c_id=c.c_id);
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM c WHERE bill = ALL(SELECT ship FROM o WHERE o.c_id=c.c_id);
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM c WHERE bill = ANY(SELECT ship FROM o);
 
 -- sqlfmt-corpus-separator --
 
@@ -5686,6 +5702,14 @@ SELECT 1 = ALL(SELECT 1)
 -- sqlfmt-corpus-separator --
 
 SELECT 1 = ANY(NULL::INT[])
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 = ANY(SELECT 1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 = SOME(SELECT 1)
 
 -- sqlfmt-corpus-separator --
 

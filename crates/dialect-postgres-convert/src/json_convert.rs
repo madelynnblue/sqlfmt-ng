@@ -3304,7 +3304,9 @@ fn sub_link_to_node(sl: &Value) -> Node {
             close: ")".into(),
         },
         "ANY_SUBLINK" => {
-            // testexpr op ANY (subselect), or testexpr IN (subselect) when op is "=".
+            // When operName is present the user wrote "op ANY(subquery)".
+            // When absent the user wrote "IN (subquery)" — pg_query represents both
+            // as ANY_SUBLINK. Preserve whichever form was used.
             let op_name = sl["operName"]
                 .as_array()
                 .and_then(|arr| arr.first())
@@ -3312,18 +3314,12 @@ fn sub_link_to_node(sl: &Value) -> Node {
                     n["String"]["sval"]
                         .as_str()
                         .or_else(|| n["String"]["str"].as_str())
-                })
-                .unwrap_or("=");
+                });
             if sl["testexpr"].is_null() {
                 wrapped
             } else {
                 let test = node_value_to_node(&sl["testexpr"]);
-                if op_name == "=" {
-                    Node::Infix {
-                        op: "IN".into(),
-                        items: vec![test, wrapped],
-                    }
-                } else {
+                if let Some(op) = op_name {
                     let rhs = Node::Wrap {
                         keyword: Some("ANY".into()),
                         open: "(".into(),
@@ -3331,8 +3327,13 @@ fn sub_link_to_node(sl: &Value) -> Node {
                         close: ")".into(),
                     };
                     Node::Infix {
-                        op: op_name.to_string(),
+                        op: op.to_string(),
                         items: vec![test, rhs],
+                    }
+                } else {
+                    Node::Infix {
+                        op: "IN".into(),
+                        items: vec![test, wrapped],
                     }
                 }
             }

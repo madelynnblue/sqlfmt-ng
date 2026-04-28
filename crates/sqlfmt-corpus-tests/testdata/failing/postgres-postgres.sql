@@ -1,7 +1,3 @@
-SELECT sum((3 = ANY(SELECT generate_series(1,4)))::int)
-
--- sqlfmt-corpus-separator --
-
 WITH
    x AS (SELECT proname, proowner, procost::numeric, pronargs,
                 array_to_string(proargnames,',') as proargnames,
@@ -103,10 +99,6 @@ WITH RECURSIVE
     )
   )
 SELECT * FROM iter
-
--- sqlfmt-corpus-separator --
-
-select (1 = any(array_agg(f1))) = any (select false) from int4_tbl
 
 -- sqlfmt-corpus-separator --
 

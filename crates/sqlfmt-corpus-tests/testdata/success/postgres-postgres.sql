@@ -13537,6 +13537,10 @@ SELECT substring(indtoasttest::text, 1, 200) FROM indtoasttest
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum((3 = ANY(SELECT generate_series(1,4)))::int)
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(four) OVER (PARTITION BY ten ORDER BY unique2) AS sum_1, ten, four FROM tenk1 WHERE unique2 < 10
 
 -- sqlfmt-corpus-separator --
@@ -19190,6 +19194,10 @@ select ('true'::jsonb)::bool
 -- sqlfmt-corpus-separator --
 
 select ('{"text": "hello"}'::jsonb)::text
+
+-- sqlfmt-corpus-separator --
+
+select (1 = any(array_agg(f1))) = any (select false) from int4_tbl
 
 -- sqlfmt-corpus-separator --
 

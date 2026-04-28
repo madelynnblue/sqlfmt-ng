@@ -12,7 +12,8 @@ pub enum SqlfmtError {
 
 pub trait Dialect {
     fn parse(&self, sql: &str) -> Result<Node, SqlfmtError>;
-    // ast_equal returns an error if the ASTs of sql and rendered are not equal. This needs to be implemented by each Dialect because that's the only thing with raw AST access.
+    /// Returns an error if the ASTs of sql and rendered are not equal.
+    /// Implemented per-dialect since only the dialect crate has raw AST access.
     fn ast_equal(&self, sql: &str, rendered: &str) -> Result<(), SqlfmtError>;
 }
 

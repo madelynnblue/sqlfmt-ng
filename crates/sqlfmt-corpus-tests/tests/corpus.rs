@@ -395,24 +395,26 @@ fn test_rewrite_corpus() {
                 .collect();
 
             for s in &now_passing {
-                success_stmts.insert(s.clone());
+                if success_stmts.insert(s.clone()) {
+                    moved += 1;
+                }
             }
             let mut sorted: Vec<String> = success_stmts.into_iter().collect();
             sorted.sort();
             write_corpus_file(&testdata_dir, SUCCESS, source, dialect, &sorted);
-
-            moved += now_passing.len();
         }
 
         // Rewrite failing/ with only the still-failing statements.
-        if now_passing.len() < stmts.len() {
-            let mut sorted: Vec<String> = still_failing.into_iter().collect();
-            sorted.sort();
-            if sorted.is_empty() {
-                remove_corpus_file_if_empty(&testdata_dir, FAILING, source, dialect);
-            } else {
-                write_corpus_file(&testdata_dir, FAILING, source, dialect, &sorted);
-            }
+        // Always run this when anything moved — the entire file may have passed.
+        let mut sorted: Vec<String> = still_failing.into_iter().collect();
+        sorted.sort();
+        if sorted.is_empty() {
+            let file_path = testdata_dir
+                .join(FAILING)
+                .join(format!("{source}-{dialect}.sql"));
+            let _ = fs::remove_file(&file_path);
+        } else {
+            write_corpus_file(&testdata_dir, FAILING, source, dialect, &sorted);
         }
     }
 

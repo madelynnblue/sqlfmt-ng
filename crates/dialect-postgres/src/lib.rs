@@ -116,6 +116,19 @@ mod tests {
     }
 
     #[test]
+    fn test_any_subquery_roundtrip() {
+        // = ANY(subquery) should render as = ANY(subquery), not be rewritten to IN.
+        let d = PostgresDialect;
+        let opts = RenderOpts {
+            line_width: 1000,
+            ..Default::default()
+        };
+        let result = format_sql(&d, "SELECT 1 = ANY(SELECT 1)", &opts);
+        assert!(result.is_ok(), "roundtrip failed: {:?}", result);
+        assert!(result.unwrap().contains("= ANY"), "should preserve = ANY, not convert to IN");
+    }
+
+    #[test]
     fn test_format_select_where() {
         let d = PostgresDialect;
         let opts = RenderOpts {
