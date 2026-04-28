@@ -29,14 +29,6 @@ WHERE t.typbasetype = 0 AND
 
 -- sqlfmt-corpus-separator --
 
-UPDATE arrtest_s SET a[:] = '{11, 12, 13, 14, 15}'
-
--- sqlfmt-corpus-separator --
-
-UPDATE arrtest_s SET a[:] = '{23, 24, 25}'
-
--- sqlfmt-corpus-separator --
-
 WITH
    x AS (SELECT proname, proowner, procost::numeric, pronargs,
                 array_to_string(proargnames,',') as proargnames,
