@@ -23904,6 +23904,14 @@ SELECT * FROM (TABLE int2_tbl) AS s (a, b)
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN ROWS FROM( rngfunc_sql(11,13), rngfunc_mat(11,13) ) WITH ORDINALITY AS f(i1,s1,i2,s2,o) ON (r+i1+i2)<100
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN generate_series(11,13) WITH ORDINALITY AS f(i,o) ON (r+i)<100
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN generate_series(11,13) f(i) ON (r+i)<100
 
 -- sqlfmt-corpus-separator --
@@ -23912,7 +23920,19 @@ SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN rngfunc_mat(11,13) ON (r+i)<10
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN rngfunc_mat(11,13) WITH ORDINALITY AS f(i,s,o) ON (r+i)<100
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN rngfunc_sql(11,13) ON (r+i)<100
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN rngfunc_sql(11,13) WITH ORDINALITY AS f(i,s,o) ON (r+i)<100
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1),(2),(3)) v(r) LEFT JOIN unnest(array[10,20,30]) WITH ORDINALITY AS f(i,o) ON (r+i)<100
 
 -- sqlfmt-corpus-separator --
 
@@ -23932,6 +23952,10 @@ SELECT * FROM (VALUES (1),(2),(3)) v(r), ROWS FROM( rngfunc_sql(11,11), rngfunc_
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (VALUES (1),(2),(3)) v(r), generate_series(10+r,20-r) WITH ORDINALITY AS f(i,o)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (VALUES (1),(2),(3)) v(r), generate_series(10+r,20-r) f(i)
 
 -- sqlfmt-corpus-separator --
@@ -23940,7 +23964,15 @@ SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_mat(10+r,13)
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_mat(10+r,13) WITH ORDINALITY AS f(i,s,o)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_mat(11,10+r)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_mat(11,10+r) WITH ORDINALITY AS f(i,s,o)
 
 -- sqlfmt-corpus-separator --
 
@@ -23948,7 +23980,19 @@ SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_sql(10+r,13)
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_sql(10+r,13) WITH ORDINALITY AS f(i,s,o)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_sql(11,10+r)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1),(2),(3)) v(r), rngfunc_sql(11,10+r) WITH ORDINALITY AS f(i,s,o)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1),(2),(3)) v(r), unnest(array[r*10,r*20,r*30]) WITH ORDINALITY AS f(i,o)
 
 -- sqlfmt-corpus-separator --
 
@@ -23984,7 +24028,15 @@ SELECT * FROM (VALUES (11,12),(13,15),(16,20)) v(r1,r2), rngfunc_mat(r1,r2)
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (VALUES (11,12),(13,15),(16,20)) v(r1,r2), rngfunc_mat(r1,r2) WITH ORDINALITY AS f(i,s,o)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (VALUES (11,12),(13,15),(16,20)) v(r1,r2), rngfunc_sql(r1,r2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (11,12),(13,15),(16,20)) v(r1,r2), rngfunc_sql(r1,r2) WITH ORDINALITY AS f(i,s,o)
 
 -- sqlfmt-corpus-separator --
 
@@ -24275,6 +24327,14 @@ SELECT * FROM POLYGON_TBL
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM PRIMARY_TBL
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ROWS FROM(generate_series(10,11), get_users()) WITH ORDINALITY
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ROWS FROM(get_users(), generate_series(10,11)) WITH ORDINALITY
 
 -- sqlfmt-corpus-separator --
 
@@ -25978,7 +26038,15 @@ SELECT * FROM get_users()
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM get_users() WITH ORDINALITY
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM getrngfunc1(1) AS t1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM getrngfunc1(1) WITH ORDINALITY AS t1(v,o)
 
 -- sqlfmt-corpus-separator --
 
@@ -25986,7 +26054,15 @@ SELECT * FROM getrngfunc2(1) AS t1
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM getrngfunc2(1) WITH ORDINALITY AS t1(v,o)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM getrngfunc3(1) AS t1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM getrngfunc3(1) WITH ORDINALITY AS t1(v,o)
 
 -- sqlfmt-corpus-separator --
 
@@ -25994,7 +26070,15 @@ SELECT * FROM getrngfunc4(1) AS t1
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM getrngfunc4(1) WITH ORDINALITY AS t1(a,b,c,o)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM getrngfunc5(1) AS t1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM getrngfunc5(1) WITH ORDINALITY AS t1(a,b,c,o)
 
 -- sqlfmt-corpus-separator --
 
@@ -26010,7 +26094,15 @@ SELECT * FROM getrngfunc8(1) AS t1
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM getrngfunc8(1) WITH ORDINALITY AS t1(v,o)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM getrngfunc9(1) AS t1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM getrngfunc9(1) WITH ORDINALITY AS t1(a,b,c,o)
 
 -- sqlfmt-corpus-separator --
 
@@ -73871,11 +73963,31 @@ select * from rngfunc2 where f2 in (select f2 from rngfunct(rngfunc2.rngfuncid) 
 
 -- sqlfmt-corpus-separator --
 
+select * from rngfunc2, rngfunct(rngfunc2.rngfuncid) with ordinality as z(rngfuncid,f2,ord) where rngfunc2.f2 = z.f2
+
+-- sqlfmt-corpus-separator --
+
 select * from rngfunc2, rngfunct(rngfunc2.rngfuncid) z where rngfunc2.f2 = z.f2
 
 -- sqlfmt-corpus-separator --
 
 select * from rngfuncbar()
+
+-- sqlfmt-corpus-separator --
+
+select * from rngfunct(1) with ordinality as z(a,b,ord)
+
+-- sqlfmt-corpus-separator --
+
+select * from rngfunct(1) with ordinality as z(a,b,ord) where b > 100
+
+-- sqlfmt-corpus-separator --
+
+select * from rows from(rngfunct(1),rngfunct(2)) with ordinality as z(a,b,c,d,ord)
+
+-- sqlfmt-corpus-separator --
+
+select * from rows from(unnest(array[10,20],array['foo','bar']), generate_series(101,102)) with ordinality as z(a,b,c,ord)
 
 -- sqlfmt-corpus-separator --
 
@@ -74214,11 +74326,23 @@ select * from twoconstraints
 
 -- sqlfmt-corpus-separator --
 
+select * from unnest(array['a','b']) with ordinality as z(a,ord)
+
+-- sqlfmt-corpus-separator --
+
 select * from unnest(array[1,2,3])
 
 -- sqlfmt-corpus-separator --
 
+select * from unnest(array[1.0::float8]) with ordinality as z(a,ord)
+
+-- sqlfmt-corpus-separator --
+
 select * from unnest(array[10,20],array['foo','bar'],array[1.0])
+
+-- sqlfmt-corpus-separator --
+
+select * from unnest(array[10,20],array['foo','bar'],array[1.0]) with ordinality as z(a,b,c,ord)
 
 -- sqlfmt-corpus-separator --
 
@@ -74862,6 +74986,18 @@ select a,b,c,d from atacc1
 
 -- sqlfmt-corpus-separator --
 
+select a,b,ord from rngfunct(1) with ordinality as z(a,b,ord)
+
+-- sqlfmt-corpus-separator --
+
+select a,ord from unnest(array['a','b']) with ordinality as z(a,ord)
+
+-- sqlfmt-corpus-separator --
+
+select a,ord from unnest(array[1.0::float8]) with ordinality as z(a,ord)
+
+-- sqlfmt-corpus-separator --
+
 select a.f1, b.f1, t.thousand, t.tenthous from
   tenk1 t,
   (select sum(f1)+1 as f1 from int4_tbl i4a) a,
@@ -75044,6 +75180,16 @@ select aggfstr(distinct a,b,c)
 -- sqlfmt-corpus-separator --
 
 select alter2.plus1(41)
+
+-- sqlfmt-corpus-separator --
+
+select amname, prop, pg_indexam_has_property(a.oid, prop) as p
+  from pg_am a,
+       unnest(array['can_order', 'can_unique', 'can_multi_col',
+                    'can_exclude', 'can_include', 'bogus']::text[])
+         with ordinality as u(prop,ord)
+ where amtype = 'i'
+ order by amname, ord
 
 -- sqlfmt-corpus-separator --
 
@@ -84794,6 +84940,76 @@ select proname from pg_proc where proname like E'RI\\_FKey%del' order by 1
 
 -- sqlfmt-corpus-separator --
 
+select prop,
+       pg_index_column_has_property('onek_hundred'::regclass, 1, prop) as btree,
+       pg_index_column_has_property('hash_i4_index'::regclass, 1, prop) as hash,
+       pg_index_column_has_property('gcircleind'::regclass, 1, prop) as gist,
+       pg_index_column_has_property('sp_radix_ind'::regclass, 1, prop) as spgist_radix,
+       pg_index_column_has_property('sp_quad_ind'::regclass, 1, prop) as spgist_quad,
+       pg_index_column_has_property('botharrayidx'::regclass, 1, prop) as gin,
+       pg_index_column_has_property('brinidx'::regclass, 1, prop) as brin
+  from unnest(array['asc', 'desc', 'nulls_first', 'nulls_last',
+                    'orderable', 'distance_orderable', 'returnable',
+                    'search_array', 'search_nulls',
+                    'bogus']::text[])
+         with ordinality as u(prop,ord)
+ order by ord
+
+-- sqlfmt-corpus-separator --
+
+select prop,
+       pg_index_has_property('onek_hundred'::regclass, prop) as btree,
+       pg_index_has_property('hash_i4_index'::regclass, prop) as hash,
+       pg_index_has_property('gcircleind'::regclass, prop) as gist,
+       pg_index_has_property('sp_radix_ind'::regclass, prop) as spgist,
+       pg_index_has_property('botharrayidx'::regclass, prop) as gin,
+       pg_index_has_property('brinidx'::regclass, prop) as brin
+  from unnest(array['clusterable', 'index_scan', 'bitmap_scan',
+                    'backward_scan',
+                    'bogus']::text[])
+         with ordinality as u(prop,ord)
+ order by ord
+
+-- sqlfmt-corpus-separator --
+
+select prop,
+       pg_indexam_has_property(a.oid, prop) as "AM",
+       pg_index_has_property('gcircleind'::regclass, prop) as "Index",
+       pg_index_column_has_property('gcircleind'::regclass, 1, prop) as "Column"
+  from pg_am a,
+       unnest(array['asc', 'desc', 'nulls_first', 'nulls_last',
+                    'orderable', 'distance_orderable', 'returnable',
+                    'search_array', 'search_nulls',
+                    'clusterable', 'index_scan', 'bitmap_scan',
+                    'backward_scan',
+                    'can_order', 'can_unique', 'can_multi_col',
+                    'can_exclude', 'can_include',
+                    'bogus']::text[])
+         with ordinality as u(prop,ord)
+ where a.amname = 'gist'
+ order by ord
+
+-- sqlfmt-corpus-separator --
+
+select prop,
+       pg_indexam_has_property(a.oid, prop) as "AM",
+       pg_index_has_property('onek_hundred'::regclass, prop) as "Index",
+       pg_index_column_has_property('onek_hundred'::regclass, 1, prop) as "Column"
+  from pg_am a,
+       unnest(array['asc', 'desc', 'nulls_first', 'nulls_last',
+                    'orderable', 'distance_orderable', 'returnable',
+                    'search_array', 'search_nulls',
+                    'clusterable', 'index_scan', 'bitmap_scan',
+                    'backward_scan',
+                    'can_order', 'can_unique', 'can_multi_col',
+                    'can_exclude', 'can_include',
+                    'bogus']::text[])
+         with ordinality as u(prop,ord)
+ where a.amname = 'btree'
+ order by ord
+
+-- sqlfmt-corpus-separator --
+
 select q from (select max(f1) from int4_tbl group by f1 order by f1) q
 
 -- sqlfmt-corpus-separator --
@@ -85717,6 +85933,10 @@ select row_to_json(q) from
 -- sqlfmt-corpus-separator --
 
 select row_to_json(r) from (select q2,q1 from tt1 offset 0) r
+
+-- sqlfmt-corpus-separator --
+
+select row_to_json(s.*) from generate_series(11,14) with ordinality s
 
 -- sqlfmt-corpus-separator --
 

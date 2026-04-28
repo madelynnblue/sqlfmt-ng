@@ -1828,12 +1828,22 @@ fn range_function_to_node(rf: &Value) -> Node {
         funcs_node
     };
 
-    if alias_name.is_empty() && colnames.is_empty() && coldeflist_items.is_empty() {
+    let ordinality = rf["ordinality"].as_bool().unwrap_or(false);
+
+    if alias_name.is_empty() && colnames.is_empty() && coldeflist_items.is_empty() && !ordinality {
         return funcs_node;
     }
 
     let mut items = vec![funcs_node];
+    if ordinality {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "WITH ORDINALITY".into(),
+        });
+    }
     if !alias_name.is_empty() {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword { value: "AS".into() });
         items.push(Node::Text { value: " ".into() });
         items.push(ident_node(alias_name));
     }

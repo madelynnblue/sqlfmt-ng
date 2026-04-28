@@ -17120,6 +17120,215 @@ FROM
 -- sqlfmt-corpus-separator --
 
 SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't1' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't10' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't11' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't12' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't2' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't3' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't4' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't5' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't6' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't7' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  c.relname AS index_name,
+  k.ord AS seq,
+  a.attname AS column_name,
+  ic.implicit
+FROM pg_index i
+JOIN pg_class c ON c.oid = i.indexrelid
+JOIN pg_class t ON t.oid = i.indrelid
+CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS k(attnum, ord)
+JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum
+JOIN crdb_internal.index_columns ic
+  ON ic.descriptor_name = t.relname
+  AND ic.index_name = c.relname
+  AND ic.column_name = a.attname
+WHERE t.relname = 't9' AND ic.column_type = 'key'
+ORDER BY index_name, seq
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   c.relname,
   a.attname,
   a.attnum,
@@ -26822,6 +27031,10 @@ SELECT * FROM ctas1 ORDER BY ID;
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM current_schema() WITH ORDINALITY AS a(b)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM customers
 
 -- sqlfmt-corpus-separator --
@@ -27627,6 +27840,14 @@ SELECT * FROM generate_series('2017-11-11 03:00:00'::TIMESTAMP, '2017-11-15 00:0
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM generate_series(1, 1) AS c(x)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM generate_series(1, 1) WITH ORDINALITY
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM generate_series(1, 1) WITH ORDINALITY AS c(x, y)
 
 -- sqlfmt-corpus-separator --
 
@@ -30035,6 +30256,14 @@ SELECT * FROM t95158 WHERE c !~ SOME (ARRAY['x']::STRING[])
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t95360
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t95615, LATERAL ROWS FROM (f95615(), f95615()) WITH ORDINALITY
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t95615, LATERAL ROWS FROM (hostmask(c1), hostmask(c1)) WITH ORDINALITY
 
 -- sqlfmt-corpus-separator --
 
@@ -65586,6 +65815,51 @@ WHERE
   tr.str16 = '12345'
 ORDER BY 1 DESC
 ;
+
+-- sqlfmt-corpus-separator --
+
+WITH
+pks_uniques_cols AS (
+  SELECT
+    connamespace,
+    conrelid,
+    jsonb_agg(column_info.cols) as cols
+  FROM pg_constraint
+  JOIN lateral (
+    SELECT array_agg(cols.attname order by cols.attnum) as cols
+    FROM ( select unnest(conkey) as col) _
+    JOIN pg_attribute cols on cols.attrelid = conrelid and cols.attnum = col
+  ) column_info ON TRUE
+  WHERE
+    contype IN ('p', 'u') and
+    connamespace::regnamespace::text <> 'pg_catalog'
+  GROUP BY connamespace, conrelid
+)
+SELECT
+  ns1.nspname AS table_schema,
+  tab.relname AS table_name,
+  ns2.nspname AS foreign_table_schema,
+  other.relname AS foreign_table_name,
+  (ns1.nspname, tab.relname) = (ns2.nspname, other.relname) AS is_self,
+  traint.conname  AS constraint_name,
+  column_info.cols_and_fcols,
+  (column_info.cols IN (SELECT * FROM jsonb_array_elements(pks_uqs.cols))) AS one_to_one
+FROM pg_constraint traint
+JOIN LATERAL (
+  SELECT
+    array_agg(row(cols.attname, refs.attname) order by ord) AS cols_and_fcols,
+    jsonb_agg(cols.attname order by ord) AS cols
+  FROM unnest(traint.conkey, traint.confkey) WITH ORDINALITY AS _(col, ref, ord)
+  JOIN pg_attribute cols ON cols.attrelid = traint.conrelid AND cols.attnum = col
+  JOIN pg_attribute refs ON refs.attrelid = traint.confrelid AND refs.attnum = ref
+) AS column_info ON TRUE
+JOIN pg_namespace ns1 ON ns1.oid = traint.connamespace
+JOIN pg_class tab ON tab.oid = traint.conrelid
+JOIN pg_class other ON other.oid = traint.confrelid
+JOIN pg_namespace ns2 ON ns2.oid = other.relnamespace
+LEFT JOIN pks_uniques_cols pks_uqs ON pks_uqs.connamespace = traint.connamespace AND pks_uqs.conrelid = traint.conrelid
+WHERE traint.contype = 'f'
+and traint.conparentid = 0 ORDER BY traint.conrelid, traint.conname
 
 -- sqlfmt-corpus-separator --
 
