@@ -2002,7 +2002,63 @@ fn join_expr_to_node(je: &Value) -> Node {
         }
     }
 
-    Node::Concat { items }
+    // Alias and column names (for subquery-in-FROM wrappers like (... JOIN ...) alias(cols))
+    let alias_name = je["alias"]["aliasname"]
+        .as_str()
+        .or_else(|| je["alias"]["Alias"]["aliasname"].as_str())
+        .unwrap_or("");
+    let colnames: Vec<&str> = je["alias"]["colnames"]
+        .as_array()
+        .or_else(|| je["alias"]["Alias"]["colnames"].as_array())
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|n| {
+                    n["String"]["sval"]
+                        .as_str()
+                        .or_else(|| n["String"]["str"].as_str())
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+
+    let has_alias = !alias_name.is_empty() || !colnames.is_empty();
+    let join_node = if has_alias {
+        Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(Node::Concat { items }),
+            close: ")".into(),
+        }
+    } else {
+        Node::Concat { items }
+    };
+
+    if has_alias {
+        let mut alias_items = vec![join_node];
+        if !alias_name.is_empty() {
+            alias_items.push(Node::Text { value: " ".into() });
+            alias_items.push(Node::Keyword { value: "AS".into() });
+            alias_items.push(Node::Text { value: " ".into() });
+            alias_items.push(ident_node(alias_name));
+        }
+        if !colnames.is_empty() {
+            let col_nodes: Vec<Node> = colnames.iter().map(|&c| ident_node(c)).collect();
+            alias_items.push(Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items: col_nodes,
+                    separator: None,
+                }),
+                close: ")".into(),
+            });
+        }
+        Node::Concat {
+            items: alias_items,
+        }
+    } else {
+        join_node
+    }
 }
 
 fn range_var_to_node(rv: &Value) -> Node {

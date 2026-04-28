@@ -23059,11 +23059,19 @@ SELECT 'x' AS "xxx", i, k, t FROM J1_TBL CROSS JOIN J2_TBL
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'x' AS "xxx", ii, tt, kk FROM (J1_TBL CROSS JOIN J2_TBL) AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
 SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
 
 -- sqlfmt-corpus-separator --
 
 SELECT 'x' AS "xxx", t1.i, k, t FROM J1_TBL t1 CROSS JOIN J2_TBL t2
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", tx.ii, tx.jj, tx.kk FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e)) AS tx (ii, jj, tt, ii2, kk)
 
 -- sqlfmt-corpus-separator --
 

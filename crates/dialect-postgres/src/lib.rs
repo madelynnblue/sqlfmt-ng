@@ -129,6 +129,16 @@ mod tests {
     }
 
     #[test]
+    fn test_diag_json() {
+        let json = pg_query_parse_json("SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)").unwrap();
+        if let Some(pos) = json.find("fromClause") {
+            let start = if pos > 10 { pos - 10 } else { 0 };
+            let end = (pos + 800).min(json.len());
+            println!("FROM: {}", &json[start..end]);
+        }
+    }
+
+    #[test]
     fn test_format_select_where() {
         let d = PostgresDialect;
         let opts = RenderOpts {

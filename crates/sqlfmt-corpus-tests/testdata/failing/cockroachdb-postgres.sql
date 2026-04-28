@@ -56,14 +56,6 @@ SELECT "reportingID",
 
 -- sqlfmt-corpus-separator --
 
-SELECT 'x' AS "xxx", ii, tt, kk FROM (J1_TBL CROSS JOIN J2_TBL) AS tx (ii, jj, tt, ii2, kk)
-
--- sqlfmt-corpus-separator --
-
-SELECT 'x' AS "xxx", tx.ii, tx.jj, tx.kk FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e)) AS tx (ii, jj, tt, ii2, kk)
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM c WHERE (NULL::text NOT IN (SELECT ship FROM o WHERE o.c_id=c.c_id)) IS NOT NULL;
 
 -- sqlfmt-corpus-separator --

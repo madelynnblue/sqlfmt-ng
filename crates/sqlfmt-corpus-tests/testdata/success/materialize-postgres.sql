@@ -31218,11 +31218,19 @@ SELECT 'x' AS "xxx", i, k, t FROM J1_TBL CROSS JOIN J2_TBL
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'x' AS "xxx", ii, tt, kk FROM (J1_TBL CROSS JOIN J2_TBL) AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
 SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
 
 -- sqlfmt-corpus-separator --
 
 SELECT 'x' AS "xxx", t1.i, k, t FROM J1_TBL t1 CROSS JOIN J2_TBL t2
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", tx.ii, tx.jj, tx.kk FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e)) AS tx (ii, jj, tt, ii2, kk)
 
 -- sqlfmt-corpus-separator --
 
@@ -33410,6 +33418,18 @@ SELECT * FROM (SELECT 1 AS x) AS sub LEFT JOIN empty_t ON true
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM (SELECT 1 AS x) ss
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (SELECT 1 a) t1 CROSS JOIN ((SELECT 1 a) t1 CROSS JOIN LATERAL (SELECT a) t2) t3;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (SELECT 1 a) t1 CROSS JOIN ((SELECT 1 a) t1 CROSS JOIN LATERAL (SELECT t1) t2) t3;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (SELECT 1 a) t1 CROSS JOIN ((SELECT 1 a) t1 CROSS JOIN LATERAL (SELECT t1.a) t2) t3;
 
 -- sqlfmt-corpus-separator --
 
@@ -61517,6 +61537,10 @@ SELECT t FROM timestamptzish WHERE t >= TIMESTAMPTZ '1999-12-31 9:46:01-04'
 
 -- sqlfmt-corpus-separator --
 
+SELECT t.a FROM (t1 NATURAL JOIN t2) t
+
+-- sqlfmt-corpus-separator --
+
 SELECT t.b FROM t GROUP BY a
 
 -- sqlfmt-corpus-separator --
@@ -66528,6 +66552,11 @@ select * from (
   select min(unique1) from tenk1 as a
   where not exists (select 1 from tenk1 as b where b.unique2 = 10000)
 ) ss
+
+-- sqlfmt-corpus-separator --
+
+select * from ((select f1/2 as x from int4_tbl) ss1 join int4_tbl i4 on x = f1) j,
+  lateral (select x) ss2(y);
 
 -- sqlfmt-corpus-separator --
 

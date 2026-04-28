@@ -24040,6 +24040,10 @@ SELECT * FROM (VALUES (11,12),(13,15),(16,20)) v(r1,r2), rngfunc_sql(r1,r2) WITH
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM BIT_TABLE
 
 -- sqlfmt-corpus-separator --
@@ -40706,6 +40710,12 @@ SELECT id,lag(id) OVER(), count(*) OVER(), generate_series(1,3) FROM few
 
 SELECT idx_scan, stats_reset IS NOT NULL AS has_stats_reset
   FROM pg_stat_all_indexes WHERE indexrelid = 'test_last_scan_pkey'::regclass
+
+-- sqlfmt-corpus-separator --
+
+SELECT ii, tt, kk
+  FROM (J1_TBL CROSS JOIN J2_TBL)
+    AS tx (ii, jj, tt, ii2, kk)
 
 -- sqlfmt-corpus-separator --
 
@@ -57506,6 +57516,12 @@ SELECT two, stringu1, ten, string4
 
 -- sqlfmt-corpus-separator --
 
+SELECT tx.ii, tx.jj, tx.kk
+  FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e))
+    AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
 SELECT txid_current_if_assigned() IS NULL
 
 -- sqlfmt-corpus-separator --
@@ -72291,6 +72307,21 @@ order by 1,2
 -- sqlfmt-corpus-separator --
 
 select * from
+  int8_tbl x join (int4_tbl x cross join int4_tbl y(ff)) j on q1 = f1
+
+-- sqlfmt-corpus-separator --
+
+select * from
+  int8_tbl x join (int4_tbl x cross join int4_tbl y) j on q1 = f1
+
+-- sqlfmt-corpus-separator --
+
+select * from
+  int8_tbl x join (int4_tbl x cross join int4_tbl y) j on q1 = y.f1
+
+-- sqlfmt-corpus-separator --
+
+select * from
   int8_tbl x left join (select q1,coalesce(q2,0) q2 from int8_tbl) y on x.q2 = y.q1,
   lateral (select x.q1,y.q1,y.q2) v(xq1,yq1,yq2)
 
@@ -72386,6 +72417,18 @@ left join unnest(v1ys) as u1(u1y) on u1y = v2y
 
 -- sqlfmt-corpus-separator --
 
+select * from
+int4_tbl i0 left join
+( (select *, 123 as x from int4_tbl i1) ss1
+  left join
+  (select *, q2 as x from int8_tbl i2) ss2
+  using (x)
+) ss0
+on (i0.f1 = ss0.f1)
+order by i0.f1, x
+
+-- sqlfmt-corpus-separator --
+
 select * from (
   select max(unique1) from tenk1 as a
   where exists (select 1 from tenk1 as b where b.thousand = a.unique2)
@@ -72397,6 +72440,11 @@ select * from (
   select min(unique1) from tenk1 as a
   where not exists (select 1 from tenk1 as b where b.unique2 = 10000)
 ) ss
+
+-- sqlfmt-corpus-separator --
+
+select * from ((select f1/2 as x from int4_tbl) ss1 join int4_tbl i4 on x = f1) j,
+  lateral (select x) ss2(y)
 
 -- sqlfmt-corpus-separator --
 

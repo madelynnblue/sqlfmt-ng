@@ -1,7 +1,3 @@
-SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM sj j1, sj j2
 WHERE j1.b = j2.b
   AND (j1.a*j1.a) = (EXTRACT(DOW FROM current_timestamp(0))/15 + 3)::int
@@ -13,12 +9,6 @@ SELECT * FROM sj j1, sj j2
 WHERE j1.b = j2.b
   AND j1.a = (EXTRACT(DOW FROM current_timestamp(0))/15 + 3)::int
   AND (EXTRACT(DOW FROM current_timestamp(0))/15 + 3)::int = j2.a
-
--- sqlfmt-corpus-separator --
-
-SELECT ii, tt, kk
-  FROM (J1_TBL CROSS JOIN J2_TBL)
-    AS tx (ii, jj, tt, ii2, kk)
 
 -- sqlfmt-corpus-separator --
 
@@ -36,12 +26,6 @@ SELECT t.oid, t.typname, t.typanalyze
 FROM pg_type t LEFT JOIN pg_range r on t.oid = r.rngtypid
 WHERE t.typbasetype = 0 AND
     (t.typanalyze = 'range_typanalyze'::regproc) != (r.rngtypid IS NOT NULL)
-
--- sqlfmt-corpus-separator --
-
-SELECT tx.ii, tx.jj, tx.kk
-  FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e))
-    AS tx (ii, jj, tt, ii2, kk)
 
 -- sqlfmt-corpus-separator --
 
@@ -322,38 +306,6 @@ insert into t1 (f1[5].q1) values(42)
 
 select * from
   int8_tbl x cross join (int4_tbl x cross join lateral (select x.f1) ss)
-
--- sqlfmt-corpus-separator --
-
-select * from
-  int8_tbl x join (int4_tbl x cross join int4_tbl y(ff)) j on q1 = f1
-
--- sqlfmt-corpus-separator --
-
-select * from
-  int8_tbl x join (int4_tbl x cross join int4_tbl y) j on q1 = f1
-
--- sqlfmt-corpus-separator --
-
-select * from
-  int8_tbl x join (int4_tbl x cross join int4_tbl y) j on q1 = y.f1
-
--- sqlfmt-corpus-separator --
-
-select * from
-int4_tbl i0 left join
-( (select *, 123 as x from int4_tbl i1) ss1
-  left join
-  (select *, q2 as x from int8_tbl i2) ss2
-  using (x)
-) ss0
-on (i0.f1 = ss0.f1)
-order by i0.f1, x
-
--- sqlfmt-corpus-separator --
-
-select * from ((select f1/2 as x from int4_tbl) ss1 join int4_tbl i4 on x = f1) j,
-  lateral (select x) ss2(y)
 
 -- sqlfmt-corpus-separator --
 
