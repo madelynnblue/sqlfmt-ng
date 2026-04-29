@@ -455,6 +455,7 @@ version = "0.1.0"
 dependencies = [
  "mz-sql-parser",
  "sqlfmt-core",
+ "sqlfmt-corpus-tests",
  "sqlfmt-ir",
  "sqlfmt-render",
  "thiserror 1.0.69",
@@ -467,6 +468,7 @@ dependencies = [
  "dialect-postgres-convert",
  "pg_query",
  "sqlfmt-core",
+ "sqlfmt-corpus-tests",
  "sqlfmt-ir",
  "sqlfmt-render",
 ]
@@ -2616,8 +2618,6 @@ dependencies = [
 name = "sqlfmt-corpus-tests"
 version = "0.1.0"
 dependencies = [
- "dialect-materialize",
- "dialect-postgres",
  "serde",
  "serde_json",
  "sqlfmt-core",

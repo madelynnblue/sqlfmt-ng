@@ -12,3 +12,4 @@ pg_query = "5"
 
 [dev-dependencies]
 sqlfmt-render = { path = "../sqlfmt-render" }
+sqlfmt-corpus-tests = { path = "../sqlfmt-corpus-tests" }

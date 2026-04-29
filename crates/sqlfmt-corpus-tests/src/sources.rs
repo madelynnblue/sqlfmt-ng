@@ -2,6 +2,14 @@ use crate::CorpusSource;
 use crate::github::{CorpusFormat, GithubFetcher};
 use std::path::Path;
 
+pub fn all_sources() -> Vec<Box<dyn CorpusSource>> {
+    vec![
+        Box::new(MaterializeCorpus),
+        Box::new(PostgresCorpus),
+        Box::new(CockroachDbCorpus),
+    ]
+}
+
 pub struct MaterializeCorpus;
 pub struct PostgresCorpus;
 pub struct CockroachDbCorpus;
