@@ -1,6 +1,6 @@
 use mz_sql_parser::ast::{
-    Expr, Function, FunctionArgs, Ident, Limit, OrderByExpr, Query, Raw, Select, SelectItem,
-    SelectStatement, SetExpr, Statement, TableAlias, TableFactor, TableWithJoins, Value,
+    Distinct, Expr, Ident, Limit, OrderByExpr, Query, Raw, Select, SelectItem, SelectStatement,
+    SetExpr, Statement, TableAlias, TableFactor, TableWithJoins, Value,
 };
 use sqlfmt_ir::{Clause, Node};
 
@@ -29,10 +29,15 @@ fn query_to_node(query: &Query<Raw>) -> Node {
 fn select_to_node(select: &Select<Raw>, query: &Query<Raw>) -> Node {
     let mut clauses = Vec::new();
 
-    // SELECT [DISTINCT] cols
+    // SELECT [DISTINCT | DISTINCT ON (...)] cols
+    let select_keyword = match &select.distinct {
+        None => "SELECT".into(),
+        Some(Distinct::EntireRow) => "SELECT DISTINCT".into(),
+        Some(d @ Distinct::On(_)) => format!("SELECT {d}"),
+    };
     let cols: Vec<Node> = select.projection.iter().map(select_item_to_node).collect();
     clauses.push(Clause {
-        keyword: "SELECT".into(),
+        keyword: select_keyword,
         body: Some(Box::new(Node::List {
             items: cols,
             separator: None,
@@ -242,7 +247,12 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
             content: Box::new(expr_to_node(e)),
             close: ")".into(),
         },
-        Expr::Function(f) => function_to_node(f),
+        // Use Unformatted for functions: Node::Wrap applies case transformation to
+        // the keyword slot, which corrupts function names that are SQL reserved words
+        // (e.g. `left` → `LEFT` then re-parses as a different quoted identifier).
+        Expr::Function(f) => Node::Unformatted {
+            value: format!("{f}"),
+        },
         Expr::Subquery(q) => Node::Wrap {
             keyword: None,
             open: "(".into(),
@@ -268,28 +278,7 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
     }
 }
 
-fn function_to_node(f: &Function<Raw>) -> Node {
-    match &f.args {
-        FunctionArgs::Star => Node::Wrap {
-            keyword: Some(f.name.to_string()),
-            open: "(".into(),
-            content: Box::new(Node::Text { value: "*".into() }),
-            close: ")".into(),
-        },
-        FunctionArgs::Args { args, .. } => {
-            let arg_nodes: Vec<Node> = args.iter().map(expr_to_node).collect();
-            Node::Wrap {
-                keyword: Some(f.name.to_string()),
-                open: "(".into(),
-                content: Box::new(Node::List {
-                    items: arg_nodes,
-                    separator: None,
-                }),
-                close: ")".into(),
-            }
-        }
-    }
-}
+
 
 fn order_by_expr_to_node(o: &OrderByExpr<Raw>) -> Node {
     let mut items = vec![expr_to_node(&o.expr)];
