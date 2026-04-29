@@ -199,6 +199,16 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(do_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("CreatedbStmt") {
         Some(createdb_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CallStmt") {
+        Some(call_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("DeclareCursorStmt") {
+        Some(declare_cursor_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("DropdbStmt") {
+        Some(dropdb_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("ReindexStmt") {
+        Some(reindex_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CommentStmt") {
+        Some(comment_stmt_to_node(inner))
     } else {
         None
     }
@@ -2121,6 +2131,276 @@ fn createdb_stmt_to_node(stmt: &Value) -> Node {
                 }
             }
         }
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn qualified_name_node(names: &[&str]) -> Node {
+    if names.len() == 1 {
+        ident_node(names[0])
+    } else {
+        Node::Infix {
+            op: ".".into(),
+            items: names.iter().map(|n| ident_node(n)).collect(),
+        }
+    }
+}
+
+fn call_stmt_to_node(stmt: &Value) -> Node {
+    let funccall = &stmt["funccall"];
+    let name_strs: Vec<&str> = funccall["funcname"]
+        .as_array()
+        .map(|arr| arr.iter().filter_map(|n| n["String"]["sval"].as_str()).collect())
+        .unwrap_or_default();
+    let mut items = vec![
+        Node::Keyword {
+            value: "CALL".into(),
+        },
+        Node::Text { value: " ".into() },
+        qualified_name_node(&name_strs),
+    ];
+
+    // Arguments
+    if let Some(args) = funccall["args"].as_array().filter(|a| !a.is_empty()) {
+        let arg_nodes: Vec<Node> = args.iter().map(node_value_to_node).collect();
+        items.push(Node::Text { value: "(".into() });
+        items.push(Node::List {
+            items: arg_nodes,
+            separator: Some(",".into()),
+        });
+        items.push(Node::Text { value: ")".into() });
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+const CURSOR_OPT_BINARY: i64 = 0x0001;
+const CURSOR_OPT_SCROLL: i64 = 0x0002;
+const CURSOR_OPT_NO_SCROLL: i64 = 0x0004;
+const CURSOR_OPT_INSENSITIVE: i64 = 0x0008;
+const CURSOR_OPT_HOLD: i64 = 0x0020;
+
+fn declare_cursor_stmt_to_node(stmt: &Value) -> Node {
+    let name = stmt["portalname"].as_str().unwrap_or("");
+    let mut items = vec![
+        Node::Keyword {
+            value: "DECLARE".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_node(name),
+    ];
+
+    let opts = stmt["options"].as_i64().unwrap_or(0);
+
+    if opts & CURSOR_OPT_INSENSITIVE != 0 {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "INSENSITIVE".into(),
+        });
+    }
+
+    if opts & CURSOR_OPT_SCROLL != 0 {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "SCROLL".into(),
+        });
+    } else if opts & CURSOR_OPT_NO_SCROLL != 0 {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "NO SCROLL".into(),
+        });
+    }
+
+    if opts & CURSOR_OPT_BINARY != 0 {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "BINARY".into(),
+        });
+    }
+
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: "CURSOR".into(),
+    });
+
+    if opts & CURSOR_OPT_HOLD != 0 {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "WITH HOLD".into(),
+        });
+    }
+
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: "FOR".into(),
+    });
+
+    // Query body
+    if let Some(query) = stmt.get("query") {
+        if let Some(body) = stmt_to_node(query) {
+            items.push(Node::Text { value: " ".into() });
+            items.push(body);
+        }
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn dropdb_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![Node::Keyword {
+        value: "DROP DATABASE".into(),
+    }];
+
+    if stmt["missing_ok"].as_bool().unwrap_or(false) {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "IF EXISTS".into(),
+        });
+    }
+
+    let name = stmt["dbname"].as_str().unwrap_or("");
+    items.push(Node::Text { value: " ".into() });
+    items.push(ident_node(name));
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn reindex_stmt_to_node(stmt: &Value) -> Node {
+    let kind = stmt["kind"].as_str().unwrap_or("REINDEX_OBJECT_TABLE");
+    let obj_kw = match kind {
+        "REINDEX_OBJECT_TABLE" => "TABLE",
+        "REINDEX_OBJECT_INDEX" => "INDEX",
+        "REINDEX_OBJECT_SCHEMA" => "SCHEMA",
+        "REINDEX_OBJECT_SYSTEM" => "SYSTEM",
+        "REINDEX_OBJECT_DATABASE" => "DATABASE",
+        _ => "TABLE",
+    };
+
+    let mut items = vec![Node::Keyword {
+        value: "REINDEX".into(),
+    }];
+
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: obj_kw.into(),
+    });
+
+    // CONCURRENTLY (after object keyword, before name)
+    if let Some(params) = stmt["params"].as_array().filter(|a| !a.is_empty()) {
+        for param in params {
+            if let Some(defelem) = param.get("DefElem") {
+                if defelem["defname"].as_str() == Some("concurrently") {
+                    items.push(Node::Text { value: " ".into() });
+                    items.push(Node::Keyword {
+                        value: "CONCURRENTLY".into(),
+                    });
+                }
+            }
+        }
+    }
+
+    // SYSTEM uses "name", other types use "relation"
+    if let Some(relation) = stmt.get("relation").filter(|v| !v.is_null()) {
+        items.push(Node::Text { value: " ".into() });
+        items.push(range_var_to_node(relation));
+    } else if let Some(name) = stmt["name"].as_str() {
+        items.push(Node::Text { value: " ".into() });
+        items.push(ident_node(name));
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn comment_stmt_to_node(stmt: &Value) -> Node {
+    let objtype = stmt["objtype"].as_str().unwrap_or("OBJECT_TABLE");
+    let obj_kw = match objtype {
+        "OBJECT_TABLE" => "TABLE",
+        "OBJECT_COLUMN" => "COLUMN",
+        "OBJECT_INDEX" => "INDEX",
+        "OBJECT_SEQUENCE" => "SEQUENCE",
+        "OBJECT_TYPE" => "TYPE",
+        "OBJECT_DOMAIN" => "DOMAIN",
+        "OBJECT_SCHEMA" => "SCHEMA",
+        "OBJECT_TABLESPACE" => "TABLESPACE",
+        "OBJECT_COLLATION" => "COLLATION",
+        "OBJECT_CONVERSION" => "CONVERSION",
+        "OBJECT_LANGUAGE" => "LANGUAGE",
+        "OBJECT_STATISTIC_EXT" => "STATISTICS",
+        "OBJECT_TRIGGER" => "TRIGGER",
+        "OBJECT_POLICY" => "POLICY",
+        "OBJECT_RULE" => "RULE",
+        "OBJECT_EXTENSION" => "EXTENSION",
+        "OBJECT_EVENT_TRIGGER" => "EVENT TRIGGER",
+        "OBJECT_FUNCTION" => "FUNCTION",
+        "OBJECT_ROUTINE" => "ROUTINE",
+        "OBJECT_DATABASE" => "DATABASE",
+        "OBJECT_ROLE" => "ROLE",
+        "OBJECT_MATVIEW" => "MATERIALIZED VIEW",
+        "OBJECT_FOREIGN_TABLE" => "FOREIGN TABLE",
+        "OBJECT_FDW" => "FOREIGN DATA WRAPPER",
+        "OBJECT_FOREIGN_SERVER" => "SERVER",
+        "OBJECT_OPCLASS" => "OPERATOR CLASS",
+        "OBJECT_OPFAMILY" => "OPERATOR FAMILY",
+        "OBJECT_PUBLICATION" => "PUBLICATION",
+        "OBJECT_SUBSCRIPTION" => "SUBSCRIPTION",
+        "OBJECT_AGGREGATE" => "AGGREGATE",
+        "OBJECT_CAST" => "CAST",
+        "OBJECT_CONSTRAINT" => "CONSTRAINT",
+        "OBJECT_OPERATOR" => "OPERATOR",
+        "OBJECT_LARGEOBJECT" => "LARGE OBJECT",
+        "OBJECT_ACCESS_METHOD" => "ACCESS METHOD",
+        _ => "TABLE",
+    };
+
+    let mut items = vec![
+        Node::Keyword {
+            value: "COMMENT ON".into(),
+        },
+        Node::Text { value: " ".into() },
+        Node::Keyword {
+            value: obj_kw.into(),
+        },
+    ];
+
+    // Object name (may be qualified List or bare String)
+    let object = &stmt["object"];
+    if let Some(list) = object.get("List") {
+        let names: Vec<&str> = list["items"]
+            .as_array()
+            .map(|arr| arr.iter().filter_map(|i| i["String"]["sval"].as_str()).collect())
+            .unwrap_or_default();
+        items.push(Node::Text { value: " ".into() });
+        items.push(qualified_name_node(&names));
+    } else if let Some(sval) = object.get("String").and_then(|s| s["sval"].as_str()) {
+        items.push(Node::Text { value: " ".into() });
+        items.push(ident_node(sval));
+    }
+
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: "IS".into(),
+    });
+
+    if let Some(comment) = stmt["comment"].as_str().filter(|c| !c.is_empty()) {
+        items.push(Node::Text {
+            value: format!(" '{}'", comment),
+        });
+    } else {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "NULL".into(),
+        });
     }
 
     Node::Group {
