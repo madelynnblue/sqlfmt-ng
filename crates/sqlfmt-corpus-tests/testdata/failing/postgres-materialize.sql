@@ -116,42 +116,6 @@ FROM tenk1 ORDER BY unique2 LIMIT 100
 
 -- sqlfmt-corpus-separator --
 
-SELECT ''::text AS eleven, unique1, unique2, stringu1
-		FROM onek WHERE unique1 < 50
-		ORDER BY unique1 DESC LIMIT 20 OFFSET 39
-
--- sqlfmt-corpus-separator --
-
-SELECT ''::text AS five, unique1, unique2, stringu1
-		FROM onek
-		ORDER BY unique1 LIMIT 5 OFFSET 900
-
--- sqlfmt-corpus-separator --
-
-SELECT ''::text AS five, unique1, unique2, stringu1
-		FROM onek
-		ORDER BY unique1 OFFSET 990 LIMIT 5
-
--- sqlfmt-corpus-separator --
-
-SELECT ''::text AS ten, unique1, unique2, stringu1
-		FROM onek
-		ORDER BY unique1 OFFSET 990
-
--- sqlfmt-corpus-separator --
-
-SELECT ''::text AS three, unique1, unique2, stringu1
-		FROM onek WHERE unique1 > 100
-		ORDER BY unique1 LIMIT 3 OFFSET 20
-
--- sqlfmt-corpus-separator --
-
-SELECT ''::text AS zero, unique1, unique2, stringu1
-		FROM onek WHERE unique1 < 50
-		ORDER BY unique1 DESC LIMIT 8 OFFSET 99
-
--- sqlfmt-corpus-separator --
-
 SELECT ''::text::"char"
 
 -- sqlfmt-corpus-separator --
@@ -188,69 +152,6 @@ SELECT 'a'::text::"char"
 
 -- sqlfmt-corpus-separator --
 
-SELECT (SELECT generate_series(1,3) LIMIT 1 OFFSET few.id) FROM few
-
--- sqlfmt-corpus-separator --
-
-SELECT (SELECT generate_series(1,3) LIMIT 1 OFFSET g.i) FROM generate_series(0,3) g(i)
-
--- sqlfmt-corpus-separator --
-
-SELECT *
-  FROM J1_TBL AS t1 (a, b, c)
-
--- sqlfmt-corpus-separator --
-
-SELECT *
-  FROM J1_TBL t1 (a, b, c)
-
--- sqlfmt-corpus-separator --
-
-SELECT *
-  FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM INT2_TBL AS f(a, b)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, generate_series(1,2) FROM (VALUES(1),(2),(3)) r(a) LIMIT 2 OFFSET 2
-
--- sqlfmt-corpus-separator --
-
-SELECT abort_increasing, abort_decreasing FROM abbrev_abort_uuids ORDER BY abort_decreasing NULLS FIRST OFFSET 20000 - 4
-
--- sqlfmt-corpus-separator --
-
-SELECT abort_increasing, abort_decreasing FROM abbrev_abort_uuids ORDER BY abort_increasing OFFSET 20000 - 4
-
--- sqlfmt-corpus-separator --
-
-SELECT ii, tt, kk
-  FROM (J1_TBL CROSS JOIN J2_TBL)
-    AS tx (ii, jj, tt, ii2, kk)
-
--- sqlfmt-corpus-separator --
-
-SELECT noabort_increasing, noabort_decreasing FROM abbrev_abort_uuids ORDER BY noabort_decreasing NULLS FIRST OFFSET 20000 - 4
-
--- sqlfmt-corpus-separator --
-
-SELECT noabort_increasing, noabort_decreasing FROM abbrev_abort_uuids ORDER BY noabort_increasing OFFSET 20000 - 4
-
--- sqlfmt-corpus-separator --
-
-SELECT t1.a, t2.e
-  FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
-  WHERE t1.a = t2.d
-
--- sqlfmt-corpus-separator --
-
 SELECT t1.oid, t1.typname, t1.typalign, t2.typname, t2.typalign
 FROM pg_type AS t1, pg_type AS t2
 WHERE t1.typarray = t2.oid AND
@@ -267,21 +168,6 @@ WHERE t1.typtype = 'r' AND
     (t1.typalign != (CASE WHEN t2.typalign = 'd' THEN 'd'::"char"
                           ELSE 'i'::"char" END)
      OR t2.oid IS NULL)
-
--- sqlfmt-corpus-separator --
-
-SELECT tx.ii, tx.jj, tx.kk
-  FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e))
-    AS tx (ii, jj, tt, ii2, kk)
-
--- sqlfmt-corpus-separator --
-
-SELECT unique1 FROM tenk1 t0
-WHERE unique1 < 3
-  AND EXISTS (
-	SELECT 1 FROM tenk1 t1
-	INNER JOIN tenk1 t2 ON t1.unique1 = t2.hundred
-	WHERE t0.ten = t1.twenty AND t0.two <> t2.four OFFSET 0)
 
 -- sqlfmt-corpus-separator --
 
@@ -585,23 +471,9 @@ from int4_tbl
 
 -- sqlfmt-corpus-separator --
 
-select * from int8_tbl offset (case when random() < 0.5 then null::bigint end)
-
--- sqlfmt-corpus-separator --
-
-select avg((select avg(a1.col1 order by (select avg(a2.col2) from tenk1 a3))
-            from tenk1 a1(col1)))
-from tenk1 a2(col2)
-
--- sqlfmt-corpus-separator --
-
 select f1, (with cte1(x,y) as (select 1,2)
             select count((select i4.f1 from cte1))) as ss
 from int4_tbl i4
-
--- sqlfmt-corpus-separator --
-
-select row_to_json(i) from int8_tbl i(x,y)
 
 -- sqlfmt-corpus-separator --
 

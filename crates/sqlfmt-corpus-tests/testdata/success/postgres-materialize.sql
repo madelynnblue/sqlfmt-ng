@@ -76,6 +76,50 @@ FROM (VALUES (NULL::interval),
 
 -- sqlfmt-corpus-separator --
 
+SELECT ''::text AS eleven, unique1, unique2, stringu1
+		FROM onek WHERE unique1 < 50
+		ORDER BY unique1 DESC LIMIT 20 OFFSET 39
+
+-- sqlfmt-corpus-separator --
+
+SELECT ''::text AS five, unique1, unique2, stringu1
+		FROM onek
+		ORDER BY unique1 LIMIT 5 OFFSET 900
+
+-- sqlfmt-corpus-separator --
+
+SELECT ''::text AS five, unique1, unique2, stringu1
+		FROM onek
+		ORDER BY unique1 OFFSET 990 LIMIT 5
+
+-- sqlfmt-corpus-separator --
+
+SELECT ''::text AS ten, unique1, unique2, stringu1
+		FROM onek
+		ORDER BY unique1 OFFSET 990
+
+-- sqlfmt-corpus-separator --
+
+SELECT ''::text AS three, unique1, unique2, stringu1
+		FROM onek WHERE unique1 > 100
+		ORDER BY unique1 LIMIT 3 OFFSET 20
+
+-- sqlfmt-corpus-separator --
+
+SELECT ''::text AS zero, unique1, unique2, stringu1
+		FROM onek WHERE unique1 < 50
+		ORDER BY unique1 DESC LIMIT 8 OFFSET 99
+
+-- sqlfmt-corpus-separator --
+
+SELECT (SELECT generate_series(1,3) LIMIT 1 OFFSET few.id) FROM few
+
+-- sqlfmt-corpus-separator --
+
+SELECT (SELECT generate_series(1,3) LIMIT 1 OFFSET g.i) FROM generate_series(0,3) g(i)
+
+-- sqlfmt-corpus-separator --
+
 SELECT (count(*) FILTER (WHERE r < -2104533975)) > 0 AS has_small,
        (count(*) FILTER (WHERE r > 2104533974)) > 0 AS has_large
 FROM (SELECT random(-2147483648, 2147483647) r FROM generate_series(1, 2000)) ss
@@ -86,6 +130,29 @@ SELECT (count(*) FILTER (WHERE r < -9038904596117680292)) > 0 AS has_small,
        (count(*) FILTER (WHERE r > 9038904596117680291)) > 0 AS has_large
 FROM (SELECT random(-9223372036854775808, 9223372036854775807) r
       FROM generate_series(1, 2000)) ss
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+  FROM J1_TBL AS t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+  FROM J1_TBL t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+  FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM INT2_TBL AS f(a, b)
 
 -- sqlfmt-corpus-separator --
 
@@ -559,7 +626,19 @@ FROM (VALUES(1,1::numeric),(2,2),(3,'NaN'),(4,3),(5,4)) t(a,b)
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, generate_series(1,2) FROM (VALUES(1),(2),(3)) r(a) LIMIT 2 OFFSET 2
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, sum(b), array_agg(distinct c), count(*) FROM pagg_tab_ml GROUP BY a HAVING avg(b) < 3 ORDER BY 1, 2, 3
+
+-- sqlfmt-corpus-separator --
+
+SELECT abort_increasing, abort_decreasing FROM abbrev_abort_uuids ORDER BY abort_decreasing NULLS FIRST OFFSET 20000 - 4
+
+-- sqlfmt-corpus-separator --
+
+SELECT abort_increasing, abort_decreasing FROM abbrev_abort_uuids ORDER BY abort_increasing OFFSET 20000 - 4
 
 -- sqlfmt-corpus-separator --
 
@@ -869,6 +948,12 @@ SELECT id,lag(id) OVER(), count(*) OVER(), generate_series(1,3) FROM few
 
 -- sqlfmt-corpus-separator --
 
+SELECT ii, tt, kk
+  FROM (J1_TBL CROSS JOIN J2_TBL)
+    AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
 SELECT json_agg(q ORDER BY x NULLS FIRST, y)
   FROM rows q
 
@@ -959,6 +1044,14 @@ SELECT min(x ORDER BY y) FROM (VALUES(1, 2)) AS d(x,y)
 -- sqlfmt-corpus-separator --
 
 SELECT min(x ORDER BY y) FROM (VALUES(1, NULL)) AS d(x,y)
+
+-- sqlfmt-corpus-separator --
+
+SELECT noabort_increasing, noabort_decreasing FROM abbrev_abort_uuids ORDER BY noabort_decreasing NULLS FIRST OFFSET 20000 - 4
+
+-- sqlfmt-corpus-separator --
+
+SELECT noabort_increasing, noabort_decreasing FROM abbrev_abort_uuids ORDER BY noabort_increasing OFFSET 20000 - 4
 
 -- sqlfmt-corpus-separator --
 
@@ -1215,6 +1308,12 @@ FROM tenk1 WHERE unique1 < 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT t1.a, t2.e
+  FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
+  WHERE t1.a = t2.d
+
+-- sqlfmt-corpus-separator --
+
 SELECT ten, two, sum(hundred) AS gsum, sum(sum(hundred)) OVER (PARTITION BY two ORDER BY ten) AS wsum
 FROM tenk1 GROUP BY ten, two
 
@@ -1222,6 +1321,21 @@ FROM tenk1 GROUP BY ten, two
 
 SELECT to_char(SUM(n::float8) OVER (ORDER BY i ROWS BETWEEN CURRENT ROW AND 1 FOLLOWING),'999999999999999999999D9')
   FROM (VALUES(1,1e20),(2,1)) n(i,n)
+
+-- sqlfmt-corpus-separator --
+
+SELECT tx.ii, tx.jj, tx.kk
+  FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e))
+    AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
+SELECT unique1 FROM tenk1 t0
+WHERE unique1 < 3
+  AND EXISTS (
+	SELECT 1 FROM tenk1 t1
+	INNER JOIN tenk1 t2 ON t1.unique1 = t2.hundred
+	WHERE t0.ten = t1.twenty AND t0.two <> t2.four OFFSET 0)
 
 -- sqlfmt-corpus-separator --
 
@@ -1414,6 +1528,10 @@ select (select max(unique1) filter (where sum(ten) > 0) from int8_tbl) from tenk
 
 -- sqlfmt-corpus-separator --
 
+select * from int8_tbl offset (case when random() < 0.5 then null::bigint end)
+
+-- sqlfmt-corpus-separator --
+
 select a, b, sum(c), sum(sum(c)) over (order by a,b) as rsum
   from gstest2 group by cube (a,b) order by rsum, a, b
 
@@ -1525,6 +1643,12 @@ select array_agg(distinct ar order by ar desc)
 
 select array_agg(distinct val)
 from (select null as val from generate_series(1, 2))
+
+-- sqlfmt-corpus-separator --
+
+select avg((select avg(a1.col1 order by (select avg(a2.col2) from tenk1 a3))
+            from tenk1 a1(col1)))
+from tenk1 a2(col2)
 
 -- sqlfmt-corpus-separator --
 
@@ -1735,6 +1859,10 @@ select my_avg(distinct one),my_sum(one) from (values(1),(3)) t(one)
 -- sqlfmt-corpus-separator --
 
 select my_avg(one) filter (where one > 1),my_sum(one) from (values(1),(3)) t(one)
+
+-- sqlfmt-corpus-separator --
+
+select row_to_json(i) from int8_tbl i(x,y)
 
 -- sqlfmt-corpus-separator --
 

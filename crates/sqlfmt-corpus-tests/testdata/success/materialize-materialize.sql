@@ -1060,6 +1060,30 @@ ORDER BY x-y, x;
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'x' AS "xxx", * FROM J1_TBL AS t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", ii, tt, kk FROM (J1_TBL CROSS JOIN J2_TBL) AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", tx.ii, tx.jj, tx.kk FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e)) AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
 SELECT (SELECT DISTINCT ON (a) a FROM abc ORDER BY a, b||'foo') || 'bar';
 
 -- sqlfmt-corpus-separator --
@@ -1097,6 +1121,155 @@ FROM c ORDER BY c_id
 
 -- sqlfmt-corpus-separator --
 
+SELECT *
+FROM (
+  SELECT x, unnest(l) AS u
+  FROM (
+    SELECT x, array_agg(y) OVER (PARTITION BY x%5) AS l
+    FROM t7
+  ) AS ff1
+)
+QUALIFY x-lag(x) OVER (ORDER BY x) = 0 AND lag(x) OVER (ORDER BY x) - lag(lag(x) OVER (ORDER BY x)) OVER (ORDER BY x) = 0
+ORDER BY x,u;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM (SELECT * FROM t6 UNION ALL SELECT * FROM t6)
+QUALIFY sum(x) OVER (ORDER BY y) = 26;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t
+QUALIFY row_number();
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t6
+QUALIFY row_number() OVER (PARTITION BY x%3 ORDER BY y) = 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t6
+QUALIFY sum(x) OVER (ORDER BY y) = 26;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (SELECT * FROM xyzw LIMIT 5) OFFSET 5
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab AS foo (foo1, foo2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.c = 6
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo1 = 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo2 = 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2, foo3, foo4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF 'xxx';
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF -1::numeric;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF -1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF 1.2;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF 192741824E4::numeric;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF 1E38;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF 7/0;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF LIST[7,8,9];
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF NULL::numeric;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF a;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF current_database()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF current_database()::mz_timestamp
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF mz_now();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data ORDER BY a, b AS OF AT LEAST 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM events AS OF 0
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM events AS OF 100
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM events AS OF 101
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM kv GROUP BY v, count(DISTINCT w)
 
 -- sqlfmt-corpus-separator --
@@ -1107,6 +1280,58 @@ SELECT * FROM not_allowed_tests GROUP BY v, count(w) OVER ();
 
 SELECT * FROM t
 WHERE row_number() over () > 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t AS OF 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t AS OF AT LEAST 1683131452106;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t1 LIMIT 1 OFFSET 0;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t1 LIMIT 1 OFFSET 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw LIMIT (random() * 0.0)::int OFFSET (random() * 0.0)::int
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET -100
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET 1 + y
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET 1.5
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET 9223372036854775808
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY x LIMIT 1 OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY x OFFSET 1 + 0.0
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY y OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY y OFFSET 1 LIMIT 1
 
 -- sqlfmt-corpus-separator --
 
@@ -1175,6 +1400,30 @@ ORDER BY len, row_num;
 
 -- sqlfmt-corpus-separator --
 
+SELECT *, sum(x-9) OVER (ORDER BY x, u)
+FROM
+(
+  SELECT DISTINCT *
+  FROM (
+    SELECT x, unnest(l) AS u
+    FROM (
+      SELECT x, array_agg(y) OVER (PARTITION BY x%5) AS l
+      FROM t7
+    ) AS ff1
+  )
+  QUALIFY x-lag(x) OVER (ORDER BY x) = 0 AND lag(x) OVER (ORDER BY x) - lag(lag(x) OVER (ORDER BY x)) OVER (ORDER BY x) = 0
+)
+QUALIFY sum(x-9) OVER (ORDER BY x, u) > -6
+ORDER BY x,u;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, x%3, row_number() OVER (PARTITION BY x%3 ORDER BY y)
+FROM t6
+QUALIFY row_number() OVER (PARTITION BY x%3 ORDER BY y) = 1;
+
+-- sqlfmt-corpus-separator --
+
 SELECT -sum(foo.a), b
 FROM foo LEFT JOIN (SELECT a as right_a FROM foo WHERE a<2) ON foo.a = right_a
 GROUP BY b, right_a
@@ -1197,6 +1446,10 @@ ORDER BY a;
 SELECT 1 + lag(a, 1, 0) OVER (ORDER BY a), lead(a) OVER (ORDER BY b) AS o, a, b
 FROM foo
 ORDER BY 1 + lag(a, 1, 0) OVER (ORDER BY a), o DESC;
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 AS OF NULL::timestamp;
 
 -- sqlfmt-corpus-separator --
 
@@ -1613,6 +1866,10 @@ SELECT DISTINCT(privilege) FROM item_privileges WHERE type = 'view' OR type = 'm
 
 -- sqlfmt-corpus-separator --
 
+SELECT a FROM abc ORDER BY a DESC OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT a FROM foo
 ORDER BY lag(a) OVER (ORDER BY -a NULLS FIRST) DESC NULLS LAST;
 
@@ -2017,6 +2274,14 @@ ORDER BY d;
 
 -- sqlfmt-corpus-separator --
 
+SELECT a,b
+FROM t1
+WHERE a IN (4,3,2,1)
+ORDER BY -a, b
+LIMIT 3 OFFSET 1;
+
+-- sqlfmt-corpus-separator --
+
 SELECT a.*, ROW_NUMBER() OVER() FROM (SELECT * FROM (SELECT 'a' as x UNION ALL SELECT 'b' as x) ORDER BY x limit 1) a
 
 -- sqlfmt-corpus-separator --
@@ -2037,6 +2302,14 @@ SELECT a.*, ROW_NUMBER() over () FROM (SELECT * FROM a ORDER BY x) a
 
 -- sqlfmt-corpus-separator --
 
+SELECT abc.b FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT abc.foo1 FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
 SELECT abs(1) FILTER (WHERE false)
 
 -- sqlfmt-corpus-separator --
@@ -2054,6 +2327,107 @@ SELECT array_agg(a) FILTER (WHERE a IS NULL) FROM t1
 -- sqlfmt-corpus-separator --
 
 SELECT array_agg(b ORDER BY b ASC), array_agg(b ORDER BY b DESC), bool_or(b IS NOT NULL) FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT avg(u)
+FROM (
+  SELECT x, unnest(l) AS u
+  FROM (
+    SELECT x, array_agg(y) OVER (PARTITION BY x%5) AS l
+    FROM t7
+  ) AS ff1
+) AS ff2
+GROUP BY x%5
+QUALIFY sum(avg(u)) OVER (ORDER BY x%5) = -15
+ORDER BY x%5;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b || a
+FROM mv1
+OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT b || a
+FROM mv1
+OFFSET 2 - 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT b || a
+FROM v1
+OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT b || a
+FROM v1
+OFFSET 2 - 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, (SELECT val1 FROM baz WHERE val2 = a ORDER BY val1 limit 1 offset 1 rows) c
+FROM fizz ORDER BY b, c DESC
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+FETCH FIRST 2 ROWS ONLY OFFSET 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+LIMIT 2 OFFSET 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+OFFSET 1
+FETCH FIRST 1 ROWS ONLY;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+OFFSET 1
+FETCH NEXT 1 ROWS ONLY;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+OFFSET 1 LIMIT 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+OFFSET 1 ROW LIMIT 3;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+OFFSET 1 ROWS LIMIT 3;
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, a
+FROM foo
+ORDER BY b
+OFFSET 1;
 
 -- sqlfmt-corpus-separator --
 
@@ -2196,6 +2570,10 @@ ORDER BY company_id, id;
 
 -- sqlfmt-corpus-separator --
 
+SELECT count(*) = 2 FROM t AS OF AT LEAST 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT count(DISTINCT (v)) FROM kv
 
 -- sqlfmt-corpus-separator --
@@ -2217,6 +2595,14 @@ SELECT count(DISTINCT w) FROM kv GROUP BY 1
 -- sqlfmt-corpus-separator --
 
 SELECT count(w) OVER () FROM not_allowed_tests GROUP BY 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_database() AS OF 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_database() AS OF AT LEAST 1;
 
 -- sqlfmt-corpus-separator --
 
@@ -3849,6 +4235,18 @@ ORDER BY 1, 2
 
 -- sqlfmt-corpus-separator --
 
+SELECT foo.a FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT foo1, foo.foo1, b, foo.c FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT generate_series FROM generate_series(1, 100) ORDER BY generate_series OFFSET 3 ROWS FETCH NEXT ROW ONLY;
+
+-- sqlfmt-corpus-separator --
+
 SELECT generate_series(DISTINCT 1, 1)
 
 -- sqlfmt-corpus-separator --
@@ -3870,6 +4268,30 @@ SELECT k FROM not_allowed_tests WHERE avg(k) OVER () > 1;
 -- sqlfmt-corpus-separator --
 
 SELECT k, abs(k) FILTER (WHERE k=1) FROM kv
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY k LIMIT (SELECT count(*)-3 FROM t) OFFSET (SELECT count(*)-5 FROM t)
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY k LIMIT length(pg_typeof(123)) OFFSET length(pg_typeof(123))-2
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY k OFFSET (SELECT count(*)-3 FROM t)
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY k OFFSET 5
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY v DESC LIMIT (1+4) OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY v LIMIT (1+4) OFFSET 1
 
 -- sqlfmt-corpus-separator --
 
@@ -4044,6 +4466,14 @@ SELECT length(s), count(DISTINCT k), count(DISTINCT v), count(DISTINCT (v)) FROM
 -- sqlfmt-corpus-separator --
 
 SELECT list_agg(a ORDER BY (SELECT * FROM t2)) FROM t2
+
+-- sqlfmt-corpus-separator --
+
+SELECT mz_now() AS OF 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() AS OF 1;
 
 -- sqlfmt-corpus-separator --
 
@@ -4398,6 +4828,14 @@ SELECT sum(sum(x)) OVER (ORDER BY y) FROM t7 GROUP BY y;
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(v) FROM kv GROUP BY k LIMIT 1 OFFSET sum(v)
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(v) FROM not_allowed_tests GROUP BY k LIMIT 1 OFFSET sum(v) OVER ();
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(v) FROM not_allowed_tests GROUP BY k LIMIT sum(v) OVER ();
 
 -- sqlfmt-corpus-separator --
@@ -4423,6 +4861,35 @@ SELECT v, mark, count(*) FILTER (WHERE k > 5), count(*), max(k) FILTER (WHERE k 
 -- sqlfmt-corpus-separator --
 
 SELECT v, variance(k) FILTER (WHERE k > 5), stddev(k) FILTER (WHERE k > 5) FROM filter_test GROUP BY v
+
+-- sqlfmt-corpus-separator --
+
+SELECT value from numbers LIMIT 10 OFFSET 6;
+
+-- sqlfmt-corpus-separator --
+
+select
+  subq_0."c2" as c0,
+  (select "id" from mz_introspection.mz_records_per_dataflow limit 1 offset 62)
+     as c1,
+  subq_0."c2" as c2
+from
+  (select
+        ref_0."id" as c0,
+        ref_0."name" as c1,
+        (select "count" from mz_introspection.mz_scheduling_parks_histogram_per_worker limit 1 offset 3)
+           as c2,
+        ref_0."name" as c3,
+        ref_0."records" as c4,
+        ref_0."batches" as c5
+      from
+        mz_introspection.mz_dataflow_arrangement_sizes as ref_0
+      where pg_catalog.date(
+          CAST((select "updated_at" from mz_internal.mz_cluster_replica_statuses limit 1 offset 5)
+             as timestamptz)) < (select "o_orderdate" from public.orders limit 1 offset 1)
+      limit 140) as subq_0
+where subq_0."c5" > subq_0."c5"
+limit 21;
 
 -- sqlfmt-corpus-separator --
 
@@ -4489,6 +4956,30 @@ select
   lag(y, null) ignore nulls over (partition by x%4 order by x) as lag_literal_null_offset
 from t6
 order by x%4, x;
+
+-- sqlfmt-corpus-separator --
+
+select * from valid AS OF 11;
+
+-- sqlfmt-corpus-separator --
+
+select * from valid AS OF 14;
+
+-- sqlfmt-corpus-separator --
+
+select * from valid AS OF 18446744073709551614;
+
+-- sqlfmt-corpus-separator --
+
+select * from valid AS OF 2;
+
+-- sqlfmt-corpus-separator --
+
+select * from valid AS OF 3;
+
+-- sqlfmt-corpus-separator --
+
+select * from valid_max AS OF 0
 
 -- sqlfmt-corpus-separator --
 

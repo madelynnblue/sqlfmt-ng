@@ -379,6 +379,17 @@ FROM
 -- sqlfmt-corpus-separator --
 
 SELECT
+    pk, pk2, a, b, crdb_region
+FROM
+    regional_by_row_table
+LIMIT
+    1
+OFFSET
+    4
+
+-- sqlfmt-corpus-separator --
+
+SELECT
     row_number() OVER (PARTITION BY s)
 FROM
     (SELECT sum(a) AS s FROM (SELECT a FROM x UNION ALL SELECT a FROM x) GROUP BY a)
@@ -554,6 +565,30 @@ SELECT "reportingID",
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'x' AS "xxx", * FROM J1_TBL AS t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", * FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", ii, tt, kk FROM (J1_TBL CROSS JOIN J2_TBL) AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", t1.a, t2.e FROM J1_TBL t1 (a, b, c), J2_TBL t2 (d, e) WHERE t1.a = t2.d
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'x' AS "xxx", tx.ii, tx.jj, tx.kk FROM (J1_TBL t1 (a, b, c) CROSS JOIN J2_TBL t2 (d, e)) AS tx (ii, jj, tt, ii2, kk)
+
+-- sqlfmt-corpus-separator --
+
 SELECT (1/j) * max(i) * (row_number() OVER (ORDER BY max(i))) FROM (SELECT 1 AS i, 2 AS j) GROUP BY j
 
 -- sqlfmt-corpus-separator --
@@ -578,7 +613,59 @@ SELECT (avg(d) OVER (PARTITION BY v ORDER BY w) + avg(d) OVER (PARTITION BY w OR
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (SELECT * FROM xyzw LIMIT 5) OFFSET 5
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (SELECT k, d, v, stddev(d) OVER (PARTITION BY v) FROM kv) sub ORDER BY variance(d) OVER (PARTITION BY v), k
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (SELECT y FROM NumToStr LIMIT 3) AS a ORDER BY y OFFSET 3
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (select * from generate_series(1,10) a LIMIT 5) OFFSET 3
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (select * from generate_series(1,10) a LIMIT 5) OFFSET 6
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab AS foo (foo1, foo2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.c = 6
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo1 = 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2) WHERE foo.foo2 = 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM abc AS foo (foo1, foo2, foo3, foo4)
 
 -- sqlfmt-corpus-separator --
 
@@ -587,6 +674,54 @@ SELECT * FROM kv GROUP BY v, count(DISTINCT w)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM kv GROUP BY v, count(w) OVER ()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t OFFSET generate_series(1, 3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t65171 WHERE x = 1 OFFSET 1 LIMIT 9223372036854775807
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t_42816 ORDER BY a OFFSET 1020 LIMIT 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw LIMIT (random() * 0.0)::int OFFSET (random() * 0.0)::int
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET -100
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET 1 + y
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET 1.5
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw OFFSET 9223372036854775808
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY x LIMIT 1 OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY x OFFSET 1 + 0.0
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY y OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw ORDER BY y OFFSET 1 LIMIT 1
 
 -- sqlfmt-corpus-separator --
 
@@ -1018,6 +1153,90 @@ SELECT ST_AsText(ST_MemCollect(geom ORDER BY geom)) FROM geo_table
 
 -- sqlfmt-corpus-separator --
 
+SELECT a FROM abc ORDER BY a DESC OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'large') OFFSET (SELECT v FROM vals WHERE k = 'large');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'large') OFFSET (SELECT v FROM vals WHERE k = 'maxint64');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'large') OFFSET (SELECT v FROM vals WHERE k = 'one');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'large') OFFSET (SELECT v FROM vals WHERE k = 'zero');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'maxint64') OFFSET (SELECT v FROM vals WHERE k = 'large');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'maxint64') OFFSET (SELECT v FROM vals WHERE k = 'maxint64');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'maxint64') OFFSET (SELECT v FROM vals WHERE k = 'one');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'maxint64') OFFSET (SELECT v FROM vals WHERE k = 'zero');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'one') OFFSET (SELECT v FROM vals WHERE k = 'large');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'one') OFFSET (SELECT v FROM vals WHERE k = 'maxint64');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'one') OFFSET (SELECT v FROM vals WHERE k = 'one');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'one') OFFSET (SELECT v FROM vals WHERE k = 'zero');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'zero') OFFSET (SELECT v FROM vals WHERE k = 'large');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'zero') OFFSET (SELECT v FROM vals WHERE k = 'maxint64');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'zero') OFFSET (SELECT v FROM vals WHERE k = 'one');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a LIMIT (SELECT v FROM vals WHERE k = 'zero') OFFSET (SELECT v FROM vals WHERE k = 'zero');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a OFFSET (SELECT v FROM vals WHERE k = 'large');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a OFFSET (SELECT v FROM vals WHERE k = 'maxint64');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a OFFSET (SELECT v FROM vals WHERE k = 'one');
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM probe ORDER BY a OFFSET (SELECT v FROM vals WHERE k = 'zero');
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, b - lag(b, 1) OVER (ORDER BY a) FROM t ORDER BY a;
 
 -- sqlfmt-corpus-separator --
@@ -1103,6 +1322,18 @@ SELECT a, b, sum(b) OVER (ROWS 0 PRECEDING) FROM t ORDER BY a
 -- sqlfmt-corpus-separator --
 
 SELECT a, json_agg(a) OVER (ORDER BY a) FROM x ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+SELECT ab.rowid FROM ab AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT abc.b FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT abc.foo1 FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
 
@@ -1480,6 +1711,10 @@ SELECT corr(DISTINCT y, x), count(y) FROM t55837
 
 -- sqlfmt-corpus-separator --
 
+SELECT count((k, v)) FROM kv OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT count(*) FILTER (WHERE 1) OVER () FROM products
 
 -- sqlfmt-corpus-separator --
@@ -1632,6 +1867,18 @@ SELECT distinct(st_astext(geom)) FROM
 -- sqlfmt-corpus-separator --
 
 SELECT final_variance(1.2, 1.2, 123) OVER (PARTITION BY k) FROM kv
+
+-- sqlfmt-corpus-separator --
+
+SELECT foo.a FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT foo1, foo.foo1, b, foo.c FROM abc AS foo (foo1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT generate_series FROM generate_series(1, 100) ORDER BY generate_series OFFSET 3 ROWS FETCH NEXT ROW ONLY;
 
 -- sqlfmt-corpus-separator --
 
@@ -2178,6 +2425,30 @@ SELECT k, sum(d) OVER (PARTITION BY v ORDER BY w) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
+SELECT k, v FROM t ORDER BY k LIMIT (SELECT count(*)-3 FROM t) OFFSET (SELECT count(*)-5 FROM t)
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY k LIMIT length(pg_typeof(123)) OFFSET length(pg_typeof(123))-2
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY k OFFSET (SELECT count(*)-3 FROM t)
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY k OFFSET 5
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY v DESC LIMIT (1+4) OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v FROM t ORDER BY v LIMIT (1+4) OFFSET 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT k, v, cume_dist() OVER (PARTITION BY v) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
@@ -2449,6 +2720,10 @@ SELECT round(avg(k) OVER (PARTITION BY v ORDER BY w)) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
+SELECT rowid, foo.rowid FROM ab AS foo (foo1, foo2)
+
+-- sqlfmt-corpus-separator --
+
 SELECT st_asmvt(NULL, NULL), array_agg(a ORDER BY a) FROM mvt_null_test
 
 -- sqlfmt-corpus-separator --
@@ -2521,6 +2796,14 @@ SELECT sum(price) OVER (RANGE 100 PRECEDING) FROM products
 
 -- sqlfmt-corpus-separator --
 
+SELECT sum(v) FROM kv GROUP BY k LIMIT 1 OFFSET sum(v)
+
+-- sqlfmt-corpus-separator --
+
+SELECT sum(v) FROM kv GROUP BY k LIMIT 1 OFFSET sum(v) OVER ()
+
+-- sqlfmt-corpus-separator --
+
 SELECT sum(v) FROM kv GROUP BY k LIMIT sum(v) OVER ()
 
 -- sqlfmt-corpus-separator --
@@ -2561,6 +2844,10 @@ HAVING every(true)
 
 -- sqlfmt-corpus-separator --
 
+SELECT x FROM xyz ORDER BY x OFFSET (SELECT x FROM xyz WHERE x = 1)
+
+-- sqlfmt-corpus-separator --
+
 SELECT x,
        sqrdiff(x) OVER (ORDER BY x) as sqrdiff,
        var_pop(x) OVER (ORDER BY x) as var_pop,
@@ -2577,3 +2864,7 @@ SELECT x, jsonb_agg(DISTINCT jsonb_build_object('y', y, 'z', z)) FROM (SELECT * 
 -- sqlfmt-corpus-separator --
 
 SELECT x, y, first_value(y) OVER (PARTITION BY x ROWS BETWEEN CURRENT ROW AND CURRENT ROW) FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT y FROM NumToStr ORDER BY y OFFSET 5 LIMIT 2

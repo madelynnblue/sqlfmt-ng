@@ -1,5 +1,5 @@
 use mz_sql_parser::ast::{
-    Distinct, Expr, Ident, Limit, OrderByExpr, Query, Raw, Select, SelectItem, SelectStatement,
+    AsOf, Distinct, Expr, Ident, OrderByExpr, Query, Raw, Select, SelectItem, SelectStatement,
     SetExpr, Statement, TableAlias, TableFactor, TableWithJoins, Value,
 };
 use sqlfmt_ir::{Clause, Node};
@@ -14,7 +14,25 @@ pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
 }
 
 fn select_stmt_to_node(s: &SelectStatement<Raw>) -> Node {
-    query_to_node(&s.query)
+    let SelectStatement { query, as_of } = s;
+    match as_of {
+        None => query_to_node(query),
+        Some(as_of) => {
+            let mut node = query_to_node(query);
+            // Append AS OF clause to the structured clauses node if possible.
+            if let Node::Clauses { items } = &mut node {
+                let (kw, expr) = match as_of {
+                    AsOf::At(expr) => ("AS OF", expr),
+                    AsOf::AtLeast(expr) => ("AS OF AT LEAST", expr),
+                };
+                items.push(Clause {
+                    keyword: kw.into(),
+                    body: Some(Box::new(expr_to_node(expr))),
+                });
+            }
+            node
+        }
+    }
 }
 
 fn query_to_node(query: &Query<Raw>) -> Node {
@@ -84,6 +102,14 @@ fn select_to_node(select: &Select<Raw>, query: &Query<Raw>) -> Node {
         });
     }
 
+    // QUALIFY (Materialize extension)
+    if let Some(qualify) = &select.qualify {
+        clauses.push(Clause {
+            keyword: "QUALIFY".into(),
+            body: Some(Box::new(expr_to_node(qualify))),
+        });
+    }
+
     // ORDER BY (lives on Query, not Select)
     if !query.order_by.is_empty() {
         let order_items: Vec<Node> = query.order_by.iter().map(order_by_expr_to_node).collect();
@@ -96,12 +122,50 @@ fn select_to_node(select: &Select<Raw>, query: &Query<Raw>) -> Node {
         });
     }
 
-    // LIMIT
-    if let Some(limit) = &query.limit {
-        clauses.push(Clause {
-            keyword: "LIMIT".into(),
-            body: Some(Box::new(limit_to_node(limit))),
-        });
+    // LIMIT / FETCH FIRST / OFFSET
+    // The ordering follows the Materialize AST Display:
+    //   - non-WITH TIES: LIMIT n [OFFSET m]
+    //   - WITH TIES:     [OFFSET m] FETCH FIRST n ROWS WITH TIES
+    match (&query.limit, &query.offset) {
+        (None, None) => {}
+        (None, Some(offset)) => {
+            clauses.push(Clause {
+                keyword: "OFFSET".into(),
+                body: Some(Box::new(expr_to_node(offset))),
+            });
+        }
+        (Some(limit), offset) if limit.with_ties => {
+            if let Some(off) = offset {
+                clauses.push(Clause {
+                    keyword: "OFFSET".into(),
+                    body: Some(Box::new(expr_to_node(off))),
+                });
+            }
+            clauses.push(Clause {
+                keyword: "FETCH FIRST".into(),
+                body: Some(Box::new(Node::Concat {
+                    items: vec![
+                        expr_to_node(&limit.quantity),
+                        Node::Text { value: " ".into() },
+                        Node::Keyword {
+                            value: "ROWS WITH TIES".into(),
+                        },
+                    ],
+                })),
+            });
+        }
+        (Some(limit), offset) => {
+            clauses.push(Clause {
+                keyword: "LIMIT".into(),
+                body: Some(Box::new(expr_to_node(&limit.quantity))),
+            });
+            if let Some(off) = offset {
+                clauses.push(Clause {
+                    keyword: "OFFSET".into(),
+                    body: Some(Box::new(expr_to_node(off))),
+                });
+            }
+        }
     }
 
     Node::Clauses { items: clauses }
@@ -173,15 +237,27 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
 }
 
 fn with_alias(node: Node, alias: &TableAlias) -> Node {
-    Node::Concat {
-        items: vec![
-            node,
-            Node::Text { value: " ".into() },
-            Node::Keyword { value: "AS".into() },
-            Node::Text { value: " ".into() },
-            ident_to_node(&alias.name),
-        ],
+    let TableAlias { name, columns, strict: _ } = alias;
+    let mut items = vec![
+        node,
+        Node::Text { value: " ".into() },
+        Node::Keyword { value: "AS".into() },
+        Node::Text { value: " ".into() },
+        ident_to_node(name),
+    ];
+    if !columns.is_empty() {
+        let col_nodes: Vec<Node> = columns.iter().map(ident_to_node).collect();
+        items.push(Node::Wrap {
+            keyword: None,
+            open: " (".into(),
+            content: Box::new(Node::List {
+                items: col_nodes,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
     }
+    Node::Concat { items }
 }
 
 fn expr_to_node(expr: &Expr<Raw>) -> Node {
@@ -305,22 +381,6 @@ fn order_by_expr_to_node(o: &OrderByExpr<Raw>) -> Node {
     }
 }
 
-fn limit_to_node(limit: &Limit<Raw>) -> Node {
-    let quantity = expr_to_node(&limit.quantity);
-    if limit.with_ties {
-        Node::Concat {
-            items: vec![
-                quantity,
-                Node::Text { value: " ".into() },
-                Node::Keyword {
-                    value: "WITH TIES".into(),
-                },
-            ],
-        }
-    } else {
-        quantity
-    }
-}
 
 fn ident_to_node(ident: &Ident) -> Node {
     Node::Identifier {
