@@ -179,6 +179,26 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(listen_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("NotifyStmt") {
         Some(notify_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("TransactionStmt") {
+        Some(transaction_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("VariableSetStmt") {
+        Some(variable_set_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("VariableShowStmt") {
+        Some(variable_show_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("VacuumStmt") {
+        Some(vacuum_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("LockStmt") {
+        Some(lock_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CopyStmt") {
+        Some(copy_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("PrepareStmt") {
+        Some(prepare_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("ExecuteStmt") {
+        Some(execute_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("DoStmt") {
+        Some(do_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CreatedbStmt") {
+        Some(createdb_stmt_to_node(inner))
     } else {
         None
     }
@@ -1655,6 +1675,454 @@ fn notify_stmt_to_node(stmt: &Value) -> Node {
             value: format!(", '{}'", payload),
         });
     }
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn transaction_stmt_to_node(stmt: &Value) -> Node {
+    let kind = stmt["kind"].as_str().unwrap_or("");
+    let kw = match kind {
+        "TRANS_STMT_BEGIN" => "BEGIN",
+        "TRANS_STMT_COMMIT" => "COMMIT",
+        "TRANS_STMT_ROLLBACK" => "ROLLBACK",
+        "TRANS_STMT_START" => "START TRANSACTION",
+        "TRANS_STMT_COMMIT_PREPARED" => "COMMIT PREPARED",
+        "TRANS_STMT_ROLLBACK_PREPARED" => "ROLLBACK PREPARED",
+        "TRANS_STMT_SAVEPOINT" => "SAVEPOINT",
+        "TRANS_STMT_RELEASE" => "RELEASE SAVEPOINT",
+        "TRANS_STMT_ROLLBACK_TO" => "ROLLBACK TO SAVEPOINT",
+        _ => kind,
+    };
+    let mut items = vec![Node::Keyword {
+        value: kw.into(),
+    }];
+    if let Some(sp) = stmt["savepoint_name"].as_str() {
+        items.push(Node::Text { value: " ".into() });
+        items.push(ident_node(sp));
+    }
+    // gid for PREPARED transactions
+    if let Some(gid) = stmt["gid"].as_str() {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Literal {
+            value: format!("'{}'", gid),
+        });
+    }
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn variable_set_stmt_to_node(stmt: &Value) -> Node {
+    let kind = stmt["kind"].as_str().unwrap_or("");
+    let name = stmt["name"].as_str().unwrap_or("");
+
+    match kind {
+        "VAR_RESET_ALL" => {
+            let items = vec![Node::Keyword {
+                value: "RESET ALL".into(),
+            }];
+            Node::Group {
+                content: Box::new(Node::Concat { items }),
+            }
+        }
+        "VAR_RESET" => {
+            let items = vec![
+                Node::Keyword {
+                    value: "RESET".into(),
+                },
+                Node::Text { value: " ".into() },
+                ident_node(name),
+            ];
+            Node::Group {
+                content: Box::new(Node::Concat { items }),
+            }
+        }
+        _ => {
+            let set_kw = if stmt["is_local"].as_bool().unwrap_or(false) {
+                "SET LOCAL"
+            } else {
+                "SET"
+            };
+            let mut items = vec![
+                Node::Keyword {
+                    value: set_kw.into(),
+                },
+                Node::Text { value: " ".into() },
+                ident_node(name),
+            ];
+            if let Some(args) = stmt["args"].as_array().filter(|a| !a.is_empty()) {
+                items.push(Node::Text { value: " = ".into() });
+                let arg_nodes: Vec<Node> =
+                    args.iter().map(node_value_to_node).collect();
+                items.push(Node::List {
+                    items: arg_nodes,
+                    separator: Some(",".into()),
+                });
+            } else if kind == "VAR_SET_DEFAULT" {
+                items.push(Node::Text { value: " ".into() });
+                items.push(Node::Keyword {
+                    value: "TO DEFAULT".into(),
+                });
+            }
+            Node::Group {
+                content: Box::new(Node::Concat { items }),
+            }
+        }
+    }
+}
+
+fn variable_show_stmt_to_node(stmt: &Value) -> Node {
+    let name = stmt["name"].as_str().unwrap_or("");
+    let items = vec![
+        Node::Keyword {
+            value: "SHOW".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_node(name),
+    ];
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn vacuum_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![Node::Keyword {
+        value: "VACUUM".into(),
+    }];
+
+    // Options like (ANALYZE, VERBOSE, etc.)
+    if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
+        let opt_strs: Vec<String> = opts
+            .iter()
+            .filter_map(|o| {
+                o.get("DefElem")
+                    .map(|d| d["defname"].as_str().unwrap_or("").to_uppercase())
+            })
+            .collect();
+        items.push(Node::Text {
+            value: format!(" ({})", opt_strs.join(", ")),
+        });
+    }
+
+    // Relation list
+    if let Some(rels) = stmt["rels"].as_array().filter(|a| !a.is_empty()) {
+        items.push(Node::Text { value: " ".into() });
+        let rel_nodes: Vec<Node> = rels
+            .iter()
+            .map(|r| {
+                if let Some(vr) = r.get("VacuumRelation") {
+                    range_var_to_node(&vr["relation"])
+                } else {
+                    range_var_to_node(r)
+                }
+            })
+            .collect();
+        items.push(Node::List {
+            items: rel_nodes,
+            separator: Some(",".into()),
+        });
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn lock_stmt_to_node(stmt: &Value) -> Node {
+    let mode_num = stmt["mode"].as_i64().unwrap_or(8);
+    let mode_str = match mode_num {
+        1 => "ACCESS SHARE",
+        2 => "ROW SHARE",
+        3 => "ROW EXCLUSIVE",
+        4 => "SHARE UPDATE EXCLUSIVE",
+        5 => "SHARE",
+        6 => "SHARE ROW EXCLUSIVE",
+        7 => "EXCLUSIVE",
+        8 => "ACCESS EXCLUSIVE",
+        _ => "ACCESS EXCLUSIVE",
+    };
+
+    let mut items = vec![
+        Node::Keyword {
+            value: "LOCK TABLE".into(),
+        },
+        Node::Text { value: " ".into() },
+    ];
+
+    let relations: Vec<Node> = stmt["relations"]
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .map(|r| {
+                    if let Some(rv) = r.get("RangeVar") {
+                        range_var_to_node(rv)
+                    } else {
+                        range_var_to_node(r)
+                    }
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    items.push(Node::List {
+        items: relations,
+        separator: Some(",".into()),
+    });
+
+    items.push(Node::Text {
+        value: format!(" IN {} MODE", mode_str),
+    });
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn copy_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![Node::Keyword {
+        value: "COPY".into(),
+    }];
+
+    // Relation
+    if let Some(relation) = stmt.get("relation").filter(|v| !v.is_null()) {
+        items.push(Node::Text { value: " ".into() });
+        if let Some(rv) = relation.get("RangeVar") {
+            items.push(range_var_to_node(rv));
+        } else {
+            items.push(range_var_to_node(relation));
+        }
+
+        // Column list
+        if let Some(cols) = stmt["attlist"]
+            .as_array()
+            .filter(|a| !a.is_empty())
+        {
+            let col_nodes: Vec<Node> = cols
+                .iter()
+                .map(|c| ident_node(c["String"]["sval"].as_str().unwrap_or("")))
+                .collect();
+            items.push(Node::Text { value: "(".into() });
+            items.push(Node::List {
+                items: col_nodes,
+                separator: Some(",".into()),
+            });
+            items.push(Node::Text { value: ")".into() });
+        }
+    }
+
+    let is_from = stmt["is_from"].as_bool().unwrap_or(false);
+    if is_from {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "FROM".into(),
+        });
+    } else {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "TO".into(),
+        });
+    }
+
+    // PROGRAM / STDIN / STDOUT / file
+    if stmt["is_program"].as_bool().unwrap_or(false) {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "PROGRAM".into(),
+        });
+    }
+
+    if let Some(filename) = stmt["filename"]
+        .as_str()
+        .filter(|s| !s.is_empty())
+    {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Literal {
+            value: format!("'{}'", filename),
+        });
+    } else {
+        // No filename means STDIN or STDOUT.
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: if is_from { "STDIN" } else { "STDOUT" }.into(),
+        });
+    }
+
+    // WITH options — use (opt, opt) format (parenthesized, comma-separated)
+    if let Some(opts) = stmt["options"]
+        .as_array()
+        .filter(|a| !a.is_empty())
+    {
+        let opt_strs: Vec<String> = opts
+            .iter()
+            .filter_map(|o| {
+                o.get("DefElem").map(|d| {
+                    let name = d["defname"].as_str().unwrap_or("").to_uppercase();
+                    if let Some(arg) = d.get("arg") {
+                        let val = string_val(&arg["String"]);
+                        format!("{} {}", name, val)
+                    } else {
+                        name
+                    }
+                })
+            })
+            .collect();
+        items.push(Node::Text {
+            value: format!(" ({})", opt_strs.join(", ")),
+        });
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn prepare_stmt_to_node(stmt: &Value) -> Node {
+    let name = stmt["name"].as_str().unwrap_or("");
+    let mut items = vec![
+        Node::Keyword {
+            value: "PREPARE".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_node(name),
+    ];
+
+    // Argument types
+    if let Some(argtypes) = stmt["argtypes"]
+        .as_array()
+        .filter(|a| !a.is_empty())
+    {
+        let types: Vec<Node> = argtypes
+            .iter()
+            .map(|t| {
+                Node::Text {
+                    value: type_name_str(&t["TypeName"]),
+                }
+            })
+            .collect();
+        items.push(Node::Text { value: " (".into() });
+        items.push(Node::List {
+            items: types,
+            separator: Some(",".into()),
+        });
+        items.push(Node::Text { value: ")".into() });
+    }
+
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: "AS".into(),
+    });
+
+    // Query body
+    if let Some(query) = stmt.get("query") {
+        if let Some(body) = stmt_to_node(query) {
+            items.push(Node::Text { value: " ".into() });
+            items.push(body);
+        }
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn execute_stmt_to_node(stmt: &Value) -> Node {
+    let name = stmt["name"].as_str().unwrap_or("");
+    let mut items = vec![
+        Node::Keyword {
+            value: "EXECUTE".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_node(name),
+    ];
+
+    // Parameter list
+    if let Some(params) = stmt["params"]
+        .as_array()
+        .filter(|a| !a.is_empty())
+    {
+        let param_nodes: Vec<Node> = params.iter().map(node_value_to_node).collect();
+        items.push(Node::Text { value: "(".into() });
+        items.push(Node::List {
+            items: param_nodes,
+            separator: Some(",".into()),
+        });
+        items.push(Node::Text { value: ")".into() });
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn do_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![Node::Keyword {
+        value: "DO".into(),
+    }];
+
+    // Body and language (as DefElems in args array)
+    if let Some(args) = stmt["args"].as_array().filter(|a| !a.is_empty()) {
+        // The "as" element: body string literal (no AS keyword in SQL)
+        for arg in args {
+            if let Some(defelem) = arg.get("DefElem") {
+                let defname = defelem["defname"].as_str().unwrap_or("");
+                if defname == "as" {
+                    if let Some(a) = defelem.get("arg") {
+                        let body = a
+                            .get("String")
+                            .map(|s| string_val(s))
+                            .unwrap_or("");
+                        items.push(Node::Text {
+                            value: format!(" $${}$$", body),
+                        });
+                    }
+                } else {
+                    // language, etc.
+                    items.push(Node::Text { value: " ".into() });
+                    items.push(Node::Keyword {
+                        value: defname.to_uppercase(),
+                    });
+                    if let Some(a) = defelem.get("arg") {
+                        items.push(Node::Text { value: " ".into() });
+                        items.push(node_value_to_node(a));
+                    }
+                }
+            }
+        }
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn createdb_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![
+        Node::Keyword {
+            value: "CREATE DATABASE".into(),
+        },
+        Node::Text { value: " ".into() },
+    ];
+
+    let name = stmt["dbname"].as_str().unwrap_or("");
+    items.push(ident_node(name));
+
+    // Options
+    if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
+        for opt in opts {
+            if let Some(defelem) = opt.get("DefElem") {
+                let defname = defelem["defname"].as_str().unwrap_or("");
+                items.push(Node::Text { value: " ".into() });
+                items.push(Node::Keyword {
+                    value: defname.to_uppercase(),
+                });
+                if let Some(arg) = defelem.get("arg") {
+                    items.push(Node::Text { value: " ".into() });
+                    items.push(node_value_to_node(arg));
+                }
+            }
+        }
+    }
+
     Node::Group {
         content: Box::new(Node::Concat { items }),
     }
