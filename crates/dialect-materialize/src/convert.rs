@@ -1,6 +1,6 @@
 use mz_sql_parser::ast::{
-    AsOf, Distinct, Expr, Ident, OrderByExpr, Query, Raw, Select, SelectItem, SelectStatement,
-    SetExpr, Statement, TableAlias, TableFactor, TableWithJoins, Value,
+    AsOf, Cte, CteBlock, Distinct, Expr, Ident, OrderByExpr, Query, Raw, Select, SelectItem,
+    SelectStatement, SetExpr, Statement, TableAlias, TableFactor, TableWithJoins, Value,
 };
 use sqlfmt_ir::{Clause, Node};
 
@@ -36,12 +36,66 @@ fn select_stmt_to_node(s: &SelectStatement<Raw>) -> Node {
 }
 
 fn query_to_node(query: &Query<Raw>) -> Node {
-    match &query.body {
-        SetExpr::Select(select) => select_to_node(select, query),
-        _ => Node::Unformatted {
+    // WITH MUTUALLY RECURSIVE is complex; fall back to unformatted.
+    if matches!(query.ctes, CteBlock::MutuallyRecursive(_)) {
+        return Node::Unformatted {
             value: format!("{query}"),
-        },
+        };
     }
+
+    let body_node = match &query.body {
+        SetExpr::Select(select) => select_to_node(select, query),
+        _ => {
+            return Node::Unformatted {
+                value: format!("{query}"),
+            }
+        }
+    };
+
+    // Prepend simple CTEs if present.
+    match &query.ctes {
+        CteBlock::Simple(ctes) if !ctes.is_empty() => {
+            let cte_nodes: Vec<Node> = ctes.iter().map(cte_to_node).collect();
+            let cte_clause = Clause {
+                keyword: "WITH".into(),
+                body: Some(Box::new(Node::List {
+                    items: cte_nodes,
+                    separator: None,
+                })),
+            };
+            match body_node {
+                Node::Clauses { mut items } => {
+                    items.insert(0, cte_clause);
+                    Node::Clauses { items }
+                }
+                other => {
+                    let _ = other;
+                    Node::Unformatted {
+                        value: format!("{query}"),
+                    }
+                }
+            }
+        }
+        _ => body_node,
+    }
+}
+
+fn cte_to_node(cte: &Cte<Raw>) -> Node {
+    let Cte { alias, id: _, query } = cte;
+    // Render the alias (name + optional column list), then AS (...query...).
+    let mut items = vec![
+        Node::Text {
+            value: format!("{alias}"),
+        },
+        Node::Text { value: " AS ".into() },
+    ];
+    items.push(Node::Wrap {
+        keyword: None,
+        open: "(".into(),
+        content: Box::new(query_to_node(query)),
+        close: ")".into(),
+    });
+    Node::Concat { items }
 }
 
 fn select_to_node(select: &Select<Raw>, query: &Query<Raw>) -> Node {
