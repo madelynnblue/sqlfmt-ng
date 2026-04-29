@@ -1,0 +1,91 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+# Test that subscribes propagate query errors.
+
+mode cockroach
+
+statement ok
+CREATE TABLE t (a int)
+
+statement ok
+INSERT INTO t VALUES (1), (2), (0)
+
+statement ok
+CREATE VIEW v AS SELECT 1/a FROM t
+
+statement ok
+CREATE DEFAULT INDEX ON v
+
+statement ok
+CREATE MATERIALIZED VIEW mv AS SELECT 1/a FROM t
+
+statement ok
+BEGIN
+
+statement ok
+DECLARE c CURSOR FOR SUBSCRIBE (SELECT 1/a FROM t)
+
+statement error Evaluation error: division by zero
+FETCH 1 c
+
+statement ok
+ROLLBACK
+
+statement ok
+BEGIN
+
+statement ok
+DECLARE c CURSOR FOR SUBSCRIBE v
+
+statement error Evaluation error: division by zero
+FETCH 1 c
+
+statement ok
+ROLLBACK
+
+statement ok
+BEGIN
+
+statement ok
+DECLARE c CURSOR FOR SUBSCRIBE mv
+
+statement error Evaluation error: division by zero
+FETCH 1 c
+
+statement ok
+ROLLBACK
+
+# Test that invalid UP TO expressions are rejected.
+# (`SUBSCRIBE ... AS OF ... UP TO` is also tested in `as_of.slt` and in some cargo tests:
+# test_empty_subscribe_error, test_empty_subscribe_notice, test_subscribe_basic)
+
+statement error AS OF or UP TO should be castable to a \(non\-null\) mz_timestamp value
+SUBSCRIBE mv UP TO -1;
+
+statement error AS OF or UP TO should be castable to a \(non\-null\) mz_timestamp value
+SUBSCRIBE mv UP TO null;
+
+statement error AS OF or UP TO should be castable to a \(non\-null\) mz_timestamp value
+SUBSCRIBE mv UP TO null::mz_timestamp;
+
+statement error AS OF or UP TO should be castable to a \(non\-null\) mz_timestamp value
+SUBSCRIBE mv UP TO 'xxx';
+
+statement error calling an unmaterializable function in AS OF or UP TO not yet supported
+SUBSCRIBE mv UP TO now();
+
+statement error calling an unmaterializable function in AS OF or UP TO not yet supported
+SUBSCRIBE mv UP TO mz_now();
+
+statement error calling an unmaterializable function in AS OF or UP TO not yet supported
+SUBSCRIBE mv UP TO current_database();
+
+statement error calling an unmaterializable function in AS OF or UP TO not yet supported
+SUBSCRIBE mv UP TO current_database()::mz_timestamp;

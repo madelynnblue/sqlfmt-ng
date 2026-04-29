@@ -1,0 +1,791 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+simple conn=mz_system,user=mz_system
+ALTER SYSTEM SET unsafe_enable_table_keys = true
+----
+COMPLETE 0
+
+#
+# Test various cases of equivalence propagation
+#
+
+mode cockroach
+
+statement ok
+CREATE TABLE t1 (f1 INTEGER PRIMARY KEY, f2 INTEGER);
+
+statement ok
+CREATE TABLE t2 (f1 INTEGER PRIMARY KEY, f2 INTEGER);
+
+statement ok
+CREATE TABLE t3 (f1 INTEGER PRIMARY KEY, f2 INTEGER);
+
+# No propagation for single tables
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 WHERE t1.f1 = 123 AND t1.f1 = t1.f2
+----
+Explained Query (fast path):
+  Filter (#0{f1} = 123) AND (#0{f1} = #1{f2})
+    PeekPersist materialize.public.t1 [value=(123)]
+
+Target cluster: quickstart
+
+EOF
+
+# Inner joins
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 , t2 WHERE t1.f1 = 123 AND t1.f1 = t2.f1
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 4 }
+    implementation
+      %0:t1[×]Uef » %1:t2[×]Uef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+# Outer joins
+
+# TODO the second join should be removed as redundant and replaced with `Get(l1)`.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 LEFT JOIN t2 ON (t1.f1 = t2.f1) WHERE t1.f1 = 123;
+----
+Explained Query:
+  With
+    cte l0 =
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    cte l1 =
+      CrossJoin type=differential // { arity: 4 }
+        implementation
+          %0:l0[×]Uef » %1:t2[×]Uef
+        ArrangeBy keys=[[]] // { arity: 2 }
+          Get l0 // { arity: 2 }
+        ArrangeBy keys=[[]] // { arity: 2 }
+          Filter (#0{f1} = 123) // { arity: 2 }
+            ReadStorage materialize.public.t2 // { arity: 2 }
+  Return // { arity: 4 }
+    Union // { arity: 4 }
+      Map (null, null) // { arity: 4 }
+        Union // { arity: 2 }
+          Negate // { arity: 2 }
+            Project (#0{f1}, #1{f2}) // { arity: 2 }
+              Get l1 // { arity: 4 }
+          Get l0 // { arity: 2 }
+      Get l1 // { arity: 4 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 LEFT JOIN t2 USING (f1) WHERE t1.f1 = 123;
+----
+Explained Query:
+  With
+    cte l0 =
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    cte l1 =
+      CrossJoin type=differential // { arity: 3 }
+        implementation
+          %0:l0[×]Uef » %1:t2[×]Uef
+        ArrangeBy keys=[[]] // { arity: 2 }
+          Get l0 // { arity: 2 }
+        ArrangeBy keys=[[]] // { arity: 1 }
+          Project (#1{f2}) // { arity: 1 }
+            Filter (#0{f1} = 123) // { arity: 2 }
+              ReadStorage materialize.public.t2 // { arity: 2 }
+  Return // { arity: 3 }
+    Union // { arity: 3 }
+      Map (null) // { arity: 3 }
+        Union // { arity: 2 }
+          Negate // { arity: 2 }
+            Project (#0{f1}, #1{f2}) // { arity: 2 }
+              Get l1 // { arity: 3 }
+          Get l0 // { arity: 2 }
+      Get l1 // { arity: 3 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 LEFT JOIN t2 ON (TRUE) WHERE t1.f1 = t2.f1 AND t1.f1 = 123;
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 4 }
+    implementation
+      %0:t1[×]Uef » %1:t2[×]Uef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+# Transitive application
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1, t2, t3 WHERE t1.f1 = 123 AND t1.f1 = t2.f1 AND t2.f1 = t3.f1;
+----
+Explained Query:
+  CrossJoin type=delta // { arity: 6 }
+    implementation
+      %0:t1 » %1:t2[×]Uef » %2:t3[×]Uef
+      %1:t2 » %0:t1[×]Uef » %2:t3[×]Uef
+      %2:t3 » %0:t1[×]Uef » %1:t2[×]Uef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t2 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t3 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+Source materialize.public.t3
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+# HAVING clause
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT t1.f1 FROM t1, t2 WHERE t1.f1 = t2.f1 GROUP BY t1.f1 HAVING t1.f1 = 123;
+----
+Explained Query:
+  Map (123) // { arity: 1 }
+    CrossJoin type=differential // { arity: 0 }
+      implementation
+        %0:t1[×]Uef » %1:t2[×]Uef
+      ArrangeBy keys=[[]] // { arity: 0 }
+        Project () // { arity: 0 }
+          Filter (#0{f1} = 123) // { arity: 2 }
+            ReadStorage materialize.public.t1 // { arity: 2 }
+      ArrangeBy keys=[[]] // { arity: 0 }
+        Project () // { arity: 0 }
+          Filter (#0{f1} = 123) // { arity: 2 }
+            ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+#
+# Subqueries
+#
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT (SELECT t1.f1 FROM t1 WHERE t1.f1 = t2.f1) FROM t2 WHERE t2.f1 = 123;
+----
+Explained Query:
+  With
+    cte l0 =
+      Project () // { arity: 0 }
+        Filter (#0{f1} = 123) // { arity: 2 }
+          ReadStorage materialize.public.t2 // { arity: 2 }
+    cte l1 =
+      ArrangeBy keys=[[]] // { arity: 0 }
+        Get l0 // { arity: 0 }
+    cte l2 =
+      CrossJoin type=differential // { arity: 1 }
+        implementation
+          %0:l1[×]Uef » %1:t1[×]Uef
+        Get l1 // { arity: 0 }
+        ArrangeBy keys=[[]] // { arity: 1 }
+          Project (#0{f1}) // { arity: 1 }
+            Filter (#0{f1} = 123) // { arity: 2 }
+              ReadStorage materialize.public.t1 // { arity: 2 }
+  Return // { arity: 1 }
+    CrossJoin type=differential // { arity: 1 }
+      implementation
+        %0:l1[×]Uef » %1[×]Uef
+      Get l1 // { arity: 0 }
+      ArrangeBy keys=[[]] // { arity: 1 }
+        Union // { arity: 1 }
+          Get l2 // { arity: 1 }
+          Map (null) // { arity: 1 }
+            Union // { arity: 0 }
+              Negate // { arity: 0 }
+                Project () // { arity: 0 }
+                  Get l2 // { arity: 1 }
+              Get l0 // { arity: 0 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+# This case is currently not optimized
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT (SELECT t1.f1 FROM t1) = t2.f1 FROM t2 WHERE t2.f1 = 123;
+----
+Explained Query:
+  With
+    cte l0 =
+      Union // { arity: 1 }
+        Project (#0{f1}) // { arity: 1 }
+          ReadStorage materialize.public.t1 // { arity: 2 }
+        Project (#1) // { arity: 1 }
+          FlatMap guard_subquery_size(#0{count}) // { arity: 2 }
+            Reduce aggregates=[count(*)] // { arity: 1 }
+              Project () // { arity: 0 }
+                ReadStorage materialize.public.t1 // { arity: 2 }
+  Return // { arity: 1 }
+    Project (#1) // { arity: 1 }
+      Map ((#0{f1} = 123)) // { arity: 2 }
+        CrossJoin type=differential // { arity: 1 }
+          implementation
+            %0:t2[×]Uef » %1[×]ef
+          ArrangeBy keys=[[]] // { arity: 0 }
+            Project () // { arity: 0 }
+              Filter (#0{f1} = 123) // { arity: 2 }
+                ReadStorage materialize.public.t2 // { arity: 2 }
+          ArrangeBy keys=[[]] // { arity: 1 }
+            Union // { arity: 1 }
+              Get l0 // { arity: 1 }
+              Map (null) // { arity: 1 }
+                Union // { arity: 0 }
+                  Negate // { arity: 0 }
+                    Distinct project=[] // { arity: 0 }
+                      Project () // { arity: 0 }
+                        Get l0 // { arity: 1 }
+                  Constant // { arity: 0 }
+                    - ()
+
+Source materialize.public.t1
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 WHERE t1.f1 = 123 AND EXISTS (SELECT * FROM t2 WHERE t2.f1 = t1.f1);
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 2 }
+    implementation
+      %0:t1[×]Uef » %1:t2[×]Uef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 0 }
+      Project () // { arity: 0 }
+        Filter (#0{f1} = 123) // { arity: 2 }
+          ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 WHERE t1.f1 = 123 AND EXISTS (SELECT * FROM t2 WHERE t2.f1 = t1.f1) AND EXISTS (SELECT * FROM t3 WHERE t3.f1 = t1.f1);
+----
+Explained Query:
+  CrossJoin type=delta // { arity: 2 }
+    implementation
+      %0:t1 » %1:t2[×]Uef » %2:t3[×]Uef
+      %1:t2 » %0:t1[×]Uef » %2:t3[×]Uef
+      %2:t3 » %0:t1[×]Uef » %1:t2[×]Uef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 0 }
+      Project () // { arity: 0 }
+        Filter (#0{f1} = 123) // { arity: 2 }
+          ReadStorage materialize.public.t2 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 0 }
+      Project () // { arity: 0 }
+        Filter (#0{f1} = 123) // { arity: 2 }
+          ReadStorage materialize.public.t3 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+Source materialize.public.t3
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1, (SELECT t2.f1 FROM t2) AS dt1 WHERE dt1.f1 = t1.f1 AND t1.f1 = 123;
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 3 }
+    implementation
+      %0:t1[×]Uef » %1:t2[×]Uef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 1 }
+      Project (#0{f1}) // { arity: 1 }
+        Filter (#0{f1} = 123) // { arity: 2 }
+          ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((#0{f1} = 123))
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 WHERE 123 = (SELECT t2.f1 FROM t2);
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 2 }
+    implementation
+      %0:t1[×] » %1[×]
+    ArrangeBy keys=[[]] // { arity: 2 }
+      ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 0 }
+      Union // { arity: 0 }
+        Project () // { arity: 0 }
+          Filter (#0{f1} = 123) // { arity: 2 }
+            ReadStorage materialize.public.t2 // { arity: 2 }
+        Project () // { arity: 0 }
+          Filter (#1 = 123) // { arity: 2 }
+            FlatMap guard_subquery_size(#0{count}) // { arity: 2 }
+              Reduce aggregates=[count(*)] // { arity: 1 }
+                Project () // { arity: 0 }
+                  ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+Source materialize.public.t2
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 WHERE t1.f1 = 123 AND t1.f1 = (SELECT t2.f1 FROM t2);
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 2 }
+    implementation
+      %0:t1[×]Uef » %1[×]ef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 0 }
+      Union // { arity: 0 }
+        Project () // { arity: 0 }
+          Filter (#0{f1} = 123) // { arity: 2 }
+            ReadStorage materialize.public.t2 // { arity: 2 }
+        Project () // { arity: 0 }
+          Filter (#1 = 123) // { arity: 2 }
+            FlatMap guard_subquery_size(#0{count}) // { arity: 2 }
+              Reduce aggregates=[count(*)] // { arity: 1 }
+                Project () // { arity: 0 }
+                  ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+
+Target cluster: quickstart
+
+EOF
+
+#
+# Multipart keys
+#
+
+
+statement ok
+CREATE TABLE t4 (f1 INTEGER, f2 INTEGER, PRIMARY KEY (f1, f2));
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t4 AS a1, t4 AS a2 WHERE a1.f1 = 123 AND a1.f2 = 234 AND a1.f1 = a2.f1 AND a1.f2 = a2.f2;
+----
+Explained Query (fast path):
+  Project (#0{f1}, #1{f2}, #0{f1}, #1{f2})
+    Filter (#0{f1} = 123) AND (#1{f2} = 234)
+      PeekPersist materialize.public.t4 [value=(123, 234)]
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t4 AS a1 LEFT JOIN t4 AS a2 USING (f1, f2) WHERE a1.f1 = 123 AND a1.f2 = 234;
+----
+Explained Query (fast path):
+  Filter (#0{f1} = 123) AND (#1{f2} = 234)
+    PeekPersist materialize.public.t4 [value=(123, 234)]
+
+Target cluster: quickstart
+
+EOF
+
+#
+# Propagation in opposite direction
+#
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t4 AS a1 LEFT JOIN t4 AS a2 USING (f1, f2) WHERE a1.f1 = 123 AND a2.f2 = 234;
+----
+Explained Query (fast path):
+  Filter (#0{f1} = 123) AND (#1{f2} = 234)
+    PeekPersist materialize.public.t4 [value=(123, 234)]
+
+Target cluster: quickstart
+
+EOF
+
+#
+# Detect impossible conditions
+#
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 LEFT JOIN t2 USING (f1) WHERE t1.f1 = 123 AND t2.f1 = 234;
+----
+Explained Query (fast path):
+  Constant <empty>
+
+Target cluster: quickstart
+
+EOF
+
+#
+# The following impossible condition is removed by `CanonicalizeMfp::remove_impossible_or_args`
+#
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1 FULL OUTER JOIN t2 USING (f1) WHERE t1.f1 = 123 AND t2.f1 = 234;
+----
+Explained Query (fast path):
+  Constant <empty>
+
+Target cluster: quickstart
+
+EOF
+
+# Inequality between columns
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM t1, t2 WHERE t1.f1 = 123 AND t1.f1 > t2.f1;
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 4 }
+    implementation
+      %0:t1[×]Uef » %1:t2[×]eif
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{f1} = 123) // { arity: 2 }
+        ReadStorage materialize.public.t1 // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (123 > #0{f1}) // { arity: 2 }
+        ReadStorage materialize.public.t2 // { arity: 2 }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 123))
+Source materialize.public.t2
+  filter=((123 > #0{f1}))
+
+Target cluster: quickstart
+
+EOF
+
+statement ok
+create table double_table(double_col DOUBLE);
+
+statement ok
+create table int_table(int_col integer NOT NULL);
+
+# TODO: get rid of the unnecessary !isnull at the end of this plan
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR select * from int_table, double_table where int_table.int_col = double_table.double_col;
+----
+Explained Query:
+  Join on=(#1{double_col} = integer_to_double(#0{int_col})) type=differential // { arity: 2 }
+    implementation
+      %0:int_table[integer_to_double(#0{int_col})]K » %1:double_table[#0{double_col}]K
+    ArrangeBy keys=[[integer_to_double(#0{int_col})]] // { arity: 1 }
+      ReadStorage materialize.public.int_table // { arity: 1 }
+    ArrangeBy keys=[[#0{double_col}]] // { arity: 1 }
+      Filter (#0{double_col}) IS NOT NULL // { arity: 1 }
+        ReadStorage materialize.public.double_table // { arity: 1 }
+
+Source materialize.public.double_table
+  filter=((#0{double_col}) IS NOT NULL)
+Source materialize.public.int_table
+
+Target cluster: quickstart
+
+EOF
+
+# WITH MUTUALLY RECURSIVE support
+# -------------------------------
+
+# Single binding, value knowledge
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(arity, types, humanized expressions) AS VERBOSE TEXT FOR
+WITH MUTUALLY RECURSIVE
+  c0(f1 integer, f2 integer) AS (
+    SELECT * FROM (
+      SELECT * FROM t1
+      UNION
+      SELECT * FROM c0
+    ) WHERE f1 = 3 AND f2 = 5
+  )
+SELECT f1, f2, f1 + f2 FROM c0;
+----
+Explained Query:
+  With Mutually Recursive
+    cte l0 =
+      Map (3, 5) // { arity: 2, types: "(r_int32, r_int32)" }
+        Distinct project=[] // { arity: 0, types: "()" }
+          Union // { arity: 0, types: "()" }
+            Project () // { arity: 0, types: "()" }
+              Filter (#0{f1} = 3) AND (#1{f2} = 5) // { arity: 2, types: "(r_int32, r_int32)" }
+                ReadStorage materialize.public.t1 // { arity: 2, types: "(r_int32, r_int32?)" }
+            Project () // { arity: 0, types: "()" }
+              Get l0 // { arity: 2, types: "(r_int32, r_int32)" }
+  Return // { arity: 3, types: "(r_int32, r_int32, r_int32)" }
+    Map (8) // { arity: 3, types: "(r_int32, r_int32, r_int32)" }
+      Get l0 // { arity: 2, types: "(r_int32, r_int32)" }
+
+Source materialize.public.t1
+  filter=((#0{f1} = 3) AND (#1{f2} = 5))
+
+Target cluster: quickstart
+
+EOF
+
+# Single binding, NOT NULL knowledge
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(arity, types, humanized expressions) AS VERBOSE TEXT FOR
+WITH MUTUALLY RECURSIVE
+  c0(f1 integer, f2 integer) AS (
+    SELECT * FROM (
+      SELECT * FROM t1
+      UNION
+      SELECT * FROM c0
+    ) WHERE f1 IS NOT NULL AND f2 IS NOT NULL
+  )
+SELECT f1, f2, f1 IS NOT NULL, f2 IS NULL FROM c0;
+----
+Explained Query:
+  With Mutually Recursive
+    cte l0 =
+      Distinct project=[#0{f1}, #1{f2}] // { arity: 2, types: "(r_int32, r_int32)" }
+        Union // { arity: 2, types: "(r_int32, r_int32)" }
+          Filter (#1{f2}) IS NOT NULL // { arity: 2, types: "(r_int32, r_int32)" }
+            ReadStorage materialize.public.t1 // { arity: 2, types: "(r_int32, r_int32?)" }
+          Get l0 // { arity: 2, types: "(r_int32, r_int32)" }
+  Return // { arity: 4, types: "(r_int32, r_int32, r_bool, r_bool)" }
+    Map (true, false) // { arity: 4, types: "(r_int32, r_int32, r_bool, r_bool)" }
+      Get l0 // { arity: 2, types: "(r_int32, r_int32)" }
+
+Source materialize.public.t1
+  filter=((#1{f2}) IS NOT NULL)
+
+Target cluster: quickstart
+
+EOF
+
+# Single binding, NOT NULL knowledge inside a UNION branch
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(arity, types, humanized expressions) AS VERBOSE TEXT FOR
+WITH MUTUALLY RECURSIVE
+  c0(f1 integer, f2 integer) AS (
+    SELECT * FROM (
+      SELECT * FROM t1
+      UNION
+      SELECT * FROM c0 WHERE f1 IS NOT NULL AND f2 IS NOT NULL
+    )
+  )
+SELECT f1, f2, f1 IS NOT NULL, f2 IS NULL FROM c0;
+----
+Explained Query:
+  With Mutually Recursive
+    cte l0 =
+      Distinct project=[#0{f1}, #1{f2}] // { arity: 2, types: "(r_int32, r_int32?)" }
+        Union // { arity: 2, types: "(r_int32, r_int32?)" }
+          ReadStorage materialize.public.t1 // { arity: 2, types: "(r_int32, r_int32?)" }
+          Filter (#1{f2}) IS NOT NULL // { arity: 2, types: "(r_int32, r_int32)" }
+            Get l0 // { arity: 2, types: "(r_int32, r_int32?)" }
+  Return // { arity: 4, types: "(r_int32, r_int32?, r_bool, r_bool)" }
+    Project (#0{f1}, #1{f2}, #3, #2) // { arity: 4, types: "(r_int32, r_int32?, r_bool, r_bool)" }
+      Map ((#1{f2}) IS NULL, true) // { arity: 4, types: "(r_int32, r_int32?, r_bool, r_bool)" }
+        Get l0 // { arity: 2, types: "(r_int32, r_int32?)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF
+
+# Multiple bindings, value knowledge
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(arity, types, humanized expressions) AS VERBOSE TEXT FOR
+WITH MUTUALLY RECURSIVE
+  it(count integer) AS (
+    SELECT 1 UNION SELECT * FROM it WHERE count = 1
+  ),
+  c0(count integer, f1 integer, f2 integer) AS (
+    SELECT * FROM (
+      SELECT count * 2, f1, f2 FROM it, t1
+      UNION
+      SELECT * FROM c0
+    )
+  )
+SELECT * FROM c0;
+----
+Explained Query:
+  With Mutually Recursive
+    cte l0 =
+      Map (1) // { arity: 1, types: "(r_int32)" }
+        Distinct project=[] monotonic // { arity: 0, types: "()" }
+          Union // { arity: 0, types: "()" }
+            Project () // { arity: 0, types: "()" }
+              Get l0 // { arity: 1, types: "(r_int32)" }
+            Constant // { arity: 0, types: "()" }
+              - ()
+    cte l1 =
+      Project (#2, #0{f1}, #1{f2}) // { arity: 3, types: "(r_int32, r_int32, r_int32?)" }
+        Map (2) // { arity: 3, types: "(r_int32, r_int32?, r_int32)" }
+          Distinct project=[#0{f1}, #1{f2}] // { arity: 2, types: "(r_int32, r_int32?)" }
+            Union // { arity: 2, types: "(r_int32, r_int32?)" }
+              CrossJoin type=differential // { arity: 2, types: "(r_int32, r_int32?)" }
+                ArrangeBy keys=[[]] // { arity: 0, types: "()" }
+                  Project () // { arity: 0, types: "()" }
+                    Get l0 // { arity: 1, types: "(r_int32)" }
+                ArrangeBy keys=[[]] // { arity: 2, types: "(r_int32, r_int32?)" }
+                  ReadStorage materialize.public.t1 // { arity: 2, types: "(r_int32, r_int32?)" }
+              Project (#1{f1}, #2{f2}) // { arity: 2, types: "(r_int32, r_int32?)" }
+                Get l1 // { arity: 3, types: "(r_int32, r_int32, r_int32?)" }
+  Return // { arity: 3, types: "(r_int32, r_int32, r_int32?)" }
+    Get l1 // { arity: 3, types: "(r_int32, r_int32, r_int32?)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF
+
+
+# Multiple bindings, NOT NULL knowledge
+#
+# This is currently masked by identical work done by the "non_nullable"
+# transform. I had to swap the order of "non_nullable" and "column_knowledge" to
+# see this transform in action in https://optimizer-trace.dev.materialize.com/.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(arity, types, humanized expressions) AS VERBOSE TEXT FOR
+WITH MUTUALLY RECURSIVE
+  it(count integer) AS (
+    SELECT 1 UNION SELECT * FROM it WHERE count IS NOT NULL
+  ),
+  c0(count_is_null boolean, f1 integer, f2 integer) AS (
+    SELECT * FROM (
+      SELECT count IS NULL, f1, f2 FROM it, t1
+      UNION
+      SELECT * FROM c0
+    )
+  )
+SELECT * FROM c0;
+----
+Explained Query:
+  With Mutually Recursive
+    cte l0 =
+      Map (1) // { arity: 1, types: "(r_int32)" }
+        Distinct project=[] monotonic // { arity: 0, types: "()" }
+          Union // { arity: 0, types: "()" }
+            Project () // { arity: 0, types: "()" }
+              Get l0 // { arity: 1, types: "(r_int32)" }
+            Constant // { arity: 0, types: "()" }
+              - ()
+    cte l1 =
+      Project (#2, #0{f1}, #1{f2}) // { arity: 3, types: "(r_bool, r_int32, r_int32?)" }
+        Map (false) // { arity: 3, types: "(r_int32, r_int32?, r_bool)" }
+          Distinct project=[#0{f1}, #1{f2}] // { arity: 2, types: "(r_int32, r_int32?)" }
+            Union // { arity: 2, types: "(r_int32, r_int32?)" }
+              CrossJoin type=differential // { arity: 2, types: "(r_int32, r_int32?)" }
+                ArrangeBy keys=[[]] // { arity: 0, types: "()" }
+                  Project () // { arity: 0, types: "()" }
+                    Get l0 // { arity: 1, types: "(r_int32)" }
+                ArrangeBy keys=[[]] // { arity: 2, types: "(r_int32, r_int32?)" }
+                  ReadStorage materialize.public.t1 // { arity: 2, types: "(r_int32, r_int32?)" }
+              Project (#1{f1}, #2{f2}) // { arity: 2, types: "(r_int32, r_int32?)" }
+                Get l1 // { arity: 3, types: "(r_bool, r_int32, r_int32?)" }
+  Return // { arity: 3, types: "(r_bool, r_int32, r_int32?)" }
+    Get l1 // { arity: 3, types: "(r_bool, r_int32, r_int32?)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF
+
+statement ok
+SELECT mz_internal.mz_minimal_name_qualification(COALESCE(pg_catalog.string_to_array(pg_catalog."current_role"(), pg_catalog."user"()), COALESCE(mz_internal.mz_normalize_object_name(NULL), pg_catalog.regexp_match(CAST(0 AS text), CAST(0 AS text)))), mz_catalog.mz_version()) AS c1;

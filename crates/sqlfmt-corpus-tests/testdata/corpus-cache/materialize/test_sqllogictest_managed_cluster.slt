@@ -1,0 +1,420 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+# Basic tests of the `CREATE CLUSTER` and `DROP CLUSTER` DDL statements.
+
+mode cockroach
+
+# Start from a pristine state
+reset-server
+
+statement ok
+CREATE CLUSTER foo SIZE 'scale=1,workers=1'
+
+statement error Expected one of OWNER or RENAME or RESET or SET or SWAP, found dot
+ALTER CLUSTER foo.bar SET (SIZE 'scale=1,workers=2')
+
+statement ok
+ALTER CLUSTER foo RESET (REPLICATION FACTOR)
+
+statement error SIZE has no default value
+ALTER CLUSTER foo RESET (SIZE)
+
+statement ok
+ALTER CLUSTER foo RESET (AVAILABILITY ZONES)
+
+statement ok
+ALTER CLUSTER foo RESET (INTROSPECTION DEBUGGING)
+
+statement ok
+ALTER CLUSTER foo RESET (INTROSPECTION INTERVAL)
+
+statement ok
+DROP CLUSTER foo
+
+statement error Expected left parenthesis, found REPLICATION
+ALTER CLUSTER foo SET REPLICATION FACTOR 2
+
+statement error Expected left parenthesis, found REPLICATION
+ALTER CLUSTER foo RESET REPLICATION FACTOR
+
+statement error unknown cluster 'foo'
+ALTER CLUSTER foo SET (REPLICATION FACTOR 2)
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name != 'quickstart'
+----
+s1  mz_system  true  1  scale=1,workers=2
+s2  mz_catalog_server  true  1  scale=1,workers=2
+s3  mz_probe  true  1  scale=1,workers=2
+s4  mz_support  true  0  scale=1,workers=2
+s5  mz_analytics  true  0  scale=1,workers=2
+
+
+query T rowsort
+SELECT name FROM (SHOW CLUSTERS)
+----
+mz_analytics
+mz_system
+mz_support
+mz_probe
+mz_catalog_server
+quickstart
+
+# Test invalid option combinations.
+
+statement error REPLICAS not supported for managed clusters
+CREATE CLUSTER baz REPLICAS (), MANAGED
+
+statement ok
+CREATE CLUSTER baz REPLICAS (), MANAGED = false
+
+statement error REPLICATION FACTOR not supported for unmanaged clusters
+ALTER CLUSTER baz SET (REPLICATION FACTOR 2)
+
+statement error SIZE not supported for unmanaged clusters
+ALTER CLUSTER baz SET (SIZE 'scale=1,workers=2')
+
+statement ok
+ALTER CLUSTER baz RESET (REPLICAS)
+
+statement error Cannot change REPLICATION FACTOR of unmanaged clusters
+ALTER CLUSTER baz RESET (REPLICATION FACTOR)
+
+statement error Cannot change SIZE of unmanaged clusters
+ALTER CLUSTER baz RESET (SIZE)
+
+statement error Cannot change AVAILABILITY ZONES of unmanaged clusters
+ALTER CLUSTER baz RESET (AVAILABILITY ZONES)
+
+statement error Cannot change INTROSPECTION DEGUBBING of unmanaged clusters
+ALTER CLUSTER baz RESET (INTROSPECTION DEBUGGING)
+
+statement error Cannot change INTROSPECTION INTERVAL of unmanaged clusters
+ALTER CLUSTER baz RESET (INTROSPECTION INTERVAL)
+
+statement error Missing SIZE for empty cluster
+ALTER CLUSTER baz SET (MANAGED)
+
+statement ok
+ALTER CLUSTER baz SET (MANAGED, SIZE 'scale=1,workers=1')
+
+statement ok
+DROP CLUSTER baz
+
+statement error SIZE not supported for unmanaged clusters
+CREATE CLUSTER baz REPLICAS (), SIZE 'scale=1,workers=1'
+
+statement error REPLICATION FACTOR not supported for unmanaged clusters
+CREATE CLUSTER baz REPLICAS (), REPLICATION FACTOR 0
+
+statement error INTROSPECTION DEBUGGING not supported for unmanaged clusters
+CREATE CLUSTER baz REPLICAS (), INTROSPECTION DEBUGGING = true
+
+statement error INTROSPECTION INTERVAL not supported for unmanaged clusters
+CREATE CLUSTER baz REPLICAS (), INTROSPECTION INTERVAL 1
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+statement error unknown cluster replica size abc
+CREATE CLUSTER foo SIZE 'abc', REPLICATION FACTOR 3
+
+statement ok
+CREATE CLUSTER foo SIZE 'scale=1,workers=1', REPLICATION FACTOR 3
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=1
+foo  r2  scale=1,workers=1
+foo  r3  scale=1,workers=1
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  true  3  scale=1,workers=1
+
+statement ok
+ALTER CLUSTER foo SET (MANAGED = false)
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=1
+foo  r2  scale=1,workers=1
+foo  r3  scale=1,workers=1
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  false  NULL  NULL
+
+statement error REPLICATION FACTOR 4 does not match number of replicas \(3\)
+ALTER CLUSTER foo SET (MANAGED, REPLICATION FACTOR 4)
+
+statement error Cluster replicas of size scale=1,workers=1 do not match expected SIZE scale=1,workers=2
+ALTER CLUSTER foo SET (MANAGED, SIZE 'scale=1,workers=2')
+
+statement error Cluster replicas of size scale=1,workers=1 do not match expected SIZE abc
+ALTER CLUSTER foo SET (MANAGED, SIZE abc)
+
+statement ok
+ALTER CLUSTER foo SET (MANAGED, SIZE 'scale=1,workers=1')
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS WHERE cluster != 'quickstart') ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=1
+foo  r2  scale=1,workers=1
+foo  r3  scale=1,workers=1
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  true  3  scale=1,workers=1
+
+query TT
+SELECT mz_clusters.name, mz_cluster_replicas.name FROM mz_cluster_replicas JOIN mz_clusters ON mz_cluster_replicas.cluster_id = mz_clusters.id WHERE mz_clusters.name != 'quickstart' ORDER BY 1, 2
+----
+foo  r1
+foo  r2
+foo  r3
+mz_catalog_server  r1
+mz_probe  r1
+mz_system  r1
+
+statement error cannot drop replica of managed cluster
+DROP CLUSTER REPLICA foo.r1
+
+statement error cannot modify managed cluster foo
+ALTER CLUSTER REPLICA foo.r2 RENAME TO bar
+
+statement ok
+ALTER CLUSTER foo SET (REPLICATION FACTOR 1)
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=1
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  true  1  scale=1,workers=1
+
+statement ok
+ALTER CLUSTER foo SET (REPLICATION FACTOR 2)
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=1
+foo  r2  scale=1,workers=1
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  true  2  scale=1,workers=1
+
+statement ok
+ALTER CLUSTER foo RESET (REPLICATION FACTOR)
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=1
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  true  1  scale=1,workers=1
+
+statement ok
+ALTER CLUSTER foo SET (SIZE 'scale=1,workers=2')
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=2
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  true  1  scale=1,workers=2
+
+statement ok
+ALTER CLUSTER foo SET (SIZE 'scale=1,workers=1', REPLICATION FACTOR 1)
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+foo  r1  scale=1,workers=1
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTT rowsort
+SELECT id, name, managed, replication_factor, size FROM mz_clusters WHERE name LIKE 'foo'
+----
+u5  foo  true  1  scale=1,workers=1
+
+statement error cannot drop replica of managed cluster
+DROP CLUSTER REPLICA foo.r1
+
+statement ok
+ALTER CLUSTER foo SET (REPLICATION FACTOR 0)
+
+statement error unknown cluster replica size invalid_size
+ALTER CLUSTER foo SET (SIZE invalid_size)
+
+statement ok
+DROP CLUSTER REPLICA IF EXISTS quickstart.bar
+
+statement ok
+DROP CLUSTER REPLICA IF EXISTS bar.foo
+
+statement ok
+DROP CLUSTER REPLICA IF EXISTS quickstart.foo
+
+statement error CLUSTER foo has no CLUSTER REPLICA named "r1"
+DROP CLUSTER REPLICA foo.r1
+
+
+query TTT
+SELECT cluster, replica, size FROM (SHOW CLUSTER REPLICAS) WHERE cluster != 'quickstart' ORDER BY 1, 2, 3
+----
+mz_catalog_server  r1  scale=1,workers=2
+mz_probe  r1  scale=1,workers=2
+mz_system  r1  scale=1,workers=2
+
+query TTTTTTT
+SELECT r.name, r.size, s.processes, s.cpu_nano_cores, s.memory_bytes, s.workers, s.credits_per_hour FROM mz_cluster_replicas r JOIN mz_catalog.mz_cluster_replica_sizes s ON r.size = s.size JOIN mz_clusters ON r.cluster_id = mz_clusters.id WHERE mz_clusters.name != 'quickstart' ORDER BY r.name
+----
+r1  scale=1,workers=2  1  18446744073709000000  18446744073709551615  2  1
+r1  scale=1,workers=2  1  18446744073709000000  18446744073709551615  2  1
+r1  scale=1,workers=2  1  18446744073709000000  18446744073709551615  2  1
+
+statement ok
+DROP CLUSTER foo CASCADE
+
+statement ok
+CREATE CLUSTER foo REPLICAS (r1 (SIZE 'scale=1,workers=1'), r2 (SIZE 'scale=1,workers=2'))
+
+statement error Cannot convert unmanaged cluster to managed, non\-unique replica sizes: scale=1,workers=1, scale=1,workers=2
+ALTER CLUSTER foo SET (MANAGED)
+
+statement ok
+DROP CLUSTER foo CASCADE
+
+statement ok
+CREATE CLUSTER foo REPLICAS (c1 (SIZE 'scale=1,workers=1'), r2 (SIZE 'scale=1,workers=1'))
+
+statement error Cannot convert unmanaged cluster to managed, invalid replica names: c1
+ALTER CLUSTER foo SET (MANAGED)
+
+statement ok
+DROP CLUSTER foo CASCADE
+
+statement ok
+CREATE CLUSTER foo REPLICAS (r1 (SIZE 'scale=1,workers=1'), r2 (SIZE 'scale=1,workers=1'))
+
+statement ok
+ALTER CLUSTER foo RESET (MANAGED)
+
+statement ok
+DROP CLUSTER foo CASCADE
+
+statement ok
+CREATE CLUSTER foo REPLICAS (r1 (SIZE 'scale=1,workers=1'), r2 (SIZE 'scale=1,workers=1'))
+
+statement error Cluster replicas of size scale=1,workers=1 do not match expected SIZE scale=1,workers=2
+ALTER CLUSTER foo SET (MANAGED, SIZE 'scale=1,workers=2')
+
+statement error REPLICATION FACTOR 1 does not match number of replicas \(2\)
+ALTER CLUSTER foo SET (MANAGED, REPLICATION FACTOR 1)
+
+statement ok
+ALTER CLUSTER foo SET (MANAGED, REPLICATION FACTOR 2)
+
+statement ok
+DROP CLUSTER foo CASCADE
+
+statement error creating cluster replica would violate max_replicas_per_cluster limit \(desired: 99, limit: 5, current: 0\)
+CREATE CLUSTER foo SIZE 'scale=1,workers=1', replication factor 99
+
+statement ok
+CREATE CLUSTER foo SIZE 'scale=1,workers=1', replication factor 1
+
+statement error cluster 'foo' already exists
+CREATE CLUSTER foo SIZE 'scale=1,workers=1', replication factor 1
+
+statement ok
+CREATE SOURCE loadgen IN CLUSTER foo FROM LOAD GENERATOR COUNTER
+
+statement ok
+ALTER CLUSTER foo SET (REPLICATION FACTOR 2)
+
+statement ok
+ALTER CLUSTER foo SET (REPLICATION FACTOR 0)
+
+statement ok
+DROP CLUSTER foo CASCADE
+
+statement error unknown cluster replica size invalid_size
+CREATE CLUSTER foo SIZE invalid_size, REPLICATION FACTOR 0
+
+# Test for database-issues#6046 . Without the fix, this query will hang indefinitely
+statement error creating cluster replica would violate max_replicas_per_cluster limit \(desired: 9999999, limit: 5, current: 0\)
+CREATE CLUSTER foo SIZE 'scale=1,workers=1', replication factor 9999999;
+
+simple conn=mz_system,user=mz_system
+ALTER SYSTEM SET enable_zero_downtime_cluster_reconfiguration = true;
+----
+COMPLETE 0
+
+statement ok
+CREATE CLUSTER foo (SIZE 'scale=1,workers=1')
+
+statement ok
+ALTER CLUSTER foo set (SIZE 'scale=1,workers=2') WITH (WAIT FOR '0s')
+
+statement ok
+ALTER CLUSTER foo set (SIZE 'scale=1,workers=4') WITH (WAIT UNTIL READY (TIMEOUT '0s', ON TIMEOUT 'COMMIT') )
+
+statement ok
+ALTER CLUSTER foo set (SIZE 'scale=1,workers=4') WITH (WAIT UNTIL READY (TIMEOUT '10ms', ON TIMEOUT 'ROLLBACK') )
+
+# Restore pristine server state
+reset-server

@@ -1,0 +1,122 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+# Tests that exist primarily to test our sqllogictest runner,
+# rather than Materialize.
+
+statement ok
+CREATE TABLE t (a int)
+
+statement ok
+INSERT INTO t VALUES (1), (2), (3), (4), (5)
+
+# Computing the diff for UPDATEs with WHERE clauses is a bit involved.
+# Check that we do it right.
+
+statement ok
+UPDATE t SET a = a - 1 WHERE a > 3
+
+query I
+SELECT * FROM t ORDER BY a
+----
+1
+2
+3
+3
+4
+
+query III colnames
+SELECT 1 AS "column name with spaces!", 2 AS "nospaces", 3 AS "space again";
+----
+column␠name␠with␠spaces! nospaces space␠again
+1
+2
+3
+
+statement ok
+CREATE MATERIALIZED VIEW mv1 AS SELECT 1;
+
+mode standard
+
+query TT
+SELECT 'result' || chr(10) || 'with' || chr(10) || 'newline', 'no newline in this one, but there are spaces'
+UNION
+SELECT 'one' || chr(10) || 'more' || chr(10) || 'row (with spaces)', 'easy'
+----
+one⏎more⏎row (with spaces)
+easy
+result⏎with⏎newline
+no newline in this one, but there are spaces
+
+query T multiline
+SELECT 'result' || chr(10) || 'with' || chr(10) || 'newline';
+----
+result
+with
+newline
+EOF
+
+query TT
+SHOW CREATE MATERIALIZED VIEW mv1;
+----
+materialize.public.mv1
+CREATE MATERIALIZED VIEW materialize.public.mv1⏎    IN CLUSTER quickstart⏎    WITH (REFRESH = ON COMMIT)⏎    AS SELECT 1;
+
+query T
+SELECT create_sql FROM (SHOW CREATE MATERIALIZED VIEW mv1);
+----
+CREATE MATERIALIZED VIEW materialize.public.mv1⏎    IN CLUSTER quickstart⏎    WITH (REFRESH = ON COMMIT)⏎    AS SELECT 1;
+
+simple multiline,conn=mz_catalog_server,user=mz_support
+SELECT create_sql FROM (SHOW CREATE MATERIALIZED VIEW mv1);
+----
+CREATE MATERIALIZED VIEW materialize.public.mv1
+    IN CLUSTER quickstart
+    WITH (REFRESH = ON COMMIT)
+    AS SELECT 1;
+EOF
+COMPLETE 1
+
+mode cockroach
+
+query TT
+SELECT 'result' || chr(10) || 'with' || chr(10) || 'newline', 'no newline in this one, but there are spaces'
+UNION
+SELECT 'one' || chr(10) || 'more' || chr(10) || 'row (with spaces)', 'easy'
+----
+one⏎more⏎row␠(with␠spaces)  easy
+result⏎with⏎newline  no␠newline␠in␠this␠one,␠but␠there␠are␠spaces
+
+query T multiline
+SELECT 'result' || chr(10) || 'with' || chr(10) || 'newline';
+----
+result
+with
+newline
+EOF
+
+query TT
+SHOW CREATE MATERIALIZED VIEW mv1;
+----
+materialize.public.mv1  CREATE␠MATERIALIZED␠VIEW␠materialize.public.mv1⏎␠␠␠␠IN␠CLUSTER␠quickstart⏎␠␠␠␠WITH␠(REFRESH␠=␠ON␠COMMIT)⏎␠␠␠␠AS␠SELECT␠1;
+
+query T
+SELECT create_sql FROM (SHOW CREATE MATERIALIZED VIEW mv1);
+----
+CREATE MATERIALIZED VIEW materialize.public.mv1⏎    IN CLUSTER quickstart⏎    WITH (REFRESH = ON COMMIT)⏎    AS SELECT 1;
+
+simple multiline,conn=mz_catalog_server,user=mz_support
+SELECT create_sql FROM (SHOW CREATE MATERIALIZED VIEW mv1);
+----
+CREATE MATERIALIZED VIEW materialize.public.mv1
+    IN CLUSTER quickstart
+    WITH (REFRESH = ON COMMIT)
+    AS SELECT 1;
+EOF
+COMPLETE 1

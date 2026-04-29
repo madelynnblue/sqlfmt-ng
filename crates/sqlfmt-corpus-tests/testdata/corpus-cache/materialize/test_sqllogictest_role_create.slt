@@ -1,0 +1,298 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+# Loosely based on https://github.com/postgres/postgres/blob/master/src/test/regress/expected/create_role.out
+# We have replaced role attributes with system privileges so we had to make a lot of changes to
+# this test file to reflect that.
+
+mode cockroach
+
+reset-server
+
+# Set password auth to false by default
+simple conn=mz_system,user=mz_system
+ALTER SYSTEM SET enable_password_auth TO false;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+CREATE ROLE regress_role_admin;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+GRANT CREATEDB, CREATECLUSTER, CREATEROLE ON SYSTEM TO regress_role_admin;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+CREATE DATABASE regression
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+GRANT CREATE ON DATABASE regression TO regress_role_admin;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+GRANT CREATE ON DATABASE regression TO regress_role_admin WITH GRANT OPTION;
+----
+db error: ERROR: Expected end of statement, found WITH
+
+simple conn=mz_system,user=mz_system
+CREATE ROLE regress_role_limited_admin;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+GRANT CREATEROLE ON SYSTEM TO regress_role_limited_admin;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+CREATE ROLE regress_role_normal;
+----
+COMPLETE 0
+
+simple conn=regress_role_limited_admin,user=regress_role_limited_admin
+CREATE ROLE regress_nosuch_superuser SUPERUSER;
+----
+db error: ERROR: permission denied to create superuser role
+DETAIL: You must be a superuser to create superuser role
+
+simple conn=regress_role_limited_admin,user=regress_role_limited_admin
+CREATE ROLE regress_nosuch_createdb CREATEDB;
+----
+db error: ERROR: CREATEDB attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_limited_admin,user=regress_role_limited_admin
+CREATE ROLE regress_nosuch_createcluster CREATECLUSTER;
+----
+db error: ERROR: CREATECLUSTER attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_limited_admin,user=regress_role_limited_admin
+CREATE ROLE regress_role_limited;
+----
+COMPLETE 0
+
+simple conn=regress_role_limited_admin,user=regress_role_limited_admin
+ALTER ROLE regress_role_limited CREATEDB;
+----
+db error: ERROR: CREATEDB attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_limited_admin,user=regress_role_limited_admin
+ALTER ROLE regress_role_limited CREATECLUSTER;
+----
+db error: ERROR: CREATECLUSTER attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_createdb;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+GRANT CREATEDB ON SYSTEM TO regress_createdb;
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE regress_createdb NOCREATEDB;
+----
+db error: ERROR: CREATEDB attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE regress_createdb CREATEDB;
+----
+db error: ERROR: CREATEDB attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_createcluster;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+GRANT CREATECLUSTER ON SYSTEM TO regress_createcluster;
+----
+COMPLETE 0
+
+# We disable password auth to make sure we error in cloud like
+# we expect.
+simple conn=mz_system,user=mz_system
+ALTER SYSTEM SET enable_password_auth = false
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE regress_createcluster NOCREATECLUSTER;
+----
+db error: ERROR: CREATECLUSTER attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE regress_createcluster CREATECLUSTER;
+----
+db error: ERROR: CREATECLUSTER attribute is not supported, for more information consult the documentation at https://materialize.com/docs/sql/create-role/#details
+DETAIL: Use system privileges instead.
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE regress_createdb SUPERUSER;
+----
+db error: ERROR: permission denied to alter superuser role
+DETAIL: You must be a superuser to alter superuser role
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE regress_createdb NOSUPERUSER;
+----
+db error: ERROR: permission denied to alter superuser role
+DETAIL: You must be a superuser to alter superuser role
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_createrole;
+----
+COMPLETE 0
+
+simple conn=mz_system,user=mz_system
+GRANT CREATEROLE ON SYSTEM TO regress_createrole;
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_connection_limit CONNECTION LIMIT 5;
+----
+db error: ERROR: Expected end of statement, found CONNECTION
+
+# You might think to yourself "why is creating a role with PASSWORD NULL
+# allowed? Especially when self hosted auth isn't enabled?"
+# The answer is unsatisfying: it's a legacy behavior from Postgres.
+# Creating a role with a null password is the same as not specifying a password at all.
+# So, uh, sure...
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_password_null PASSWORD NULL;
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword SYSID 12345;
+----
+db error: ERROR: Expected end of statement, found identifier "sysid"
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword USER x;
+----
+db error: ERROR: Expected end of statement, found USER
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword ADMIN x
+----
+db error: ERROR: Expected end of statement, found identifier "admin"
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword ROLE x
+----
+db error: ERROR: Expected end of statement, found ROLE
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword IN GROUP x
+----
+db error: ERROR: Expected end of statement, found IN
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword IN ROLE x;
+----
+db error: ERROR: Expected end of statement, found IN
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword VALID UNTIL '2024';
+----
+db error: ERROR: Expected end of statement, found identifier "valid"
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword ENCRYPTED PASSWORD NULL;
+----
+db error: ERROR: Expected end of statement, found identifier "encrypted"
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword BYPASSRLS;
+----
+db error: ERROR: Expected end of statement, found identifier "bypassrls"
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword NOBYPASSRLS;
+----
+db error: ERROR: Expected end of statement, found identifier "nobypassrls"
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword REPLICATION;
+----
+db error: ERROR: Expected end of statement, found REPLICATION
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE regress_noiseword NOREPLICATION;
+----
+db error: ERROR: Expected end of statement, found identifier "noreplication"
+
+simple conn=mz_system,user=mz_system
+ALTER SYSTEM SET enable_password_auth = true
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE password_role WITH PASSWORD 'password';
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE login_password_role WITH LOGIN PASSWORD 'password';
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE password_role WITH PASSWORD 'new_password';
+----
+db error: ERROR: permission denied to alter password of role
+DETAIL: You must be a superuser to alter password of role
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE regress_role_admin WITH PASSWORD 'new_password';
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE password_role WITH PASSWORD NULL;
+----
+COMPLETE 0
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE password_role WITH PASSWORD 123;
+----
+db error: ERROR: Expected literal string, found number "123"
+
+simple conn=regress_role_admin,user=regress_role_admin
+CREATE ROLE superuser_login_password_role WITH SUPERUSER LOGIN PASSWORD 'password';
+----
+db error: ERROR: permission denied to create superuser role
+DETAIL: You must be a superuser to create superuser role
+
+simple conn=regress_role_admin,user=regress_role_admin
+ALTER ROLE password_role WITH SUPERUSER;
+----
+db error: ERROR: permission denied to alter superuser role
+DETAIL: You must be a superuser to alter superuser role
+
+simple conn=regress_role_admin,user=regress_role_admin
+DROP ROLE password_role;
+----
+COMPLETE 0

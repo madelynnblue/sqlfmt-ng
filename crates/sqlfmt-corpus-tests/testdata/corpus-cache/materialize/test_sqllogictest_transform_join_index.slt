@@ -1,0 +1,771 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+simple conn=mz_system,user=mz_system
+ALTER SYSTEM SET unsafe_enable_table_keys = true
+----
+COMPLETE 0
+
+statement ok
+DROP TABLE IF EXISTS foo;
+
+statement ok
+DROP TABLE IF EXISTS bar;
+
+statement ok
+CREATE TABLE foo(a int, b int)
+
+statement ok
+INSERT INTO foo VALUES (1, 2), (-1, 4), (null, 3)
+
+statement ok
+CREATE TABLE bar(a int, b int)
+
+statement ok
+INSERT INTO bar VALUES (1, 3), (-1, null), (null, 5)
+
+# no indexes other than the default foo(a,b) and bar(a,b)
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR select * from foo inner join bar on foo.a = bar.a where foo.a = 1
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 4 }
+    implementation
+      %0:foo[×]ef » %1:bar[×]ef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{a} = 1) // { arity: 2 }
+        ReadStorage materialize.public.foo // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{a} = 1) // { arity: 2 }
+        ReadStorage materialize.public.bar // { arity: 2 }
+
+Source materialize.public.foo
+  filter=((#0{a} = 1))
+Source materialize.public.bar
+  filter=((#0{a} = 1))
+
+Target cluster: quickstart
+
+EOF
+
+query IIII
+select * from foo inner join bar on foo.a = bar.a where foo.a = 1
+----
+1
+2
+1
+3
+
+# no indexes other than the default foo(a,b) and bar(a,b)
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR select * from foo inner join bar on foo.a = abs(bar.a) where mod(foo.a, 2) = 1
+----
+Explained Query:
+  Join on=(#0{a} = abs(#2{a})) type=differential // { arity: 4 }
+    implementation
+      %0:foo[#0{a}]Kef » %1:bar[abs(#0{a})]Kef
+    ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+      Filter (1 = (#0{a} % 2)) // { arity: 2 }
+        ReadStorage materialize.public.foo // { arity: 2 }
+    ArrangeBy keys=[[abs(#0{a})]] // { arity: 2 }
+      Filter (1 = (abs(#0{a}) % 2)) // { arity: 2 }
+        ReadStorage materialize.public.bar // { arity: 2 }
+
+Source materialize.public.foo
+  filter=((1 = (#0{a} % 2)))
+Source materialize.public.bar
+  filter=((1 = (abs(#0{a}) % 2)))
+
+Target cluster: quickstart
+
+EOF
+
+query IIII
+select * from foo inner join bar on foo.a = abs(bar.a) where mod(foo.a, 2) = 1
+----
+1
+2
+-1
+NULL
+1
+2
+1
+3
+
+# Test that equivalence propagation can propagate across inputs of a join.
+# no indexes other than the default foo(a,b) and bar(a,b)
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR select * from (select * from foo where a = 1) filtered_foo, bar where filtered_foo.a = bar.a
+----
+Explained Query:
+  CrossJoin type=differential // { arity: 4 }
+    implementation
+      %0:foo[×]ef » %1:bar[×]ef
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{a} = 1) // { arity: 2 }
+        ReadStorage materialize.public.foo // { arity: 2 }
+    ArrangeBy keys=[[]] // { arity: 2 }
+      Filter (#0{a} = 1) // { arity: 2 }
+        ReadStorage materialize.public.bar // { arity: 2 }
+
+Source materialize.public.foo
+  filter=((#0{a} = 1))
+Source materialize.public.bar
+  filter=((#0{a} = 1))
+
+Target cluster: quickstart
+
+EOF
+
+query IIII
+select * from (select * from foo where a = 1) filtered_foo, bar where filtered_foo.a = bar.a
+----
+1
+2
+1
+3
+
+statement ok
+CREATE INDEX foo_idx on foo(a);
+
+statement ok
+CREATE INDEX bar_idx on bar(a);
+
+statement ok
+CREATE TABLE baz(a int primary key, b int)
+
+statement ok
+INSERT INTO baz VALUES (3, 0), (5, 2)
+
+# indexes exist on foo(a), bar(a), and baz(a). baz(a) is a unique key
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+select foo.a, baz.b
+from foo, bar, baz
+where foo.a = bar.a
+  and baz.a = bar.b
+----
+Explained Query:
+  Project (#0{a}, #5{b}) // { arity: 2 }
+    Join on=(#0{a} = #2{a} AND #3{b} = #4{a}) type=delta // { arity: 6 }
+      implementation
+        %0:foo » %1:bar[#0{a}]KA » %2:baz[#0{a}]UK
+        %1:bar » %2:baz[#0{a}]UK » %0:foo[#0{a}]KA
+        %2:baz » %1:bar[#1{b}]K » %0:foo[#0{a}]KA
+      ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+        ReadIndex on=foo foo_idx=[delta join 1st input (full scan)] // { arity: 2 }
+      ArrangeBy keys=[[#0{a}], [#1{b}]] // { arity: 2 }
+        Filter (#0{a}) IS NOT NULL AND (#1{b}) IS NOT NULL // { arity: 2 }
+          ReadIndex on=bar bar_idx=[*** full scan ***] // { arity: 2 }
+      ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+        ReadStorage materialize.public.baz // { arity: 2 }
+
+Source materialize.public.baz
+
+Used Indexes:
+  - materialize.public.foo_idx (delta join 1st input (full scan))
+  - materialize.public.bar_idx (*** full scan ***)
+
+Target cluster: quickstart
+
+EOF
+
+query II
+select foo.a, baz.b
+from foo, bar, baz
+where foo.a = bar.a
+  and baz.a = bar.b
+----
+1
+0
+
+statement ok
+DROP TABLE baz
+
+statement ok
+CREATE TABLE baz(a int, b int)
+
+statement ok
+INSERT INTO baz VALUES (3, 0), (5, 2), (null, 6)
+
+statement ok
+CREATE INDEX baz_idx on baz(a);
+
+# indexes exist on foo(a), bar(a), and baz(a)
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+select foo.a, baz.b
+from foo, bar, baz
+where foo.a = bar.a
+  and baz.a = bar.b
+----
+Explained Query:
+  Project (#0{a}, #5{b}) // { arity: 2 }
+    Join on=(#0{a} = #2{a} AND #3{b} = #4{a}) type=delta // { arity: 6 }
+      implementation
+        %0:foo » %1:bar[#0{a}]KA » %2:baz[#0{a}]KA
+        %1:bar » %0:foo[#0{a}]KA » %2:baz[#0{a}]KA
+        %2:baz » %1:bar[#1{b}]K » %0:foo[#0{a}]KA
+      ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+        ReadIndex on=foo foo_idx=[delta join 1st input (full scan)] // { arity: 2 }
+      ArrangeBy keys=[[#0{a}], [#1{b}]] // { arity: 2 }
+        Filter (#0{a}) IS NOT NULL AND (#1{b}) IS NOT NULL // { arity: 2 }
+          ReadIndex on=bar bar_idx=[*** full scan ***] // { arity: 2 }
+      ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+        ReadIndex on=baz baz_idx=[delta join lookup] // { arity: 2 }
+
+Used Indexes:
+  - materialize.public.foo_idx (delta join 1st input (full scan))
+  - materialize.public.bar_idx (*** full scan ***)
+  - materialize.public.baz_idx (delta join lookup)
+
+Target cluster: quickstart
+
+EOF
+
+query II
+select foo.a, baz.b
+from foo, bar, baz
+where foo.a = bar.a
+  and baz.a = bar.b
+----
+1
+0
+
+statement ok
+CREATE INDEX foo_idx2 on foo(nullif(a, 0));
+
+statement ok
+CREATE INDEX bar_idx2 on bar(-a);
+
+# Test that when join planning uses indexes on expressions.
+# Protects against regression of database-issues#1290.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+select foo.b, bar.b
+from foo, bar
+where nullif(foo.a, 0) = -bar.a
+----
+Explained Query:
+  Project (#1{b}, #3{b}) // { arity: 2 }
+    Filter (#2{a}) IS NOT NULL // { arity: 4 }
+      Join on=(-(#2{a}) = case when (#0{a} = 0) then null else #0{a} end) type=differential // { arity: 4 }
+        implementation
+          %0:foo[case when (#0{a} = 0) then null else #0{a} end]KA » %1:bar[-(#0{a})]KA
+        ArrangeBy keys=[[case when (#0{a} = 0) then null else #0{a} end]] // { arity: 2 }
+          ReadIndex on=foo foo_idx2=[differential join] // { arity: 2 }
+        ArrangeBy keys=[[-(#0{a})]] // { arity: 2 }
+          ReadIndex on=bar bar_idx2=[differential join] // { arity: 2 }
+
+Used Indexes:
+  - materialize.public.foo_idx2 (differential join)
+  - materialize.public.bar_idx2 (differential join)
+
+Target cluster: quickstart
+
+EOF
+
+query II
+select foo.b, bar.b
+from foo, bar
+where nullif(foo.a, 0) = -bar.a
+----
+2
+NULL
+4
+3
+
+statement ok
+DROP INDEX bar_idx;
+
+statement ok
+CREATE INDEX bar_idx3 on bar(a + 4);
+
+# In this test, there exists an index on bar(a + 4)
+# but not bar(a). Check that bar(a+4) is not inappropriately
+# substituted for bar(a) in the first equivalence.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+select foo.b, bar.b, baz.b
+FROM bar, foo, baz
+where foo.a = bar.a
+  and bar.a + 4 = baz.a
+----
+Explained Query:
+  Project (#3{b}, #1{b}, #5{b}) // { arity: 3 }
+    Filter (#4{a}) IS NOT NULL // { arity: 6 }
+      Join on=(#0{a} = #2{a} AND #4{a} = (#0{a} + 4)) type=delta // { arity: 6 }
+        implementation
+          %0:bar » %1:foo[#0{a}]KA » %2:baz[#0{a}]KA
+          %1:foo » %0:bar[#0{a}]K » %2:baz[#0{a}]KA
+          %2:baz » %0:bar[(#0{a} + 4)]KA » %1:foo[#0{a}]KA
+        ArrangeBy keys=[[#0{a}], [(#0{a} + 4)]] // { arity: 2 }
+          Filter (#0{a}) IS NOT NULL // { arity: 2 }
+            ReadIndex on=bar bar_idx2=[*** full scan ***] // { arity: 2 }
+        ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+          ReadIndex on=foo foo_idx=[delta join lookup] // { arity: 2 }
+        ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+          ReadIndex on=baz baz_idx=[delta join lookup] // { arity: 2 }
+
+Used Indexes:
+  - materialize.public.foo_idx (delta join lookup)
+  - materialize.public.baz_idx (delta join lookup)
+  - materialize.public.bar_idx2 (*** full scan ***)
+
+Target cluster: quickstart
+
+EOF
+
+mode cockroach
+
+query III rowsort
+select foo.b, bar.b, baz.b
+FROM bar, foo, baz
+where foo.a = bar.a
+  and bar.a + 4 = baz.a
+----
+4 NULL 0
+2 3 2
+
+mode standard
+
+# tests that equalities involving multi-input equalities become join conditions.
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR select foo.b, bar.b from foo, bar, (select 1 as a) const where foo.a / bar.a = const.a
+----
+Explained Query:
+  Project (#1{b}, #3{b}) // { arity: 2 }
+    Join on=(1 = (#0{a} / #2{a})) type=differential // { arity: 4 }
+      implementation
+        %0:foo[×] » %1:bar[×]
+      ArrangeBy keys=[[]] // { arity: 2 }
+        ReadIndex on=foo foo_idx=[*** full scan ***] // { arity: 2 }
+      ArrangeBy keys=[[]] // { arity: 2 }
+        ReadIndex on=bar bar_idx2=[*** full scan ***] // { arity: 2 }
+
+Used Indexes:
+  - materialize.public.foo_idx (*** full scan ***)
+  - materialize.public.bar_idx2 (*** full scan ***)
+
+Target cluster: quickstart
+
+EOF
+
+mode cockroach
+
+query II rowsort
+select foo.b, bar.b from foo, bar, (select 1 as a) const where foo.a / bar.a = const.a
+----
+4 NULL
+2 3
+
+ mode standard
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+select foo.b, bar.b
+from foo, bar, (select -1 as a) const
+where foo.a / bar.a = const.a
+and bar.b - foo.b = foo.a / bar.a
+----
+Explained Query:
+  Project (#1{b}, #3{b}) // { arity: 2 }
+    Join on=(-1 = (#3{b} - #1{b}) = (#0{a} / #2{a})) type=differential // { arity: 4 }
+      implementation
+        %0:foo[×] » %1:bar[×]
+      ArrangeBy keys=[[]] // { arity: 2 }
+        ReadIndex on=foo foo_idx=[*** full scan ***] // { arity: 2 }
+      ArrangeBy keys=[[]] // { arity: 2 }
+        ReadIndex on=bar bar_idx2=[*** full scan ***] // { arity: 2 }
+
+Used Indexes:
+  - materialize.public.foo_idx (*** full scan ***)
+  - materialize.public.bar_idx2 (*** full scan ***)
+
+Target cluster: quickstart
+
+EOF
+
+query II
+select foo.b, bar.b
+from foo, bar, (select -1 as a) const
+where foo.a / bar.a = const.a
+and bar.b - foo.b = foo.a / bar.a
+----
+4
+3
+
+statement ok
+DROP INDEX baz_idx
+
+# database-issues#2449: it would be nice if this join used the indexes on bar(a+4)
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+select foo.b, bar.b, baz.b
+FROM foo, bar, baz
+where foo.a = bar.a
+  and foo.a + 4 = baz.a
+----
+Explained Query:
+  Project (#1{b}, #3{b}, #5{b}) // { arity: 3 }
+    Join on=(#0{a} = #2{a} AND #4{a} = (#0{a} + 4)) type=delta // { arity: 6 }
+      implementation
+        %0:foo » %1:bar[#0{a}]K » %2:baz[#0{a}]K
+        %1:bar » %0:foo[#0{a}]KA » %2:baz[#0{a}]K
+        %2:baz » %0:foo[(#0{a} + 4)]K » %1:bar[#0{a}]K
+      ArrangeBy keys=[[#0{a}], [(#0{a} + 4)]] // { arity: 2 }
+        Filter (#0{a}) IS NOT NULL // { arity: 2 }
+          ReadIndex on=foo foo_idx=[*** full scan ***] // { arity: 2 }
+      ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+        Filter (#0{a}) IS NOT NULL // { arity: 2 }
+          ReadIndex on=bar bar_idx2=[*** full scan ***] // { arity: 2 }
+      ArrangeBy keys=[[#0{a}]] // { arity: 2 }
+        Filter (#0{a}) IS NOT NULL // { arity: 2 }
+          ReadStorage materialize.public.baz // { arity: 2 }
+
+Source materialize.public.baz
+  filter=((#0{a}) IS NOT NULL)
+
+Used Indexes:
+  - materialize.public.foo_idx (*** full scan ***)
+  - materialize.public.bar_idx2 (*** full scan ***)
+
+Target cluster: quickstart
+
+EOF
+
+mode cockroach
+
+query III rowsort
+select foo.b, bar.b, baz.b
+FROM bar, foo, baz
+where foo.a = bar.a
+  and bar.a + 4 = baz.a
+----
+4 NULL 0
+2 3 2
+
+mode standard
+
+statement ok
+CREATE TABLE t1 (f1 DOUBLE PRECISION, f2 DOUBLE PRECISION NOT NULL);
+
+statement ok
+CREATE INDEX t1i1 ON t1(f1);
+
+statement ok
+CREATE INDEX t1i2 ON t1(f2, f1);
+
+# one NULL row in t1
+
+statement ok
+INSERT INTO t1 VALUES (NULL, 0);
+
+# values 1 and 2 have 2 rows each in t1
+
+statement ok
+INSERT INTO t1 VALUES (1, 1), (1, 1), (2, 2), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8);
+
+# value 9 not present in either table
+
+statement ok
+CREATE TABLE t2 (f1 DOUBLE PRECISION, f2 DOUBLE PRECISION NOT NULL);
+
+statement ok
+CREATE INDEX t2i1 ON t2(f1);
+
+statement ok
+CREATE INDEX i2i2 ON t2(f2, f1);
+
+# two NULL rows in t2
+
+statement ok
+INSERT INTO t2 VALUES (NULL, 0), (NULL, 0), (1, 1);
+
+# value 2 has 2 rows in t2
+statement ok
+INSERT INTO t2 VALUES (2, 2), (2, 2);
+
+# value 3 has no rows in t2
+statement ok
+INSERT INTO t2 VALUES (4, 4), (5, 5), (6, 6), (7, 7), (8, 8);
+
+query RRR
+SELECT *
+  FROM (
+        SELECT AVG(f1) + 10000 AS agg1
+          FROM t1
+       ) a1,
+       t1 a2
+ WHERE a2.f2 > a1.agg1;
+----
+
+query RR rowsort
+SELECT a2.f2, agg1
+  FROM (
+        SELECT AVG(f1)  AS agg1 FROM t1
+       ) a1 ,
+       t1 a2
+ WHERE a2.f2 < a1.agg1;
+----
+0.000
+3.900
+1.000
+3.900
+1.000
+3.900
+2.000
+3.900
+2.000
+3.900
+3.000
+3.900
+
+query
+SELECT  FROM (  SELECT  AVG ( f2  ) f2  FROM t2  )  JOIN (  SELECT a2 .f1  FROM t1  JOIN t1 a2  ON  TRUE  )  ON  TRUE  WHERE  TRUE  AND f1  = f2   ;
+----
+
+query B
+SELECT a1 .f1  FROM (  SELECT  TRUE f1  , MAX ( f1  ) f2  FROM t2  ) a1  RIGHT  JOIN (  SELECT f1  FROM t2  )  ON f2  IN (  1  , f2  )   ;
+----
+true
+true
+true
+true
+true
+true
+true
+true
+true
+true
+
+query R
+SELECT f1  FROM (  SELECT  2 f1  , MIN ( f2  ) f2  FROM t1  ) a1  RIGHT  JOIN (  SELECT f2  FROM t2  )  ON f1  = a1 .f2   ;
+----
+NULL
+NULL
+NULL
+NULL
+NULL
+NULL
+NULL
+NULL
+NULL
+NULL
+
+# FilterCharacteristics and IndexedFilter
+
+statement ok
+CREATE TABLE big(a int not null, b int not null, c int not null, d int not null, e int not null, f int not null, g int not null, h int not null, i int not null, j int not null, k int not null, x int, y int, s string);
+
+statement ok
+CREATE INDEX big_idx_a on big(a);
+
+statement ok
+CREATE INDEX big_idx_b on big(b);
+
+statement ok
+CREATE INDEX big_idx_c on big(c);
+
+statement ok
+CREATE INDEX big_idx_d on big(d);
+
+statement ok
+CREATE INDEX big_idx_e on big(e);
+
+statement ok
+CREATE INDEX big_idx_f on big(f);
+
+statement ok
+CREATE INDEX big_idx_g on big(g);
+
+statement ok
+CREATE INDEX big_idx_h on big(h);
+
+statement ok
+CREATE INDEX big_idx_i on big(i);
+
+statement ok
+CREATE INDEX big_idx_j on big(j);
+
+statement ok
+CREATE INDEX big_idx_k on big(k);
+
+statement ok
+CREATE INDEX big_idx_y on big(y);
+
+# In the last Delta path (%10):
+# - From %9 to %5, there are decreasing FilterCharacteristics.
+# - %2 to %4 are all in the any_filter category.
+# - %0 and %1 don't have any filters.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM big as t0, big as t1, big as t2, big as t3, big as t4, big as t5, big as t6, big as t7, big as t8, big as t9, big as t10
+WHERE
+t0.a = t1.b AND
+t1.b = t2.c AND
+t2.c = t3.d AND
+t3.d = t4.e AND
+t4.e = t5.f AND
+t5.f = t6.g AND
+t6.g = t7.h AND
+t7.h = t8.i AND
+t8.i = t9.j AND
+t9.j = t10.k AND
+t9.x = 71 AND
+t8.s LIKE 'a%' AND
+t7.x IS NULL AND
+t6.x BETWEEN 3 AND 8 AND
+t5.x > 5 AND
+t4.s NOT LIKE 'b%' AND
+t3.x != t3.y AND
+(NOT (t2.x = t2.y))
+;
+----
+Explained Query:
+  Project (#0{a}..=#14{a}, #0{a}, #16{c}..=#29{b}, #0{a}, #31{d}..=#44{c}, #0{a}, #46{e}..=#59{d}, #0{a}, #61{f}..=#74{e}, #0{a}, #76{g}..=#89{f}, #0{a}, #91{h}..=#104{g}, #0{a}, #106{i}..=#119{h}, #0{a}, #121{j}..=#134{i}, #0{a}, #136{k}..=#149{j}, #0{a}, #151{x}..=#153{s}) // { arity: 154 }
+    Filter (#109{x}) IS NULL AND like["a%"](#125{s}) AND (#137{x} = 71) AND (#95{x} <= 8) AND (#81{x} > 5) AND (#95{x} >= 3) AND NOT(like["b%"](#69{s})) AND (#39{x} != #40{y}) AND (#53{x} != #54{y}) // { arity: 154 }
+      Join on=(#0{a} = #15{b} = #30{c} = #45{d} = #60{e} = #75{f} = #90{g} = #105{h} = #120{i} = #135{j} = #150{k}) type=delta // { arity: 154 }
+        implementation
+          %0:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %1:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %10:big[#10{k}]KA
+          %2:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %3:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %4:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %5:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %6:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %7:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %8:big » %9:big[#9{j}]KAef » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %9:big » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA » %10:big[#10{k}]KA
+          %10:big » %9:big[#9{j}]KAef » %8:big[#8{i}]KAlf » %7:big[#7{h}]KAnf » %6:big[#6{g}]KAiif » %5:big[#5{f}]KAif » %2:big[#2{c}]KAf » %3:big[#3{d}]KAf » %4:big[#4{e}]KAf » %0:big[#0{a}]KA » %1:big[#1{b}]KA
+        ArrangeBy keys=[[#0{a}]] // { arity: 14 }
+          ReadIndex on=big big_idx_a=[delta join 1st input (full scan)] // { arity: 14 }
+        ArrangeBy keys=[[#1{b}]] // { arity: 14 }
+          ReadIndex on=big big_idx_b=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#2{c}]] // { arity: 14 }
+          ReadIndex on=big big_idx_c=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#3{d}]] // { arity: 14 }
+          ReadIndex on=big big_idx_d=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#4{e}]] // { arity: 14 }
+          ReadIndex on=big big_idx_e=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#5{f}]] // { arity: 14 }
+          ReadIndex on=big big_idx_f=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#6{g}]] // { arity: 14 }
+          ReadIndex on=big big_idx_g=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#7{h}]] // { arity: 14 }
+          ReadIndex on=big big_idx_h=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#8{i}]] // { arity: 14 }
+          ReadIndex on=big big_idx_i=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#9{j}]] // { arity: 14 }
+          ReadIndex on=big big_idx_j=[delta join lookup] // { arity: 14 }
+        ArrangeBy keys=[[#10{k}]] // { arity: 14 }
+          ReadIndex on=big big_idx_k=[delta join lookup] // { arity: 14 }
+
+Used Indexes:
+  - materialize.public.big_idx_a (delta join 1st input (full scan))
+  - materialize.public.big_idx_b (delta join lookup)
+  - materialize.public.big_idx_c (delta join lookup)
+  - materialize.public.big_idx_d (delta join lookup)
+  - materialize.public.big_idx_e (delta join lookup)
+  - materialize.public.big_idx_f (delta join lookup)
+  - materialize.public.big_idx_g (delta join lookup)
+  - materialize.public.big_idx_h (delta join lookup)
+  - materialize.public.big_idx_i (delta join lookup)
+  - materialize.public.big_idx_j (delta join lookup)
+  - materialize.public.big_idx_k (delta join lookup)
+
+Target cluster: quickstart
+
+EOF
+
+# IndexedFilter should
+# - come before like (i.e., same category as literal_equality)
+# - not prevent planning a Delta join
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM big as t0, big as t1, big as t2
+WHERE
+t0.a = t1.b AND
+t1.b = t2.c AND
+t1.y = 42 AND
+t0.s LIKE 'a%'
+;
+----
+Explained Query:
+  Project (#0{a}..=#14{a}, #0{a}, #16{c}..=#27{s}, #29{a}, #30{b}, #0{a}, #32{d}..=#42{s}) // { arity: 42 }
+    Filter like["a%"](#13{s}) // { arity: 43 }
+      Join on=(#0{a} = #15{b} = #31{c}) type=delta // { arity: 43 }
+        implementation
+          %0:big » %1:big[#1{b}]KAe » %2:big[#2{c}]KA
+          %1:big » %0:big[#0{a}]KAlf » %2:big[#2{c}]KA
+          %2:big » %1:big[#1{b}]KAe » %0:big[#0{a}]KAlf
+        ArrangeBy keys=[[#0{a}]] // { arity: 14 }
+          ReadIndex on=big big_idx_a=[delta join 1st input (full scan)] // { arity: 14 }
+        ArrangeBy keys=[[#1{b}]] // { arity: 15 }
+          ReadIndex on=materialize.public.big big_idx_y=[lookup value=(42)] // { arity: 15 }
+        ArrangeBy keys=[[#2{c}]] // { arity: 14 }
+          ReadIndex on=big big_idx_c=[delta join lookup] // { arity: 14 }
+
+Used Indexes:
+  - materialize.public.big_idx_a (delta join 1st input (full scan))
+  - materialize.public.big_idx_c (delta join lookup)
+  - materialize.public.big_idx_y (lookup)
+
+Target cluster: quickstart
+
+EOF
+
+# FilterCharacteristics from behind a Get. %2 should come at the first or second position in every Delta path,
+# and %2 should have an "e", indicating the join ordering code's awareness of the equality filter.
+# The magic that makes this work is as follows:
+# - inline_mfp has to be true on the last RelationCSE call before JoinImplementation (i.e., in logical_cleanup_pass);
+# - There shouldn't be a RelationCSE between the CanonicalizeMfp that is before JoinImplementation and JoinImplementation.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+WITH t(x) AS (
+  SELECT a
+  FROM big
+  WHERE a = 5
+)
+(
+  SELECT b1.a
+  FROM big as b1, big as b2, t
+)
+UNION ALL
+(SELECT * FROM t);
+----
+Explained Query:
+  With
+    cte l0 =
+      Project (#0{a}) // { arity: 1 }
+        ReadIndex on=materialize.public.big big_idx_a=[lookup value=(5)] // { arity: 15 }
+  Return // { arity: 1 }
+    Union // { arity: 1 }
+      CrossJoin type=delta // { arity: 1 }
+        implementation
+          %0:big » %2:l0[×]e » %1:big[×]
+          %1:big » %2:l0[×]e » %0:big[×]
+          %2:l0 » %0:big[×] » %1:big[×]
+        ArrangeBy keys=[[]] // { arity: 1 }
+          Project (#0{a}) // { arity: 1 }
+            ReadIndex on=big big_idx_a=[*** full scan ***] // { arity: 14 }
+        ArrangeBy keys=[[]] // { arity: 0 }
+          Project () // { arity: 0 }
+            ReadIndex on=big big_idx_a=[*** full scan ***] // { arity: 14 }
+        ArrangeBy keys=[[]] // { arity: 0 }
+          Project () // { arity: 0 }
+            Get l0 // { arity: 1 }
+      Get l0 // { arity: 1 }
+
+Used Indexes:
+  - materialize.public.big_idx_a (*** full scan ***, lookup)
+
+Target cluster: quickstart
+
+EOF

@@ -113,16 +113,35 @@ fn remove_corpus_file_if_empty(dir: &Path, subdir: &str, source: &str, dialect: 
     }
 }
 
+/// Downloads raw corpus files from external sources (Materialize, PostgreSQL, CockroachDB)
+/// into `testdata/corpus-cache/`. Re-run this when you want to refresh the cached sources.
+/// Run with `cargo test -p sqlfmt-corpus-tests -- --ignored test_download_corpus`.
+#[test]
+#[ignore]
+fn test_download_corpus() {
+    let cache_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata/corpus-cache");
+    for source in &all_sources() {
+        match source.fetch(&cache_dir) {
+            Ok(stmts) => println!("{}: {} statements", source.name(), stmts.len()),
+            Err(e) => panic!("failed to fetch {}: {}", source.name(), e),
+        }
+    }
+}
+
+/// Reads cached corpus files from `testdata/corpus-cache/`, formats each statement with all
+/// supported dialects, and updates `testdata/failing/` and `testdata/success/` accordingly.
+/// New failures and regressions cause the test to panic.
+/// Run with `cargo test -p sqlfmt-corpus-tests -- --ignored test_external_corpus`.
 #[test]
 #[ignore]
 fn test_external_corpus() {
-    let cache_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/sqlfmt-corpus-cache");
+    let cache_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata/corpus-cache");
     let testdata_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata");
 
     let opts = default_opts();
     let sources = all_sources();
 
-    // 1. Fetch all external statements and format them.
+    // 1. Load statements from the cache and format them.
     let mut failures: Vec<(String, String, String)> = Vec::new();
     let mut successes: Vec<(String, String, String)> = Vec::new();
 

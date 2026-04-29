@@ -1,0 +1,122 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+# This file contains tests for the ProjectionLifting transform.
+
+mode cockroach
+
+statement ok
+CREATE TABLE edges (src int, dst int)
+
+# Lifting the projections from the inner SELECT enables join fusion, resulting
+# in a single 3-way join in the optimized plan.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR
+SELECT
+  a, b, c
+FROM
+  edges as edge,
+  (
+    SELECT
+      e2.src as a,
+      e2.dst as b,
+      e3.dst as c
+    FROM
+      edges as e2,
+      edges as e3
+    WHERE
+      e2.dst = e3.src
+  ) as apex(a, b, c)
+WHERE
+  edge.dst = apex.a AND
+  edge.src = apex.c;
+----
+Explained Query:
+  With
+    cte l0 =
+      Filter (#0{src}) IS NOT NULL AND (#1{dst}) IS NOT NULL
+        ReadStorage materialize.public.edges
+  Return
+    Project (#1{dst}, #3{dst}, #0{src})
+      Join on=(#0{src} = #5{dst} AND #1{dst} = #2{src} AND #3{dst} = #4{src}) type=differential
+        ArrangeBy keys=[[#1{dst}]]
+          Get l0
+        ArrangeBy keys=[[#0{src}]]
+          Get l0
+        ArrangeBy keys=[[#0{src}, #1{dst}]]
+          Get l0
+
+Source materialize.public.edges
+  filter=((#0{src}) IS NOT NULL AND (#1{dst}) IS NOT NULL)
+
+Target cluster: quickstart
+
+EOF
+
+
+# The above works also in WMR blocks.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR
+WITH MUTUALLY RECURSIVE
+  triangles(a int, b int, c int) AS (
+    SELECT
+      a, b, c
+    FROM
+      edges as edge,
+      (
+        SELECT
+        e2.src as a,
+        e2.dst as b,
+        e3.dst as c
+        FROM
+          edges as e2,
+          edges as e3
+        WHERE
+          e2.dst = e3.src
+      ) as apex(a, b, c)
+    WHERE
+      edge.dst = apex.a AND
+      edge.src = apex.c
+  ),
+  triangle_cycles(a int, b int, c int) AS (
+    SELECT a, b, c FROM triangles
+    UNION
+    SELECT c, a, b FROM triangle_cycles
+  )
+SELECT * FROM triangle_cycles;
+----
+Explained Query:
+  With
+    cte l0 =
+      Filter (#0{src}) IS NOT NULL AND (#1{dst}) IS NOT NULL
+        ReadStorage materialize.public.edges
+  Return
+    With Mutually Recursive
+      cte l1 =
+        Distinct project=[#0{dst}..=#2{src}]
+          Union
+            Project (#1{dst}, #3{dst}, #0{src})
+              Join on=(#0{src} = #5{dst} AND #1{dst} = #2{src} AND #3{dst} = #4{src}) type=differential
+                ArrangeBy keys=[[#1{dst}]]
+                  Get l0
+                ArrangeBy keys=[[#0{src}]]
+                  Get l0
+                ArrangeBy keys=[[#0{src}, #1{dst}]]
+                  Get l0
+            Project (#2{src}, #0{dst}, #1{dst})
+              Get l1
+    Return
+      Get l1
+
+Source materialize.public.edges
+  filter=((#0{src}) IS NOT NULL AND (#1{dst}) IS NOT NULL)
+
+Target cluster: quickstart
+
+EOF

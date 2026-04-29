@@ -1,0 +1,1080 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+# 🔬 Type resolution (non-array)
+
+# 🔬🔬 bool
+
+query T
+SELECT 'true'::bool
+----
+true
+
+query T
+SELECT 'true'::pg_catalog.bool
+----
+true
+
+# 🔬🔬🔬 bool alias
+
+query T
+SELECT 'true'::boolean
+----
+true
+
+query T
+SELECT pg_typeof('true'::boolean)
+----
+boolean
+
+query error type "pg_catalog.boolean" does not exist
+SELECT 'true'::pg_catalog.boolean
+
+# 🔬🔬 bytea
+
+query T
+SELECT 'a'::bytea
+----
+a
+
+query T
+SELECT 'a'::pg_catalog.bytea
+----
+a
+
+# 🔬🔬🔬 bytea alias
+
+query T
+SELECT 'a'::bytes
+----
+a
+
+query error type "pg_catalog.bytes" does not exist
+SELECT ''::pg_catalog.bytes
+
+# 🔬🔬 date
+
+query T
+SELECT '2007-02-01'::date
+----
+2007-02-01
+
+query T
+SELECT '2007-02-01'::pg_catalog.date
+----
+2007-02-01
+
+# 🔬🔬 float4
+
+query T
+SELECT '1.2'::float4
+----
+1.200
+
+query T
+SELECT '1.2'::pg_catalog.float4
+----
+1.200
+
+# 🔬🔬🔬 float4 aliases
+
+query T
+SELECT '1.2'::float(1)
+----
+1.200
+
+query error type "pg_catalog.float" does not exist
+SELECT '1.2'::pg_catalog.float(1)
+
+query T
+SELECT pg_typeof('1.2'::float(1))
+----
+real
+
+query T
+SELECT '1.2'::real
+----
+1.200
+
+query error type "pg_catalog.real" does not exist
+SELECT '1.2'::pg_catalog.real
+
+query T
+SELECT pg_typeof('1.2'::real)
+----
+real
+
+# 🔬🔬 float8
+
+query T
+SELECT '1.2'::float8
+----
+1.200
+
+query T
+SELECT '1.2'::pg_catalog.float8
+----
+1.200
+
+# 🔬🔬🔬 float8 aliases
+
+query T
+SELECT '1.2'::float(53)
+----
+1.200
+
+query error type "pg_catalog.float" does not exist
+SELECT '1.2'::pg_catalog.float(53)
+
+query T
+SELECT pg_typeof('1.2'::float(53))
+----
+double precision
+
+query T
+SELECT '1.2'::double
+----
+1.200
+
+query error type "pg_catalog.double" does not exist
+SELECT '1.2'::pg_catalog.double
+
+query T
+SELECT pg_typeof('1.2'::double)
+----
+double precision
+
+# 🔬🔬 int2
+
+query T
+SELECT '1'::int2
+----
+1
+
+query T
+SELECT '1'::pg_catalog.int2
+----
+1
+
+# 🔬🔬🔬 int2 aliases
+
+query T
+SELECT '1'::smallint
+----
+1
+
+query error type "pg_catalog.smallint" does not exist
+SELECT '1'::pg_catalog.smallint
+
+query T
+SELECT pg_typeof('1'::smallint)
+----
+smallint
+
+# 🔬🔬 int4
+
+query T
+SELECT '1'::int4
+----
+1
+
+query T
+SELECT '1'::pg_catalog.int4
+----
+1
+
+# 🔬🔬🔬 int4 aliases
+
+query T
+SELECT '1'::int
+----
+1
+
+query error type "pg_catalog.int" does not exist
+SELECT '1'::pg_catalog.int
+
+query T
+SELECT pg_typeof('1'::int)
+----
+integer
+
+query T
+SELECT '1'::integer
+----
+1
+
+query error type "pg_catalog.integer" does not exist
+SELECT '1'::pg_catalog.integer
+
+query T
+SELECT pg_typeof('1'::integer)
+----
+integer
+
+# 🔬🔬 int8
+
+query T
+SELECT '1'::int8
+----
+1
+
+query T
+SELECT '1'::pg_catalog.int8
+----
+1
+
+# 🔬🔬🔬 int8 aliases
+
+query T
+SELECT '1'::bigint
+----
+1
+
+query error type "pg_catalog.bigint" does not exist
+SELECT '1'::pg_catalog.bigint
+
+query T
+SELECT pg_typeof('1'::bigint)
+----
+bigint
+
+# 🔬🔬 interval
+
+query T
+SELECT '1-2 3 4:5:6.7'::interval
+----
+1 year 2 months 3 days 04:05:06.7
+
+query T
+SELECT '1-2 3 4:5:6.7'::pg_catalog.interval
+----
+1 year 2 months 3 days 04:05:06.7
+
+# 🔬🔬🔬 interval prefix
+
+query T
+SELECT interval '1-2 3 4:5:6.7'
+----
+1 year 2 months 3 days 04:05:06.7
+
+query T
+SELECT pg_catalog.interval '1-2 3 4:5:6.7'
+----
+1 year 2 months 3 days 04:05:06.7
+
+# Special interval literal syntax doesn't apply to qualified interval
+query error Expected end of statement, found DAY
+SELECT pg_catalog.interval '1-2 3 4:5:6.7' DAY
+
+# 🔬🔬 jsonb
+
+query T
+SELECT '{"1":2,"3":4}'::jsonb
+----
+{"1":2,"3":4}
+
+query T
+SELECT '{"1":2,"3":4}'::pg_catalog.jsonb
+----
+{"1":2,"3":4}
+
+# 🔬🔬🔬 jsonb aliases
+
+query T
+SELECT '{"1":2,"3":4}'::json
+----
+{"1":2,"3":4}
+
+query error type "pg_catalog.json" does not exist
+SELECT '{"1":2,"3":4}'::pg_catalog.json
+
+# 🔬🔬 numeric
+
+query T
+SELECT '1'::numeric(38,0)
+----
+1
+
+query T
+SELECT '1'::pg_catalog.numeric(38,0)
+----
+1
+
+# 🔬🔬🔬 numeric aliases –– note that decimal alises all resolve to numeric when
+# qualified, unlike all other aliases
+
+query T
+SELECT '1'::decimal(38,0)
+----
+1
+
+query error type "pg_catalog.decimal" does not exist
+SELECT '1'::pg_catalog.decimal(38,0)
+
+query T
+SELECT '1'::dec(38,0)
+----
+1
+
+query error type "pg_catalog.dec" does not exist
+SELECT '1'::pg_catalog.dec(38,0)
+
+# 🔬🔬 oid
+
+query T
+SELECT '1'::oid
+----
+1
+
+query T
+SELECT '1'::pg_catalog.oid
+----
+1
+
+query I
+SELECT 1::oid
+----
+1
+
+query I
+SELECT 1::int4::oid
+----
+1
+
+query I
+SELECT 1::int4::oid::int4
+----
+1
+
+# 🔬🔬 record
+
+query error cannot reference pseudo type pg_catalog.record
+SELECT ROW(1, 2)::record;
+
+query error cannot reference pseudo type pg_catalog.record
+SELECT ROW(1, 2)::pg_catalog.record;
+
+# 🔬🔬 text
+
+query T
+SELECT 'dog'::text
+----
+dog
+
+query T
+SELECT 'dog'::pg_catalog.text
+----
+dog
+
+# 🔬🔬🔬 char
+
+query T
+SELECT 'dog'::char(3)
+----
+dog
+
+query T
+SELECT 'dog'::pg_catalog.bpchar(3)
+----
+dog
+
+query error pg_catalog.char does not support type modifiers
+SELECT 'dog'::pg_catalog.char(3)
+
+# 🔬🔬🔬 varchar
+
+query T
+SELECT 'dog'::varchar(10)
+----
+dog
+
+query T
+SELECT 'dog'::pg_catalog.varchar(10)
+----
+dog
+
+# 🔬🔬 time
+
+query T
+SELECT '01:23:45'::time
+----
+01:23:45
+
+query T
+SELECT '01:23:45'::pg_catalog.time
+----
+01:23:45
+
+# 🔬🔬 timestamp
+
+query T
+SELECT '2007-02-01 15:04:05'::timestamp
+----
+2007-02-01 15:04:05
+
+query T
+SELECT '2007-02-01 15:04:05'::pg_catalog.timestamp
+----
+2007-02-01 15:04:05
+
+# 🔬🔬 timestamptz
+
+query T
+SELECT '2007-02-01 15:04:05'::timestamptz
+----
+2007-02-01 15:04:05+00
+
+query T
+SELECT '2007-02-01 15:04:05'::pg_catalog.timestamptz
+----
+2007-02-01 15:04:05+00
+
+# 🔬🔬 uuid
+
+query T
+SELECT '63616665-6630-3064-6465-616462656568'::uuid
+----
+63616665-6630-3064-6465-616462656568
+
+query T
+SELECT '63616665-6630-3064-6465-616462656568'::pg_catalog.uuid
+----
+63616665-6630-3064-6465-616462656568
+
+# 🔬 CASE 'str_literal' should NOT resolve to CAST('str_literal' AS CASE)
+
+query T
+SELECT CASE 'foo' WHEN 'foo' THEN 'FOO' WHEN 'bar' THEN 'BAR' ELSE 'other' END AS result;
+----
+FOO
+
+# 🔬 Type resolution of list element
+
+query T
+SELECT '{true}'::bool list::text
+----
+{t}
+
+query T
+SELECT '{true}'::pg_catalog.bool list::text
+----
+{t}
+
+# 🔬 float resolves to proper types
+
+query T
+SELECT pg_typeof(1::float)
+----
+double precision
+
+query T
+SELECT pg_typeof(1::float(1))
+----
+real
+
+query T
+SELECT pg_typeof(1::float(53))
+----
+double precision
+
+query T
+SELECT pg_typeof(1::float(53))
+----
+double precision
+
+# 🔬 misc. resolution tests
+
+# pg_catalog and materialize.pg_catalog resolution are equivalent
+query T
+SELECT '1'::materialize.pg_catalog.int4
+----
+1
+
+# tables are not types yet
+query error type "pg_catalog.pg_enum" does not exist
+SELECT '1'::pg_catalog.pg_enum
+
+# relations can have the same name as built-in types
+statement ok
+CREATE VIEW int4 AS VALUES (1)
+
+query I
+SELECT * FROM int4
+----
+1
+
+# but within the same schema, types cannot have the same name as a relation
+statement error view "materialize.public.int4" already exists
+CREATE TYPE int4 AS (a int)
+
+# creating relations with the same name as an existing type is not allowed
+# (see database-issues#7142)...
+
+statement ok
+CREATE TYPE rectype AS (a int)
+
+statement error type "materialize.public.rectype" already exists
+CREATE VIEW rectype AS VALUES (1)
+
+statement error type "materialize.public.rectype" already exists
+CREATE MATERIALIZED VIEW rectype AS VALUES (1)
+
+statement error type "materialize.public.rectype" already exists
+CREATE TABLE rectype (a int)
+
+statement error type "materialize.public.rectype" already exists
+CREATE SOURCE rectype FROM LOAD GENERATOR COUNTER
+
+statement error type "materialize.public.rectype" already exists
+CREATE INDEX rectype ON int4 (column1)
+
+# ...not even via rename...
+
+statement ok
+CREATE VIEW rectype_sneaky_v AS VALUES (1)
+
+statement error catalog item 'rectype' already exists
+ALTER VIEW rectype_sneaky_v RENAME TO rectype
+
+statement ok
+CREATE MATERIALIZED VIEW rectype_sneaky_mv AS VALUES (1)
+
+statement error catalog item 'rectype' already exists
+ALTER MATERIALIZED VIEW rectype_sneaky_mv RENAME TO rectype
+
+statement ok
+CREATE TABLE rectype_sneaky_t (a int)
+
+statement error catalog item 'rectype' already exists
+ALTER TABLE rectype_sneaky_t RENAME TO rectype
+
+statement ok
+CREATE SOURCE rectype_sneaky_s FROM LOAD GENERATOR COUNTER
+
+statement error catalog item 'rectype' already exists
+ALTER SOURCE rectype_sneaky_s RENAME TO rectype
+
+statement ok
+CREATE INDEX rectype_sneaky_i ON int4 (column1)
+
+statement error catalog item 'rectype' already exists
+ALTER INDEX rectype_sneaky_i RENAME TO rectype
+
+# creating secrets with the same name as a type is ok though...
+
+statement ok
+CREATE SECRET rectype AS 'ignored'
+
+statement ok
+DROP SECRET rectype
+
+statement ok
+CREATE SECRET rectype_sneaky AS 'ignored'
+
+statement ok
+ALTER SECRET rectype_sneaky RENAME TO rectype
+
+statement ok
+DROP SECRET rectype
+
+statement ok
+CREATE CONNECTION rectype TO SSH TUNNEL (HOST 'localhost', USER 'ignored')
+
+statement ok
+DROP CONNECTION rectype
+
+statement ok
+CREATE CONNECTION rectype_sneaky TO SSH TUNNEL (HOST 'localhost', USER 'ignored')
+
+statement ok
+ALTER CONNECTION rectype_sneaky RENAME TO rectype
+
+statement ok
+DROP CONNECTION rectype
+
+# 🔬 format_type
+
+query T
+SELECT format_type(NULL, NULL)
+----
+NULL
+
+query T
+SELECT format_type(NULL, 1)
+----
+NULL
+
+query T
+SELECT format_type(16, NULL)
+----
+boolean
+
+query T
+SELECT format_type(17, NULL)
+----
+bytea
+
+query T
+SELECT format_type(20, NULL)
+----
+bigint
+
+query T
+SELECT format_type(23, NULL)
+----
+integer
+
+query T
+SELECT format_type(25, NULL)
+----
+text
+
+query T
+SELECT format_type(18, NULL)
+----
+"char"
+
+query B
+SELECT format_type(18, NULL) != format_type(1042, NULL)
+----
+true
+
+query T
+SELECT format_type(1002, NULL)
+----
+"char"[]
+
+query T
+SELECT mz_internal.mz_type_name(18::oid)
+----
+"char"
+
+query T
+SELECT format_type(1043, NULL)
+----
+character varying
+
+query T
+SELECT format_type(26, NULL)
+----
+oid
+
+query T
+SELECT format_type(700, NULL)
+----
+real
+
+query T
+SELECT format_type(701, NULL)
+----
+double precision
+
+query T
+SELECT format_type(1082, NULL)
+----
+date
+
+query T
+SELECT format_type(1083, NULL)
+----
+time
+
+query T
+SELECT format_type(1114, NULL)
+----
+timestamp without time zone
+
+query T
+SELECT format_type(1114, -2)
+----
+timestamp without time zone
+
+query T
+SELECT format_type(1114, -1)
+----
+timestamp without time zone
+
+query T
+SELECT format_type(1114, 0)
+----
+timestamp(0) without time zone
+
+query T
+SELECT format_type(1114, 1)
+----
+timestamp(1) without time zone
+
+query T
+SELECT format_type(1114, 2)
+----
+timestamp(2) without time zone
+
+query T
+SELECT format_type(1114, 3)
+----
+timestamp(3) without time zone
+
+query T
+SELECT format_type(1114, 4)
+----
+timestamp(4) without time zone
+
+query T
+SELECT format_type(1114, 5)
+----
+timestamp(5) without time zone
+
+query T
+SELECT format_type(1114, 6)
+----
+timestamp(6) without time zone
+
+query T
+SELECT format_type(1114, 7)
+----
+timestamp(7) without time zone
+
+query T
+SELECT format_type(1184, NULL)
+----
+timestamp with time zone
+
+query T
+SELECT format_type(1184, -2)
+----
+timestamp with time zone
+
+query T
+SELECT format_type(1184, -1)
+----
+timestamp with time zone
+
+query T
+SELECT format_type(1184, 0)
+----
+timestamp(0) with time zone
+
+query T
+SELECT format_type(1184, 1)
+----
+timestamp(1) with time zone
+
+query T
+SELECT format_type(1184, 2)
+----
+timestamp(2) with time zone
+
+query T
+SELECT format_type(1184, 3)
+----
+timestamp(3) with time zone
+
+query T
+SELECT format_type(1184, 4)
+----
+timestamp(4) with time zone
+
+query T
+SELECT format_type(1184, 5)
+----
+timestamp(5) with time zone
+
+query T
+SELECT format_type(1184, 6)
+----
+timestamp(6) with time zone
+
+query T
+SELECT format_type(1184, 7)
+----
+timestamp(7) with time zone
+
+query T
+SELECT format_type(1186, NULL)
+----
+interval
+
+query T
+SELECT format_type(1700, NULL)
+----
+numeric
+
+query T
+SELECT format_type(2950, NULL)
+----
+uuid
+
+query T
+SELECT format_type(3802, NULL)
+----
+jsonb
+
+query T
+SELECT format_type(1000, NULL)
+----
+boolean[]
+
+query T
+SELECT format_type(1001, NULL)
+----
+bytea[]
+
+query T
+SELECT format_type(1005, NULL)
+----
+smallint[]
+
+query T
+SELECT format_type(1016, NULL)
+----
+bigint[]
+
+query T
+SELECT format_type(1007, NULL)
+----
+integer[]
+
+query T
+SELECT format_type(1009, NULL)
+----
+text[]
+
+query T
+SELECT format_type(1028, NULL)
+----
+oid[]
+
+query T
+SELECT format_type(1021, NULL)
+----
+real[]
+
+query T
+SELECT format_type(1022, NULL)
+----
+double precision[]
+
+query T
+SELECT format_type(1182, NULL)
+----
+date[]
+
+query T
+SELECT format_type(1183, NULL)
+----
+time[]
+
+query T
+SELECT format_type(1115, NULL)
+----
+timestamp without time zone[]
+
+query T
+SELECT format_type(1185, NULL)
+----
+timestamp with time zone[]
+
+query T
+SELECT format_type(1187, NULL)
+----
+interval[]
+
+query T
+SELECT format_type(1231, NULL)
+----
+numeric[]
+
+query T
+SELECT format_type(2951, NULL)
+----
+uuid[]
+
+query T
+SELECT format_type(3807, NULL)
+----
+jsonb[]
+
+query T
+SELECT format_type(2210, NULL)
+----
+regclass[]
+
+query T
+SELECT format_type(1008, NULL)
+----
+regproc[]
+
+query T
+SELECT format_type(2211, NULL)
+----
+regtype[]
+
+# 🔬🔬 non-type OID
+
+query T
+SELECT format_type(6, NULL);
+----
+???
+
+query T
+SELECT format_type(600, 100);
+----
+???
+
+query T
+SELECT format_type(6000, -100);
+----
+???
+
+# 🔬🔬 non-NULL typemod
+
+query T
+SELECT format_type(1700, 0);
+----
+numeric
+
+query T
+SELECT format_type(1700, 3);
+----
+numeric
+
+query T
+SELECT format_type(1700, 4);
+----
+numeric(0,0)
+
+query T
+SELECT format_type(1700, 65540);
+----
+numeric(1,0)
+
+query T
+SELECT format_type(1700, 65541);
+----
+numeric(1,1)
+
+query T
+SELECT format_type(1700, 2490372);
+----
+numeric(38,0)
+
+query T
+SELECT format_type(1700, 2490371);
+----
+numeric(37,-1)
+
+query T
+SELECT format_type(1700, 2490373);
+----
+numeric(38,1)
+
+query T
+SELECT format_type(1700, -2490373);
+----
+numeric
+
+query T
+SELECT format_type(26, 1);
+----
+oid(1)
+
+query T
+SELECT format_type(26, -1);
+----
+oid
+
+## coalesce nullability
+
+statement ok
+CREATE TABLE t1(key int, val int, n int NOT NULL);
+
+# coalesce's output type should be non-nullable when any of its input types are non-nullable
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(types, humanized expressions) AS VERBOSE TEXT FOR
+SELECT coalesce(key, 0)
+FROM t1;
+----
+Explained Query:
+  Project (#3) // { types: "(r_int32)" }
+    Map (coalesce(#0{key}, 0)) // { types: "(r_int32?, r_int32?, r_int32, r_int32)" }
+      ReadStorage materialize.public.t1 // { types: "(r_int32?, r_int32?, r_int32)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(types, humanized expressions) AS VERBOSE TEXT FOR
+SELECT coalesce(key, n)
+FROM t1;
+----
+Explained Query:
+  Project (#3) // { types: "(r_int32)" }
+    Map (coalesce(#0{key}, #2{n})) // { types: "(r_int32?, r_int32?, r_int32, r_int32)" }
+      ReadStorage materialize.public.t1 // { types: "(r_int32?, r_int32?, r_int32)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(types, humanized expressions) AS VERBOSE TEXT FOR
+SELECT coalesce(key, 0), sum(val)
+FROM t1
+GROUP BY key;
+----
+Explained Query:
+  Project (#2, #1{sum_val}) // { types: "(r_int32, r_int64?)" }
+    Map (coalesce(#0{key}, 0)) // { types: "(r_int32?, r_int64?, r_int32)" }
+      Reduce group_by=[#0{key}] aggregates=[sum(#1{val})] // { types: "(r_int32?, r_int64?)" }
+        Project (#0{key}, #1{val}) // { types: "(r_int32?, r_int32?)" }
+          ReadStorage materialize.public.t1 // { types: "(r_int32?, r_int32?, r_int32)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF
+
+# coalesce's output type should be nullable when all of its input types are nullable
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(types, humanized expressions) AS VERBOSE TEXT FOR
+SELECT coalesce(key, val)
+FROM t1;
+----
+Explained Query:
+  Project (#3) // { types: "(r_int32?)" }
+    Map (coalesce(#0{key}, #1{val})) // { types: "(r_int32?, r_int32?, r_int32, r_int32?)" }
+      ReadStorage materialize.public.t1 // { types: "(r_int32?, r_int32?, r_int32)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(types, humanized expressions) AS VERBOSE TEXT FOR
+SELECT coalesce(key, val + 5)
+FROM t1;
+----
+Explained Query:
+  Project (#3) // { types: "(r_int32?)" }
+    Map (coalesce(#0{key}, (#1{val} + 5))) // { types: "(r_int32?, r_int32?, r_int32, r_int32?)" }
+      ReadStorage materialize.public.t1 // { types: "(r_int32?, r_int32?, r_int32)" }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF

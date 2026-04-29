@@ -1,0 +1,126 @@
+
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+# This file contains tests for the TopK elision transform
+# and interaction of transforms with the TopK operator.
+
+simple conn=mz_system,user=mz_system
+ALTER SYSTEM SET unsafe_enable_table_keys = true
+----
+COMPLETE 0
+
+statement ok
+CREATE TABLE test1(a int, b int, c int, d int)
+
+# check that the extra project caused by the CSE is lifted
+# through the TopK
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT avg(d), sumc, sumd FROM (
+SELECT a + b + c as sumc, a + b + d as sumd, d
+FROM test1
+ORDER BY d NULLS FIRST LIMIT 4
+)
+GROUP BY sumc, sumd
+----
+Explained Query:
+  Project (#4, #0, #1) // { arity: 3 }
+    Map ((bigint_to_numeric(#2{sum_d}) / bigint_to_numeric(case when (#3{count_d} = 0) then null else #3{count_d} end))) // { arity: 5 }
+      Reduce group_by=[#1, #2] aggregates=[sum(#0{d}), count(#0{d})] // { arity: 4 }
+        TopK order_by=[#0{d} asc nulls_first] limit=4 // { arity: 3 }
+          Project (#3{d}, #5, #6) // { arity: 3 }
+            Map ((#0{a} + #1{b}), (#4 + #2{c}), (#4 + #3{d})) // { arity: 7 }
+              ReadStorage materialize.public.test1 // { arity: 4 }
+
+Source materialize.public.test1
+
+Target cluster: quickstart
+
+EOF
+
+# check that TopK elision is recursive
+statement ok
+CREATE VIEW plan_test1 AS
+SELECT avg(d), sumc, sumd FROM (
+SELECT a + b + c as sumc, a + b + d as sumd, d
+FROM test1
+ORDER BY d
+)
+GROUP BY sumc, sumd
+ORDER BY sumc
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM plan_test1
+----
+Explained Query:
+  Project (#4, #0, #1) // { arity: 3 }
+    Map ((bigint_to_numeric(#2{sum_d}) / bigint_to_numeric(case when (#3{count_d} = 0) then null else #3{count_d} end))) // { arity: 5 }
+      Reduce group_by=[((#0{a} + #1{b}) + #2{c}), ((#0{a} + #1{b}) + #3{d})] aggregates=[sum(#3{d}), count(#3{d})] // { arity: 4 }
+        ReadStorage materialize.public.test1 // { arity: 4 }
+
+Source materialize.public.test1
+
+Target cluster: quickstart
+
+EOF
+
+# Test that chained unions get planned with a single union operator.
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT * FROM test1 UNION ALL SELECT * FROM test1 UNION ALL SELECT * FROM test1
+----
+Explained Query:
+  Union // { arity: 4 }
+    ReadStorage materialize.public.test1 // { arity: 4 }
+    ReadStorage materialize.public.test1 // { arity: 4 }
+    ReadStorage materialize.public.test1 // { arity: 4 }
+
+Source materialize.public.test1
+
+Target cluster: quickstart
+
+EOF
+
+# Test that `limit 0` results in an empty constant with () as the keys
+
+statement ok
+CREATE TABLE with_primary_key(a int primary key, b int)
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(TYPES) AS VERBOSE TEXT FOR
+select * from (select * from with_primary_key limit 0);
+----
+Explained Query (fast path):
+  Constant <empty>
+
+Target cluster: quickstart
+
+EOF
+
+# Check that TopK fusion transform is wired up
+
+statement ok
+create table t1(f1 int, f2 int);
+
+statement ok
+create materialized view mv1 as select * from (select * from t1 order by f1 limit 10 offset 2) order by f1 limit 3 offset 1;
+----
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR materialized view mv1;
+----
+materialize.public.mv1:
+  TopK order_by=[#0{f1} asc nulls_last] limit=3 offset=3 // { arity: 2 }
+    ReadStorage materialize.public.t1 // { arity: 2 }
+
+Source materialize.public.t1
+
+Target cluster: quickstart
+
+EOF

@@ -1,0 +1,185 @@
+# Copyright Materialize, Inc. and contributors. All rights reserved.
+#
+# Use of this software is governed by the Business Source License
+# included in the LICENSE file at the root of this repository.
+#
+# As of the Change Date specified in that file, in accordance with
+# the Business Source License, use of this software will be governed
+# by the Apache License, Version 2.0.
+
+mode cockroach
+
+statement ok
+CREATE TABLE cities (
+    name text NOT NULL,
+    state text NOT NULL,
+    pop int
+)
+
+statement ok
+INSERT INTO cities VALUES
+    ('Los_Angeles', 'CA', 3979576),
+    ('Phoenix', 'AZ', 1680992),
+    ('Houston', 'TX', 2320268),
+    ('San_Diego', 'CA', NULL),
+    ('San_Francisco', 'CA', 881549),
+    ('New_York', 'NY', 8336817),
+    ('Dallas', 'TX', 1343573),
+    ('San_Antonio', 'TX', 1547253),
+    ('San_Jose', 'CA', 1021795),
+    ('Chicago', 'IL', 2695598),
+    ('Austin', 'TX', 978908)
+
+query TT rowsort
+SELECT state, name FROM
+    (SELECT DISTINCT state FROM cities) grp,
+    LATERAL (SELECT name FROM cities WHERE state = grp.state ORDER BY pop DESC NULLS LAST LIMIT 3)
+----
+AZ  Phoenix
+CA  Los_Angeles
+CA  San_Francisco
+CA  San_Jose
+IL  Chicago
+NY  New_York
+TX  Houston
+TX  San_Antonio
+TX  Dallas
+
+query TT rowsort
+SELECT state, name FROM
+    (SELECT DISTINCT state FROM cities) grp,
+    LATERAL (SELECT name FROM cities WHERE state = grp.state ORDER BY pop DESC NULLS FIRST LIMIT 3)
+----
+AZ  Phoenix
+CA  San_Diego
+CA  Los_Angeles
+CA  San_Jose
+IL  Chicago
+NY  New_York
+TX  Houston
+TX  San_Antonio
+TX  Dallas
+
+# LIMIT INPUT GROUP SIZE hint should not affect the results
+query TT rowsort
+SELECT state, name FROM
+    (SELECT DISTINCT state FROM cities) grp,
+    LATERAL (SELECT name FROM cities WHERE state = grp.state
+             OPTIONS (LIMIT INPUT GROUP SIZE = 1)
+             ORDER BY pop DESC NULLS LAST LIMIT 3)
+----
+AZ  Phoenix
+CA  Los_Angeles
+CA  San_Francisco
+CA  San_Jose
+IL  Chicago
+NY  New_York
+TX  Dallas
+TX  Houston
+TX  San_Antonio
+
+mode standard
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT state, name FROM
+    (SELECT DISTINCT state FROM cities) grp,
+    LATERAL (SELECT name, pop FROM cities WHERE state = grp.state ORDER BY pop DESC LIMIT 3)
+----
+Explained Query:
+  Project (#1{state}, #0{name}) // { arity: 2 }
+    TopK group_by=[#1{state}] order_by=[#2{pop} desc nulls_first] limit=3 // { arity: 3 }
+      ReadStorage materialize.public.cities // { arity: 3 }
+
+Source materialize.public.cities
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT state, name FROM
+    (SELECT DISTINCT state FROM cities) grp
+    LEFT JOIN LATERAL (SELECT name, pop FROM cities  where cities.state = grp.state ORDER BY pop DESC LIMIT 3) ON true
+----
+Explained Query:
+  With
+    cte l0 =
+      Project (#0{name}, #1{state}) // { arity: 2 }
+        TopK group_by=[#1{state}] order_by=[#2{pop} desc nulls_first] limit=3 // { arity: 3 }
+          ReadStorage materialize.public.cities // { arity: 3 }
+  Return // { arity: 2 }
+    Union // { arity: 2 }
+      Project (#1{state}, #0{name}) // { arity: 2 }
+        Get l0 // { arity: 2 }
+      Map (null) // { arity: 2 }
+        Union // { arity: 1 }
+          Negate // { arity: 1 }
+            Distinct project=[#0{state}] // { arity: 1 }
+              Project (#1{state}) // { arity: 1 }
+                Get l0 // { arity: 2 }
+          Distinct project=[#0{state}] // { arity: 1 }
+            Project (#1{state}) // { arity: 1 }
+              ReadStorage materialize.public.cities // { arity: 3 }
+
+Source materialize.public.cities
+
+Target cluster: quickstart
+
+EOF
+
+# Test that LIMIT 0 is optimized out
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT state, COUNT(*) FROM (
+    SELECT state, name FROM
+        (SELECT DISTINCT state FROM cities) grp,
+        LATERAL (SELECT name, pop FROM cities WHERE state = grp.state ORDER BY pop DESC LIMIT 0)
+    )
+    GROUP BY state
+----
+Explained Query (fast path):
+  Constant <empty>
+
+Target cluster: quickstart
+
+EOF
+
+
+# Test that LIMIT 1 results in a unique key
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT state, COUNT(*) FROM (
+    SELECT state, name FROM
+        (SELECT DISTINCT state FROM cities) grp,
+        LATERAL (SELECT name, pop FROM cities WHERE state = grp.state ORDER BY pop DESC LIMIT 1)
+    )
+    GROUP BY state
+----
+Explained Query:
+  Project (#0{state}, #2) // { arity: 2 }
+    Map (1) // { arity: 3 }
+      TopK group_by=[#0{state}] order_by=[#1{pop} desc nulls_first] limit=1 // { arity: 2 }
+        Project (#1{state}, #2{pop}) // { arity: 2 }
+          ReadStorage materialize.public.cities // { arity: 3 }
+
+Source materialize.public.cities
+
+Target cluster: quickstart
+
+EOF
+
+query T multiline
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT state, name FROM
+    (SELECT DISTINCT state FROM cities) grp,
+    LATERAL (SELECT name FROM cities WHERE state = grp.state
+             OPTIONS (LIMIT INPUT GROUP SIZE = 1)
+             ORDER BY pop DESC NULLS LAST LIMIT 3)
+----
+Explained Query:
+  Project (#1{state}, #0{name}) // { arity: 2 }
+    TopK group_by=[#1{state}] order_by=[#2{pop} desc nulls_last] limit=3 exp_group_size=1 // { arity: 3 }
+      ReadStorage materialize.public.cities // { arity: 3 }
+
+Source materialize.public.cities
+
+Target cluster: quickstart
+
+EOF
