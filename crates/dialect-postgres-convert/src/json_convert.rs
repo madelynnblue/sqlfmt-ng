@@ -209,10 +209,8 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(reindex_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("CommentStmt") {
         Some(comment_stmt_to_node(inner))
-    } else if let Some(inner) = obj.get("AlterTableStmt") {
-        Some(alter_table_stmt_to_node(inner))
     } else {
-        None
+        obj.get("AlterTableStmt").map(alter_table_stmt_to_node)
     }
 }
 
@@ -901,10 +899,8 @@ fn create_table_as_stmt_to_node(stmt: &Value) -> Node {
     let query_node = node_value_to_node(&stmt["query"]);
     let mut items = vec![
         Clause {
-            keyword: create_kw.into(),
-            body: Some(Box::new(Node::Concat {
-                items: body_items,
-            })),
+            keyword: create_kw,
+            body: Some(Box::new(Node::Concat { items: body_items })),
         },
         Clause {
             keyword: "AS".into(),
@@ -1030,17 +1026,13 @@ fn drop_stmt_to_node(stmt: &Value) -> Node {
                             })
                             .unwrap_or_default();
                         Node::Concat {
-                            items: items
-                                .into_iter()
-                                .fold(Vec::new(), |mut acc, n| {
-                                    if !acc.is_empty() {
-                                        acc.push(Node::Text {
-                                            value: ".".into(),
-                                        });
-                                    }
-                                    acc.push(n);
-                                    acc
-                                }),
+                            items: items.into_iter().fold(Vec::new(), |mut acc, n| {
+                                if !acc.is_empty() {
+                                    acc.push(Node::Text { value: ".".into() });
+                                }
+                                acc.push(n);
+                                acc
+                            }),
                         }
                     } else {
                         let s = obj
@@ -1110,9 +1102,7 @@ fn drop_stmt_to_node(stmt: &Value) -> Node {
 fn view_stmt_to_node(stmt: &Value) -> Node {
     let view = range_var_to_node(&stmt["view"]);
 
-    let relpersistence = stmt["view"]["relpersistence"]
-        .as_str()
-        .unwrap_or("p");
+    let relpersistence = stmt["view"]["relpersistence"].as_str().unwrap_or("p");
 
     let mut kw = String::from("CREATE");
     if relpersistence == "t" {
@@ -1163,9 +1153,7 @@ fn view_stmt_to_node(stmt: &Value) -> Node {
 
     // AS + query
     body_items.push(Node::Text { value: " ".into() });
-    body_items.push(Node::Keyword {
-        value: "AS".into(),
-    });
+    body_items.push(Node::Keyword { value: "AS".into() });
     body_items.push(Node::Text { value: " ".into() });
     body_items.push(query);
 
@@ -1191,9 +1179,7 @@ fn view_stmt_to_node(stmt: &Value) -> Node {
 
     clauses.push(Clause {
         keyword: kw,
-        body: Some(Box::new(Node::Concat {
-            items: body_items,
-        })),
+        body: Some(Box::new(Node::Concat { items: body_items })),
     });
 
     Node::Clauses { items: clauses }
@@ -1223,7 +1209,7 @@ fn index_stmt_to_node(stmt: &Value) -> Node {
     // Index name
     let idxname = stmt["idxname"]
         .as_str()
-        .map(|s| ident_node(s))
+        .map(ident_node)
         .unwrap_or(Node::Unformatted {
             value: "UNKNOWN_INDEX".into(),
         });
@@ -1231,9 +1217,7 @@ fn index_stmt_to_node(stmt: &Value) -> Node {
     body_items.push(Node::Text { value: " ".into() });
 
     // ON
-    body_items.push(Node::Keyword {
-        value: "ON".into(),
-    });
+    body_items.push(Node::Keyword { value: "ON".into() });
     body_items.push(Node::Text { value: " ".into() });
     body_items.push(range_var_to_node(&stmt["relation"]));
 
@@ -1288,9 +1272,7 @@ fn index_stmt_to_node(stmt: &Value) -> Node {
     Node::Clauses {
         items: vec![Clause {
             keyword: kw,
-            body: Some(Box::new(Node::Concat {
-                items: body_items,
-            })),
+            body: Some(Box::new(Node::Concat { items: body_items })),
         }],
     }
 }
@@ -1310,7 +1292,7 @@ fn create_schema_stmt_to_node(stmt: &Value) -> Node {
     }
     let name = stmt["schemaname"]
         .as_str()
-        .map(|s| ident_node(s))
+        .map(ident_node)
         .unwrap_or(Node::Unformatted {
             value: "UNKNOWN_SCHEMA".into(),
         });
@@ -1321,9 +1303,7 @@ fn create_schema_stmt_to_node(stmt: &Value) -> Node {
 }
 
 fn create_seq_stmt_to_node(stmt: &Value) -> Node {
-    let relpersistence = stmt["sequence"]["relpersistence"]
-        .as_str()
-        .unwrap_or("p");
+    let relpersistence = stmt["sequence"]["relpersistence"].as_str().unwrap_or("p");
     let kw = if relpersistence == "t" {
         "CREATE TEMPORARY SEQUENCE"
     } else {
@@ -1354,9 +1334,7 @@ fn create_seq_stmt_to_node(stmt: &Value) -> Node {
     Node::Clauses {
         items: vec![Clause {
             keyword: kw.into(),
-            body: Some(Box::new(Node::Concat {
-                items: body_items,
-            })),
+            body: Some(Box::new(Node::Concat { items: body_items })),
         }],
     }
 }
@@ -1426,25 +1404,18 @@ fn explain_stmt_to_node(stmt: &Value) -> Node {
                 o.get("DefElem").map(|d| {
                     let name = d["defname"].as_str().unwrap_or("").to_uppercase();
                     if let Some(arg) = d.get("arg") {
-                        let val_str = if let Some(s) = arg
-                            .get("String")
-                            .and_then(|v| v["sval"].as_str())
+                        let val_str = if let Some(s) =
+                            arg.get("String").and_then(|v| v["sval"].as_str())
                         {
                             format!("'{}'", s)
-                        } else if let Some(b) = arg
-                            .get("Boolean")
-                            .and_then(|v| v["boolval"].as_i64())
+                        } else if let Some(b) =
+                            arg.get("Boolean").and_then(|v| v["boolval"].as_i64())
                         {
                             if b == 0 { "OFF".into() } else { "ON".into() }
-                        } else if let Some(iv) = arg
-                            .get("Integer")
-                            .and_then(|v| v["ival"].as_i64())
+                        } else if let Some(iv) = arg.get("Integer").and_then(|v| v["ival"].as_i64())
                         {
                             iv.to_string()
-                        } else if let Some(fv) = arg
-                            .get("Float")
-                            .and_then(|v| v["fval"].as_str())
-                        {
+                        } else if let Some(fv) = arg.get("Float").and_then(|v| v["fval"].as_str()) {
                             fv.to_string()
                         } else {
                             String::new()
@@ -1706,9 +1677,7 @@ fn transaction_stmt_to_node(stmt: &Value) -> Node {
         "TRANS_STMT_ROLLBACK_TO" => "ROLLBACK TO SAVEPOINT",
         _ => kind,
     };
-    let mut items = vec![Node::Keyword {
-        value: kw.into(),
-    }];
+    let mut items = vec![Node::Keyword { value: kw.into() }];
     if let Some(sp) = stmt["savepoint_name"].as_str() {
         items.push(Node::Text { value: " ".into() });
         items.push(ident_node(sp));
@@ -1764,9 +1733,10 @@ fn variable_set_stmt_to_node(stmt: &Value) -> Node {
                 ident_node(name),
             ];
             if let Some(args) = stmt["args"].as_array().filter(|a| !a.is_empty()) {
-                items.push(Node::Text { value: " = ".into() });
-                let arg_nodes: Vec<Node> =
-                    args.iter().map(node_value_to_node).collect();
+                items.push(Node::Text {
+                    value: " = ".into(),
+                });
+                let arg_nodes: Vec<Node> = args.iter().map(node_value_to_node).collect();
                 items.push(Node::List {
                     items: arg_nodes,
                     separator: Some(",".into()),
@@ -1905,10 +1875,7 @@ fn copy_stmt_to_node(stmt: &Value) -> Node {
         }
 
         // Column list
-        if let Some(cols) = stmt["attlist"]
-            .as_array()
-            .filter(|a| !a.is_empty())
-        {
+        if let Some(cols) = stmt["attlist"].as_array().filter(|a| !a.is_empty()) {
             let col_nodes: Vec<Node> = cols
                 .iter()
                 .map(|c| ident_node(c["String"]["sval"].as_str().unwrap_or("")))
@@ -1930,9 +1897,7 @@ fn copy_stmt_to_node(stmt: &Value) -> Node {
         });
     } else {
         items.push(Node::Text { value: " ".into() });
-        items.push(Node::Keyword {
-            value: "TO".into(),
-        });
+        items.push(Node::Keyword { value: "TO".into() });
     }
 
     // PROGRAM / STDIN / STDOUT / file
@@ -1943,10 +1908,7 @@ fn copy_stmt_to_node(stmt: &Value) -> Node {
         });
     }
 
-    if let Some(filename) = stmt["filename"]
-        .as_str()
-        .filter(|s| !s.is_empty())
-    {
+    if let Some(filename) = stmt["filename"].as_str().filter(|s| !s.is_empty()) {
         items.push(Node::Text { value: " ".into() });
         items.push(Node::Literal {
             value: format!("'{}'", filename),
@@ -1960,10 +1922,7 @@ fn copy_stmt_to_node(stmt: &Value) -> Node {
     }
 
     // WITH options — use (opt, opt) format (parenthesized, comma-separated)
-    if let Some(opts) = stmt["options"]
-        .as_array()
-        .filter(|a| !a.is_empty())
-    {
+    if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
         let opt_strs: Vec<String> = opts
             .iter()
             .filter_map(|o| {
@@ -1999,16 +1958,11 @@ fn prepare_stmt_to_node(stmt: &Value) -> Node {
     ];
 
     // Argument types
-    if let Some(argtypes) = stmt["argtypes"]
-        .as_array()
-        .filter(|a| !a.is_empty())
-    {
+    if let Some(argtypes) = stmt["argtypes"].as_array().filter(|a| !a.is_empty()) {
         let types: Vec<Node> = argtypes
             .iter()
-            .map(|t| {
-                Node::Text {
-                    value: type_name_str(&t["TypeName"]),
-                }
+            .map(|t| Node::Text {
+                value: type_name_str(&t["TypeName"]),
             })
             .collect();
         items.push(Node::Text { value: " (".into() });
@@ -2020,9 +1974,7 @@ fn prepare_stmt_to_node(stmt: &Value) -> Node {
     }
 
     items.push(Node::Text { value: " ".into() });
-    items.push(Node::Keyword {
-        value: "AS".into(),
-    });
+    items.push(Node::Keyword { value: "AS".into() });
 
     // Query body
     if let Some(query) = stmt.get("query") {
@@ -2048,10 +2000,7 @@ fn execute_stmt_to_node(stmt: &Value) -> Node {
     ];
 
     // Parameter list
-    if let Some(params) = stmt["params"]
-        .as_array()
-        .filter(|a| !a.is_empty())
-    {
+    if let Some(params) = stmt["params"].as_array().filter(|a| !a.is_empty()) {
         let param_nodes: Vec<Node> = params.iter().map(node_value_to_node).collect();
         items.push(Node::Text { value: "(".into() });
         items.push(Node::List {
@@ -2067,9 +2016,7 @@ fn execute_stmt_to_node(stmt: &Value) -> Node {
 }
 
 fn do_stmt_to_node(stmt: &Value) -> Node {
-    let mut items = vec![Node::Keyword {
-        value: "DO".into(),
-    }];
+    let mut items = vec![Node::Keyword { value: "DO".into() }];
 
     // Body and language (as DefElems in args array)
     if let Some(args) = stmt["args"].as_array().filter(|a| !a.is_empty()) {
@@ -2079,10 +2026,7 @@ fn do_stmt_to_node(stmt: &Value) -> Node {
                 let defname = defelem["defname"].as_str().unwrap_or("");
                 if defname == "as" {
                     if let Some(a) = defelem.get("arg") {
-                        let body = a
-                            .get("String")
-                            .map(|s| string_val(s))
-                            .unwrap_or("");
+                        let body = a.get("String").map(string_val).unwrap_or("");
                         items.push(Node::Text {
                             value: format!(" $${}$$", body),
                         });
@@ -2155,7 +2099,11 @@ fn call_stmt_to_node(stmt: &Value) -> Node {
     let funccall = &stmt["funccall"];
     let name_strs: Vec<&str> = funccall["funcname"]
         .as_array()
-        .map(|arr| arr.iter().filter_map(|n| n["String"]["sval"].as_str()).collect())
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|n| n["String"]["sval"].as_str())
+                .collect()
+        })
         .unwrap_or_default();
     let mut items = vec![
         Node::Keyword {
@@ -2380,7 +2328,11 @@ fn comment_stmt_to_node(stmt: &Value) -> Node {
     if let Some(list) = object.get("List") {
         let names: Vec<&str> = list["items"]
             .as_array()
-            .map(|arr| arr.iter().filter_map(|i| i["String"]["sval"].as_str()).collect())
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(|i| i["String"]["sval"].as_str())
+                    .collect()
+            })
             .unwrap_or_default();
         items.push(Node::Text { value: " ".into() });
         items.push(qualified_name_node(&names));
@@ -2390,9 +2342,7 @@ fn comment_stmt_to_node(stmt: &Value) -> Node {
     }
 
     items.push(Node::Text { value: " ".into() });
-    items.push(Node::Keyword {
-        value: "IS".into(),
-    });
+    items.push(Node::Keyword { value: "IS".into() });
 
     if let Some(comment) = stmt["comment"].as_str().filter(|c| !c.is_empty()) {
         items.push(Node::Text {
@@ -2454,9 +2404,13 @@ fn alter_table_cmd_to_node(cmd: &Value) -> Node {
     match subtype {
         "AT_AddColumn" => {
             let mut items = vec![
-                Node::Keyword { value: "ADD".into() },
+                Node::Keyword {
+                    value: "ADD".into(),
+                },
                 Node::Text { value: " ".into() },
-                Node::Keyword { value: "COLUMN".into() },
+                Node::Keyword {
+                    value: "COLUMN".into(),
+                },
             ];
             if let Some(df) = cmd.get("def") {
                 items.push(Node::Text { value: " ".into() });
@@ -2488,44 +2442,40 @@ fn alter_table_cmd_to_node(cmd: &Value) -> Node {
             }
             Node::Concat { items }
         }
-        "AT_SetNotNull" => {
-            Node::Concat {
-                items: vec![
-                    Node::Keyword {
-                        value: "ALTER".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    Node::Keyword {
-                        value: "COLUMN".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    ident_node(name),
-                    Node::Text { value: " ".into() },
-                    Node::Keyword {
-                        value: "SET NOT NULL".into(),
-                    },
-                ],
-            }
-        }
-        "AT_DropNotNull" => {
-            Node::Concat {
-                items: vec![
-                    Node::Keyword {
-                        value: "ALTER".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    Node::Keyword {
-                        value: "COLUMN".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    ident_node(name),
-                    Node::Text { value: " ".into() },
-                    Node::Keyword {
-                        value: "DROP NOT NULL".into(),
-                    },
-                ],
-            }
-        }
+        "AT_SetNotNull" => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "ALTER".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Keyword {
+                    value: "COLUMN".into(),
+                },
+                Node::Text { value: " ".into() },
+                ident_node(name),
+                Node::Text { value: " ".into() },
+                Node::Keyword {
+                    value: "SET NOT NULL".into(),
+                },
+            ],
+        },
+        "AT_DropNotNull" => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "ALTER".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Keyword {
+                    value: "COLUMN".into(),
+                },
+                Node::Text { value: " ".into() },
+                ident_node(name),
+                Node::Text { value: " ".into() },
+                Node::Keyword {
+                    value: "DROP NOT NULL".into(),
+                },
+            ],
+        },
         "AT_ColumnDefault" => {
             let mut items = vec![
                 Node::Keyword {
@@ -2618,33 +2568,33 @@ fn alter_table_cmd_to_node(cmd: &Value) -> Node {
             }
             Node::Concat { items }
         }
-        "AT_SetTableSpace" => {
-            Node::Concat {
-                items: vec![
-                    Node::Keyword {
-                        value: "SET TABLESPACE".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    ident_node(name),
-                ],
+        "AT_SetTableSpace" => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "SET TABLESPACE".into(),
+                },
+                Node::Text { value: " ".into() },
+                ident_node(name),
+            ],
+        },
+        "AT_ChangeOwner" => {
+            if let Some(newowner) = cmd.get("newowner") {
+                let role = newowner["rolename"].as_str().unwrap_or("");
+                Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "OWNER TO".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        ident_node(role),
+                    ],
+                }
+            } else {
+                Node::Unformatted {
+                    value: "OWNER TO ???".into(),
+                }
             }
         }
-        "AT_ChangeOwner" => if let Some(newowner) = cmd.get("newowner") {
-            let role = newowner["rolename"].as_str().unwrap_or("");
-            Node::Concat {
-                items: vec![
-                    Node::Keyword {
-                        value: "OWNER TO".into(),
-                    },
-                    Node::Text { value: " ".into() },
-                    ident_node(role),
-                ],
-            }
-        } else {
-            Node::Unformatted {
-                value: "OWNER TO ???".into(),
-            }
-        },
         "AT_DropOids" => Node::Keyword {
             value: "SET WITHOUT OIDS".into(),
         },
@@ -2757,7 +2707,7 @@ fn column_def_to_text(coldef: &Value) -> Node {
     // Wrap in a single-element object so table_elt_to_node can dispatch on the key.
     let name = coldef["ColumnDef"]["colname"]
         .as_str()
-        .map(|n| ident_node(n))
+        .map(ident_node)
         .unwrap_or(Node::Unformatted {
             value: "???".into(),
         });
@@ -2807,7 +2757,11 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
             of_body
         } else {
             Node::Concat {
-                items: vec![of_body, Node::Text { value: " ".into() }, parens_block(elts_result)],
+                items: vec![
+                    of_body,
+                    Node::Text { value: " ".into() },
+                    parens_block(elts_result),
+                ],
             }
         }
     } else {
@@ -2821,10 +2775,14 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
     };
 
     let mut header_items: Vec<Node> = Vec::new();
-    header_items.push(Node::Keyword { value: create_kw.into() });
+    header_items.push(Node::Keyword {
+        value: create_kw.into(),
+    });
     header_items.push(Node::Text { value: " ".into() });
     if stmt["if_not_exists"].as_bool().unwrap_or(false) {
-        header_items.push(Node::Keyword { value: "IF NOT EXISTS".into() });
+        header_items.push(Node::Keyword {
+            value: "IF NOT EXISTS".into(),
+        });
         header_items.push(Node::Text { value: " ".into() });
     }
     header_items.push(relation);
@@ -2844,7 +2802,9 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
 
     // PARTITION BY.
     if let Some(part) = stmt["partspec"].as_object() {
-        let kw = part["strategy"].as_str().unwrap_or("PARTITION_STRATEGY_LIST");
+        let kw = part["strategy"]
+            .as_str()
+            .unwrap_or("PARTITION_STRATEGY_LIST");
         let strat = match kw {
             "PARTITION_STRATEGY_HASH" => "HASH",
             "PARTITION_STRATEGY_RANGE" => "RANGE",
@@ -2858,12 +2818,17 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
             keyword: "PARTITION BY".into(),
             body: Some(Box::new(Node::Concat {
                 items: vec![
-                    Node::Keyword { value: strat.into() },
+                    Node::Keyword {
+                        value: strat.into(),
+                    },
                     Node::Text { value: " ".into() },
                     Node::Wrap {
                         keyword: None,
                         open: "(".into(),
-                        content: Box::new(Node::List { items: part_exprs, separator: None }),
+                        content: Box::new(Node::List {
+                            items: part_exprs,
+                            separator: None,
+                        }),
                         close: ")".into(),
                     },
                 ],
@@ -2881,10 +2846,13 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
 
     // WITH options (storage parameters).
     if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
-        let opt_items: Vec<Node> = opts.iter().map(|o| def_elem_to_node(o)).collect();
+        let opt_items: Vec<Node> = opts.iter().map(def_elem_to_node).collect();
         additional_clauses.push(Clause {
             keyword: "WITH".into(),
-            body: Some(Box::new(Node::List { items: opt_items, separator: Some(",".into()) })),
+            body: Some(Box::new(Node::List {
+                items: opt_items,
+                separator: Some(",".into()),
+            })),
         });
     }
 
@@ -2922,7 +2890,11 @@ fn create_stmt_to_node(stmt: &Value) -> Node {
 fn table_elt_to_node(elt: &Value) -> Node {
     let obj = match elt.as_object() {
         Some(o) => o,
-        None => return Node::Unformatted { value: format!("{elt}") },
+        None => {
+            return Node::Unformatted {
+                value: format!("{elt}"),
+            };
+        }
     };
 
     if let Some(col) = obj.get("ColumnDef") {
@@ -2930,7 +2902,9 @@ fn table_elt_to_node(elt: &Value) -> Node {
     } else if let Some(c) = obj.get("Constraint") {
         constraint_to_node(c)
     } else {
-        Node::Unformatted { value: format!("{elt}") }
+        Node::Unformatted {
+            value: format!("{elt}"),
+        }
     }
 }
 
@@ -2942,7 +2916,10 @@ fn column_def_to_node(col: &Value) -> Node {
     // Omit the type for typed tables (OF type_name) where the column inherits
     // the type from the parent type and has no typeName of its own.
     let type_str = type_name_str(&col["typeName"]);
-    let has_type = col["typeName"]["names"].as_array().map(|a| !a.is_empty()).unwrap_or(false);
+    let has_type = col["typeName"]["names"]
+        .as_array()
+        .map(|a| !a.is_empty())
+        .unwrap_or(false);
     if has_type {
         items.push(Node::Text { value: " ".into() });
         items.push(Node::Text { value: type_str });
@@ -2967,7 +2944,10 @@ fn column_def_to_node(col: &Value) -> Node {
     }
 
     // COLLATE clause.
-    if let Some(coll_vals) = col["collClause"]["collname"].as_array().filter(|a| !a.is_empty()) {
+    if let Some(coll_vals) = col["collClause"]["collname"]
+        .as_array()
+        .filter(|a| !a.is_empty())
+    {
         let coll_parts: Vec<&str> = coll_vals
             .iter()
             .filter_map(|n| {
@@ -3002,9 +2982,7 @@ fn column_def_to_node(col: &Value) -> Node {
 
     // COMPRESSION clause.
     if let Some(comp) = col["compression"].as_str().filter(|s| !s.is_empty()) {
-        items.push(Node::Text {
-            value: " ".into(),
-        });
+        items.push(Node::Text { value: " ".into() });
         items.push(Node::Keyword {
             value: "COMPRESSION".into(),
         });
@@ -3015,9 +2993,7 @@ fn column_def_to_node(col: &Value) -> Node {
     if let Some(constraints) = col["constraints"].as_array() {
         for c in constraints {
             items.push(Node::Text { value: " ".into() });
-            items.push(constraint_to_node(
-                &c["Constraint"],
-            ));
+            items.push(constraint_to_node(&c["Constraint"]));
         }
     }
 
@@ -3197,7 +3173,7 @@ fn constraint_to_node(c: &Value) -> Node {
 
     // Wrap with CONSTRAINT <name> if named.
     let conname = c["conname"].as_str().unwrap_or("");
-    let result = if !conname.is_empty() {
+    if !conname.is_empty() {
         Node::Concat {
             items: vec![
                 Node::Keyword {
@@ -3211,9 +3187,7 @@ fn constraint_to_node(c: &Value) -> Node {
         }
     } else {
         body
-    };
-
-    result
+    }
 }
 
 /// Extract key columns from a constraint's "keys" array.
@@ -3301,9 +3275,7 @@ fn constraint_generated_identity(c: &Value) -> Vec<Node> {
                 value: if is_always { "ALWAYS" } else { "BY DEFAULT" }.into(),
             });
             items.push(Node::Text { value: " ".into() });
-            items.push(Node::Keyword {
-                value: "AS".into(),
-            });
+            items.push(Node::Keyword { value: "AS".into() });
             items.push(Node::Text { value: " ".into() });
             items.push(Node::Wrap {
                 keyword: None,
@@ -3317,10 +3289,7 @@ fn constraint_generated_identity(c: &Value) -> Vec<Node> {
 
     // Sequence options for IDENTITY columns.
     if let Some(opts) = c["options"].as_array().filter(|a| !a.is_empty()) {
-        let opt_strs: Vec<String> = opts
-            .iter()
-            .map(|o| format!("{o}"))
-            .collect();
+        let opt_strs: Vec<String> = opts.iter().map(|o| format!("{o}")).collect();
         let opt_text = opt_strs.join(" ");
         if !opt_text.is_empty() {
             items.push(Node::Text {
@@ -3335,7 +3304,11 @@ fn constraint_generated_identity(c: &Value) -> Vec<Node> {
 fn def_elem_to_node(e: &Value) -> Node {
     let obj = match e.as_object().and_then(|o| o.get("DefElem")) {
         Some(o) => o,
-        None => return Node::Unformatted { value: format!("{e}") },
+        None => {
+            return Node::Unformatted {
+                value: format!("{e}"),
+            };
+        }
     };
     let name = obj["defname"].as_str().unwrap_or("");
     let namespace = obj["defnamespace"].as_str().unwrap_or("");
@@ -4299,7 +4272,9 @@ fn partition_elem_to_node(pe: &Value) -> Node {
                 .collect();
             if !coll_parts.is_empty() {
                 items.push(Node::Text { value: " ".into() });
-                items.push(Node::Keyword { value: "COLLATE".into() });
+                items.push(Node::Keyword {
+                    value: "COLLATE".into(),
+                });
                 items.push(Node::Text { value: " ".into() });
                 items.push(ident_node(&coll_parts.join(".")));
             }
@@ -5121,7 +5096,7 @@ fn a_expr_to_node(e: &Value) -> Node {
             Node::Concat {
                 items: vec![
                     Node::Text {
-                        value: format!("{op_raw}"),
+                        value: op_raw.to_string(),
                     },
                     rhs,
                 ],
@@ -6319,9 +6294,7 @@ fn normalize_ast(v: Value) -> Value {
         Value::Object(mut map) => {
             // Normalize PartitionElem: move collation into expr as CollateClause.
             if map.contains_key("PartitionElem") {
-                if let Some(pe) = map.get_mut("PartitionElem")
-                    .and_then(|v| v.as_object_mut())
-                {
+                if let Some(pe) = map.get_mut("PartitionElem").and_then(|v| v.as_object_mut()) {
                     if let Some(coll_vals) = pe.get("collation").filter(|c| !c.is_null()) {
                         let coll_val = normalize_ast(coll_vals.clone());
                         let expr = pe
@@ -6332,15 +6305,9 @@ fn normalize_ast(v: Value) -> Value {
                         let expr_norm = normalize_ast(expr);
                         let mut collate = serde_json::Map::new();
                         collate.insert("arg".to_string(), expr_norm);
-                        collate.insert(
-                            "collname".to_string(),
-                            coll_val,
-                        );
+                        collate.insert("collname".to_string(), coll_val);
                         let mut inner = serde_json::Map::new();
-                        inner.insert(
-                            "CollateClause".to_string(),
-                            Value::Object(collate),
-                        );
+                        inner.insert("CollateClause".to_string(), Value::Object(collate));
                         pe.insert("expr".to_string(), Value::Object(inner));
                         pe.remove("collation");
                     }

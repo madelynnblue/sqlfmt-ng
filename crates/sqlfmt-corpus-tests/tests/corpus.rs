@@ -16,6 +16,7 @@ fn default_opts() -> RenderOpts {
         use_tabs: false,
         tab_width: 4,
         case: CaseMode::Upper,
+        error_on_unformatted: true,
     }
 }
 
@@ -145,7 +146,7 @@ fn test_external_corpus() {
                         ));
                     }
                     Err(SqlfmtError::Parse(_)) => {}
-                    Err(SqlfmtError::Roundtrip { .. }) => {
+                    Err(SqlfmtError::Roundtrip { .. } | SqlfmtError::Unformatted) => {
                         failures.push((
                             source.name().to_owned(),
                             dialect_name.to_string(),
@@ -378,7 +379,7 @@ fn test_rewrite_corpus() {
                     // Leave in failing/.
                     still_failing.push(stmt.clone());
                 }
-                Err(SqlfmtError::Roundtrip { .. }) => {
+                Err(SqlfmtError::Roundtrip { .. } | SqlfmtError::Unformatted) => {
                     still_failing.push(stmt.clone());
                 }
             }
@@ -472,8 +473,8 @@ fn test_permanent_corpus() {
                 Err(SqlfmtError::Parse(_)) => {
                     // Acceptable — cross-dialect statements or parser changes.
                 }
-                Err(SqlfmtError::Roundtrip { .. }) => {
-                    // Expected — still a round-trip failure.
+                Err(SqlfmtError::Roundtrip { .. } | SqlfmtError::Unformatted) => {
+                    // Expected — still a round-trip or unformatted failure.
                 }
             }
         }

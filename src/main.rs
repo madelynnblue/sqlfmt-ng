@@ -67,6 +67,7 @@ fn main() {
             CaseArg::Lower => CaseMode::Lower,
             CaseArg::Title => CaseMode::Title,
         },
+        error_on_unformatted: false,
     };
 
     let result = match args.dialect {

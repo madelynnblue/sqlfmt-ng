@@ -8,6 +8,7 @@ members = [
     "crates/dialect-postgres",
     "crates/sqlfmt-corpus-tests",
     "crates/sqlfmt-core",
+    "crates/sqlfmt-error",
     "crates/sqlfmt-ir",
     "crates/sqlfmt-render",
     "web",

@@ -1,7 +1,7 @@
 use dialect_materialize::MaterializeDialect;
 use dialect_postgres_convert::{convert_pg_query_json, json_ast_equal};
 use sqlfmt_core::format_sql;
-use sqlfmt_render::{CaseMode, RenderOpts, render};
+use sqlfmt_render::{CaseMode, RenderOpts};
 use wasm_bindgen::prelude::*;
 
 fn parse_opts(width: usize, tab_width: usize, use_tabs: bool, case: &str) -> RenderOpts {
@@ -14,6 +14,7 @@ fn parse_opts(width: usize, tab_width: usize, use_tabs: bool, case: &str) -> Ren
             "title" => CaseMode::Title,
             _ => CaseMode::Upper,
         },
+        error_on_unformatted: false,
     }
 }
 
@@ -51,7 +52,8 @@ pub fn fmt_postgres_json(
     let node =
         convert_pg_query_json(parse_tree_json).map_err(|e| JsValue::from_str(&e.to_string()))?;
     let opts = parse_opts(width, tab_width, use_tabs, case);
-    Ok(render(&node, &opts))
+    opts.render(&node)
+        .map_err(|err| JsValue::from_str(&err.to_string()))
 }
 
 /// Compare two pg-query JSON parse trees for AST equality, ignoring location fields.
@@ -75,5 +77,6 @@ pub fn fmt_from_ir(
     let node: sqlfmt_ir::Node = serde_json::from_str(ir_json)
         .map_err(|e| JsValue::from_str(&format!("invalid IR JSON: {e}")))?;
     let opts = parse_opts(width, tab_width, use_tabs, case);
-    Ok(render(&node, &opts))
+    opts.render(&node)
+        .map_err(|err| JsValue::from_str(&err.to_string()))
 }

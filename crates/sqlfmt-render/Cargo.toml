@@ -5,5 +5,6 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-sqlfmt-ir = { path = "../sqlfmt-ir" }
 pretty = "0.12"
+sqlfmt-error = { path = "../sqlfmt-error" }
+sqlfmt-ir = { path = "../sqlfmt-ir" }

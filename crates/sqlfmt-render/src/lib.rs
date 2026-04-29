@@ -1,4 +1,5 @@
 use pretty::RcDoc;
+use sqlfmt_error::SqlfmtError;
 use sqlfmt_ir::{Clause, Node};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -14,6 +15,7 @@ pub struct RenderOpts {
     pub use_tabs: bool,
     pub tab_width: usize,
     pub case: CaseMode,
+    pub error_on_unformatted: bool,
 }
 
 impl Default for RenderOpts {
@@ -23,6 +25,7 @@ impl Default for RenderOpts {
             use_tabs: false,
             tab_width: 4,
             case: CaseMode::Upper,
+            error_on_unformatted: false,
         }
     }
 }
@@ -42,95 +45,101 @@ fn apply_case(s: &str, mode: CaseMode) -> String {
     }
 }
 
-pub fn render(node: &Node, opts: &RenderOpts) -> String {
-    let doc = to_rdoc(node, opts);
-    let mut w = Vec::new();
-    doc.render(opts.line_width, &mut w).unwrap();
-    let s = String::from_utf8(w).unwrap();
-    if opts.use_tabs {
-        // Replace each leading run of `tab_width` spaces on every line with a tab.
-        // This is a post-processing step because the `pretty` crate always emits spaces.
-        let indent = " ".repeat(opts.tab_width.max(1));
-        s.lines()
-            .map(|line| {
-                let mut rest = line;
-                let mut tabs = 0usize;
-                while let Some(stripped) = rest.strip_prefix(indent.as_str()) {
-                    tabs += 1;
-                    rest = stripped;
-                }
-                format!("{}{}", "\t".repeat(tabs), rest)
-            })
-            .collect::<Vec<_>>()
-            .join("\n")
-    } else {
-        s
-    }
-}
+impl RenderOpts {
+    pub fn render(&self, node: &Node) -> Result<String, SqlfmtError> {
+        if self.error_on_unformatted && node.contains_unformatted() {
+            return Err(SqlfmtError::Unformatted);
+        }
 
-fn to_rdoc<'a>(node: &Node, opts: &RenderOpts) -> RcDoc<'a> {
-    match node {
-        Node::Clauses { items } => {
-            let docs: Vec<RcDoc> = items.iter().map(|c| clause_to_rdoc(c, opts)).collect();
-            RcDoc::intersperse(docs, RcDoc::line()).group()
+        let doc = self.to_rdoc(node);
+        let mut w = Vec::new();
+        doc.render(self.line_width, &mut w).unwrap();
+        let mut s = String::from_utf8(w).unwrap();
+        if self.use_tabs {
+            // Replace each leading run of `tab_width` spaces on every line with a tab.
+            // This is a post-processing step because the `pretty` crate always emits spaces.
+            let indent = " ".repeat(self.tab_width.max(1));
+            s = s
+                .lines()
+                .map(|line| {
+                    let mut rest = line;
+                    let mut tabs = 0usize;
+                    while let Some(stripped) = rest.strip_prefix(indent.as_str()) {
+                        tabs += 1;
+                        rest = stripped;
+                    }
+                    format!("{}{}", "\t".repeat(tabs), rest)
+                })
+                .collect::<Vec<_>>()
+                .join("\n");
         }
-        Node::List { items, separator } => {
-            let sep_str = separator.as_deref().unwrap_or(",");
-            let sep = RcDoc::text(sep_str.to_owned()).append(RcDoc::line());
-            let docs: Vec<RcDoc> = items.iter().map(|n| to_rdoc(n, opts)).collect();
-            RcDoc::intersperse(docs, sep).group()
-        }
-        Node::Wrap {
-            keyword,
-            open,
-            content,
-            close,
-        } => {
-            let prefix: RcDoc = if let Some(kw) = keyword {
-                RcDoc::text(apply_case(kw, opts.case)).append(RcDoc::text(open.clone()))
-            } else {
-                RcDoc::text(open.clone())
-            };
-            prefix
-                .append(to_rdoc(content, opts))
-                .append(RcDoc::text(close.clone()))
-        }
-        Node::Infix { op, items } => {
-            let sep = RcDoc::line()
-                .append(RcDoc::text(op.clone()))
-                .append(RcDoc::space());
-            let docs: Vec<RcDoc> = items.iter().map(|n| to_rdoc(n, opts)).collect();
-            RcDoc::intersperse(docs, sep).group()
-        }
-        Node::Keyword { value } => RcDoc::text(apply_case(value, opts.case)),
-        Node::Identifier { value, quote } => match quote {
-            Some(q) => RcDoc::text(format!("{q}{value}{q}")),
-            None => RcDoc::text(value.clone()),
-        },
-        Node::Literal { value } => RcDoc::text(value.clone()),
-        Node::Text { value } => RcDoc::text(value.clone()),
-        Node::Unformatted { value } => RcDoc::text(value.clone()),
-        Node::Concat { items } => {
-            let docs: Vec<RcDoc> = items.iter().map(|n| to_rdoc(n, opts)).collect();
-            RcDoc::concat(docs)
-        }
-        Node::Group { content } => to_rdoc(content, opts).group(),
-        Node::Nest { content } => to_rdoc(content, opts).nest(opts.tab_width as isize),
-        Node::Line => RcDoc::line(),
-        Node::Softline => RcDoc::line_(),
+        Ok(s)
     }
-}
 
-fn clause_to_rdoc<'a>(clause: &Clause, opts: &RenderOpts) -> RcDoc<'a> {
-    let kw = RcDoc::text(apply_case(&clause.keyword, opts.case));
-    match &clause.body {
-        None => kw,
-        Some(body) => {
-            let body_doc = to_rdoc(body, opts);
-            // Nest the line break + body together so that when broken, the body
-            // is indented by tab_width relative to the clause keyword.
-            kw.append(RcDoc::line().append(body_doc).nest(opts.tab_width as isize))
-                .group()
+    fn to_rdoc<'a>(&self, node: &Node) -> RcDoc<'a> {
+        match node {
+            Node::Clauses { items } => {
+                let docs: Vec<RcDoc> = items.iter().map(|c| self.clause_to_rdoc(c)).collect();
+                RcDoc::intersperse(docs, RcDoc::line()).group()
+            }
+            Node::List { items, separator } => {
+                let sep_str = separator.as_deref().unwrap_or(",");
+                let sep = RcDoc::text(sep_str.to_owned()).append(RcDoc::line());
+                let docs: Vec<RcDoc> = items.iter().map(|n| self.to_rdoc(n)).collect();
+                RcDoc::intersperse(docs, sep).group()
+            }
+            Node::Wrap {
+                keyword,
+                open,
+                content,
+                close,
+            } => {
+                let prefix: RcDoc = if let Some(kw) = keyword {
+                    RcDoc::text(apply_case(kw, self.case)).append(RcDoc::text(open.clone()))
+                } else {
+                    RcDoc::text(open.clone())
+                };
+                prefix
+                    .append(self.to_rdoc(content))
+                    .append(RcDoc::text(close.clone()))
+            }
+            Node::Infix { op, items } => {
+                let sep = RcDoc::line()
+                    .append(RcDoc::text(op.clone()))
+                    .append(RcDoc::space());
+                let docs: Vec<RcDoc> = items.iter().map(|n| self.to_rdoc(n)).collect();
+                RcDoc::intersperse(docs, sep).group()
+            }
+            Node::Keyword { value } => RcDoc::text(apply_case(value, self.case)),
+            Node::Identifier { value, quote } => match quote {
+                Some(q) => RcDoc::text(format!("{q}{value}{q}")),
+                None => RcDoc::text(value.clone()),
+            },
+            Node::Literal { value } => RcDoc::text(value.clone()),
+            Node::Text { value } => RcDoc::text(value.clone()),
+            Node::Unformatted { value } => RcDoc::text(value.clone()),
+            Node::Concat { items } => {
+                let docs: Vec<RcDoc> = items.iter().map(|n| self.to_rdoc(n)).collect();
+                RcDoc::concat(docs)
+            }
+            Node::Group { content } => self.to_rdoc(content).group(),
+            Node::Nest { content } => self.to_rdoc(content).nest(self.tab_width as isize),
+            Node::Line => RcDoc::line(),
+            Node::Softline => RcDoc::line_(),
+        }
+    }
+
+    fn clause_to_rdoc<'a>(&self, clause: &Clause) -> RcDoc<'a> {
+        let kw = RcDoc::text(apply_case(&clause.keyword, self.case));
+        match &clause.body {
+            None => kw,
+            Some(body) => {
+                let body_doc = self.to_rdoc(body);
+                // Nest the line break + body together so that when broken, the body
+                // is indented by tab_width relative to the clause keyword.
+                kw.append(RcDoc::line().append(body_doc).nest(self.tab_width as isize))
+                    .group()
+            }
         }
     }
 }
@@ -149,7 +158,7 @@ mod tests {
         let node = Node::Keyword {
             value: "select".into(),
         };
-        assert_eq!(render(&node, &opts()), "SELECT");
+        assert_eq!(opts().render(&node).unwrap(), "SELECT");
     }
 
     #[test]
@@ -161,13 +170,13 @@ mod tests {
             case: CaseMode::Lower,
             ..RenderOpts::default()
         };
-        assert_eq!(render(&node, &o), "select");
+        assert_eq!(o.render(&node).unwrap(), "select");
     }
 
     #[test]
     fn test_literal() {
         let node = Node::Literal { value: "42".into() };
-        assert_eq!(render(&node, &opts()), "42");
+        assert_eq!(opts().render(&node).unwrap(), "42");
     }
 
     #[test]
@@ -176,7 +185,7 @@ mod tests {
             value: "my_table".into(),
             quote: None,
         };
-        assert_eq!(render(&node, &opts()), "my_table");
+        assert_eq!(opts().render(&node).unwrap(), "my_table");
     }
 
     #[test]
@@ -185,7 +194,7 @@ mod tests {
             value: "my table".into(),
             quote: Some("\"".into()),
         };
-        assert_eq!(render(&node, &opts()), "\"my table\"");
+        assert_eq!(opts().render(&node).unwrap(), "\"my table\"");
     }
 
     #[test]
@@ -196,7 +205,7 @@ mod tests {
             content: Box::new(Node::Literal { value: "1".into() }),
             close: ")".into(),
         };
-        assert_eq!(render(&node, &opts()), "(1)");
+        assert_eq!(opts().render(&node).unwrap(), "(1)");
     }
 
     #[test]
@@ -210,7 +219,7 @@ mod tests {
             }),
             close: ")".into(),
         };
-        assert_eq!(render(&node, &opts()), "COUNT(x)");
+        assert_eq!(opts().render(&node).unwrap(), "COUNT(x)");
     }
 
     #[test]
@@ -246,7 +255,7 @@ mod tests {
             line_width: 1000,
             ..RenderOpts::default()
         };
-        let result = render(&node, &wide);
+        let result = wide.render(&node).unwrap();
         assert_eq!(result, "SELECT a, b FROM t");
     }
 
@@ -263,7 +272,7 @@ mod tests {
             line_width: 1000,
             ..RenderOpts::default()
         };
-        let result = render(&node, &wide);
+        let result = wide.render(&node).unwrap();
         assert_eq!(result, "a AND b");
     }
 
@@ -276,7 +285,7 @@ mod tests {
             case: CaseMode::Title,
             ..RenderOpts::default()
         };
-        assert_eq!(render(&node, &o), "Select");
+        assert_eq!(o.render(&node).unwrap(), "Select");
     }
 
     #[test]
@@ -297,8 +306,9 @@ mod tests {
             use_tabs: true,
             tab_width: 4,
             case: CaseMode::Upper,
+            error_on_unformatted: false,
         };
-        let result = render(&node, &tab_opts);
+        let result = tab_opts.render(&node).unwrap();
         // The body should be indented with a tab, not spaces.
         assert!(
             result.contains("\tmy_col"),

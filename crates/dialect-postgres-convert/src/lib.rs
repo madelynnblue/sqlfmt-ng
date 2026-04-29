@@ -55,14 +55,14 @@ mod tests {
 
     #[test]
     fn test_json_select_with_where() {
-        use sqlfmt_render::{RenderOpts, render};
+        use sqlfmt_render::RenderOpts;
         let json = parse_to_json_c("SELECT a, b FROM t WHERE x = 1");
         let node = convert_pg_query_json(&json).unwrap();
         let opts = RenderOpts {
             line_width: 1000,
             ..Default::default()
         };
-        let out = render(&node, &opts);
+        let out = opts.render(&node).unwrap();
         assert!(out.contains("SELECT"), "got: {out}");
         assert!(out.contains("FROM"), "got: {out}");
         assert!(out.contains("WHERE"), "got: {out}");
@@ -70,14 +70,14 @@ mod tests {
 
     #[test]
     fn test_json_order_by() {
-        use sqlfmt_render::{RenderOpts, render};
+        use sqlfmt_render::RenderOpts;
         let json = parse_to_json_c("SELECT a FROM t ORDER BY a DESC");
         let node = convert_pg_query_json(&json).unwrap();
         let opts = RenderOpts {
             line_width: 1000,
             ..Default::default()
         };
-        let out = render(&node, &opts);
+        let out = opts.render(&node).unwrap();
         assert!(out.contains("ORDER BY"), "got: {out}");
         assert!(out.contains("DESC"), "got: {out}");
     }

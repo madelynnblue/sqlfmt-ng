@@ -61,6 +61,28 @@ pub enum Node {
     Softline,
 }
 
+impl Node {
+    pub fn contains_unformatted(&self) -> bool {
+        match self {
+            Node::Unformatted { .. } => true,
+            Node::Clauses { items } => items.iter().any(|c| c.contains_unformatted()),
+            Node::List { items, .. } => items.iter().any(|n| n.contains_unformatted()),
+            Node::Wrap { content, .. } => content.contains_unformatted(),
+            Node::Infix { items, .. } => items.iter().any(|n| n.contains_unformatted()),
+            Node::Concat { items } => items.iter().any(|n| n.contains_unformatted()),
+            Node::Group { content } => content.contains_unformatted(),
+            Node::Nest { content } => content.contains_unformatted(),
+            _ => false,
+        }
+    }
+}
+
+impl Clause {
+    fn contains_unformatted(&self) -> bool {
+        self.body.as_ref().is_some_and(|b| b.contains_unformatted())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
