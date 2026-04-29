@@ -52,18 +52,6 @@ SELECT COALESCE('a'::varchar, 'a'::"char");
 
 -- sqlfmt-corpus-separator --
 
-SELECT a, sum(b) AS a FROM t GROUP BY a OPTIONS (AGGREGATE INPUT  GROUP SIZE = 0.1)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, sum(b) AS a FROM t GROUP BY a OPTIONS (AGGREGATE INPUT GROUP SIZE 100)
-
--- sqlfmt-corpus-separator --
-
-SELECT a, sum(b) AS a FROM t GROUP BY a OPTIONS (AGGREGATE INPUT GROUP SIZE = 'foo')
-
--- sqlfmt-corpus-separator --
-
 SELECT pg_typeof('a'::"char"::char);
 
 -- sqlfmt-corpus-separator --

@@ -2274,6 +2274,18 @@ ORDER BY d;
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, sum(b) AS a FROM t GROUP BY a OPTIONS (AGGREGATE INPUT  GROUP SIZE = 0.1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, sum(b) AS a FROM t GROUP BY a OPTIONS (AGGREGATE INPUT GROUP SIZE 100)
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, sum(b) AS a FROM t GROUP BY a OPTIONS (AGGREGATE INPUT GROUP SIZE = 'foo')
+
+-- sqlfmt-corpus-separator --
+
 SELECT a,b
 FROM t1
 WHERE a IN (4,3,2,1)

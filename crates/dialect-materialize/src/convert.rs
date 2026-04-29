@@ -1,6 +1,7 @@
 use mz_sql_parser::ast::{
-    AsOf, Cte, CteBlock, Distinct, Expr, Ident, OrderByExpr, Query, Raw, Select, SelectItem,
-    SelectStatement, SetExpr, Statement, TableAlias, TableFactor, TableWithJoins, Value,
+    display::AstDisplay, AsOf, Cte, CteBlock, Distinct, Expr, Ident, OrderByExpr, Query, Raw,
+    Select, SelectItem, SelectStatement, SetExpr, Statement, TableAlias, TableFactor,
+    TableWithJoins, Value,
 };
 use sqlfmt_ir::{Clause, Node};
 
@@ -161,6 +162,25 @@ fn select_to_node(select: &Select<Raw>, query: &Query<Raw>) -> Node {
         clauses.push(Clause {
             keyword: "QUALIFY".into(),
             body: Some(Box::new(expr_to_node(qualify))),
+        });
+    }
+
+    // OPTIONS (Materialize query hint extension, follows QUALIFY in mz SELECT display)
+    if !select.options.is_empty() {
+        let opts_str = select
+            .options
+            .iter()
+            .map(|o| o.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        clauses.push(Clause {
+            keyword: "OPTIONS".into(),
+            body: Some(Box::new(Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::Text { value: opts_str }),
+                close: ")".into(),
+            })),
         });
     }
 
