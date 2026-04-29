@@ -167,6 +167,18 @@ fn stmt_to_node(stmt: &Value) -> Option<Node> {
         Some(create_seq_stmt_to_node(inner))
     } else if let Some(inner) = obj.get("TruncateStmt") {
         Some(truncate_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("ExplainStmt") {
+        Some(explain_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("RefreshMatViewStmt") {
+        Some(refresh_matview_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("CreateExtensionStmt") {
+        Some(create_extension_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("RenameStmt") {
+        Some(rename_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("ListenStmt") {
+        Some(listen_stmt_to_node(inner))
+    } else if let Some(inner) = obj.get("NotifyStmt") {
+        Some(notify_stmt_to_node(inner))
     } else {
         None
     }
@@ -1364,6 +1376,285 @@ fn truncate_stmt_to_node(stmt: &Value) -> Node {
         });
     }
 
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn explain_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = vec![Node::Keyword {
+        value: "EXPLAIN".into(),
+    }];
+
+    // Options like (ANALYZE, BUFFERS, VERBOSE)
+    if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
+        let opt_strs: Vec<String> = opts
+            .iter()
+            .filter_map(|o| {
+                o.get("DefElem").map(|d| {
+                    let name = d["defname"].as_str().unwrap_or("").to_uppercase();
+                    if let Some(arg) = d.get("arg") {
+                        let val_str = if let Some(s) = arg
+                            .get("String")
+                            .and_then(|v| v["sval"].as_str())
+                        {
+                            format!("'{}'", s)
+                        } else if let Some(b) = arg
+                            .get("Boolean")
+                            .and_then(|v| v["boolval"].as_i64())
+                        {
+                            if b == 0 { "OFF".into() } else { "ON".into() }
+                        } else if let Some(iv) = arg
+                            .get("Integer")
+                            .and_then(|v| v["ival"].as_i64())
+                        {
+                            iv.to_string()
+                        } else if let Some(fv) = arg
+                            .get("Float")
+                            .and_then(|v| v["fval"].as_str())
+                        {
+                            fv.to_string()
+                        } else {
+                            String::new()
+                        };
+                        if val_str.is_empty() {
+                            name
+                        } else {
+                            format!("{} {}", name, val_str)
+                        }
+                    } else {
+                        name
+                    }
+                })
+            })
+            .collect();
+        items.push(Node::Text {
+            value: format!(" ({})", opt_strs.join(", ")),
+        });
+    }
+
+    items.push(Node::Text { value: " ".into() });
+
+    // Query body — recursively convert the nested statement.
+    if let Some(query) = stmt.get("query") {
+        if let Some(body) = stmt_to_node(query) {
+            items.push(body);
+        }
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn refresh_matview_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = Vec::new();
+
+    if stmt["concurrent"].as_bool().unwrap_or(false) {
+        items.push(Node::Keyword {
+            value: "REFRESH MATERIALIZED VIEW CONCURRENTLY".into(),
+        });
+    } else {
+        items.push(Node::Keyword {
+            value: "REFRESH MATERIALIZED VIEW".into(),
+        });
+    }
+
+    let relation = range_var_to_node(&stmt["relation"]);
+    items.push(Node::Text { value: " ".into() });
+    items.push(relation);
+
+    if stmt["skipData"].as_bool().unwrap_or(false) {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "WITH NO DATA".into(),
+        });
+    } else {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "WITH DATA".into(),
+        });
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn create_extension_stmt_to_node(stmt: &Value) -> Node {
+    let mut items = Vec::new();
+
+    items.push(Node::Keyword {
+        value: "CREATE EXTENSION".into(),
+    });
+
+    if stmt["if_not_exists"].as_bool().unwrap_or(false) {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "IF NOT EXISTS".into(),
+        });
+    }
+
+    let name = stmt["extname"].as_str().unwrap_or("");
+    items.push(Node::Text { value: " ".into() });
+    items.push(ident_node(name));
+
+    if let Some(opts) = stmt["options"].as_array().filter(|a| !a.is_empty()) {
+        for opt in opts {
+            if let Some(defelem) = opt.get("DefElem") {
+                let defname = defelem["defname"].as_str().unwrap_or("");
+                match defname {
+                    "schema" => {
+                        items.push(Node::Text { value: " ".into() });
+                        items.push(Node::Keyword {
+                            value: "SCHEMA".into(),
+                        });
+                        if let Some(arg) = defelem.get("arg") {
+                            items.push(Node::Text { value: " ".into() });
+                            items.push(node_value_to_node(arg));
+                        }
+                    }
+                    "new_version" => {
+                        items.push(Node::Text { value: " ".into() });
+                        items.push(Node::Keyword {
+                            value: "VERSION".into(),
+                        });
+                        if let Some(arg) = defelem.get("arg") {
+                            items.push(Node::Text { value: " ".into() });
+                            items.push(node_value_to_node(arg));
+                        }
+                    }
+                    "cascade" => {
+                        items.push(Node::Text { value: " ".into() });
+                        items.push(Node::Keyword {
+                            value: "CASCADE".into(),
+                        });
+                    }
+                    _ => {
+                        // Unknown option — render generically.
+                        items.push(Node::Text { value: " ".into() });
+                        items.push(Node::Keyword {
+                            value: defname.to_uppercase(),
+                        });
+                        if let Some(arg) = defelem.get("arg") {
+                            items.push(Node::Text { value: " ".into() });
+                            items.push(node_value_to_node(arg));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn rename_stmt_to_node(stmt: &Value) -> Node {
+    let rename_type = stmt["renameType"].as_str().unwrap_or("OBJECT_TABLE");
+    let obj_kw = match rename_type {
+        "OBJECT_TABLE" => "TABLE",
+        "OBJECT_COLUMN" => "COLUMN",
+        "OBJECT_INDEX" => "INDEX",
+        "OBJECT_SEQUENCE" => "SEQUENCE",
+        "OBJECT_VIEW" => "VIEW",
+        "OBJECT_MATVIEW" => "MATERIALIZED VIEW",
+        "OBJECT_FOREIGN_TABLE" => "FOREIGN TABLE",
+        "OBJECT_FUNCTION" => "FUNCTION",
+        "OBJECT_ROUTINE" => "ROUTINE",
+        "OBJECT_TYPE" => "TYPE",
+        "OBJECT_DOMAIN" => "DOMAIN",
+        "OBJECT_SCHEMA" => "SCHEMA",
+        "OBJECT_TABLESPACE" => "TABLESPACE",
+        "OBJECT_COLLATION" => "COLLATION",
+        "OBJECT_CONVERSION" => "CONVERSION",
+        "OBJECT_LANGUAGE" => "LANGUAGE",
+        "OBJECT_STATISTIC_EXT" => "STATISTICS",
+        "OBJECT_TRIGGER" => "TRIGGER",
+        "OBJECT_POLICY" => "POLICY",
+        "OBJECT_RULE" => "RULE",
+        "OBJECT_EXTENSION" => "EXTENSION",
+        "OBJECT_EVENT_TRIGGER" => "EVENT TRIGGER",
+        "OBJECT_AGGREGATE" => "AGGREGATE",
+        "OBJECT_OPERATOR" => "OPERATOR",
+        "OBJECT_OPCLASS" => "OPERATOR CLASS",
+        "OBJECT_OPFAMILY" => "OPERATOR FAMILY",
+        "OBJECT_ACCESS_METHOD" => "ACCESS METHOD",
+        "OBJECT_PUBLICATION" => "PUBLICATION",
+        "OBJECT_SUBSCRIPTION" => "SUBSCRIPTION",
+        "OBJECT_DATABASE" => "DATABASE",
+        _ => "TABLE",
+    };
+
+    let mut items = vec![Node::Keyword {
+        value: "ALTER".into(),
+    }];
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: obj_kw.into(),
+    });
+
+    // Object name (relation or qualified name)
+    if let Some(relation) = stmt.get("relation").filter(|v| !v.is_null()) {
+        items.push(Node::Text { value: " ".into() });
+        if let Some(rv) = relation.get("RangeVar") {
+            items.push(range_var_to_node(rv));
+        } else if relation.get("List").is_some() {
+            items.push(node_value_to_node(relation));
+        } else {
+            items.push(range_var_to_node(relation));
+        }
+    }
+
+    // subname (e.g., column name for RENAME COLUMN)
+    if let Some(subname) = stmt["subname"].as_str().filter(|s| !s.is_empty()) {
+        items.push(Node::Text { value: " ".into() });
+        items.push(ident_node(subname));
+    }
+
+    items.push(Node::Text { value: " ".into() });
+    items.push(Node::Keyword {
+        value: "RENAME TO".into(),
+    });
+
+    let newname = stmt["newname"].as_str().unwrap_or("");
+    items.push(Node::Text { value: " ".into() });
+    items.push(ident_node(newname));
+
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn listen_stmt_to_node(stmt: &Value) -> Node {
+    let name = stmt["conditionname"].as_str().unwrap_or("");
+    let items = vec![
+        Node::Keyword {
+            value: "LISTEN".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_node(name),
+    ];
+    Node::Group {
+        content: Box::new(Node::Concat { items }),
+    }
+}
+
+fn notify_stmt_to_node(stmt: &Value) -> Node {
+    let name = stmt["conditionname"].as_str().unwrap_or("");
+    let mut items = vec![
+        Node::Keyword {
+            value: "NOTIFY".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_node(name),
+    ];
+    if let Some(payload) = stmt["payload"].as_str() {
+        items.push(Node::Text {
+            value: format!(", '{}'", payload),
+        });
+    }
     Node::Group {
         content: Box::new(Node::Concat { items }),
     }
