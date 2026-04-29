@@ -133,13 +133,41 @@ mod tests {
 
     #[test]
     fn test_diag_json() {
-        let json =
-            pg_query_parse_json("SELECT * FROM (int8_tbl i cross join int4_tbl j) ss(a,b,c,d)")
-                .unwrap();
-        if let Some(pos) = json.find("fromClause") {
-            let start = if pos > 10 { pos - 10 } else { 0 };
-            let end = (pos + 800).min(json.len());
-            println!("FROM: {}", &json[start..end]);
+        let cases = [
+            // Column operations
+            "ALTER TABLE t ADD COLUMN x int",
+            "ALTER TABLE t DROP COLUMN x",
+            "ALTER TABLE t DROP COLUMN IF EXISTS x",
+            "ALTER TABLE t ALTER COLUMN x SET NOT NULL",
+            "ALTER TABLE t ALTER COLUMN x DROP NOT NULL",
+            "ALTER TABLE t ALTER COLUMN x SET DEFAULT 42",
+            "ALTER TABLE t ALTER COLUMN x DROP DEFAULT",
+            "ALTER TABLE t ALTER COLUMN x TYPE text",
+            // Constraint operations
+            "ALTER TABLE t ADD CONSTRAINT pk PRIMARY KEY (a)",
+            "ALTER TABLE t ADD CONSTRAINT uniq UNIQUE (a, b)",
+            "ALTER TABLE t ADD CONSTRAINT fk FOREIGN KEY (a) REFERENCES other (id)",
+            "ALTER TABLE t DROP CONSTRAINT pk",
+            "ALTER TABLE t DROP CONSTRAINT IF EXISTS pk",
+            // Tblspc / owner etc
+            "ALTER TABLE t SET TABLESPACE myspace",
+            "ALTER TABLE t OWNER TO newuser",
+            // SET without / with OIDS
+            "ALTER TABLE t SET WITHOUT OIDS",
+            "ALTER TABLE t SET (autovacuum_enabled = true)",
+            "ALTER TABLE t RESET (autovacuum_enabled)",
+            // INHERIT
+            "ALTER TABLE t INHERIT parent",
+            "ALTER TABLE t NO INHERIT parent",
+            // RENAME
+            "ALTER TABLE t RENAME COLUMN a TO b",
+        ];
+        for sql in &cases {
+            println!("\n=== {} ===", sql);
+            match pg_query_parse_json(sql) {
+                Ok(j) => println!("{}", j),
+                Err(e) => println!("ERROR: {}", e),
+            }
         }
     }
 
