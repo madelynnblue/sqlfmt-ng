@@ -16,21 +16,34 @@ impl Dialect for MaterializeDialect {
     }
 
     fn ast_equal(&self, sql: &str, rendered: &str) -> Result<(), SqlfmtError> {
-        let sql_stmts = mz_sql_parser::parser::parse_statements(sql)
-            .map_err(|e| SqlfmtError::Parse(e.to_string()))?;
-        let rendered_stmts = mz_sql_parser::parser::parse_statements(rendered)
-            .map_err(|e| SqlfmtError::Parse(e.to_string()))?;
-        if sql_stmts.is_empty() || rendered_stmts.is_empty() {
-            return Err(SqlfmtError::Parse("empty input".into()));
-        }
         // Compare canonical Display output rather than structural PartialEq.
         // DeclareStatement and PrepareStatement store the original raw SQL in a
         // `sql: String` field included in their PartialEq, so whitespace-only
         // reformatting (e.g. `1/a` → `1 / a`) would cause spurious failures.
         // Display ignores that field and writes only the semantic AST.
-        let sql_display = format!("{}", sql_stmts[0].ast);
-        let rendered_display = format!("{}", rendered_stmts[0].ast);
-        if sql_display != rendered_display {
+        //
+        // We also apply a second parse+display cycle before comparing. The mz
+        // parser has a non-idempotent Display for the `"char"` type: `"char"`
+        // displays as `char`, but `char` re-parses as `bpchar`. The double cycle
+        // stabilizes both sides to the fully-normalized form, preventing false
+        // round-trip failures caused by this parser bug.
+        let normalize = |s: &str| -> Result<String, SqlfmtError> {
+            let stmts = mz_sql_parser::parser::parse_statements(s)
+                .map_err(|e| SqlfmtError::Parse(e.to_string()))?;
+            if stmts.is_empty() {
+                return Err(SqlfmtError::Parse("empty input".into()));
+            }
+            let display1 = format!("{}", stmts[0].ast);
+            let stmts2 = mz_sql_parser::parser::parse_statements(&display1)
+                .map_err(|e| SqlfmtError::Parse(e.to_string()))?;
+            if stmts2.is_empty() {
+                return Err(SqlfmtError::Parse("empty input".into()));
+            }
+            Ok(format!("{}", stmts2[0].ast))
+        };
+        let sql_normal = normalize(sql)?;
+        let rendered_normal = normalize(rendered)?;
+        if sql_normal != rendered_normal {
             return Err(SqlfmtError::Roundtrip {
                 input: sql.to_owned(),
                 output: rendered.to_owned(),

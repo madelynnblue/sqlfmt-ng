@@ -69,11 +69,8 @@ fn query_to_node(query: &Query<Raw>) -> Node {
                     items.insert(0, cte_clause);
                     Node::Clauses { items }
                 }
-                other => {
-                    let _ = other;
-                    Node::Unformatted {
-                        value: format!("{query}"),
-                    }
+                _ => Node::Unformatted {
+                    value: format!("{query}"),
                 }
             }
         }
@@ -88,7 +85,9 @@ fn cte_to_node(cte: &Cte<Raw>) -> Node {
         Node::Text {
             value: format!("{alias}"),
         },
-        Node::Text { value: " AS ".into() },
+        Node::Text { value: " ".into() },
+        Node::Keyword { value: "AS".into() },
+        Node::Text { value: " ".into() },
     ];
     items.push(Node::Wrap {
         keyword: None,
@@ -428,8 +427,6 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
     }
 }
 
-
-
 fn order_by_expr_to_node(o: &OrderByExpr<Raw>) -> Node {
     let mut items = vec![expr_to_node(&o.expr)];
     if let Some(asc) = o.asc {
@@ -454,7 +451,6 @@ fn order_by_expr_to_node(o: &OrderByExpr<Raw>) -> Node {
         Node::Concat { items }
     }
 }
-
 
 fn ident_to_node(ident: &Ident) -> Node {
     Node::Identifier {
