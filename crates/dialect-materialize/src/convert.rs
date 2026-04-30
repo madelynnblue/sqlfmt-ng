@@ -1,13 +1,30 @@
 use mz_sql_parser::ast::{
-    display::AstDisplay, AsOf, Cte, CteBlock, Distinct, Expr, Function, FunctionArgs, Ident, Join,
-    JoinConstraint, JoinOperator, OrderByExpr, Query, Raw, Select, SelectItem, SelectStatement,
-    SetExpr, SetOperator, Statement, TableAlias, TableFactor, TableWithJoins, Value, Values,
+    display::AstDisplay, Assignment, AsOf, CreateMaterializedViewStatement,
+    CreateIndexStatement, CreateTableStatement, CreateViewStatement, Cte, CteBlock,
+    DeleteStatement, Distinct, DropObjectsStatement, ResetVariableStatement,
+    Expr, Function,
+    FunctionArgs, Ident, IfExistsBehavior, InsertSource, InsertStatement, Join,
+    JoinConstraint, JoinOperator, MapEntry, ObjectType, OrderByExpr, Query, Raw, Select, SelectItem,
+    SelectStatement, SetExpr, SetOperator, SetVariableStatement, Statement,
+    SubscriptPosition, TableAlias,
+    TableFactor, TableWithJoins, UpdateStatement, Value, Values,
+    WindowSpec,
 };
 use sqlfmt_ir::{Clause, Node};
 
 pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
     match stmt {
         Statement::Select(s) => select_stmt_to_node(s),
+        Statement::Insert(ins) => insert_stmt_to_node(ins),
+        Statement::Update(upd) => update_stmt_to_node(upd),
+        Statement::Delete(del) => delete_stmt_to_node(del),
+        Statement::CreateTable(ct) => create_table_to_node(ct),
+        Statement::CreateMaterializedView(mv) => create_materialized_view_to_node(mv),
+        Statement::CreateView(cv) => create_view_to_node(cv),
+        Statement::CreateIndex(ci) => create_index_to_node(ci),
+        Statement::DropObjects(drop) => drop_objects_to_node(drop),
+        Statement::SetVariable(sv) => set_variable_to_node(sv),
+        Statement::ResetVariable(rv) => reset_variable_to_node(rv),
         _ => Node::Text {
             value: format!("{stmt}"),
         },
@@ -886,9 +903,137 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
             content: Box::new(query_to_node(s)),
             close: ")".into(),
         },
-        _ => Node::Text {
-            value: format!("{expr}"),
+        Expr::Map(entries) => {
+            let items: Vec<Node> = entries
+                .iter()
+                .map(entry_to_node)
+                .collect();
+            Node::Wrap {
+                keyword: Some("MAP".into()),
+                open: "[".into(),
+                content: Box::new(Node::List {
+                    items,
+                    separator: None,
+                }),
+                close: "]".into(),
+            }
+        }
+        Expr::MapSubquery(s) => Node::Wrap {
+            keyword: Some("MAP".into()),
+            open: "(".into(),
+            content: Box::new(query_to_node(s)),
+            close: ")".into(),
         },
+        Expr::QualifiedWildcard(idents) => {
+            let items: Vec<Node> = idents
+                .iter()
+                .enumerate()
+                .flat_map(|(i, ident)| {
+                    if i == 0 {
+                        vec![ident_to_node(ident)]
+                    } else {
+                        vec![Node::Text { value: ".".into() }, ident_to_node(ident)]
+                    }
+                })
+                .chain(std::iter::once(Node::Text { value: ".*".into() }))
+                .collect();
+            Node::Concat { items }
+        }
+        Expr::FieldAccess { expr, field } => Node::Concat {
+            items: vec![
+                expr_to_node(expr),
+                Node::Text { value: ".".into() },
+                ident_to_node(field),
+            ],
+        },
+        Expr::WildcardAccess(expr) => Node::Concat {
+            items: vec![
+                expr_to_node(expr),
+                Node::Text { value: ".*".into() },
+            ],
+        },
+        Expr::Parameter(n) => Node::Text {
+            value: format!("${n}"),
+        },
+        Expr::AnySubquery { left, op, right } => Node::Concat {
+            items: vec![
+                expr_to_node(left),
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: op.to_string(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Wrap {
+                    keyword: Some("ANY".into()),
+                    open: " (".into(),
+                    content: Box::new(query_to_node(right)),
+                    close: ")".into(),
+                },
+            ],
+        },
+        Expr::AnyExpr { left, op, right } => Node::Concat {
+            items: vec![
+                expr_to_node(left),
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: op.to_string(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Wrap {
+                    keyword: Some("ANY".into()),
+                    open: " (".into(),
+                    content: Box::new(expr_to_node(right)),
+                    close: ")".into(),
+                },
+            ],
+        },
+        Expr::AllSubquery { left, op, right } => Node::Concat {
+            items: vec![
+                expr_to_node(left),
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: op.to_string(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Wrap {
+                    keyword: Some("ALL".into()),
+                    open: " (".into(),
+                    content: Box::new(query_to_node(right)),
+                    close: ")".into(),
+                },
+            ],
+        },
+        Expr::AllExpr { left, op, right } => Node::Concat {
+            items: vec![
+                expr_to_node(left),
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: op.to_string(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Wrap {
+                    keyword: Some("ALL".into()),
+                    open: " (".into(),
+                    content: Box::new(expr_to_node(right)),
+                    close: ")".into(),
+                },
+            ],
+        },
+        Expr::Subscript { expr, positions } => {
+            let mut node = expr_to_node(expr);
+            for pos in positions {
+                let inner = subscript_position_to_node(pos);
+                node = Node::Concat {
+                    items: vec![
+                        node,
+                        Node::Text { value: "[".into() },
+                        inner,
+                        Node::Text { value: "]".into() },
+                    ],
+                };
+            }
+            node
+        }
     }
 }
 
@@ -903,41 +1048,745 @@ fn function_to_node(f: &Function<Raw>) -> Node {
         return Node::Text { value: format!("{f}") };
     }
 
-    let args_list = match &f.args {
-        FunctionArgs::Star => return Node::Text { value: format!("{f}") },
-        FunctionArgs::Args { args, order_by } => {
-            if args.is_empty()
-                || f.filter.is_some()
-                || f.over.is_some()
-                || !order_by.is_empty()
-                || f.distinct
-            {
+    // ORDER BY within function args is complex and requires fallback to
+    // the parser's own Display. We also can't handle the combination of
+    // both ORDER BY in args and OVER in the same call.
+    let has_complex = match &f.args {
+        FunctionArgs::Args { order_by, .. } => !order_by.is_empty(),
+        FunctionArgs::Star => false,
+    };
+    if has_complex {
+        return Node::Text { value: format!("{f}") };
+    }
+
+    let mut items = match &f.args {
+        FunctionArgs::Star => {
+            let items = vec![
+                Node::Text {
+                    value: format!("{}", f.name),
+                },
+                Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(Node::Text { value: "*".into() }),
+                    close: ")".into(),
+                },
+            ];
+            items
+        }
+        FunctionArgs::Args { args, order_by: _ } => {
+            if args.is_empty() {
                 return Node::Text { value: format!("{f}") };
             }
-            args
+            let arg_nodes: Vec<Node> = args.iter().map(expr_to_node).collect();
+            let mut body = Node::List {
+                items: arg_nodes,
+                separator: None,
+            };
+            if f.distinct {
+                body = Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "DISTINCT".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        body,
+                    ],
+                };
+            }
+            let items = vec![
+                Node::Text {
+                    value: format!("{}", f.name),
+                },
+                Node::Wrap {
+                    keyword: None,
+                    open: "(".into(),
+                    content: Box::new(body),
+                    close: ")".into(),
+                },
+            ];
+            items
         }
     };
 
-    let arg_nodes: Vec<Node> = args_list.iter().map(expr_to_node).collect();
-    // Use the Display form of the name. For simple names this matches what
-    // the parser's AstDisplay produces (including quoting reserved words).
-    // The renderer's Node::Text preserves this without case transformation,
-    // avoiding the issue where `Wrap::keyword` would up-case `left` to `LEFT`.
-    Node::Concat {
-        items: vec![
-            Node::Text {
-                value: format!("{}", f.name),
-            },
-            Node::Wrap {
+    append_function_filter(f, &mut items);
+
+    if let Some(ws) = &f.over {
+        items.push(window_spec_to_node(ws));
+    }
+
+    Node::Concat { items }
+}
+
+fn append_function_filter(f: &Function<Raw>, items: &mut Vec<Node>) {
+    if let Some(filter) = &f.filter {
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::Keyword {
+            value: "FILTER".into(),
+        });
+        items.push(Node::Wrap {
+            keyword: None,
+            open: " (WHERE ".into(),
+            content: Box::new(expr_to_node(filter)),
+            close: ")".into(),
+        });
+    }
+}
+
+fn window_spec_to_node(ws: &WindowSpec<Raw>) -> Node {
+    let WindowSpec {
+        partition_by,
+        order_by,
+        window_frame,
+        ignore_nulls,
+        respect_nulls,
+    } = ws;
+
+    let mut items: Vec<Node> = Vec::new();
+
+    // IGNORE NULLS / RESPECT NULLS come before OVER (per AstDisplay order)
+    if *ignore_nulls {
+        items.push(Node::Text {
+            value: " IGNORE NULLS".into(),
+        });
+    }
+    if *respect_nulls {
+        items.push(Node::Text {
+            value: " RESPECT NULLS".into(),
+        });
+    }
+
+    items.push(Node::Text {
+        value: " OVER (".into(),
+    });
+
+    // Build the inside of OVER (...)
+    if !partition_by.is_empty() {
+        let part_items: Vec<Node> = partition_by.iter().map(expr_to_node).collect();
+        items.push(Node::Keyword {
+            value: "PARTITION BY".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::List {
+            items: part_items,
+            separator: None,
+        });
+    }
+
+    if !order_by.is_empty() {
+        if !partition_by.is_empty() {
+            items.push(Node::Text { value: " ".into() });
+        }
+        let order_items: Vec<Node> = order_by.iter().map(order_by_expr_to_node).collect();
+        items.push(Node::Keyword {
+            value: "ORDER BY".into(),
+        });
+        items.push(Node::Text { value: " ".into() });
+        items.push(Node::List {
+            items: order_items,
+            separator: None,
+        });
+    }
+
+    if let Some(frame) = window_frame {
+        if !partition_by.is_empty() || !order_by.is_empty() {
+            items.push(Node::Text { value: " ".into() });
+        }
+        items.push(Node::Keyword {
+            value: format!("{}", frame.units),
+        });
+        items.push(Node::Text { value: " ".into() });
+        if let Some(end_bound) = &frame.end_bound {
+            items.push(Node::Keyword {
+                value: "BETWEEN".into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Text {
+                value: format!("{}", frame.start_bound),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Keyword { value: "AND".into() });
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Text {
+                value: format!("{end_bound}"),
+            });
+        } else {
+            items.push(Node::Text {
+                value: format!("{}", frame.start_bound),
+            });
+        }
+    }
+
+    items.push(Node::Text { value: ")".into() });
+
+    Node::Concat { items }
+}
+
+fn insert_stmt_to_node(ins: &InsertStatement<Raw>) -> Node {
+    let InsertStatement {
+        table_name,
+        columns,
+        source,
+        returning,
+    } = ins;
+
+    let mut clauses = vec![Clause {
+        keyword: "INSERT INTO".into(),
+        body: Some(Box::new(table_name_to_node(table_name))),
+    }];
+
+    if !columns.is_empty() {
+        let col_items: Vec<Node> = columns.iter().map(ident_to_node).collect();
+        clauses.push(Clause {
+            keyword: "".into(),
+            body: Some(Box::new(Node::Wrap {
                 keyword: None,
                 open: "(".into(),
                 content: Box::new(Node::List {
-                    items: arg_nodes,
+                    items: col_items,
                     separator: None,
+                }),
+                close: ")".into(),
+            })),
+        });
+    }
+
+    match source {
+        InsertSource::Query(q) => {
+            clauses.push(Clause {
+                keyword: "".into(),
+                body: Some(Box::new(query_to_node(q))),
+            });
+        }
+        InsertSource::DefaultValues => {
+            clauses.push(Clause {
+                keyword: "".into(),
+                body: Some(Box::new(Node::Text {
+                    value: "DEFAULT VALUES".into(),
+                })),
+            });
+        }
+    }
+
+    if !returning.is_empty() {
+        let ret_items: Vec<Node> = returning.iter().map(select_item_to_node).collect();
+        clauses.push(Clause {
+            keyword: "RETURNING".into(),
+            body: Some(Box::new(Node::List {
+                items: ret_items,
+                separator: None,
+            })),
+        });
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn update_stmt_to_node(upd: &UpdateStatement<Raw>) -> Node {
+    let UpdateStatement {
+        table_name,
+        alias,
+        assignments,
+        selection,
+    } = upd;
+
+    let mut table_node = table_name_to_node(table_name);
+    if let Some(a) = alias {
+        table_node = table_alias_node(table_node, a);
+    }
+
+    let mut clauses = vec![Clause {
+        keyword: "UPDATE".into(),
+        body: Some(Box::new(table_node)),
+    }];
+
+    if !assignments.is_empty() {
+        let assign_items: Vec<Node> = assignments
+            .iter()
+            .map(|a| assignment_to_node(a))
+            .collect();
+        clauses.push(Clause {
+            keyword: "SET".into(),
+            body: Some(Box::new(Node::List {
+                items: assign_items,
+                separator: None,
+            })),
+        });
+    }
+
+    if let Some(sel) = selection {
+        clauses.push(Clause {
+            keyword: "WHERE".into(),
+            body: Some(Box::new(expr_to_node(sel))),
+        });
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn delete_stmt_to_node(del: &DeleteStatement<Raw>) -> Node {
+    let DeleteStatement {
+        table_name,
+        alias,
+        using,
+        selection,
+    } = del;
+
+    let mut table_node = table_name_to_node(table_name);
+    if let Some(a) = alias {
+        table_node = table_alias_node(table_node, a);
+    }
+
+    let mut clauses = vec![Clause {
+        keyword: "DELETE FROM".into(),
+        body: Some(Box::new(table_node)),
+    }];
+
+    if !using.is_empty() {
+        let using_items: Vec<Node> = using.iter().map(table_with_joins_to_node).collect();
+        clauses.push(Clause {
+            keyword: "USING".into(),
+            body: Some(Box::new(Node::List {
+                items: using_items,
+                separator: None,
+            })),
+        });
+    }
+
+    if let Some(sel) = selection {
+        clauses.push(Clause {
+            keyword: "WHERE".into(),
+            body: Some(Box::new(expr_to_node(sel))),
+        });
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn create_table_to_node(ct: &CreateTableStatement<Raw>) -> Node {
+    let CreateTableStatement {
+        name,
+        columns,
+        constraints,
+        if_not_exists,
+        temporary,
+        with_options,
+    } = ct;
+
+    let mut title = "CREATE".to_string();
+    if *temporary {
+        title.push_str(" TEMPORARY");
+    }
+    title.push_str(" TABLE");
+    if *if_not_exists {
+        title.push_str(" IF NOT EXISTS");
+    }
+
+    let mut body_parts: Vec<String> = columns.iter().map(|c| format!("{c}")).collect();
+    body_parts.extend(constraints.iter().map(|c| format!("{c}")));
+    let body_str = body_parts.join(", ");
+
+    let table_def = Node::Concat {
+        items: vec![
+            table_name_to_node(name),
+            Node::Wrap {
+                keyword: None,
+                open: " (".into(),
+                content: Box::new(Node::Text {
+                    value: body_str,
                 }),
                 close: ")".into(),
             },
         ],
+    };
+
+    let mut clauses = vec![Clause {
+        keyword: title,
+        body: Some(Box::new(table_def)),
+    }];
+
+    if !with_options.is_empty() {
+        let opts_str = with_options
+            .iter()
+            .map(|o| o.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        clauses.push(Clause {
+            keyword: "WITH".into(),
+            body: Some(Box::new(Node::Wrap {
+                keyword: None,
+                open: " (".into(),
+                content: Box::new(Node::Text { value: opts_str }),
+                close: ")".into(),
+            })),
+        });
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn set_variable_to_node(sv: &SetVariableStatement) -> Node {
+    let mut title = "SET".to_string();
+    if sv.local {
+        title.push_str(" LOCAL");
+    }
+    Node::Clauses {
+        items: vec![Clause {
+            keyword: title,
+            body: Some(Box::new(Node::Infix {
+                op: "=".into(),
+                items: vec![
+                    ident_to_node(&sv.variable),
+                    Node::Text {
+                        value: format!("{}", sv.to),
+                    },
+                ],
+            })),
+        }],
+    }
+}
+
+fn reset_variable_to_node(rv: &ResetVariableStatement) -> Node {
+    Node::Clauses {
+        items: vec![Clause {
+            keyword: "RESET".into(),
+            body: Some(Box::new(ident_to_node(&rv.variable))),
+        }],
+    }
+}
+
+fn drop_objects_to_node(drop: &DropObjectsStatement) -> Node {
+    let DropObjectsStatement {
+        object_type,
+        if_exists,
+        names,
+        cascade,
+    } = drop;
+
+    let mut title = format!("DROP {object_type}");
+    if *if_exists {
+        title.push_str(" IF EXISTS");
+    }
+
+    let name_nodes: Vec<Node> = names
+        .iter()
+        .map(|n| Node::Identifier {
+            value: format!("{n}"),
+            quote: None,
+        })
+        .collect();
+    let body = if name_nodes.len() == 1 {
+        name_nodes.into_iter().next().unwrap()
+    } else {
+        Node::List {
+            items: name_nodes,
+            separator: None,
+        }
+    };
+
+    let mut body_items = vec![body];
+    if *cascade {
+        body_items.push(Node::Text {
+            value: " CASCADE".into(),
+        });
+    } else if *object_type == ObjectType::Database {
+        body_items.push(Node::Text {
+            value: " RESTRICT".into(),
+        });
+    }
+
+    Node::Clauses {
+        items: vec![Clause {
+            keyword: title,
+            body: Some(Box::new(if body_items.len() == 1 {
+                body_items.pop().unwrap()
+            } else {
+                Node::Concat { items: body_items }
+            })),
+        }],
+    }
+}
+
+fn create_index_to_node(ci: &CreateIndexStatement<Raw>) -> Node {
+    let CreateIndexStatement {
+        name,
+        in_cluster,
+        on_name,
+        key_parts,
+        with_options,
+        if_not_exists,
+    } = ci;
+
+    let mut title = "CREATE ".to_string();
+    if key_parts.is_none() {
+        title.push_str("DEFAULT ");
+    }
+    title.push_str("INDEX");
+    if *if_not_exists {
+        title.push_str(" IF NOT EXISTS");
+    }
+
+    let mut body_items = Vec::new();
+    if let Some(n) = name {
+        body_items.push(ident_to_node(n));
+    }
+    if let Some(cluster) = in_cluster {
+        if !body_items.is_empty() {
+            body_items.push(Node::Text { value: " ".into() });
+        }
+        body_items.push(Node::Text {
+            value: format!("IN CLUSTER {cluster}"),
+        });
+    }
+    if !body_items.is_empty() {
+        body_items.push(Node::Text { value: " ".into() });
+    }
+    body_items.push(Node::Keyword { value: "ON".into() });
+    body_items.push(Node::Text { value: " ".into() });
+    body_items.push(table_name_to_node(on_name));
+    if let Some(kp) = key_parts {
+        let kp_nodes: Vec<Node> = kp.iter().map(expr_to_node).collect();
+        body_items.push(Node::Wrap {
+            keyword: None,
+            open: " (".into(),
+            content: Box::new(Node::List {
+                items: kp_nodes,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    }
+
+    let mut clauses = vec![Clause {
+        keyword: title,
+        body: Some(Box::new(if body_items.len() == 1 {
+            body_items.pop().unwrap()
+        } else {
+            Node::Concat { items: body_items }
+        })),
+    }];
+
+    if !with_options.is_empty() {
+        let opts_str = with_options
+            .iter()
+            .map(|o| o.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        clauses.push(Clause {
+            keyword: "WITH".into(),
+            body: Some(Box::new(Node::Wrap {
+                keyword: None,
+                open: " (".into(),
+                content: Box::new(Node::Text { value: opts_str }),
+                close: ")".into(),
+            })),
+        });
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn create_view_to_node(cv: &CreateViewStatement<Raw>) -> Node {
+    let CreateViewStatement {
+        if_exists,
+        temporary,
+        definition,
+    } = cv;
+
+    let mut title = "CREATE".to_string();
+    if *if_exists == IfExistsBehavior::Replace {
+        title.push_str(" OR REPLACE");
+    }
+    if *temporary {
+        title.push_str(" TEMPORARY");
+    }
+    title.push_str(" VIEW");
+    if *if_exists == IfExistsBehavior::Skip {
+        title.push_str(" IF NOT EXISTS");
+    }
+
+    let mut name_items = vec![table_name_to_node(&definition.name)];
+    if !definition.columns.is_empty() {
+        let col_nodes: Vec<Node> = definition.columns.iter().map(ident_to_node).collect();
+        name_items.push(Node::Wrap {
+            keyword: None,
+            open: " (".into(),
+            content: Box::new(Node::List {
+                items: col_nodes,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    }
+    let name_body = if name_items.len() == 1 {
+        name_items.pop().unwrap()
+    } else {
+        Node::Concat { items: name_items }
+    };
+
+    let clauses = vec![
+        Clause {
+            keyword: title,
+            body: Some(Box::new(name_body)),
+        },
+        Clause {
+            keyword: "AS".into(),
+            body: Some(Box::new(query_to_node(&definition.query))),
+        },
+    ];
+
+    Node::Clauses { items: clauses }
+}
+
+fn create_materialized_view_to_node(mv: &CreateMaterializedViewStatement<Raw>) -> Node {
+    let CreateMaterializedViewStatement {
+        if_exists,
+        name,
+        columns,
+        replacement_for,
+        in_cluster,
+        in_cluster_replica,
+        query,
+        as_of,
+        with_options,
+    } = mv;
+
+    let mut title = "CREATE".to_string();
+    if *if_exists == IfExistsBehavior::Replace {
+        title.push_str(" OR REPLACE");
+    }
+    if replacement_for.is_some() {
+        title.push_str(" REPLACEMENT");
+    }
+    title.push_str(" MATERIALIZED VIEW");
+    if *if_exists == IfExistsBehavior::Skip {
+        title.push_str(" IF NOT EXISTS");
+    }
+
+    // Name + optional columns + optional FOR
+    let mut name_items = vec![table_name_to_node(name)];
+    if !columns.is_empty() {
+        let col_nodes: Vec<Node> = columns.iter().map(ident_to_node).collect();
+        name_items.push(Node::Wrap {
+            keyword: None,
+            open: " (".into(),
+            content: Box::new(Node::List {
+                items: col_nodes,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    }
+    if let Some(target) = replacement_for {
+        name_items.push(Node::Text { value: " FOR ".into() });
+        name_items.push(Node::Identifier {
+            value: format!("{target}"),
+            quote: None,
+        });
+    }
+    let mut name_body = if name_items.len() == 1 {
+        name_items.pop().unwrap()
+    } else {
+        Node::Concat { items: name_items }
+    };
+
+    // IN CLUSTER / REPLICA
+    match (in_cluster, in_cluster_replica) {
+        (Some(cluster), Some(replica)) => {
+            name_body = Node::Concat {
+                items: vec![
+                    name_body,
+                    Node::Text {
+                        value: format!(" IN CLUSTER {cluster} REPLICA {replica}"),
+                    },
+                ],
+            };
+        }
+        (Some(cluster), None) => {
+            name_body = Node::Concat {
+                items: vec![
+                    name_body,
+                    Node::Text {
+                        value: format!(" IN CLUSTER {cluster}"),
+                    },
+                ],
+            };
+        }
+        (None, Some(replica)) => {
+            name_body = Node::Concat {
+                items: vec![
+                    name_body,
+                    Node::Text {
+                        value: format!(" IN REPLICA {replica}"),
+                    },
+                ],
+            };
+        }
+        (None, None) => {}
+    }
+
+    let mut clauses = vec![Clause {
+        keyword: title,
+        body: Some(Box::new(name_body)),
+    }];
+
+    if !with_options.is_empty() {
+        let opts_str = with_options
+            .iter()
+            .map(|o| o.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        clauses.push(Clause {
+            keyword: "WITH".into(),
+            body: Some(Box::new(Node::Wrap {
+                keyword: None,
+                open: " (".into(),
+                content: Box::new(Node::Text { value: opts_str }),
+                close: ")".into(),
+            })),
+        });
+    }
+
+    clauses.push(Clause {
+        keyword: "AS".into(),
+        body: Some(Box::new(query_to_node(query))),
+    });
+
+    if let Some(at) = as_of {
+        clauses.push(Clause {
+            keyword: "AS OF".into(),
+            body: Some(Box::new(Node::Text {
+                value: format!("{at}"),
+            })),
+        });
+    }
+
+    Node::Clauses { items: clauses }
+}
+
+fn table_name_to_node(name: &impl std::fmt::Display) -> Node {
+    Node::Identifier {
+        value: name.to_string(),
+        quote: None,
+    }
+}
+
+fn table_alias_node(node: Node, alias: &TableAlias) -> Node {
+    let mut items = vec![
+        node,
+        Node::Text { value: " ".into() },
+        Node::Keyword { value: "AS".into() },
+        Node::Text { value: " ".into() },
+        ident_to_node(&alias.name),
+    ];
+    items.push(column_list_node(&alias.columns));
+    Node::Concat { items }
+}
+
+fn assignment_to_node(a: &Assignment<Raw>) -> Node {
+    Node::Infix {
+        op: "=".into(),
+        items: vec![ident_to_node(&a.id), expr_to_node(&a.value)],
     }
 }
 
@@ -981,4 +1830,42 @@ fn value_to_string(v: &Value) -> String {
     // `Value` implements Display via impl_display!, which produces SQL-literal form
     // (e.g. `1`, `'foo'`, `TRUE`, `NULL`).
     format!("{v}")
+}
+
+fn entry_to_node(entry: &MapEntry<Raw>) -> Node {
+    Node::Concat {
+        items: vec![
+            expr_to_node(&entry.key),
+            Node::Text { value: " => ".into() },
+            expr_to_node(&entry.value),
+        ],
+    }
+}
+
+fn subscript_position_to_node(pos: &SubscriptPosition<Raw>) -> Node {
+    match (&pos.start, &pos.end, pos.explicit_slice) {
+        (Some(start), Some(end), true) => Node::Concat {
+            items: vec![
+                expr_to_node(start),
+                Node::Text { value: ":".into() },
+                expr_to_node(end),
+            ],
+        },
+        (Some(start), None, true) => Node::Concat {
+            items: vec![
+                expr_to_node(start),
+                Node::Text { value: ":".into() },
+            ],
+        },
+        (None, Some(end), true) => Node::Concat {
+            items: vec![
+                Node::Text { value: ":".into() },
+                expr_to_node(end),
+            ],
+        },
+        (Some(start), None, false) => expr_to_node(start),
+        _ => Node::Text {
+            value: format!("{pos}"),
+        },
+    }
 }

@@ -462,4 +462,251 @@ mod tests {
         let result = fmt("DELETE FROM t WHERE a = 1");
         assert!(result.contains("DELETE FROM"), "got: {result}");
     }
+
+    // --- Newly structured Expr variants ---
+
+    #[test]
+    fn test_any_subquery() {
+        let result = fmt("SELECT * FROM t WHERE x = ANY (SELECT y FROM t2)");
+        assert!(result.contains("ANY"), "got: {result}");
+    }
+
+    #[test]
+    fn test_all_subquery() {
+        let result = fmt("SELECT * FROM t WHERE x > ALL (SELECT y FROM t2)");
+        assert!(result.contains("ALL"), "got: {result}");
+    }
+
+    #[test]
+    fn test_map_expression() {
+        let result = fmt("SELECT MAP['key' => 'value'] FROM t");
+        assert!(result.contains("MAP"), "got: {result}");
+    }
+
+    #[test]
+    fn test_count_distinct() {
+        let result = fmt("SELECT COUNT(DISTINCT x) FROM t");
+        // Function names are rendered as Text (not Keyword) to preserve
+        // original case — reserved word function names like "left" must
+        // not be upcased to "LEFT".
+        assert!(result.contains("count"), "got: {result}");
+        assert!(result.contains("DISTINCT"), "got: {result}");
+    }
+
+    #[test]
+    fn test_count_star() {
+        let result = fmt("SELECT COUNT(*) FROM t");
+        assert!(result.contains("count"), "got: {result}");
+        assert!(result.contains("*"), "got: {result}");
+    }
+
+    #[test]
+    fn test_qualified_wildcard() {
+        let result = fmt("SELECT t.* FROM t");
+        assert!(result.contains(".*"), "got: {result}");
+    }
+
+    #[test]
+    fn test_parameter() {
+        let result = fmt("SELECT $1 + $2");
+        assert!(result.contains("$1"), "got: {result}");
+        assert!(result.contains("$2"), "got: {result}");
+    }
+
+    #[test]
+    fn test_delete_using() {
+        let result = fmt("DELETE FROM t USING t2 WHERE t.id = t2.id");
+        assert!(result.contains("USING"), "got: {result}");
+    }
+
+    #[test]
+    fn test_update_with_alias() {
+        let result = fmt("UPDATE t AS my_t SET a = 1");
+        assert!(result.contains("AS"), "got: {result}");
+        assert!(result.contains("my_t"), "got: {result}");
+    }
+
+    #[test]
+    fn test_insert_default_values() {
+        let result = fmt("INSERT INTO t DEFAULT VALUES");
+        assert!(result.contains("DEFAULT VALUES"), "got: {result}");
+    }
+
+    #[test]
+    fn test_insert_returning() {
+        let result = fmt("INSERT INTO t (a) VALUES (1) RETURNING a");
+        assert!(result.contains("RETURNING"), "got: {result}");
+    }
+
+    // --- Newly handled Expr variants ---
+
+    #[test]
+    fn test_any_expr() {
+        let result = fmt("SELECT x = ANY(y) FROM t");
+        assert!(result.contains("ANY"), "got: {result}");
+    }
+
+    #[test]
+    fn test_all_expr() {
+        let result = fmt("SELECT x > ALL(y) FROM t");
+        assert!(result.contains("ALL"), "got: {result}");
+    }
+
+    #[test]
+    fn test_field_access() {
+        let result = fmt("SELECT (expr).field FROM t");
+        assert!(result.contains("field"), "got: {result}");
+    }
+
+    #[test]
+    fn test_wildcard_access() {
+        let result = fmt("SELECT (expr).* FROM t");
+        assert!(result.contains(".*"), "got: {result}");
+    }
+
+    #[test]
+    fn test_map_subquery() {
+        let result = fmt("SELECT MAP(SELECT x FROM t) FROM t2");
+        assert!(result.contains("MAP"), "got: {result}");
+    }
+
+    #[test]
+    fn test_subscript_slice_range() {
+        let result = fmt("SELECT arr[1:3] FROM t");
+        assert!(result.contains("[1:3]"), "got: {result}");
+    }
+
+    #[test]
+    fn test_subscript_slice_upper_only() {
+        let result = fmt("SELECT arr[:5] FROM t");
+        assert!(result.contains("[:5]"), "got: {result}");
+    }
+
+    #[test]
+    fn test_subscript_slice_lower_only() {
+        let result = fmt("SELECT arr[1:] FROM t");
+        assert!(result.contains("[1:]"), "got: {result}");
+    }
+
+    // --- DDL statements ---
+
+    #[test]
+    fn test_create_table() {
+        let result = fmt("CREATE TABLE t (a int, b text)");
+        assert!(result.contains("CREATE TABLE"), "got: {result}");
+        assert!(result.contains("(a "), "got: {result}");
+    }
+
+    #[test]
+    fn test_create_table_if_not_exists() {
+        let result = fmt("CREATE TABLE IF NOT EXISTS t (a int)");
+        assert!(result.contains("IF NOT EXISTS"), "got: {result}");
+    }
+
+    #[test]
+    fn test_create_table_temporary() {
+        let result = fmt("CREATE TEMPORARY TABLE t (a int)");
+        assert!(result.contains("TEMPORARY"), "got: {result}");
+    }
+
+    #[test]
+    fn test_create_materialized_view() {
+        let result = fmt("CREATE MATERIALIZED VIEW mv AS SELECT 1");
+        assert!(result.contains("CREATE MATERIALIZED VIEW"), "got: {result}");
+        assert!(result.contains("AS"), "got: {result}");
+    }
+
+    #[test]
+    fn test_create_materialized_view_with_columns() {
+        let result = fmt("CREATE MATERIALIZED VIEW mv (a, b) AS SELECT 1, 2");
+        assert!(result.contains("(a, b)"), "got: {result}");
+    }
+
+    #[test]
+    fn test_create_view() {
+        let result = fmt("CREATE VIEW v AS SELECT 1");
+        assert!(result.contains("CREATE VIEW"), "got: {result}");
+    }
+
+    #[test]
+    fn test_create_view_or_replace() {
+        let result = fmt("CREATE OR REPLACE VIEW v AS SELECT 1");
+        assert!(result.contains("OR REPLACE"), "got: {result}");
+    }
+
+    #[test]
+    fn test_create_index() {
+        let result = fmt("CREATE INDEX idx ON t (a, b)");
+        assert!(result.contains("CREATE INDEX"), "got: {result}");
+        assert!(result.contains("ON t"), "got: {result}");
+    }
+
+    #[test]
+    fn test_drop_table() {
+        let result = fmt("DROP TABLE IF EXISTS t");
+        assert!(result.contains("DROP TABLE"), "got: {result}");
+        assert!(result.contains("IF EXISTS"), "got: {result}");
+    }
+
+    #[test]
+    fn test_set_variable() {
+        let result = fmt("SET foo = bar");
+        assert!(result.contains("SET"), "got: {result}");
+        assert!(result.contains("="), "got: {result}");
+    }
+
+    #[test]
+    fn test_reset_variable() {
+        let result = fmt("RESET foo");
+        assert!(result.contains("RESET"), "got: {result}");
+    }
+
+    #[test]
+    fn test_window_over_empty() {
+        let result = fmt("SELECT ROW_NUMBER() OVER () FROM t");
+        assert!(result.contains("OVER ()"), "got: {result}");
+    }
+
+    #[test]
+    fn test_window_partition_by() {
+        let result = fmt("SELECT SUM(a) OVER (PARTITION BY x) FROM t");
+        assert!(result.contains("PARTITION BY x"), "got: {result}");
+    }
+
+    #[test]
+    fn test_window_order_by() {
+        let result = fmt("SELECT RANK() OVER (ORDER BY score DESC) FROM t");
+        assert!(result.contains("ORDER BY score DESC"), "got: {result}");
+    }
+
+    #[test]
+    fn test_window_frame() {
+        let result = fmt("SELECT SUM(a) OVER (ORDER BY x ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) FROM t");
+        assert!(result.contains("ROWS BETWEEN"), "got: {result}");
+    }
+
+    #[test]
+    fn test_window_partition_and_order() {
+        let result = fmt("SELECT ROW_NUMBER() OVER (PARTITION BY x ORDER BY y) FROM t");
+        assert!(result.contains("PARTITION BY x") && result.contains("ORDER BY y"), "got: {result}");
+    }
+
+    #[test]
+    fn test_window_filter_over() {
+        let result = fmt("SELECT SUM(a) FILTER (WHERE a > 0) OVER (ORDER BY x) FROM t");
+        assert!(result.contains("FILTER") && result.contains("OVER"), "got: {result}");
+    }
+
+    #[test]
+    fn test_window_count_star() {
+        let result = fmt("SELECT COUNT(*) OVER (PARTITION BY x) FROM t");
+        assert!(result.contains("count(*) OVER"), "got: {result}");
+    }
+
+    #[test]
+    fn test_order_by_in_args_fallback() {
+        // Functions with ORDER BY in args fall back to Text; should still roundtrip
+        let result = fmt("SELECT array_agg(y ORDER BY y) OVER () FROM t");
+        assert!(result.contains("ORDER BY y"), "got: {result}");
+    }
 }
