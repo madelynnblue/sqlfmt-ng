@@ -31,6 +31,7 @@ echo "<stmt>" | cargo run -- --dialect <dialect>
 The error should be:
 
 - `SqlfmtError::Roundtrip` — IR conversion is lossy; something dropped from the AST
+- `SqlfmtError::Unformatted` — this AST node isn't converted to structured IR yet (missing match arm or intentional fallback)
 
 Find another statement if not and restart.
 
@@ -45,7 +46,26 @@ A `Roundtrip` error means the rendered SQL re-parses to a different AST than the
    - A match arm that ignores fields (e.g., `OrderByClause` missing `NULLS FIRST/LAST`)
    - A new AST node variant added upstream that has no arm
 
-### 3. Fix the converter
+### 3. `Node::Unformatted` vs `Node::Text` — critical convention
+
+**Every AST node that is not yet converted to structured IR MUST produce `Node::Unformatted`, NOT `Node::Text`.** This is the mechanism that drives the entire corpus-improve workflow:
+
+| Node variant       | Meaning                                                                    | Corpus test behavior (`error_on_unformatted: true`)       |
+| ------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `Node::Text`       | Intentional structural text (whitespace, punctuation, case-preserved name) | Passes — statement goes to `success/`                     |
+| `Node::Unformatted` | Unconverted AST node (catch-all fallback, complex edge case)             | Fails with `SqlfmtError::Unformatted` — goes to `failing/` |
+
+**Why this matters:** The corpus tests set `error_on_unformatted: true`. When you use `Node::Unformatted` for fallbacks, the corpus test automatically knows which statements are unconverted. When you later add structured IR for that node, `test_rewrite_corpus` moves those statements from `failing/` to `success/`, making progress visible.
+
+**Rules for choosing:**
+- Catch-all match arms (`_ =>`), fallback paths for complex/unsupported variants → `Node::Unformatted`
+- Intentional whitespace (`" "`), punctuation (`"."`, `":"`, `"["`), wildcards (`"*"`), inline SQL fragments (`" IGNORE NULLS"`, `" WITH ORDINALITY"`) → `Node::Text`
+- Parser Display passthrough (`format!("{node}")`) in a fallback path → `Node::Unformatted`
+- Case-preserved names (`format!("{}", f.name)`) used as structural elements → `Node::Text`
+
+**Before starting any conversion work**, search the converter for `Node::Unformatted` to find all unconverted code paths. Each one represents a class of statements in `failing/` that need structured IR.
+
+### 4. Fix the converter
 
 #### Materialize: use `doc.rs` as a formatting template
 
@@ -103,7 +123,7 @@ cargo test -p sqlfmt-corpus-tests test_rewrite_corpus -- --ignored
 cargo test -p sqlfmt-corpus-tests test_permanent_corpus
 ```
 
-### 4. Move fixed statements to success/
+### 5. Move fixed statements to success/
 
 After fixing a class of failures, run `test_rewrite_corpus` to automatically move all now-passing statements from `crates/sqlfmt-corpus-tests/testdata/failing/` to `crates/sqlfmt-corpus-tests/testdata/success/`. The test panics when statements are moved, signaling you to commit the updated testdata.
 
@@ -116,7 +136,7 @@ If a statement still fails and the fix is complex, leave it in `crates/sqlfmt-co
 
 After the statement (and possibly others) have been moved to success, commit the changes and start a new change. Try to keep it to one change per commit. Sometimes multiple fixes will be required for a single statement to move to succes if that statement has multiple broken things; that's ok.
 
-### 5. Commit
+### 6. Commit
 
 After the permanent corpus test passes, set a jj commit description summarizing the converter fixes. Then start a new change with `jj new`.
 

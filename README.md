@@ -15,7 +15,7 @@ echo "SELECT a, b FROM t" | cargo run -- --dialect materialize
 cargo run -- --help
 ```
 
-Supported dialects: `postgres`, `materialize`.
+Supported dialects: `postgres`, `materialize`. `cockroachdb` and `googlesql` are stubs (not yet implemented).
 
 ## Architecture
 
@@ -34,7 +34,7 @@ Supported dialects: `postgres`, `materialize`.
 | `sqlfmt-render` | Converts `Node` to `pretty::RcDoc` and renders |
 | `dialect-postgres` | PostgreSQL: calls `libpg_query` (C FFI) → JSON → IR |
 | `dialect-postgres-convert` | Converts `pg_query` JSON AST to IR |
-| `dialect-materialize` | Materialize: uses `mz_sql_parser` → IR |
+| `dialect-materialize` | Materialize: uses `mz_sql_parser` → IR. Covers SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, SET, GRANT, REVOKE, COMMENT |
 | `dialect-cockroachdb` | Stub (not yet implemented) |
 | `dialect-googlesql` | Stub (not yet implemented) |
 | `web` | WASM build for browser use |
@@ -42,6 +42,15 @@ Supported dialects: `postgres`, `materialize`.
 ### Round-trip correctness
 
 The formatter is strict: after rendering, it re-parses the output and compares ASTs. If the ASTs differ, `format_sql` returns `SqlfmtError::Roundtrip`. This ensures dialect converters produce a lossless IR — no SQL nodes can be silently dropped during conversion.
+
+### `Node::Unformatted` — tracking conversion progress
+
+Converters use `Node::Unformatted` (not `Node::Text`) for AST nodes that haven't been converted to structured IR yet. The corpus tests enable `error_on_unformatted`, which causes formatting to fail when encountering unconverted nodes. This drives the improvement workflow:
+
+- **`Node::Text`** — intentional structural text (whitespace, punctuation, case-preserved names)
+- **`Node::Unformatted`** — unconverted AST nodes (catch-all fallbacks, complex edge cases)
+
+Search a converter for `Node::Unformatted` to see all unconverted code paths — each represents a class of statements that need structured IR.
 
 ## Building
 
@@ -70,47 +79,41 @@ cargo test -p dialect-postgres test_format_roundtrip
 
 ### Corpus round-trip testing
 
-The `sqlfmt-corpus-tests` crate tests the formatter against large real-world SQL corpora downloaded from upstream projects. This finds statements that expose gaps in the IR conversion (cases where nodes are dropped or mishandled).
+Each dialect crate has its own corpus tests in `tests/corpus.rs` that test the formatter against large real-world SQL corpora downloaded from upstream projects. The tests use `sqlfmt-corpus-tests` as a dev-dependency for shared infrastructure.
+
+**Three test tiers:**
+
+| Test | Command | What it does |
+|------|---------|--------------|
+| `test_external_corpus` | `cargo test -p dialect-materialize -- --ignored` | Fetches live SQL from upstream, classifies statements into `failing/` (Unformatted/Roundtrip errors) and `success/` (clean formatting) |
+| `test_rewrite_corpus` | `cargo test -p dialect-materialize test_rewrite_corpus -- --ignored` | Scans `failing/`, moves now-passing statements to `success/` |
+| `test_permanent_corpus` | `cargo test -p dialect-materialize` (runs automatically) | Verifies `success/` stays passing and `failing/` still fails |
 
 **How it works:**
 
-1. SQL test files are fetched from GitHub at test time and cached locally in `target/sqlfmt-corpus-cache/`. Delete that directory to force a re-download.
-2. Each SQL statement is extracted from the test files and run through `format_sql` for every dialect.
-3. Parse errors are skipped — foreign-dialect SQL is expected to fail parsing.
-4. Round-trip failures (AST changed after formatting) are written to `testdata/` files committed in this repo, named `{corpus}-{dialect}.sql`.
-5. The test panics if any **new** failures are found (i.e., statements not already recorded in `testdata/`).
+1. SQL test files are fetched from GitHub and cached locally. Delete the cache to force a re-download.
+2. Each SQL statement is extracted and run through `format_sql`.
+3. Statements that format successfully go to `testdata/success/{source}.sql`.
+4. Statements that fail with `Roundtrip` or `Unformatted` errors go to `testdata/failing/{source}.sql`.
+5. When you add structured IR for a node that was using `Node::Unformatted`, `test_rewrite_corpus` automatically moves those statements from `failing/` to `success/`.
 
 **Corpora:**
 
-| Source | Repo | Format |
-|--------|------|--------|
+| Dialect | Source repo | Format |
+|---------|-------------|--------|
 | Materialize | `MaterializeInc/materialize` — `test/sqllogictest/*.slt` | sqllogictest |
 | PostgreSQL | `postgres/postgres` — `src/test/regress/sql/*.sql` | raw SQL |
 | CockroachDB | `cockroachdb/cockroach` — `pkg/sql/logictest/testdata/logic_test/*` | sqllogictest |
 
-**Running the corpus test:**
+**Testdata directory structure:**
 
-```sh
-# Requires network access. Downloads corpora, runs round-trip tests.
-cargo test -p sqlfmt-corpus-tests -- --ignored
-
-# Set GITHUB_TOKEN to avoid rate limiting (60 req/hr unauthenticated vs 5000 authenticated)
-GITHUB_TOKEN=ghp_... cargo test -p sqlfmt-corpus-tests -- --ignored
 ```
-
-**Permanent regression corpus:**
-
-Once round-trip failures are fixed, the `testdata/` SQL files serve as a regression suite. `test_permanent_corpus` runs automatically with `cargo test` (no network required) and fails if any of those statements stop passing.
-
-```sh
-# Runs automatically — no flags needed
-cargo test -p sqlfmt-corpus-tests
+crates/dialect-<name>/testdata/
+  failing/
+    <source>.sql    — known failures (Unformatted or Roundtrip errors)
+  success/
+    <source>.sql    — verified passing statements (regression suite)
 ```
-
-**Adding a new corpus source:**
-
-1. Add a struct to `crates/sqlfmt-corpus-tests/src/sources.rs` implementing `CorpusSource` (wrap a `GithubFetcher` with the owner/repo/path/format config).
-2. Add it to `all_sources()` in `crates/sqlfmt-corpus-tests/tests/corpus.rs`.
 
 ### Adding a new dialect
 
