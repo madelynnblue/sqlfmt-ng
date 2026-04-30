@@ -23,17 +23,25 @@ fn value_to_node(value: &serde_json::Value) -> Node {
         serde_json::Value::String(_) => Node::Literal {
             value: serde_json::to_string(value).expect("string serialization is infallible"),
         },
-        serde_json::Value::Array(items) => bracketed(
-            "[",
-            Node::List {
-                items: items.iter().map(value_to_node).collect(),
-                separator: Some(",".into()),
-            },
-            "]",
-        ),
+        serde_json::Value::Array(items) => {
+            if items.is_empty() {
+                return Node::Text { value: "[]".into() };
+            }
+            bracketed(
+                "[",
+                Node::List {
+                    items: items.iter().map(value_to_node).collect(),
+                    separator: Some(",".into()),
+                },
+                "]",
+            )
+        }
         serde_json::Value::Object(map) => {
+            if map.is_empty() {
+                return Node::Text { value: "{}".into() };
+            }
             let mut pairs: Vec<(&String, &serde_json::Value)> = map.iter().collect();
-            pairs.sort_by_key(|(k, _)| k.as_str());
+            pairs.sort_by(|(a, _), (b, _)| a.cmp(b));
             bracketed(
                 "{",
                 Node::List {
@@ -133,6 +141,16 @@ mod tests {
     #[test]
     fn test_empty_array() {
         assert_eq!(format_sql(&JsonDialect, "[]", &opts(80)).unwrap(), "[]");
+    }
+
+    #[test]
+    fn test_empty_array_narrow() {
+        assert_eq!(format_sql(&JsonDialect, "[]", &opts(1)).unwrap(), "[]");
+    }
+
+    #[test]
+    fn test_empty_object_narrow() {
+        assert_eq!(format_sql(&JsonDialect, "{}", &opts(1)).unwrap(), "{}");
     }
 
     #[test]
