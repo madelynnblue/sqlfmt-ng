@@ -230,11 +230,15 @@ fn apply_order_by_limit(body_node: Node, query: &Query<Raw>) -> Node {
             items.extend(clauses);
             Node::Clauses { items }
         }
-        _ => {
-            // For non-Clauses bodies (SetOperation, etc.), fall back to text.
-            Node::Text {
-                value: format!("{query}"),
-            }
+        other => {
+            // Wrap non-Clauses body (SetOperation, Values, etc.) as the first
+            // clause item so ORDER BY/LIMIT/OFFSET receive structured rendering.
+            let mut all = vec![Clause {
+                keyword: "".into(),
+                body: Some(Box::new(other)),
+            }];
+            all.extend(clauses);
+            Node::Clauses { items: all }
         }
     }
 }

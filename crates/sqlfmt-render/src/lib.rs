@@ -137,6 +137,12 @@ impl RenderOpts {
     }
 
     fn clause_to_rdoc<'a>(&self, clause: &Clause) -> RcDoc<'a> {
+        if clause.keyword.is_empty() {
+            return match &clause.body {
+                Some(body) => self.to_rdoc(body),
+                None => RcDoc::nil(),
+            };
+        }
         let kw = RcDoc::text(apply_case(&clause.keyword, self.case));
         match &clause.body {
             None => kw,
