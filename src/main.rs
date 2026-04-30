@@ -5,6 +5,7 @@ use std::io::{self, Read};
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 enum DialectArg {
+    Json,
     Materialize,
     Postgres,
 }
@@ -71,6 +72,7 @@ fn main() {
     };
 
     let result = match args.dialect {
+        DialectArg::Json => format_sql(&dialect_json::JsonDialect, &sql, &opts),
         DialectArg::Materialize => {
             format_sql(&dialect_materialize::MaterializeDialect, &sql, &opts)
         }
