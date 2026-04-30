@@ -1,0 +1,15 @@
+{
+  "name": "sqlfmt-web",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "sqlfmt_web_bg.wasm",
+    "sqlfmt_web.js",
+    "sqlfmt_web.d.ts"
+  ],
+  "main": "sqlfmt_web.js",
+  "types": "sqlfmt_web.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
