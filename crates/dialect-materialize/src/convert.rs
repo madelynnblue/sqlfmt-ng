@@ -813,6 +813,75 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
                 },
             ],
         },
+        Expr::HomogenizingFunction { function, exprs } => {
+            let items: Vec<Node> = exprs.iter().map(expr_to_node).collect();
+            Node::Wrap {
+                keyword: Some(format!("{function}")),
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items,
+                    separator: None,
+                }),
+                close: ")".into(),
+            }
+        }
+        Expr::NullIf { l_expr, r_expr } => Node::Wrap {
+            keyword: Some("NULLIF".into()),
+            open: "(".into(),
+            content: Box::new(Node::List {
+                items: vec![expr_to_node(l_expr), expr_to_node(r_expr)],
+                separator: None,
+            }),
+            close: ")".into(),
+        },
+        Expr::Row { exprs } => {
+            let items: Vec<Node> = exprs.iter().map(expr_to_node).collect();
+            Node::Wrap {
+                keyword: Some("ROW".into()),
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items,
+                    separator: None,
+                }),
+                close: ")".into(),
+            }
+        }
+        Expr::Array(exprs) => {
+            let items: Vec<Node> = exprs.iter().map(expr_to_node).collect();
+            Node::Wrap {
+                keyword: Some("ARRAY".into()),
+                open: "[".into(),
+                content: Box::new(Node::List {
+                    items,
+                    separator: None,
+                }),
+                close: "]".into(),
+            }
+        }
+        Expr::ArraySubquery(s) => Node::Wrap {
+            keyword: Some("ARRAY".into()),
+            open: "(".into(),
+            content: Box::new(query_to_node(s)),
+            close: ")".into(),
+        },
+        Expr::List(exprs) => {
+            let items: Vec<Node> = exprs.iter().map(expr_to_node).collect();
+            Node::Wrap {
+                keyword: Some("LIST".into()),
+                open: "[".into(),
+                content: Box::new(Node::List {
+                    items,
+                    separator: None,
+                }),
+                close: "]".into(),
+            }
+        }
+        Expr::ListSubquery(s) => Node::Wrap {
+            keyword: Some("LIST".into()),
+            open: "(".into(),
+            content: Box::new(query_to_node(s)),
+            close: ")".into(),
+        },
         _ => Node::Text {
             value: format!("{expr}"),
         },
