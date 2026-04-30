@@ -59,6 +59,11 @@ pub enum Node {
     },
     Line,
     Softline,
+    /// Multiple complete SQL statements. The renderer appends `;` after
+    /// each statement and separates them with blank lines.
+    Statements {
+        items: Vec<Node>,
+    },
 }
 
 impl Node {
@@ -72,6 +77,7 @@ impl Node {
             Node::Concat { items } => items.iter().any(|n| n.contains_unformatted()),
             Node::Group { content } => content.contains_unformatted(),
             Node::Nest { content } => content.contains_unformatted(),
+            Node::Statements { items } => items.iter().any(|n| n.contains_unformatted()),
             _ => false,
         }
     }

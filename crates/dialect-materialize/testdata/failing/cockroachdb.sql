@@ -88142,3 +88142,23 @@ update r1 set c1 = c1 ;
 -- sqlfmt-corpus-separator --
 
 update users set id = id * 10
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1; DECLARE foo CURSOR FOR SELECT * FROM a
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM kv; COMMIT; BEGIN; UPDATE kv SET v = 'd' WHERE k in ('a')
+
+-- sqlfmt-corpus-separator --
+
+select 1; BEGIN; select 1; select 1; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM kv; UPDATE kv SET v = 'c' WHERE k in ('a'); COMMIT
+
+-- sqlfmt-corpus-separator --
+
+SELECT * from kv; ROLLBACK

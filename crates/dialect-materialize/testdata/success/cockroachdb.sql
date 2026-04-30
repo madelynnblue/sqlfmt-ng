@@ -2060,14 +2060,6 @@ SELECT * FROM kv;
 
 -- sqlfmt-corpus-separator --
 
-SELECT * FROM kv; COMMIT; BEGIN; UPDATE kv SET v = 'd' WHERE k in ('a')
-
--- sqlfmt-corpus-separator --
-
-SELECT * FROM kv; UPDATE kv SET v = 'c' WHERE k in ('a'); COMMIT
-
--- sqlfmt-corpus-separator --
-
 SELECT * FROM kview
 
 -- sqlfmt-corpus-separator --
@@ -4244,10 +4236,6 @@ SELECT * from kv4
 
 -- sqlfmt-corpus-separator --
 
-SELECT * from kv; ROLLBACK
-
--- sqlfmt-corpus-separator --
-
 SELECT * from mv2
 
 -- sqlfmt-corpus-separator --
@@ -4425,10 +4413,6 @@ SELECT 123, '123', 123.0, TRUE, FALSE, NULL
 -- sqlfmt-corpus-separator --
 
 SELECT 1;
-
--- sqlfmt-corpus-separator --
-
-SELECT 1; DECLARE foo CURSOR FOR SELECT * FROM a
 
 -- sqlfmt-corpus-separator --
 
@@ -9246,10 +9230,6 @@ select * from td3
 -- sqlfmt-corpus-separator --
 
 select 1, 2; select 1, 2, 3; select 'ok'
-
--- sqlfmt-corpus-separator --
-
-select 1; BEGIN; select 1; select 1; COMMIT
 
 -- sqlfmt-corpus-separator --
 

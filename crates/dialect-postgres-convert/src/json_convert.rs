@@ -125,18 +125,7 @@ pub fn convert_pg_query_json(json_str: &str) -> Result<Node, SqlfmtError> {
         return Ok(nodes.remove(0));
     }
 
-    // Multiple statements: merge Clauses, wrap non-Clauses nodes into empty keyword clauses.
-    let mut clauses = Vec::new();
-    for node in nodes {
-        match node {
-            Node::Clauses { items } => clauses.extend(items),
-            other => clauses.push(Clause {
-                keyword: String::new(),
-                body: Some(Box::new(other)),
-            }),
-        }
-    }
-    Ok(Node::Clauses { items: clauses })
+    Ok(Node::Statements { items: nodes })
 }
 
 fn stmt_to_node(stmt: &Value) -> Option<Node> {

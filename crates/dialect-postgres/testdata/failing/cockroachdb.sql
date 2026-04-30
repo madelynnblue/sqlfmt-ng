@@ -2035,17 +2035,6 @@ CREATE SCHEMA sc AUTHORIZATION bob
 
 -- sqlfmt-corpus-separator --
 
-CREATE SCHEMA sc;
-CREATE SEQUENCE sc.sq;
-CREATE VIEW v AS SELECT last_value FROM sc.sq;
-
--- sqlfmt-corpus-separator --
-
-CREATE SCHEMA sc_seq_qualified_name;
-CREATE SEQUENCE sc_seq_qualified_name.sq;
-
--- sqlfmt-corpus-separator --
-
 CREATE SCHEMA test_schema;
 CREATE TABLE test_schema.test (
   a INT PRIMARY KEY,
@@ -3990,10 +3979,6 @@ SELECT * FROM bool2 WHERE a IS TRUE
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM c WHERE (NULL::text NOT IN (SELECT ship FROM o WHERE o.c_id=c.c_id)) IS NOT NULL;
-
--- sqlfmt-corpus-separator --
-
-SELECT * from kv; ROLLBACK
 
 -- sqlfmt-corpus-separator --
 

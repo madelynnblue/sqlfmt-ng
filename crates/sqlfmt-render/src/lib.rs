@@ -126,6 +126,13 @@ impl RenderOpts {
             Node::Nest { content } => self.to_rdoc(content).nest(self.tab_width as isize),
             Node::Line => RcDoc::line(),
             Node::Softline => RcDoc::line_(),
+            Node::Statements { items } => {
+                let docs: Vec<RcDoc> = items
+                    .iter()
+                    .map(|stmt| self.to_rdoc(stmt).append(RcDoc::text(";")))
+                    .collect();
+                RcDoc::intersperse(docs, RcDoc::hardline().append(RcDoc::hardline()))
+            }
         }
     }
 

@@ -1,803 +1,926 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>sqlfmtng</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Archivo+Black&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-<head>
-  <meta charset="utf-8">
-  <title>sqlfmtng</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Archivo+Black&display=swap"
-    rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --fg: #0a0a0a;
-      --bg: #f5f5f0;
-      --accent: #ff3366;
-      --gray: #666;
-      --border: #000;
-      --surface: #fff;
-    }
-
-    @media (prefers-color-scheme: dark) {
       :root {
-        --fg: #f5f5f0;
-        --bg: #0a0a0a;
+        --fg: #0a0a0a;
+        --bg: #f5f5f0;
         --accent: #ff3366;
-        --gray: #999;
-        --border: #333;
-        --surface: #1a1a1a;
+        --gray: #666;
+        --border: #000;
+        --surface: #fff;
       }
-    }
 
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      line-height: 1.5;
-      padding: 0;
-      overflow-x: hidden;
-    }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #f5f5f0;
+          --bg: #0a0a0a;
+          --accent: #ff3366;
+          --gray: #999;
+          --border: #333;
+          --surface: #1a1a1a;
+        }
+      }
 
-    .header {
-      background: var(--fg);
-      color: var(--bg);
-      padding: 24px 20px;
-      border-bottom: 4px solid var(--accent);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 0;
+        overflow-x: hidden;
+      }
 
-    @keyframes slideDown {
-      from { transform: translateY(-100%); }
-      to   { transform: translateY(0); }
-    }
+      .header {
+        background: var(--fg);
+        color: var(--bg);
+        padding: 24px 20px;
+        border-bottom: 4px solid var(--accent);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
 
-    h1 {
-      font-family: 'Archivo Black', sans-serif;
-      font-size: 32px;
-      letter-spacing: -1px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
+      @keyframes slideDown {
+        from {
+          transform: translateY(-100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
 
-    .tagline {
-      opacity: 0.7;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+      h1 {
+        font-family: "Archivo Black", sans-serif;
+        font-size: 32px;
+        letter-spacing: -1px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+      .tagline {
+        opacity: 0.7;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-    .workspace {
-      display: grid;
-      grid-template-columns: 1fr 200px;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 900px) {
       .workspace {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 200px;
+        gap: 20px;
+        margin-bottom: 20px;
       }
-    }
 
-    .editor-section {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    textarea {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      background: var(--surface);
-      color: var(--fg);
-      border: 2px solid var(--border);
-      padding: 16px;
-      width: 100%;
-      height: 280px;
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+      @media (max-width: 900px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    textarea:focus {
-      border-color: var(--accent);
-    }
+      .editor-section {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
 
-    .slider-container {
-      background: var(--surface);
-      border: 2px solid var(--border);
-      padding: 16px;
-    }
+      textarea {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        background: var(--surface);
+        color: var(--fg);
+        border: 2px solid var(--border);
+        padding: 16px;
+        width: 100%;
+        height: 280px;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.2s;
+      }
 
-    .slider-label {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-weight: 700;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+      textarea:focus {
+        border-color: var(--accent);
+      }
 
-    input[type="range"] {
-      width: 100%;
-      height: 8px;
-      background: var(--bg);
-      border: 2px solid var(--border);
-      outline: none;
-      appearance: none;
-      cursor: pointer;
-    }
+      .slider-container {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        padding: 16px;
+      }
 
-    input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      width: 24px;
-      height: 24px;
-      background: var(--accent);
-      border: 2px solid var(--border);
-      cursor: grab;
-    }
+      .slider-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-    input[type="range"]::-webkit-slider-thumb:active {
-      cursor: grabbing;
-    }
+      input[type="range"] {
+        width: 100%;
+        height: 8px;
+        background: var(--bg);
+        border: 2px solid var(--border);
+        outline: none;
+        appearance: none;
+        cursor: pointer;
+      }
 
-    input[type="range"]::-moz-range-thumb {
-      width: 24px;
-      height: 24px;
-      background: var(--accent);
-      border: 2px solid var(--border);
-      cursor: grab;
-      border-radius: 0;
-    }
+      input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        border: 2px solid var(--border);
+        cursor: grab;
+      }
 
-    .options {
-      background: var(--surface);
-      border: 2px solid var(--border);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+      input[type="range"]::-webkit-slider-thumb:active {
+        cursor: grabbing;
+      }
 
-    .option-group {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 12px;
-    }
+      input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        background: var(--accent);
+        border: 2px solid var(--border);
+        cursor: grab;
+        border-radius: 0;
+      }
 
-    .option-group:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
+      .options {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-    .option-title {
-      font-weight: 700;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-      color: var(--accent);
-    }
+      .option-group {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 12px;
+      }
 
-    label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-size: 12px;
-      margin-bottom: 6px;
-    }
+      .option-group:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
 
-    input[type="checkbox"],
-    input[type="radio"] {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid var(--border);
-      background: var(--bg);
-      cursor: pointer;
-      position: relative;
-      flex-shrink: 0;
-    }
+      .option-title {
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        color: var(--accent);
+      }
 
-    input[type="checkbox"]:checked,
-    input[type="radio"]:checked {
-      background: var(--accent);
-    }
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
 
-    input[type="checkbox"]:checked::after {
-      content: '×';
-      position: absolute;
-      top: -4px;
-      left: 2px;
-      color: var(--bg);
-      font-size: 18px;
-      font-weight: 700;
-    }
+      input[type="checkbox"],
+      input[type="radio"] {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        background: var(--bg);
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+      }
 
-    input[type="radio"]:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
+      input[type="checkbox"]:checked,
+      input[type="radio"]:checked {
+        background: var(--accent);
+      }
 
-    input[type="radio"]:disabled + span {
-      opacity: 0.35;
-    }
+      input[type="checkbox"]:checked::after {
+        content: "×";
+        position: absolute;
+        top: -4px;
+        left: 2px;
+        color: var(--bg);
+        font-size: 18px;
+        font-weight: 700;
+      }
 
-    input[type="radio"] {
-      border-radius: 50%;
-    }
+      input[type="radio"]:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
 
-    input[type="radio"]:checked::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 6px;
-      height: 6px;
-      background: var(--bg);
-      border-radius: 50%;
-    }
+      input[type="radio"]:disabled + span {
+        opacity: 0.35;
+      }
 
-    input[type="number"] {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      width: 60px;
-      padding: 4px 8px;
-      border: 2px solid var(--border);
-      background: var(--bg);
-      color: var(--fg);
-    }
+      input[type="radio"] {
+        border-radius: 50%;
+      }
 
-    button {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 10px 16px;
-      background: var(--fg);
-      color: var(--bg);
-      border: 2px solid var(--border);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
+      input[type="radio"]:checked::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 6px;
+        height: 6px;
+        background: var(--bg);
+        border-radius: 50%;
+      }
 
-    button:hover {
-      background: var(--accent);
-      color: var(--bg);
-      transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0 var(--border);
-    }
+      input[type="number"] {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        width: 60px;
+        padding: 4px 8px;
+        border: 2px solid var(--border);
+        background: var(--bg);
+        color: var(--fg);
+      }
 
-    button:active {
-      transform: translate(0, 0);
-      box-shadow: none;
-    }
+      button {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 10px 16px;
+        background: var(--fg);
+        color: var(--bg);
+        border: 2px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
 
-    .stats {
-      font-size: 11px;
-      background: var(--surface);
-      border: 2px solid var(--border);
-      padding: 12px 16px;
-      margin-bottom: 12px;
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
+      button:hover {
+        background: var(--accent);
+        color: var(--bg);
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 var(--border);
+      }
 
-    .stat {
-      display: flex;
-      gap: 8px;
-    }
+      button:active {
+        transform: translate(0, 0);
+        box-shadow: none;
+      }
 
-    .stat-label {
-      color: var(--gray);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+      .stats {
+        font-size: 11px;
+        background: var(--surface);
+        border: 2px solid var(--border);
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
 
-    .stat-value {
-      font-weight: 700;
-      color: var(--accent);
-    }
+      .stat {
+        display: flex;
+        gap: 8px;
+      }
 
-    .actions {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+      .stat-label {
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-    .output {
-      background: var(--surface);
-      border: 2px solid var(--border);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
+      .stat-value {
+        font-weight: 700;
+        color: var(--accent);
+      }
 
-    pre {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      overflow-x: auto;
-      line-height: 1.6;
-      white-space: pre;
-    }
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
 
-    .footer {
-      font-size: 11px;
-      padding: 20px;
-      border-top: 2px solid var(--border);
-      display: flex;
-      gap: 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+      .output {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
 
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s;
-    }
+      pre {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        overflow-x: auto;
+        line-height: 1.6;
+        white-space: pre;
+      }
 
-    a:hover {
-      border-bottom-color: var(--accent);
-    }
+      .footer {
+        font-size: 11px;
+        padding: 20px;
+        border-top: 2px solid var(--border);
+        display: flex;
+        gap: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-    .jsonly {
-      display: none;
-    }
-  </style>
-</head>
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 2px solid transparent;
+        transition: border-color 0.2s;
+      }
 
-<body>
-  <div class="header">
-    <h1>sqlfmtng</h1>
-    <div class="tagline">Type some SQL. Move the slider to set output width.</div>
-  </div>
+      a:hover {
+        border-bottom-color: var(--accent);
+      }
 
-  <div class="container">
-    <form name="theform">
-      <div class="workspace">
-        <div class="editor-section">
-          <textarea id="sql" name="sql" spellcheck="false" placeholder="PASTE YOUR SQL HERE"></textarea>
+      .jsonly {
+        display: none;
+      }
+    </style>
+  </head>
 
-          <div class="slider-container">
-            <div class="slider-label">
-              <span>Line Width</span>
-              <span id="nval">80</span>
+  <body>
+    <div class="header">
+      <h1>sqlfmtng</h1>
+      <div class="tagline">
+        Type some SQL. Move the slider to set output width.
+      </div>
+    </div>
+
+    <div class="container">
+      <form name="theform">
+        <div class="workspace">
+          <div class="editor-section">
+            <textarea
+              id="sql"
+              name="sql"
+              spellcheck="false"
+              placeholder="PASTE YOUR SQL HERE"
+            ></textarea>
+
+            <div class="slider-container">
+              <div class="slider-label">
+                <span>Line Width</span>
+                <span id="nval">80</span>
+              </div>
+              <input
+                type="range"
+                min="1"
+                max="200"
+                step="1"
+                name="n"
+                value="80"
+                id="n"
+              />
             </div>
-            <input type="range" min="1" max="200" step="1" name="n" value="80" id="n">
+          </div>
+
+          <div class="options">
+            <div class="option-group">
+              <div class="option-title">Dialect</div>
+              <label>
+                <input type="radio" name="dialect" value="json" />
+                <span>JSON</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="dialect"
+                  value="materialize"
+                  checked
+                />
+                <span>Materialize</span>
+              </label>
+              <label>
+                <input type="radio" name="dialect" value="postgres" />
+                <span>Postgres</span>
+              </label>
+            </div>
+
+            <div class="option-group">
+              <div class="option-title">Format</div>
+              <label>
+                <span>Tab Width</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="16"
+                  step="1"
+                  name="indent"
+                  value="4"
+                  id="indent"
+                />
+              </label>
+              <label>
+                <input type="checkbox" name="spaces" id="spaces" />
+                <span>Use Spaces</span>
+              </label>
+            </div>
+
+            <div class="option-group">
+              <div class="option-title">Case</div>
+              <label>
+                <input type="radio" name="case" value="upper" checked />
+                <span>Upper</span>
+              </label>
+              <label>
+                <input type="radio" name="case" value="lower" />
+                <span>Lower</span>
+              </label>
+              <label>
+                <input type="radio" name="case" value="title" />
+                <span>Title</span>
+              </label>
+            </div>
+
+            <div class="option-group">
+              <button type="button" id="reset">Reset</button>
+              <button type="button" id="clear" style="margin-top: 8px">
+                Clear
+              </button>
+              <label style="margin-top: 8px">
+                <input type="checkbox" name="paste" id="paste" />
+                <span>Auto Paste</span>
+              </label>
+            </div>
           </div>
         </div>
 
-        <div class="options">
-          <div class="option-group">
-            <div class="option-title">Dialect</div>
-            <label>
-              <input type="radio" name="dialect" value="json">
-              <span>JSON</span>
-            </label>
-            <label>
-              <input type="radio" name="dialect" value="materialize" checked>
-              <span>Materialize</span>
-            </label>
-            <label>
-              <input type="radio" name="dialect" value="postgres">
-              <span>Postgres</span>
-            </label>
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-label">Target:</span>
+            <span class="stat-value" id="nval2">80</span>
           </div>
-
-          <div class="option-group">
-            <div class="option-title">Format</div>
-            <label>
-              <span>Tab Width</span>
-              <input type="number" min="1" max="16" step="1" name="indent" value="4" id="indent">
-            </label>
-            <label>
-              <input type="checkbox" name="spaces" id="spaces">
-              <span>Use Spaces</span>
-            </label>
+          <div class="stat">
+            <span class="stat-label">Actual:</span>
+            <span class="stat-value" id="actual_width">—</span>
           </div>
-
-          <div class="option-group">
-            <div class="option-title">Case</div>
-            <label>
-              <input type="radio" name="case" value="upper" checked>
-              <span>Upper</span>
-            </label>
-            <label>
-              <input type="radio" name="case" value="lower">
-              <span>Lower</span>
-            </label>
-            <label>
-              <input type="radio" name="case" value="title">
-              <span>Title</span>
-            </label>
-          </div>
-
-          <div class="option-group">
-            <button type="button" id="reset">Reset</button>
-            <button type="button" id="clear" style="margin-top: 8px;">Clear</button>
-            <label style="margin-top: 8px;">
-              <input type="checkbox" name="paste" id="paste">
-              <span>Auto Paste</span>
-            </label>
+          <div class="stat">
+            <span class="stat-label">Bytes:</span>
+            <span class="stat-value" id="actual_bytes">—</span>
           </div>
         </div>
+
+        <div class="actions jsonly">
+          <button type="button" id="copy">Copy to Clipboard</button>
+          <a href="" id="share"><button type="button">Share</button></a>
+        </div>
+
+        <input type="submit" id="submitButton" style="display: none" />
+      </form>
+
+      <div class="output">
+        <pre id="fmt"></pre>
       </div>
 
-      <div class="stats">
-        <div class="stat">
-          <span class="stat-label">Target:</span>
-          <span class="stat-value" id="nval2">80</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Actual:</span>
-          <span class="stat-value" id="actual_width">—</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Bytes:</span>
-          <span class="stat-value" id="actual_bytes">—</span>
-        </div>
+      <div class="footer">
+        <span>WASM EDITION</span>
+        <a href="https://github.com/madelynnblue/sqlfmtng">GITHUB</a>
       </div>
-
-      <div class="actions jsonly">
-        <button type="button" id="copy">Copy to Clipboard</button>
-        <a href="" id="share"><button type="button">Share</button></a>
-      </div>
-
-      <input type="submit" id="submitButton" style="display: none;">
-    </form>
-
-    <div class="output">
-      <pre id="fmt"></pre>
     </div>
 
-    <div class="footer">
-      <span>WASM EDITION</span>
-      <a href="https://github.com/madelynnblue/sqlfmtng">GITHUB</a>
-    </div>
-  </div>
+    <script type="module">
+      import init, {
+        fmt,
+        fmt_postgres_json,
+        fmt_from_ir,
+        pg_json_ast_equal,
+        parse_to_ir,
+        check_roundtrip,
+      } from "./wasm/sqlfmt_web.js";
 
-  <script type="module">
-    import init, { fmt, fmt_postgres_json, fmt_from_ir, pg_json_ast_equal, parse_to_ir, check_roundtrip } from './wasm/sqlfmt_web.js';
+      await init({ module_or_path: "./wasm/sqlfmt_web_bg.wasm" });
 
-    await init({ module_or_path: './wasm/sqlfmt_web_bg.wasm' });
+      // Postgres parsing runs in a Web Worker so Emscripten crashes from the
+      // known pg_query_free_parse_result memory leak don't hang the main thread.
+      let pgWorker = null;
+      let pgParseId = 0;
+      const PG_PARSE_TIMEOUT = 10000;
 
-    // Postgres parsing runs in a Web Worker so Emscripten crashes from the
-    // known pg_query_free_parse_result memory leak don't hang the main thread.
-    let pgWorker = null;
-    let pgParseId = 0;
-    const PG_PARSE_TIMEOUT = 10000;
-
-    function ensurePostgresWorker() {
-      if (pgWorker) return;
-      const w = new Worker('./pg-worker.js', { type: 'module' });
-      w.onerror = () => {
-        console.warn('pg worker error, will restart on next parse');
-        w.terminate();
-        if (pgWorker === w) pgWorker = null;
-      };
-      pgWorker = w;
-    }
-
-    function pgParse(sql) {
-      return new Promise((resolve, reject) => {
-        ensurePostgresWorker();
-        const id = ++pgParseId;
-        const timeout = setTimeout(() => {
-          if (pgWorker) {
-            pgWorker.removeEventListener('message', handler);
-            pgWorker.terminate();
-          }
-          pgWorker = null;
-          reject(new Error('pg_query worker timed out'));
-        }, PG_PARSE_TIMEOUT);
-        const handler = (e) => {
-          if (e.data.id !== id) return;
-          clearTimeout(timeout);
-          if (pgWorker) pgWorker.removeEventListener('message', handler);
-          if (e.data.ok) {
-            resolve(e.data);
-          } else {
-            reject(new Error(e.data.error || 'pg_query parse error'));
-          }
+      function ensurePostgresWorker() {
+        if (pgWorker) return;
+        const w = new Worker("./pg-worker.js", { type: "module" });
+        w.onerror = () => {
+          console.warn("pg worker error, will restart on next parse");
+          w.terminate();
+          if (pgWorker === w) pgWorker = null;
         };
-        pgWorker.addEventListener('message', handler);
-        pgWorker.postMessage({ id, sql });
-      });
-    }
-
-    document.getElementById('submitButton').style.display = 'none';
-    document.querySelectorAll('.jsonly').forEach(el => el.style.display = 'inline');
-
-    const sqlEl          = document.getElementById('sql');
-    const nEl            = document.getElementById('n');
-    const indentEl       = document.getElementById('indent');
-    const spacesEl       = document.getElementById('spaces');
-    const fmtEl          = document.getElementById('fmt');
-    const actualWidthEl  = document.getElementById('actual_width');
-    const actualBytesEl  = document.getElementById('actual_bytes');
-    const shareEl        = document.getElementById('share');
-    const pasteEl        = document.getElementById('paste');
-
-    // -- State --
-    let dialectCache = {};    // { dialect: { sql, irJson?, treeJson?, error? } }
-    let lastSql = '';
-    let fmtText = '';
-    let suppressRadioEvent = false;
-
-    // -- Dialect validation --
-    function dialectIsValid(d) {
-      return dialectCache[d] && !dialectCache[d].error;
-    }
-
-    async function validateAllDialects(sql) {
-      const results = {};
-
-      // Native dialects — synchronous WASM calls, cheap.
-      for (const dialect of ['json', 'materialize']) {
-        try {
-          results[dialect] = { sql, irJson: parse_to_ir(sql, dialect) };
-        } catch (e) {
-          results[dialect] = { sql, error: String(e) };
-        }
+        pgWorker = w;
       }
 
-      // Postgres — async worker, expensive.
-      if (sql.trim()) {
-        try {
-          const r = await pgParse(sql);
-          if (r.error) throw new Error(r.error);
-          results['postgres'] = { sql, treeJson: r.treeJson };
-        } catch (e) {
-          results['postgres'] = { sql, error: String(e) };
-        }
-      } else {
-        results['postgres'] = { sql, error: 'empty input' };
-      }
-
-      dialectCache = results;
-    }
-
-    function updateDialectRadios() {
-      const radios = document.querySelectorAll('input[name="dialect"]');
-      let firstValid = null;
-
-      for (const radio of radios) {
-        const valid = dialectIsValid(radio.value);
-        radio.disabled = !valid;
-        if (valid && !firstValid) firstValid = radio;
-      }
-
-      // If the currently selected dialect is now invalid, auto-switch to the
-      // first valid one. Otherwise leave the user's manual choice alone.
-      const current = document.querySelector('input[name="dialect"]:checked');
-      if ((!current || current.disabled) && firstValid) {
-        suppressRadioEvent = true;
-        firstValid.checked = true;
-        suppressRadioEvent = false;
-      }
-    }
-
-    function displayError(msg) {
-      fmtEl.textContent = msg;
-      actualWidthEl.textContent = '';
-      actualBytesEl.textContent = '';
-    }
-
-    // -- Helpers --
-    function b64EncodeUnicode(str) {
-      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
-    }
-
-    function b64DecodeUnicode(str) {
-      return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    }
-
-    function copyTextToClipboard(text) {
-      const area = document.createElement('textarea');
-      Object.assign(area.style, { position: 'fixed', top: 0, left: 0, width: '2em', height: '2em', padding: 0, border: 'none', outline: 'none', boxShadow: 'none', background: 'transparent' });
-      area.value = text;
-      document.body.appendChild(area);
-      area.focus();
-      area.select();
-      try { document.execCommand('copy'); } catch {}
-      document.body.removeChild(area);
-    }
-
-    function getDialect() { return document.querySelector('input[name="dialect"]:checked')?.value ?? 'materialize'; }
-    function getCase()    { return document.querySelector('input[name="case"]:checked')?.value ?? 'upper'; }
-
-    // -- Core formatting --
-    async function range() {
-      const v        = parseInt(nEl.value);
-      const viw      = parseInt(indentEl.value);
-      const sql      = sqlEl.value;
-      const useTabs  = !spacesEl.checked;
-      const caseMode = getCase();
-
-      document.getElementById('nval').textContent  = v;
-      document.getElementById('nval2').textContent = v;
-      fmtEl.style['tab-size']      = viw;
-      fmtEl.style['-moz-tab-size'] = viw;
-
-      localStorage.setItem('sql',  sql);
-      localStorage.setItem('n',    v);
-      localStorage.setItem('iw',   viw);
-      localStorage.setItem('spaces', spacesEl.checked ? '1' : '0');
-      localStorage.setItem('case', caseMode);
-
-      const textChanged = sql !== lastSql;
-
-      if (textChanged) {
-        lastSql = sql;
-        await validateAllDialects(sql);
-        updateDialectRadios();
-      }
-
-      const dialect = getDialect();
-      localStorage.setItem('dialect', dialect);
-
-      shareEl.href = '/?n=' + v + '&indent=' + viw +
-        '&spaces='  + (spacesEl.checked ? '1' : '0') +
-        '&dialect=' + encodeURIComponent(dialect) +
-        '&case='    + encodeURIComponent(caseMode) +
-        '&sql='     + encodeURIComponent(b64EncodeUnicode(sql));
-
-      // If no dialect can parse, show a combined error and stop.
-      if (!['json', 'materialize', 'postgres'].some(d => dialectIsValid(d))) {
-        const errors = ['json', 'materialize', 'postgres']
-          .map(d => `${d}: ${dialectCache[d]?.error || 'unknown error'}`)
-          .join('\n');
-        displayError('No dialect could parse the input:\n' + errors);
-        return;
-      }
-
-      try {
-        let result;
-        if (dialect === 'postgres') {
-          const treeJson = dialectCache.postgres?.treeJson;
-          if (!treeJson) throw new Error('Postgres could not parse this input');
-          result = fmt_postgres_json(treeJson, v, viw, useTabs, caseMode);
-          if (textChanged) {
-            // Roundtrip check: re-parse the formatted output through the worker.
-            try {
-              const rendered = await pgParse(result);
-              if (rendered.error) throw new Error('roundtrip parse error: ' + rendered.error);
-              if (!pg_json_ast_equal(treeJson, rendered.treeJson)) {
-                throw new Error('roundtrip error: formatted output has a different AST than the input\n\nInput:\n' + sql + '\n\nFormatted:\n' + result);
-              }
-            } catch (e) {
-              console.warn('roundtrip check failed (worker may have crashed):', e);
+      function pgParse(sql) {
+        return new Promise((resolve, reject) => {
+          ensurePostgresWorker();
+          const id = ++pgParseId;
+          const timeout = setTimeout(() => {
+            if (pgWorker) {
+              pgWorker.removeEventListener("message", handler);
+              pgWorker.terminate();
             }
+            pgWorker = null;
+            reject(new Error("pg_query worker timed out"));
+          }, PG_PARSE_TIMEOUT);
+          const handler = (e) => {
+            if (e.data.id !== id) return;
+            clearTimeout(timeout);
+            if (pgWorker) pgWorker.removeEventListener("message", handler);
+            if (e.data.ok) {
+              resolve(e.data);
+            } else {
+              reject(new Error(e.data.error || "pg_query parse error"));
+            }
+          };
+          pgWorker.addEventListener("message", handler);
+          pgWorker.postMessage({ id, sql });
+        });
+      }
+
+      document.getElementById("submitButton").style.display = "none";
+      document
+        .querySelectorAll(".jsonly")
+        .forEach((el) => (el.style.display = "inline"));
+
+      const sqlEl = document.getElementById("sql");
+      const nEl = document.getElementById("n");
+      const indentEl = document.getElementById("indent");
+      const spacesEl = document.getElementById("spaces");
+      const fmtEl = document.getElementById("fmt");
+      const actualWidthEl = document.getElementById("actual_width");
+      const actualBytesEl = document.getElementById("actual_bytes");
+      const shareEl = document.getElementById("share");
+      const pasteEl = document.getElementById("paste");
+
+      // -- State --
+      let dialectCache = {}; // { dialect: { sql, irJson?, treeJson?, error? } }
+      let lastSql = "";
+      let fmtText = "";
+      let suppressRadioEvent = false;
+
+      // -- Dialect validation --
+      function dialectIsValid(d) {
+        return dialectCache[d] && !dialectCache[d].error;
+      }
+
+      async function validateAllDialects(sql) {
+        const results = {};
+
+        // Native dialects — synchronous WASM calls, cheap.
+        for (const dialect of ["json", "materialize"]) {
+          try {
+            results[dialect] = { sql, irJson: parse_to_ir(sql, dialect) };
+          } catch (e) {
+            results[dialect] = { sql, error: String(e) };
+          }
+        }
+
+        // Postgres — async worker, expensive.
+        if (sql.trim()) {
+          try {
+            const r = await pgParse(sql);
+            if (r.error) throw new Error(r.error);
+            results["postgres"] = { sql, treeJson: r.treeJson };
+          } catch (e) {
+            results["postgres"] = { sql, error: String(e) };
           }
         } else {
-          const irJson = dialectCache[dialect]?.irJson;
-          if (!irJson) throw new Error(`${dialect} could not parse this input`);
-          result = fmt_from_ir(irJson, v, viw, useTabs, caseMode);
-          if (textChanged) {
-            check_roundtrip(sql, result, dialect);
-          }
+          results["postgres"] = { sql, error: "empty input" };
         }
-        fmtText = result;
-        actualWidthEl.textContent = Math.max(0, ...result.split('\n').map(l => l.length));
-        actualBytesEl.textContent = result.length;
-        let hLine = '--';
-        if (v > 2) hLine += '-'.repeat(v - 2);
-        fmtEl.textContent = hLine + '\n\n' + result;
-      } catch (e) {
-        displayError(String(e));
+
+        dialectCache = results;
       }
-    }
 
-    // -- Init / reset --
-    function resetVals() {
-      localStorage.clear();
-      reloadVals();
-      range();
-    }
+      function updateDialectRadios() {
+        const radios = document.querySelectorAll('input[name="dialect"]');
+        let firstValid = null;
 
-    function reloadVals() {
-      const search = location.search ? new URLSearchParams(location.search) : null;
+        for (const radio of radios) {
+          const valid = dialectIsValid(radio.value);
+          radio.disabled = !valid;
+          if (valid && !firstValid) firstValid = radio;
+        }
 
-      let sql      = localStorage.getItem('sql');
-      let nVal     = localStorage.getItem('n')       ?? '80';
-      let iwVal    = localStorage.getItem('iw')      ?? '4';
-      let spVal    = localStorage.getItem('spaces') === '1';
-      let dialect  = localStorage.getItem('dialect') ?? 'materialize';
-      let caseMode = localStorage.getItem('case')    ?? 'upper';
+        // If the currently selected dialect is now invalid, auto-switch to the
+        // first valid one. Otherwise leave the user's manual choice alone.
+        const current = document.querySelector('input[name="dialect"]:checked');
+        if ((!current || current.disabled) && firstValid) {
+          suppressRadioEvent = true;
+          firstValid.checked = true;
+          suppressRadioEvent = false;
+        }
+      }
 
-      if (sql === null) {
-        sql = `SELECT count(*) count, winner, counter * (60 * 5) as counter FROM (SELECT winner, round(length / (60 * 5)) as counter FROM players WHERE build = $1 AND (hero = $2 OR region = $3)) WHERE data @> '{"data": {"domain": "github.com"}}'::JSON GROUP BY winner, counter;
+      function displayError(msg) {
+        fmtEl.textContent = msg;
+        actualWidthEl.textContent = "";
+        actualBytesEl.textContent = "";
+      }
+
+      // -- Helpers --
+      function b64EncodeUnicode(str) {
+        return btoa(
+          encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
+            String.fromCharCode("0x" + p1),
+          ),
+        );
+      }
+
+      function b64DecodeUnicode(str) {
+        return decodeURIComponent(
+          atob(str)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join(""),
+        );
+      }
+
+      function copyTextToClipboard(text) {
+        const area = document.createElement("textarea");
+        Object.assign(area.style, {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "2em",
+          height: "2em",
+          padding: 0,
+          border: "none",
+          outline: "none",
+          boxShadow: "none",
+          background: "transparent",
+        });
+        area.value = text;
+        document.body.appendChild(area);
+        area.focus();
+        area.select();
+        try {
+          document.execCommand("copy");
+        } catch {}
+        document.body.removeChild(area);
+      }
+
+      function getDialect() {
+        return (
+          document.querySelector('input[name="dialect"]:checked')?.value ??
+          "materialize"
+        );
+      }
+      function getCase() {
+        return (
+          document.querySelector('input[name="case"]:checked')?.value ?? "upper"
+        );
+      }
+
+      // -- Core formatting --
+      async function range() {
+        const v = parseInt(nEl.value);
+        const viw = parseInt(indentEl.value);
+        const sql = sqlEl.value;
+        const useTabs = !spacesEl.checked;
+        const caseMode = getCase();
+
+        document.getElementById("nval").textContent = v;
+        document.getElementById("nval2").textContent = v;
+        fmtEl.style["tab-size"] = viw;
+        fmtEl.style["-moz-tab-size"] = viw;
+
+        localStorage.setItem("sql", sql);
+        localStorage.setItem("n", v);
+        localStorage.setItem("iw", viw);
+        localStorage.setItem("spaces", spacesEl.checked ? "1" : "0");
+        localStorage.setItem("case", caseMode);
+
+        const textChanged = sql !== lastSql;
+
+        if (textChanged) {
+          lastSql = sql;
+          await validateAllDialects(sql);
+          updateDialectRadios();
+        }
+
+        const dialect = getDialect();
+        localStorage.setItem("dialect", dialect);
+
+        shareEl.href =
+          "/?n=" +
+          v +
+          "&indent=" +
+          viw +
+          "&spaces=" +
+          (spacesEl.checked ? "1" : "0") +
+          "&dialect=" +
+          encodeURIComponent(dialect) +
+          "&case=" +
+          encodeURIComponent(caseMode) +
+          "&sql=" +
+          encodeURIComponent(b64EncodeUnicode(sql));
+
+        // If no dialect can parse, show a combined error and stop.
+        if (
+          !["json", "materialize", "postgres"].some((d) => dialectIsValid(d))
+        ) {
+          const errors = ["json", "materialize", "postgres"]
+            .map((d) => `${d}: ${dialectCache[d]?.error || "unknown error"}`)
+            .join("\n");
+          displayError("No dialect could parse the input:\n" + errors);
+          return;
+        }
+
+        try {
+          let result;
+          if (dialect === "postgres") {
+            const treeJson = dialectCache.postgres?.treeJson;
+            if (!treeJson)
+              throw new Error("Postgres could not parse this input");
+            result = fmt_postgres_json(treeJson, v, viw, useTabs, caseMode);
+            if (textChanged) {
+              // Roundtrip check: re-parse the formatted output through the worker.
+              try {
+                const rendered = await pgParse(result);
+                if (rendered.error)
+                  throw new Error("roundtrip parse error: " + rendered.error);
+                if (!pg_json_ast_equal(treeJson, rendered.treeJson)) {
+                  throw new Error(
+                    "roundtrip error: formatted output has a different AST than the input\n\nInput:\n" +
+                      sql +
+                      "\n\nFormatted:\n" +
+                      result,
+                  );
+                }
+              } catch (e) {
+                console.warn(
+                  "roundtrip check failed (worker may have crashed):",
+                  e,
+                );
+              }
+            }
+          } else {
+            const irJson = dialectCache[dialect]?.irJson;
+            if (!irJson)
+              throw new Error(`${dialect} could not parse this input`);
+            result = fmt_from_ir(irJson, v, viw, useTabs, caseMode);
+            if (textChanged) {
+              check_roundtrip(sql, result, dialect);
+            }
+          }
+          fmtText = result;
+          actualWidthEl.textContent = Math.max(
+            0,
+            ...result.split("\n").map((l) => l.length),
+          );
+          actualBytesEl.textContent = result.length;
+          let hLine = "--";
+          if (v > 2) hLine += "-".repeat(v - 2);
+          fmtEl.textContent = hLine + "\n\n" + result;
+        } catch (e) {
+          displayError(String(e));
+        }
+      }
+
+      // -- Init / reset --
+      function resetVals() {
+        localStorage.clear();
+        reloadVals();
+        range();
+      }
+
+      function reloadVals() {
+        const search = location.search
+          ? new URLSearchParams(location.search)
+          : null;
+
+        let sql = localStorage.getItem("sql");
+        let nVal = localStorage.getItem("n") ?? "80";
+        let iwVal = localStorage.getItem("iw") ?? "4";
+        let spVal = localStorage.getItem("spaces") === "1";
+        let dialect = localStorage.getItem("dialect") ?? "materialize";
+        let caseMode = localStorage.getItem("case") ?? "upper";
+
+        if (sql === null) {
+          sql = `SELECT count(*) count, winner, counter * (60 * 5) as counter FROM (SELECT winner, round(length / (60 * 5)) as counter FROM players WHERE build = $1 AND (hero = $2 OR region = $3)) WHERE data @> '{"data": {"domain": "github.com"}}'::JSON GROUP BY winner, counter;
 INSERT INTO players(build, hero, region, winner, length) VALUES ($1, $2, $3, $4, $5);
-UPDATE players SET count = 0 WHERE build = $1 AND (hero = $2 OR region = $3) LIMIT 1;`;
+UPDATE players SET count = 0 WHERE build = $1 AND (hero = $2 OR region = $3);`;
+        }
+
+        if (search) {
+          if (search.has("sql")) sql = b64DecodeUnicode(search.get("sql"));
+          if (search.has("n")) nVal = search.get("n");
+          if (search.has("indent")) iwVal = search.get("indent");
+          if (search.has("spaces")) spVal = search.get("spaces") === "1";
+          if (search.has("dialect")) dialect = search.get("dialect");
+          if (search.has("case")) caseMode = search.get("case");
+        }
+
+        sqlEl.value = sql;
+        nEl.value = nVal;
+        indentEl.value = iwVal;
+        spacesEl.checked = spVal;
+        const dr = document.querySelector(
+          `input[name="dialect"][value="${dialect}"]`,
+        );
+        if (dr) dr.checked = true;
+        const cr = document.querySelector(
+          `input[name="case"][value="${caseMode}"]`,
+        );
+        if (cr) cr.checked = true;
       }
 
-      if (search) {
-        if (search.has('sql'))     sql      = b64DecodeUnicode(search.get('sql'));
-        if (search.has('n'))       nVal     = search.get('n');
-        if (search.has('indent'))  iwVal    = search.get('indent');
-        if (search.has('spaces'))  spVal    = search.get('spaces') === '1';
-        if (search.has('dialect')) dialect  = search.get('dialect');
-        if (search.has('case'))    caseMode = search.get('case');
+      function autoPaste() {
+        localStorage.setItem("paste", pasteEl.checked ? "1" : "0");
+        if (pasteEl.checked) {
+          navigator.clipboard.readText().then((text) => {
+            sqlEl.value = text;
+            range();
+          });
+        }
       }
 
-      sqlEl.value      = sql;
-      nEl.value        = nVal;
-      indentEl.value   = iwVal;
-      spacesEl.checked = spVal;
-      const dr = document.querySelector(`input[name="dialect"][value="${dialect}"]`);
-      if (dr) dr.checked = true;
-      const cr = document.querySelector(`input[name="case"][value="${caseMode}"]`);
-      if (cr) cr.checked = true;
-    }
+      // -- Event wiring --
+      // SQL textarea — fires on every keystroke: triggers validation + cache update.
+      sqlEl.addEventListener("input", range);
 
-    function autoPaste() {
-      localStorage.setItem('paste', pasteEl.checked ? '1' : '0');
-      if (pasteEl.checked) {
-        navigator.clipboard.readText().then(text => { sqlEl.value = text; range(); });
-      }
-    }
+      // Options (width, indent, spaces, case) — text hasn't changed, uses cache.
+      [
+        nEl,
+        indentEl,
+        spacesEl,
+        ...document.querySelectorAll('input[name="case"]'),
+      ].forEach((el) => el.addEventListener("input", range));
 
-    // -- Event wiring --
-    // SQL textarea — fires on every keystroke: triggers validation + cache update.
-    sqlEl.addEventListener('input', range);
+      // Dialect radios — manual switch between already-validated dialects.
+      document.querySelectorAll('input[name="dialect"]').forEach((el) => {
+        el.addEventListener("change", () => {
+          if (suppressRadioEvent) return;
+          range();
+        });
+      });
 
-    // Options (width, indent, spaces, case) — text hasn't changed, uses cache.
-    [nEl, indentEl, spacesEl,
-     ...document.querySelectorAll('input[name="case"]'),
-    ].forEach(el => el.addEventListener('input', range));
-
-    // Dialect radios — manual switch between already-validated dialects.
-    document.querySelectorAll('input[name="dialect"]').forEach(el => {
-      el.addEventListener('change', () => {
-        if (suppressRadioEvent) return;
+      document
+        .getElementById("copy")
+        .addEventListener("click", () => copyTextToClipboard(fmtText));
+      document.getElementById("reset").addEventListener("click", resetVals);
+      document.getElementById("clear").addEventListener("click", () => {
+        sqlEl.value = "";
         range();
       });
-    });
+      pasteEl.addEventListener("change", autoPaste);
 
-    document.getElementById('copy').addEventListener('click', () => copyTextToClipboard(fmtText));
-    document.getElementById('reset').addEventListener('click', resetVals);
-    document.getElementById('clear').addEventListener('click', () => { sqlEl.value = ''; range(); });
-    pasteEl.addEventListener('change', autoPaste);
+      // Clear URL search params after first edit so sharing a link doesn't lock state.
+      const search = location.search
+        ? new URLSearchParams(location.search)
+        : null;
+      if (search) {
+        const clearSearch = () => {
+          window.history.replaceState(null, "", "/");
+          sqlEl.removeEventListener("keydown", clearSearch);
+        };
+        sqlEl.addEventListener("keydown", clearSearch);
+      }
 
-    // Clear URL search params after first edit so sharing a link doesn't lock state.
-    const search = location.search ? new URLSearchParams(location.search) : null;
-    if (search) {
-      const clearSearch = () => {
-        window.history.replaceState(null, '', '/');
-        sqlEl.removeEventListener('keydown', clearSearch);
-      };
-      sqlEl.addEventListener('keydown', clearSearch);
-    }
-
-    reloadVals();
-    pasteEl.checked = localStorage.getItem('paste') === '1';
-    if (!search?.has('sql')) autoPaste();
-    range();
-  </script>
-</body>
-
+      reloadVals();
+      pasteEl.checked = localStorage.getItem("paste") === "1";
+      if (!search?.has("sql")) autoPaste();
+      range();
+    </script>
+  </body>
 </html>

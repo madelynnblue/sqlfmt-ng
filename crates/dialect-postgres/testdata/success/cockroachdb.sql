@@ -7473,11 +7473,22 @@ CREATE SCHEMA sc;
 
 -- sqlfmt-corpus-separator --
 
+CREATE SCHEMA sc;
+CREATE SEQUENCE sc.sq;
+CREATE VIEW v AS SELECT last_value FROM sc.sq;
+
+-- sqlfmt-corpus-separator --
+
 CREATE SCHEMA sc_95364;
 
 -- sqlfmt-corpus-separator --
 
 CREATE SCHEMA sc_rls_dep;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc_seq_qualified_name;
+CREATE SEQUENCE sc_seq_qualified_name.sq;
 
 -- sqlfmt-corpus-separator --
 
@@ -47548,6 +47559,10 @@ SELECT * from information_schema._pg_expandarray(array['c','b','a']) AS temp;
 -- sqlfmt-corpus-separator --
 
 SELECT * from kv4
+
+-- sqlfmt-corpus-separator --
+
+SELECT * from kv; ROLLBACK
 
 -- sqlfmt-corpus-separator --
 
