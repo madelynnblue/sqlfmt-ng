@@ -1,7 +1,7 @@
 use dialect_json::JsonDialect;
 use dialect_materialize::MaterializeDialect;
 use dialect_postgres_convert::{convert_pg_query_json, json_ast_equal};
-use sqlfmt_core::format_sql;
+use sqlfmt_core::{format_sql, Dialect};
 use sqlfmt_render::{CaseMode, RenderOpts};
 use wasm_bindgen::prelude::*;
 
@@ -82,4 +82,30 @@ pub fn fmt_from_ir(
     let opts = parse_opts(width, tab_width, use_tabs, case);
     opts.render(&node)
         .map_err(|err| JsValue::from_str(&err.to_string()))
+}
+
+/// Parse SQL/JSON into a sqlfmt IR node and return it as a JSON string.
+/// Used for validating input and caching the parse result so that option
+/// changes (width, tabs, case) can re-render without re-parsing.
+#[wasm_bindgen]
+pub fn parse_to_ir(sql: &str, dialect: &str) -> Result<String, JsValue> {
+    let node = match dialect {
+        "json" => JsonDialect.parse(sql),
+        "materialize" => MaterializeDialect.parse(sql),
+        _ => return Err(JsValue::from_str(&format!("unknown dialect: {dialect}"))),
+    }
+    .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    serde_json::to_string(&node).map_err(|e| JsValue::from_str(&e.to_string()))
+}
+
+/// Check that formatting produced a semantically equivalent AST.
+/// Only needed after text changes; option re-renders skip this.
+#[wasm_bindgen]
+pub fn check_roundtrip(original: &str, rendered: &str, dialect: &str) -> Result<(), JsValue> {
+    match dialect {
+        "json" => JsonDialect.ast_equal(original, rendered),
+        "materialize" => MaterializeDialect.ast_equal(original, rendered),
+        _ => return Err(JsValue::from_str(&format!("unknown dialect: {dialect}"))),
+    }
+    .map_err(|e| JsValue::from_str(&e.to_string()))
 }

@@ -235,6 +235,15 @@
       font-weight: 700;
     }
 
+    input[type="radio"]:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    input[type="radio"]:disabled + span {
+      opacity: 0.35;
+    }
+
     input[type="radio"] {
       border-radius: 50%;
     }
@@ -472,7 +481,7 @@
   </div>
 
   <script type="module">
-    import init, { fmt, fmt_postgres_json, pg_json_ast_equal } from './wasm/sqlfmt_web.js';
+    import init, { fmt, fmt_postgres_json, fmt_from_ir, pg_json_ast_equal, parse_to_ir, check_roundtrip } from './wasm/sqlfmt_web.js';
 
     await init({ module_or_path: './wasm/sqlfmt_web_bg.wasm' });
 
@@ -480,7 +489,6 @@
     // known pg_query_free_parse_result memory leak don't hang the main thread.
     let pgWorker = null;
     let pgParseId = 0;
-    let pgParseCache = { sql: '', treeJson: null };
     const PG_PARSE_TIMEOUT = 10000;
 
     function ensurePostgresWorker() {
@@ -489,10 +497,7 @@
       w.onerror = () => {
         console.warn('pg worker error, will restart on next parse');
         w.terminate();
-        if (pgWorker === w) {
-          pgWorker = null;
-          pgParseCache.sql = '';
-        }
+        if (pgWorker === w) pgWorker = null;
       };
       pgWorker = w;
     }
@@ -507,7 +512,6 @@
             pgWorker.terminate();
           }
           pgWorker = null;
-          pgParseCache.sql = '';
           reject(new Error('pg_query worker timed out'));
         }, PG_PARSE_TIMEOUT);
         const handler = (e) => {
@@ -525,18 +529,6 @@
       });
     }
 
-    // Parse SQL through the worker, caching the result so that width/option
-    // changes don't re-trigger an expensive (and leaky) parse.
-    async function getParseTree(sql) {
-      if (pgParseCache.sql === sql && pgParseCache.treeJson) {
-        return pgParseCache.treeJson;
-      }
-      const result = await pgParse(sql);
-      if (result.error) throw new Error(result.error);
-      pgParseCache = { sql, treeJson: result.treeJson };
-      return result.treeJson;
-    }
-
     document.getElementById('submitButton').style.display = 'none';
     document.querySelectorAll('.jsonly').forEach(el => el.style.display = 'inline');
 
@@ -550,8 +542,72 @@
     const shareEl        = document.getElementById('share');
     const pasteEl        = document.getElementById('paste');
 
+    // -- State --
+    let dialectCache = {};    // { dialect: { sql, irJson?, treeJson?, error? } }
+    let lastSql = '';
     let fmtText = '';
+    let suppressRadioEvent = false;
 
+    // -- Dialect validation --
+    function dialectIsValid(d) {
+      return dialectCache[d] && !dialectCache[d].error;
+    }
+
+    async function validateAllDialects(sql) {
+      const results = {};
+
+      // Native dialects — synchronous WASM calls, cheap.
+      for (const dialect of ['json', 'materialize']) {
+        try {
+          results[dialect] = { sql, irJson: parse_to_ir(sql, dialect) };
+        } catch (e) {
+          results[dialect] = { sql, error: String(e) };
+        }
+      }
+
+      // Postgres — async worker, expensive.
+      if (sql.trim()) {
+        try {
+          const r = await pgParse(sql);
+          if (r.error) throw new Error(r.error);
+          results['postgres'] = { sql, treeJson: r.treeJson };
+        } catch (e) {
+          results['postgres'] = { sql, error: String(e) };
+        }
+      } else {
+        results['postgres'] = { sql, error: 'empty input' };
+      }
+
+      dialectCache = results;
+    }
+
+    function updateDialectRadios() {
+      const radios = document.querySelectorAll('input[name="dialect"]');
+      let firstValid = null;
+
+      for (const radio of radios) {
+        const valid = dialectIsValid(radio.value);
+        radio.disabled = !valid;
+        if (valid && !firstValid) firstValid = radio;
+      }
+
+      // If the currently selected dialect is now invalid, auto-switch to the
+      // first valid one. Otherwise leave the user's manual choice alone.
+      const current = document.querySelector('input[name="dialect"]:checked');
+      if ((!current || current.disabled) && firstValid) {
+        suppressRadioEvent = true;
+        firstValid.checked = true;
+        suppressRadioEvent = false;
+      }
+    }
+
+    function displayError(msg) {
+      fmtEl.textContent = msg;
+      actualWidthEl.textContent = '';
+      actualBytesEl.textContent = '';
+    }
+
+    // -- Helpers --
     function b64EncodeUnicode(str) {
       return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => String.fromCharCode('0x' + p1)));
     }
@@ -574,12 +630,12 @@
     function getDialect() { return document.querySelector('input[name="dialect"]:checked')?.value ?? 'materialize'; }
     function getCase()    { return document.querySelector('input[name="case"]:checked')?.value ?? 'upper'; }
 
+    // -- Core formatting --
     async function range() {
-      const v       = parseInt(nEl.value);
-      const viw     = parseInt(indentEl.value);
-      const sql     = sqlEl.value;
-      const useTabs = !spacesEl.checked;
-      const dialect = getDialect();
+      const v        = parseInt(nEl.value);
+      const viw      = parseInt(indentEl.value);
+      const sql      = sqlEl.value;
+      const useTabs  = !spacesEl.checked;
       const caseMode = getCase();
 
       document.getElementById('nval').textContent  = v;
@@ -587,12 +643,22 @@
       fmtEl.style['tab-size']      = viw;
       fmtEl.style['-moz-tab-size'] = viw;
 
-      localStorage.setItem('sql',     sql);
-      localStorage.setItem('n',       v);
-      localStorage.setItem('iw',      viw);
-      localStorage.setItem('spaces',  spacesEl.checked ? '1' : '0');
+      localStorage.setItem('sql',  sql);
+      localStorage.setItem('n',    v);
+      localStorage.setItem('iw',   viw);
+      localStorage.setItem('spaces', spacesEl.checked ? '1' : '0');
+      localStorage.setItem('case', caseMode);
+
+      const textChanged = sql !== lastSql;
+
+      if (textChanged) {
+        lastSql = sql;
+        await validateAllDialects(sql);
+        updateDialectRadios();
+      }
+
+      const dialect = getDialect();
       localStorage.setItem('dialect', dialect);
-      localStorage.setItem('case',    caseMode);
 
       shareEl.href = '/?n=' + v + '&indent=' + viw +
         '&spaces='  + (spacesEl.checked ? '1' : '0') +
@@ -600,23 +666,40 @@
         '&case='    + encodeURIComponent(caseMode) +
         '&sql='     + encodeURIComponent(b64EncodeUnicode(sql));
 
+      // If no dialect can parse, show a combined error and stop.
+      if (!['json', 'materialize', 'postgres'].some(d => dialectIsValid(d))) {
+        const errors = ['json', 'materialize', 'postgres']
+          .map(d => `${d}: ${dialectCache[d]?.error || 'unknown error'}`)
+          .join('\n');
+        displayError('No dialect could parse the input:\n' + errors);
+        return;
+      }
+
       try {
         let result;
         if (dialect === 'postgres') {
-          const treeJson = await getParseTree(sql);
+          const treeJson = dialectCache.postgres?.treeJson;
+          if (!treeJson) throw new Error('Postgres could not parse this input');
           result = fmt_postgres_json(treeJson, v, viw, useTabs, caseMode);
-          // Roundtrip check: reparse the formatted output through the worker.
-          try {
-            const rendered = await pgParse(result);
-            if (rendered.error) throw new Error('roundtrip parse error: ' + rendered.error);
-            if (!pg_json_ast_equal(treeJson, rendered.treeJson)) {
-              throw new Error('roundtrip error: formatted output has a different AST than the input\n\nInput:\n' + sql + '\n\nFormatted:\n' + result);
+          if (textChanged) {
+            // Roundtrip check: re-parse the formatted output through the worker.
+            try {
+              const rendered = await pgParse(result);
+              if (rendered.error) throw new Error('roundtrip parse error: ' + rendered.error);
+              if (!pg_json_ast_equal(treeJson, rendered.treeJson)) {
+                throw new Error('roundtrip error: formatted output has a different AST than the input\n\nInput:\n' + sql + '\n\nFormatted:\n' + result);
+              }
+            } catch (e) {
+              console.warn('roundtrip check failed (worker may have crashed):', e);
             }
-          } catch (e) {
-            console.warn('roundtrip check failed (worker may have crashed):', e);
           }
         } else {
-          result = fmt(sql, dialect, v, viw, useTabs, caseMode);
+          const irJson = dialectCache[dialect]?.irJson;
+          if (!irJson) throw new Error(`${dialect} could not parse this input`);
+          result = fmt_from_ir(irJson, v, viw, useTabs, caseMode);
+          if (textChanged) {
+            check_roundtrip(sql, result, dialect);
+          }
         }
         fmtText = result;
         actualWidthEl.textContent = Math.max(0, ...result.split('\n').map(l => l.length));
@@ -625,12 +708,11 @@
         if (v > 2) hLine += '-'.repeat(v - 2);
         fmtEl.textContent = hLine + '\n\n' + result;
       } catch (e) {
-        fmtEl.textContent      = String(e);
-        actualWidthEl.textContent = '';
-        actualBytesEl.textContent = '';
+        displayError(String(e));
       }
     }
 
+    // -- Init / reset --
     function resetVals() {
       localStorage.clear();
       reloadVals();
@@ -662,9 +744,9 @@ UPDATE players SET count = 0 WHERE build = $1 AND (hero = $2 OR region = $3) LIM
         if (search.has('case'))    caseMode = search.get('case');
       }
 
-      sqlEl.value     = sql;
-      nEl.value       = nVal;
-      indentEl.value  = iwVal;
+      sqlEl.value      = sql;
+      nEl.value        = nVal;
+      indentEl.value   = iwVal;
       spacesEl.checked = spVal;
       const dr = document.querySelector(`input[name="dialect"][value="${dialect}"]`);
       if (dr) dr.checked = true;
@@ -679,18 +761,29 @@ UPDATE players SET count = 0 WHERE build = $1 AND (hero = $2 OR region = $3) LIM
       }
     }
 
-    // Wire up all inputs
-    [sqlEl, nEl, indentEl, spacesEl,
-     ...document.querySelectorAll('input[name="dialect"]'),
+    // -- Event wiring --
+    // SQL textarea — fires on every keystroke: triggers validation + cache update.
+    sqlEl.addEventListener('input', range);
+
+    // Options (width, indent, spaces, case) — text hasn't changed, uses cache.
+    [nEl, indentEl, spacesEl,
      ...document.querySelectorAll('input[name="case"]'),
     ].forEach(el => el.addEventListener('input', range));
+
+    // Dialect radios — manual switch between already-validated dialects.
+    document.querySelectorAll('input[name="dialect"]').forEach(el => {
+      el.addEventListener('change', () => {
+        if (suppressRadioEvent) return;
+        range();
+      });
+    });
 
     document.getElementById('copy').addEventListener('click', () => copyTextToClipboard(fmtText));
     document.getElementById('reset').addEventListener('click', resetVals);
     document.getElementById('clear').addEventListener('click', () => { sqlEl.value = ''; range(); });
     pasteEl.addEventListener('change', autoPaste);
 
-    // Clear URL search params after first edit so sharing a link doesn't lock state
+    // Clear URL search params after first edit so sharing a link doesn't lock state.
     const search = location.search ? new URLSearchParams(location.search) : null;
     if (search) {
       const clearSearch = () => {
