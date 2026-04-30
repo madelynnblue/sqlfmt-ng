@@ -788,9 +788,8 @@
                   );
                 }
               } catch (e) {
-                console.warn(
-                  "roundtrip check failed (worker may have crashed):",
-                  e,
+                throw new Error(
+                  "roundtrip error: " + String(e?.message ?? e),
                 );
               }
             }
@@ -800,7 +799,7 @@
               throw new Error(`${dialect} could not parse this input`);
             result = fmt_from_ir(irJson, v, viw, useTabs, caseMode);
             if (textChanged) {
-              check_roundtrip(sql, result, dialect);
+              await check_roundtrip(sql, result, dialect);
             }
           }
           fmtText = result;
