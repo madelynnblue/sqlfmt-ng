@@ -160,8 +160,8 @@ mod tests {
             line_width: 1000,
             ..Default::default()
         };
-        // Mixed supported (SELECT) and unsupported (CREATE, INSERT) statements.
-        // Unsupported types become Unformatted nodes, which render their text directly.
+        // Mixed SELECT and other statement types (CREATE, INSERT).
+        // Non-SELECT types become Text nodes, which render their Display representation.
         let node = d
             .parse("SELECT 1; CREATE TABLE t (a int); INSERT INTO t VALUES (1)")
             .unwrap();

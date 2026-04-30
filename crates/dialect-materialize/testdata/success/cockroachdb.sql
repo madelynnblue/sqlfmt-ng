@@ -20,6 +20,39942 @@
 
 -- sqlfmt-corpus-separator --
 
+ABORT
+
+-- sqlfmt-corpus-separator --
+
+ABORT AND CHAIN
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DECLARE dup CURSOR FOR SELECT 0;
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT '101';
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT 'abc'::STRING, 'a'::CHAR, True, 1.1::FLOAT, 1.1::DECIMAL, NULL::BIT;
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT 'abc';
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM (VALUES ('abc'), ('100'), ('1.01'), ('1.01'), ('t'), ('1'), ('a'));
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM xy ORDER BY x DESC;
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT 10000000;
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT 5.0101::DECIMAL FROM generate_series(1, 5);
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT 5.0101::FLOAT FROM generate_series(1, 5);
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT generate_series(0, 10);
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+BEGIN;
+INSERT INTO xy VALUES (7, 8), (9, 10), (11, 12), (13, 14), (15, 16);
+DECLARE foo CURSOR FOR SELECT * FROM xy ORDER BY x DESC;
+
+-- sqlfmt-corpus-separator --
+
+ABORT;
+DELETE FROM xy WHERE x >= 100;
+INSERT INTO xy VALUES (5, 6);
+
+-- sqlfmt-corpus-separator --
+
+ABORT; BEGIN TRANSACTION
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE atest OWNER TO u;
+  ALTER SCHEMA atest.sc OWNER TO u;
+  ALTER TABLE atest.sc.t OWNER TO u;
+  ALTER TYPE atest.sc.ty OWNER TO u
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE d OWNER TO b
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE d OWNER TO fake_user
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE d OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE d OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE d OWNER TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE owner_grant_option OWNER TO other_owner
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE test OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER DATABASE test_db OWNER TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT ALL ON TABLES TO testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT CREATE ON TABLES TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT CREATE ON TABLES TO testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT SELECT ON TABLES TO foo;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT SELECT ON TABLES TO roach_a;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT SELECT ON TABLES TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT SELECT ON TABLES TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES IN SCHEMA public GRANT SELECT ON TABLES TO test2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES IN SCHEMA public REVOKE SELECT ON TABLES FROM test2;
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES IN SCHEMA public GRANT USAGE ON TYPES TO test2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES IN SCHEMA s GRANT SELECT ON TABLES TO test4
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES IN SCHEMA s REVOKE SELECT ON TABLES FROM test4;
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES IN SCHEMA s GRANT USAGE ON TYPES TO test4;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES REVOKE SELECT ON TABLES FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES REVOKE SELECT ON TABLES FROM testuser2;
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT USAGE ON SCHEMAS TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES REVOKE USAGE ON SCHEMAS FROM testuser2;
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES GRANT USAGE ON TYPES TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE bar GRANT ALL ON SCHEMAS TO bar;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE bar GRANT ALL ON TABLES TO bar;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE bar GRANT ALL ON TYPES TO bar;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user GRANT USAGE ON TYPES TO public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user REVOKE ALL ON SCHEMAS FROM public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user REVOKE ALL ON TABLES FROM public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user REVOKE USAGE ON TYPES FROM public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user2 GRANT ALL ON SCHEMAS TO public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user2 GRANT ALL ON TABLES TO public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user2 REVOKE ALL ON SCHEMAS FROM public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE default_priv_user2 REVOKE ALL ON TABLES FROM public
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo GRANT ALL ON SCHEMAS TO foo;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo GRANT ALL ON TABLES TO foo;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo GRANT ALL ON TYPES TO foo;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo GRANT SELECT ON TABLES TO foo;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo REVOKE SELECT ON TABLES FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo, bar REVOKE ALL ON SCHEMAS FROM foo, bar;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo, bar REVOKE ALL ON TABLES FROM foo, bar;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE foo, bar REVOKE ALL ON TYPES FROM foo, bar;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE public REVOKE SELECT ON TABLES FROM testuser2, testuser3
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE roach_b GRANT SELECT ON TABLES TO roach_a;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE roach_c GRANT SELECT ON TABLES TO roach_d;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE roach_d GRANT SELECT ON TABLES TO roach_b;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE root GRANT SELECT ON TABLES TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE root GRANT SELECT ON TABLES TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE root, testuser GRANT SELECT ON TABLES TO testuser2, testuser3
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE root, testuser REVOKE ALL ON TABLES FROM testuser, testuser2, testuser3
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE root, testuser REVOKE SELECT ON TABLES FROM testuser2, testuser3
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE self_referencing_role GRANT INSERT ON TABLES TO self_referencing_role
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE test1 IN SCHEMA public GRANT SELECT ON TABLES TO test2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE test3 IN SCHEMA s GRANT SELECT ON TABLES TO test4;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser GRANT ALL ON TABLES TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser GRANT INSERT ON TABLES TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser GRANT SELECT ON TABLES to testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser GRANT SELECT ON TABLES to testuser, who
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser GRANT SELECT ON TABLES to who
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser IN SCHEMA public GRANT SELECT ON TABLES TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser IN SCHEMA s, public GRANT ALL ON TABLES TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser IN SCHEMA s, public REVOKE ALL ON TABLES FROM testuser2;
+ALTER DEFAULT PRIVILEGES FOR ALL ROLES IN SCHEMA s, public GRANT SELECT ON TABLES TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE ALL ON SCHEMAS FROM testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE ALL ON TABLES FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE ALL ON TABLES FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE ALL ON TABLES FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE ALL ON TABLES FROM testuser;
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE ALL ON TABLES FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE ALL ON TYPES FROM testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser REVOKE SELECT ON TABLES FROM testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser1 GRANT SELECT ON TABLES TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser1 REVOKE SELECT ON TABLES FROM testuser2;
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser1 GRANT USAGE ON SCHEMAS TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser1 REVOKE USAGE ON SCHEMAS FROM testuser2;
+ALTER DEFAULT PRIVILEGES FOR ROLE testuser1 GRANT USAGE ON TYPES TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER DEFAULT PRIVILEGES FOR ROLE who GRANT SELECT ON TABLES to testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX IF EXISTS ffo RENAME TO ufo
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX IF EXISTS foo RENAME TO ufo
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX IF EXISTS nonexistent RENAME TO foo
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX IF EXISTS ufooo RENAME TO ufoo
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX a_pk3 RENAME TO a_pk4
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX a_pkey RENAME TO a_pk
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX ffo RENAME TO ufo
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX foo RENAME TO ufo
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX i1 RENAME TO i2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX idx2 RENAME TO idx
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX public.a_pk RENAME TO a_pk2
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX public.a_pk3 RENAME TO a_pk4
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX public.public.t_pkey RENAME TO t_pk
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX public.t_pkey RENAME TO t_pk
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX test.a_pk2 RENAME TO a_pk3
+
+-- sqlfmt-corpus-separator --
+
+ALTER INDEX ufoo RENAME TO ufo
+
+-- sqlfmt-corpus-separator --
+
+ALTER MATERIALIZED VIEW mvx OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER MATERIALIZED VIEW mvx OWNER TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER MATERIALIZED VIEW normal_view RENAME TO newname
+
+-- sqlfmt-corpus-separator --
+
+ALTER MATERIALIZED VIEW vx OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+ALTER MATERIALIZED VIEW with_options OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE ALL RESET ALL
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE ALL SET application_name = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE ALL SET application_name = 'c'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE ALL SET tracing = 'off'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE admin SET application_name = 'g'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE admin with NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE fake_role SET application_name = 'e';
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE other_admin NOCREATEDB
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE other_admin SET application_name = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE otherrole LOGIN
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE otherrole NOLOGIN
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE public SET application_name = 'g'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE roach RESET search_path
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE roach SET application_name = 'e'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE roach SET statement_timeout = '10s'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE roach SET timezone = 'America/New_York'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE roach SET use_declarative_schema_changer = 'off'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE roleg WITH NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE roleg with NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE rolek CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE rolewithcreate WITH NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE root SET application_name = 'g'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role RESET application_name
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role RESET potato;
+ALTER ROLE test_set_role SET potato TO DEFAULT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET application_name = 'f'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET backslash_quote = 'off'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET backslash_quote = 'safe_encoding'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET database = 'd'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET integer_datetimes = 'on'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET potato = 'potato'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET role = 'd'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET serial_normalization = 'potato'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET serial_normalization = 'sql_sequence';
+ALTER ROLE test_set_role RESET application_name
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE test_set_role SET transaction_isolation = 'serializable'
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testrole CREATEROLE NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testrole WITH CREATEROLE CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testrole WITH CREATEROLE NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testrole WITH NOCREATEROLE NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testuser CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testuser NOCREATEDB
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testuser NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testuser RESET application_name
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testuser SET default_int_size = 4
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testuser WITH CREATEDB;
+
+-- sqlfmt-corpus-separator --
+
+ALTER ROLE testuser WITH CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA another_schema RENAME TO another_one
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA myschema RENAME TO myschema2
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA myschema RENAME TO pg_temp_not_temp
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA myschema RENAME TO public
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA myschema RENAME TO yourschema
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA myschema2 RENAME TO another_schema
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA myschema2 RENAME TO myschema3
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA owner_grant_option OWNER TO other_owner
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA pg_catalog OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA pg_catalog RENAME TO mysql_catalog
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA privs RENAME TO denied
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA public OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA public RENAME TO private
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s OWNER TO CURRENT_USER
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s OWNER TO SESSION_USER
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s OWNER TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s RENAME TO foo
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s RENAME TO r
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA s1 OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA sc RENAME TO sc1;
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA sc RENAME TO sc_new;
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA sc1 RENAME TO sc1_new
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA sc_new RENAME TO sc;
+SELECT * FROM v;
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA test_schema RENAME to new_test_schema
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA u RENAME TO t
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA with_alter_schema.altered_schema OWNER TO root;
+
+-- sqlfmt-corpus-separator --
+
+ALTER SCHEMA with_alter_schema.schema_to_alter RENAME TO altered_schema;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE IF EXISTS does_not_exist OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE IF EXISTS foo RENAME TO bar
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE a ADD COLUMN c INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE a RENAME TO b
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE abcd ADD COLUMN f DECIMAL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE accounts OWNER TO alice;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE alter_policy_table OWNER TO alter_policy_role;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE audit ADD COLUMN y INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE backfill_c ADD COLUMN s STRING
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE bar ADD COLUMN b INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE base_t OWNER TO table_owner;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE baz OWNER TO bar_role;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE baz OWNER TO foo_role;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE child OWNER TO fk_user;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE cnt OWNER TO r1_user;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE created_as_global ADD COLUMN crdb_region INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE cross_error ADD COLUMN y other.t
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE dontwant RENAME TO want
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE foo ADD COLUMN a INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE foo ADD COLUMN j INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE foo ADD COLUMN k INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE foo ADD COLUMN k SERIAL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE foo RENAME TO bar
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE fooev ADD COLUMN j INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE force_check OWNER TO forcer;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE force_check OWNER TO root;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE force_t OWNER TO table_owner;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE information_schema.tables ADD COLUMN x DECIMAL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE ins OWNER TO ins;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE kv RENAME TO kv
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE kv RENAME TO new_kv
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE mc OWNER TO mc;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE mno ADD COLUMN p INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE mqt_doc OWNER TO bob;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE mvx OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE mvx OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE new_kv RENAME TO new_kv
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE new_table ADD COLUMN c timetz(4)
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE other_db.xyz ADD COLUMN j INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE othertable ADD COLUMN b INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE owner_grant_option OWNER TO other_owner
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE parent OWNER TO fk_user;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE pg_catalog.pg_tables ADD COLUMN x DECIMAL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE regression_48233 RENAME TO reg_48233
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE renamed_public_table RENAME TO public_table_exists;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE rgb_only OWNER TO rgb_only_user;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE s.t OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE s.t OWNER TO testuser;
+ALTER TABLE t OWNER TO root;
+ALTER TABLE s.t OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE sch.table_to_rename RENAME TO renamed_table;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE second_db.pg_temp.a OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE secret_data OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE seq OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE sharded_secondary ADD COLUMN b INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE shop RENAME TO ship
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE smtng.something ADD COLUMN IF NOT EXISTS MODEL_ID INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE smtng.something ADD COLUMN IF NOT EXISTS NAME STRING
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE smtng.something ADD COLUMN IF NOT EXISTS OWNER_ID INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE stmt_ctrl ADD COLUMN fallback_works BOOL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE stmt_ctrl_sub ADD COLUMN another_to_drop BOOL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE stmt_ctrl_sub ADD COLUMN to_drop BOOL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE supermarket ADD COLUMN age INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN c INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN crdb_internal_idx_expr INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN crdb_internal_idx_expr_2 INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN crdb_internal_mvcc_timestamp INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN e INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN e INT; ALTER TABLE t ADD COLUMN d INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN e string;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN f INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN g INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN x DECIMAL
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN y INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN y INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t ADD COLUMN z INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t OWNER TO fake_user
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t OWNER TO old_role
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t OWNER TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t RENAME TO new_kv
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t RENAME TO r
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t RENAME TO t2;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t RENAME TO t_renamed
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t RENAME to t2
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t1 ADD COLUMN a STRING
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t1 ADD COLUMN x STRING;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t1 ADD COLUMN x t[]
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t1 ADD COLUMN y t
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t158154 OWNER TO user_158154;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t1_add ADD COLUMN c1 BIGINT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t2 RENAME to t
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t4 ADD COLUMN j typ4
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t6 RENAME TO t7
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t61762 ADD COLUMN v INT2VECTOR
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t61762 ADD COLUMN v OIDVECTOR
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t8 ADD COLUMN y typ8
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t97551 ADD COLUMN e enum97551;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_96727_2 ADD COLUMN j INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_alter ADD COLUMN c INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_alter ADD COLUMN d INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_auto_unlock ADD COLUMN k INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_auto_unlock ADD COLUMN l INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_conditional_bump_udt_version ADD COLUMN e1_col e1;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_conditional_bump_udt_version ADD COLUMN i_col INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_schema ADD COLUMN path LTREE
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_ttl_w_expire_at ADD COLUMN new_expire_at TIMESTAMPTZ;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE t_twocol RENAME TO t_twocol_prime;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE tab2 ADD COLUMN j INT
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE table_owner_test OWNER TO tab_owner;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE target OWNER TO john;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE tbl2 ADD COLUMN b typ
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE tbl_rename RENAME TO tbl_renamed
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE tbl_rename_legacy_label RENAME TO tbl_renamed2
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE test.t RENAME TO t2
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE test_serial ADD COLUMN b SERIAL;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE testowner_table OWNER TO testowner
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE to_drop ADD COLUMN foo int;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE toberenamed RENAME TO renamedtable;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE torename RENAME TO t
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE uniq OWNER TO uniq_user;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE ups OWNER TO ups;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE v RENAME TO new_v
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE v2 RENAME to v
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE vals ADD COLUMN y int;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE vx OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE want RENAME TO forlater
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE xy ADD COLUMN curs REFCURSOR;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE xy ADD COLUMN y INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TABLE xy ADD COLUMN z INT;
+
+-- sqlfmt-corpus-separator --
+
+ALTER TYPE db1.sc1.typ OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER TYPE owner_grant_option OWNER TO other_owner
+
+-- sqlfmt-corpus-separator --
+
+ALTER TYPE s.typ OWNER TO fake_user
+
+-- sqlfmt-corpus-separator --
+
+ALTER TYPE s.typ OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER TYPE s.typ OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER TYPE s.typ OWNER TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER TYPE s2.typ OWNER TO root
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser CREATEDB
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser CREATEDB;
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser CREATEROLE;
+  DROP USER testuser2;
+  DROP USER testuser3;
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser NOCREATEDB
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser WITH NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser WITH createdb
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser2 LOGIN
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser2 NOLOGIN
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser2 WITH CREATEDB
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser3 LOGIN
+
+-- sqlfmt-corpus-separator --
+
+ALTER USER testuser3 NOLOGIN
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW IF EXISTS does_not_exist OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW IF EXISTS foo RENAME TO bar
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW foo RENAME TO bar
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW kv RENAME TO new_kv
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW materialized_view RENAME TO newname
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW mvx OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW new_v RENAME TO new_v
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW otherview RENAME TO otherview2
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW s.vx OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW seq OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW test.v RENAME TO v2
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW test.v2 RENAME TO v4
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW test.v2 RENAME TO v5
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW v RENAME TO new_v
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW v RENAME to v2
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW v3 RENAME TO v4
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW vx OWNER TO fake_user
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW vx OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW vx OWNER TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+ALTER VIEW vx OWNER TO testuser;
+ALTER MATERIALIZED VIEW mvx OWNER TO testuser;
+ALTER VIEW s.vx OWNER TO testuser;
+ALTER VIEW vx OWNER TO root;
+ALTER MATERIALIZED VIEW mvx OWNER TO root;
+ALTER VIEW s.vx OWNER TO root;
+
+-- sqlfmt-corpus-separator --
+
+ALTER table tt ADD COLUMN r DECIMAL
+
+-- sqlfmt-corpus-separator --
+
+BEGIN
+
+-- sqlfmt-corpus-separator --
+
+BEGIN ISOLATION LEVEL READ COMMITTED
+
+-- sqlfmt-corpus-separator --
+
+BEGIN ISOLATION LEVEL READ COMMITTED;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN ISOLATION LEVEL READ COMMITTED;
+SELECT * FROM abc;
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN ISOLATION LEVEL READ COMMITTED;
+SELECT * FROM bcd;
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN ISOLATION LEVEL SERIALIZABLE
+
+-- sqlfmt-corpus-separator --
+
+BEGIN ISOLATION LEVEL SERIALIZABLE, ISOLATION LEVEL SERIALIZABLE
+
+-- sqlfmt-corpus-separator --
+
+BEGIN READ ONLY
+
+-- sqlfmt-corpus-separator --
+
+BEGIN READ WRITE
+
+-- sqlfmt-corpus-separator --
+
+BEGIN READ WRITE, READ ONLY
+
+-- sqlfmt-corpus-separator --
+
+BEGIN READ WRITE; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+ALTER TABLE single_stmt_explicit ADD COLUMN b TEXT;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+CREATE DATABASE foo;
+CREATE TABLE t (a INT);
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+CREATE TABLE single_stmt_explicit (a INT PRIMARY KEY);
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+ALTER SCHEMA s RENAME TO foo;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+ALTER TABLE supermarket ADD COLUMN age INT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+CREATE INDEX foo ON supermarket(ends_with, starts_with)
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+CREATE TABLE foo(a INT)
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+DROP TABLE supermarket
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+DROP USER testuser
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+GRANT SELECT ON supermarket TO testuser
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+GRANT USAGE ON SCHEMA public TO testuser
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+GRANT USAGE ON TYPE typ TO testuser
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+SELECT 1;
+GRANT admin TO testuser
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE READ WRITE;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+ALTER SCHEMA sc RENAME TO sc_old;
+ALTER SCHEMA sc_new RENAME TO sc
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+ALTER SCHEMA sc RENAME TO sc_old;
+ALTER SCHEMA sc_new RENAME TO sc;
+CREATE VIEW sc.v AS SELECT 1;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+ALTER SCHEMA sc RENAME TO sc_old;
+CREATE SCHEMA sc;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+ALTER VIEW v RENAME TO v_old;
+ALTER VIEW v_new RENAME TO v
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+ALTER VIEW v RENAME TO v_old;
+CREATE VIEW v AS SELECT 1;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+CREATE SCHEMA sc;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+CREATE TABLE src(x VARCHAR PRIMARY KEY);
+CREATE TABLE dst(x VARCHAR REFERENCES src(x));
+INSERT INTO src(x) VALUES ('example');
+INSERT INTO dst(x) VALUES ('example');
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DECLARE dup CURSOR FOR SELECT 0;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DROP DATABASE db;
+CREATE DATABASE db;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DROP SCHEMA sc CASCADE;
+ALTER SCHEMA sc_old RENAME TO sc;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DROP SCHEMA sc;
+CREATE SCHEMA sc;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DROP TYPE t;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DROP VIEW v;
+ALTER VIEW v_old RENAME TO v
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DROP VIEW v;
+CREATE VIEW v AS SELECT 1;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+INSERT INTO kv (k,v) VALUES (1, cluster_logical_timestamp());
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SELECT * FROM kv;
+INSERT INTO kv (k,v) VALUES (3, cluster_logical_timestamp());
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET LOCAL autocommit_before_ddl = false;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET LOCAL autocommit_before_ddl = false;
+CREATE TABLE enum_checks (x greeting);
+INSERT INTO enum_checks VALUES ('hi'), ('howdy');
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET LOCAL autocommit_before_ddl = false;
+CREATE TABLE sc (x greeting NOT NULL, y int NOT NULL);
+INSERT INTO sc VALUES ('hello', 0), ('howdy', 1), ('hi', 2);
+CREATE INDEX i1 ON sc (x);
+CREATE INDEX i2 ON sc (y);
+CREATE INDEX i3 ON sc (x, y)
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET LOCAL autocommit_before_ddl = false;
+CREATE TABLE t45985 (a INT);
+ALTER TABLE t45985 ADD COLUMN b INT;
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET LOCAL autocommit_before_ddl=off;
+ALTER TABLE t35611 ADD COLUMN b INT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET default_int_size = 4;
+CREATE TABLE t44904(c0 INT);
+INSERT INTO t44904 VALUES(0);
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET default_int_size=4;
+CREATE TABLE late4 (a INT);
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SHOW TABLES FROM sc93002;
+CREATE TABLE sc93002.t(a INT);
+DROP SCHEMA sc93002 CASCADE;
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION READ ONLY
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION; SELECT * FROM system.t; INSERT INTO t(a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION; SELECT 1; COMMIT TRANSACTION
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION; SET TRANSACTION ISOLATION LEVEL REPEATABLE READ; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION; UPDATE kv SET v = 'b' WHERE k in ('a')
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+CLOSE foo
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+CREATE TABLE table_a (a int); CREATE TEMP TABLE table_a (a int);
+INSERT INTO table_a VALUES (1); INSERT INTO pg_temp.table_a VALUES (2); INSERT INTO public.table_a VALUES (3);
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+DECLARE "<unnamed portal 3>" CURSOR FOR SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM a ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM xy ORDER BY x DESC;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM xy ORDER BY x;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+DECLARE foo CURSOR FOR SELECT generate_series(1, 5);
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+DROP SCHEMA sc1 CASCADE;
+ROLLBACK;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+DROP TABLE tt;
+DROP TYPE t;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+INSERT INTO big VALUES(100,'blargh');
+DECLARE foo CURSOR FOR SELECT * FROM big ORDER BY a;
+INSERT INTO big VALUES(101,'argh')
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+INSERT INTO kv (k,v) VALUES ('a', transaction_timestamp());
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+INSERT INTO kv (k,v) VALUES ('b', transaction_timestamp());
+SELECT * FROM kv;
+INSERT INTO kv (k,v) VALUES ('c', transaction_timestamp());
+SELECT * FROM kv;
+INSERT INTO kv (k,v) VALUES ('d', current_timestamp());
+SELECT * FROM kv;
+INSERT INTO kv (k,v) VALUES ('e', current_timestamp());
+SELECT * FROM kv;
+INSERT INTO kv (k,v) VALUES ('f', now());
+SELECT * FROM kv;
+INSERT INTO kv (k,v) VALUES ('g', now());
+SELECT * FROM kv;
+INSERT INTO kv (k,v) VALUES ('h', statement_timestamp());
+SELECT * FROM kv;
+COMMIT;
+SELECT * FROM kv;
+BEGIN;
+SELECT * FROM KV;
+INSERT INTO kv (k,v) VALUES ('i', transaction_timestamp());
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+INSERT INTO uvw SELECT u, v, w FROM
+  generate_series(0, 3) AS u,
+  generate_series(0, 3) AS v,
+  generate_series(0, 3) AS w;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+INSERT INTO uvw SELECT u, v, w FROM
+  generate_series(0, 3) AS u,
+  generate_series(0, 3) AS v,
+  generate_series(0, 3) AS w;
+UPDATE uvw SET u = NULL WHERE u = 0;
+UPDATE uvw SET v = NULL WHERE v = 0;
+UPDATE uvw SET w = NULL WHERE w = 0
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SELECT * FROM KV;
+INSERT INTO kv (k,v) VALUES ('c', transaction_timestamp());
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SELECT x, z FROM test;
+SELECT x FROM test where y=1;
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SET LOCAL IntervalStyle = 'sql_standard'
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SET LOCAL TIME ZONE 'America/Los_Angeles';
+SET IntervalStyle = 'iso_8601'
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SET LOCAL TIME ZONE -10
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SET LOCAL application_name = 'my name is sasha fierce'
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SET LOCAL database = 'alt_db'
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+SET enable_shared_locking_for_serializable = true
+
+-- sqlfmt-corpus-separator --
+
+BEGIN;
+declare a cursor for select * from crdb_internal.gossip_network;
+FETCH 1 FROM a;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; CREATE DATABASE IF NOT EXISTS d2
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; CREATE DATABASE IF NOT EXISTS d2; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; DECLARE bar CURSOR FOR SELECT 1,2,3
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; DECLARE foo CURSOR FOR SELECT * FROM a ORDER BY a;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT * FROM system.namespace LIMIT 1;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT * FROM t; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT * FROM t_53504; COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT * FROM t_53504; SELECT * FROM t_53504; COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT * FROM t_53504; SELECT * FROM t_53504; SELECT * FROM t_53504; COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT 1/0
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT 1; SELECT 1, 2; SELECT 1, 2, 3; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT 1; SELECT 1, 3; SELECT 1, 2, 3, 4; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT 1; SELECT 1, 3; SELECT 1, 2, 3; COMMIT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; SELECT x FROM test where y=1; COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; UPDATE parent_lt SET p = 1 WHERE p = 1
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; UPDATE t SET v = 2 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+BEGIN; UPDATE t SET v = 3 WHERE k = 2; UPDATE t3 SET v = 3 WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+CLOSE "<unnamed portal 2>";
+CLOSE "<unnamed portal 1>";
+
+-- sqlfmt-corpus-separator --
+
+CLOSE "<unnamed portal 3>";
+
+-- sqlfmt-corpus-separator --
+
+CLOSE "a b";
+DECLARE "a\b" CURSOR FOR SELECT 3;
+
+-- sqlfmt-corpus-separator --
+
+CLOSE "a"" b'c";
+DECLARE "a b" CURSOR FOR SELECT 2;
+
+-- sqlfmt-corpus-separator --
+
+CLOSE "a\b";
+
+-- sqlfmt-corpus-separator --
+
+CLOSE ALL
+
+-- sqlfmt-corpus-separator --
+
+CLOSE ALL;
+
+-- sqlfmt-corpus-separator --
+
+CLOSE bar
+
+-- sqlfmt-corpus-separator --
+
+CLOSE curs;
+
+-- sqlfmt-corpus-separator --
+
+CLOSE foo
+
+-- sqlfmt-corpus-separator --
+
+CLOSE foo;
+
+-- sqlfmt-corpus-separator --
+
+CLOSE foo;
+DECLARE foo CURSOR FOR SELECT * FROM a ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN a.id IS 'This is a column.'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN c.a IS 'column'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN d45707.t45707.x IS 'x45707'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN privs.usage_tbl.x IS 'foo'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN public.t1.id IS 'identification'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN public.t1.name IS 'character'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN t.a IS 'a'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN t.a IS 'comment'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN t.b IS 'column b AGAIN';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN t.b IS 'column b';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN t.b IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN t.c IS 'first comment';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON COLUMN t.x IS 'woo'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE a IS 'A'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE a IS 'AAA'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE d IS 'comment'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE d45707 IS 'd45707'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE db IS 'A'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE db IS 'AAA'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE db IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE defaultdb IS 'mydbcomment'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE test IS 'this is the test database'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON DATABASE test is 'foo'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON INDEX b_index IS 'This is an index.'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON INDEX c_a_b_idx IS 'index'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON INDEX c_foo_idx IS 'index_comment'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA comment_db.foo IS 'foo'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA db.schema1 IS 'Database_Schema'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA foo IS 'bar'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA public IS 'test comment';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA public IS 'this is the public schema'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA sc IS 'SC'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA sc IS 'SC_AGAIN'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA sc IS 'this is a schema'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA sc IS NULL
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON SCHEMA test_schema is 'testing schema';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE a IS 'This is a table.'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE a IS 'a_comment'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE c IS 'table'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE d45707.t45707 IS 't45707'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE desc_compat_test IS 'test comment'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE kv IS 'this is a table'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE privs.usage_tbl IS 'foo'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE t IS 'comment'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE t IS 'table t AGAIN';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE t IS 'table t';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE t IS 'waa'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TABLE t IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE address IS 'comment for composite type address';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE legacy_type IS 'test';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_dwellings IS 'First-CRDB-comment-on-types';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_dwellings IS 'First-CRDB-comment-on-types-again';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_dwellings IS 'roach_penthouse coming soon';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_dwellings IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_legs IS 'Second-CRDB-comment-on-types';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_legs IS 'Second-CRDB-comment-on-types-again';
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_legs IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roach_type IS 'This is a test comment on a type'
+
+-- sqlfmt-corpus-separator --
+
+COMMENT ON TYPE roaches IS 'comment for enum type roaches';
+
+-- sqlfmt-corpus-separator --
+
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+COMMIT AND CHAIN
+
+-- sqlfmt-corpus-separator --
+
+COMMIT AND NO CHAIN
+
+-- sqlfmt-corpus-separator --
+
+COMMIT TRANSACTION
+
+-- sqlfmt-corpus-separator --
+
+COMMIT WORK AND CHAIN
+
+-- sqlfmt-corpus-separator --
+
+COMMIT;
+
+-- sqlfmt-corpus-separator --
+
+COMMIT;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM a ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+COMMIT;
+INSERT INTO a SELECT g,g+1 FROM generate_series(4, 100) g(g);
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM a ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+COMMIT;
+INSERT INTO kv VALUES('x', 'y')
+
+-- sqlfmt-corpus-separator --
+
+COMMIT; DROP TABLE table_with_not_null_enum; DROP TYPE enum_with_vals;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE """"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE """test_escaping""""''b""";
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "$peci@l";
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "'db1-a'";
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "Do you like this for a database name?";
+SET database = "Do you like this for a database name?";
+CREATE SCHEMA sc;
+CREATE TABLE sc.foo (i INT8);
+CREATE TABLE foo (i INT8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "E"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "MixedCaseDB"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "defaults-to-system";
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "foo bar"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "foo-bar"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "my database";
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "non-mr-system-database"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "order";
+ALTER DATABASE "order" OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "rEgReSsIoN 105906"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "show partitions"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "show ranges"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "testDatabase"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "user content"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE "with-primary-setting"
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE D
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE IF NOT EXISTS a
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE IF NOT EXISTS d2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE IF NOT EXISTS db1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE IF NOT EXISTS db2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE IF NOT EXISTS othereventlogtest
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE IF NOT EXISTS smtng
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE a
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE a; CREATE TABLE a.c(d INT); INSERT INTO a.public.c(d) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE alt_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE alter_primary_region_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE another_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE another_db;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE atest;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE auth;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE auth_check_db;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE b
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE bar
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE base; CREATE TABLE base.t(x NUMERIC); CREATE TABLE base.u(y STRING);
+CREATE DATABASE newdb; SET database = newdb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE c
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE comment_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE constraint_column
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE constraint_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE create_schemas;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d1
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d1;
+CREATE TABLE d1.t();
+CREATE DATABASE d2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d3
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d34856
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d34862; SET database=d34862
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d35145
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d35145; SET database = d35145;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d35145_2; SET database = d35145_2; DROP DATABASE d35145_2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d4
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d;
+ALTER DATABASE d OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d;
+CREATE TABLE d.public.t50069_a (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d;
+CREATE TABLE d.t (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d;
+GRANT CREATE ON DATABASE d TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d;
+GRANT CREATE ON DATABASE d TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d; CREATE TABLE d.kv (k CHAR PRIMARY KEY, v CHAR);
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d_drop_db_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE d_show_partitions
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE database_108751
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE database_142780
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE database_142783
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE database_145438
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db1
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db106602a
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db106602b
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db1;
+ALTER DATABASE db1 OWNER TO testuser;
+CREATE SCHEMA db1.sc1;
+ALTER SCHEMA db1.sc1 OWNER TO testuser;
+CREATE TABLE db1.sc1.table(n int);
+ALTER TABLE db1.sc1.table OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db2;
+CREATE TABLE db2.t (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db2; CREATE TABLE db2.tbl (a int DEFAULT nextval('db1.seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db3;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db4;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db50997
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db69713;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db;
+CREATE DATABASE db_new
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_121808
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_50712
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_51782
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_73323
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_87672;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_95364;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_create_db_priv
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_enum_name_clash;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE db_type_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE dbt
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE dd; CREATE TABLE dd.kv (k CHAR PRIMARY KEY, v CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE defaultdb;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE deleted_database;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE dfk; SET database=dfk
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE diff_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE drop_me
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE e
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE empty
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE eventlogtest
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE eventlogtorename
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE foo
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE foo; CREATE TABLE foo.bar(x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE foo; SET database = foo; SELECT typname FROM pg_type WHERE typname = 'date'
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE for_show;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE gc_ttl_predefined_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE information_schema
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE initial_multiregion_db;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE namespace_test;
+CREATE DATABASE namespace_test2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE new_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE newdb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE newdb2; SET database = newdb2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE newdb;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE no_region_placement
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE non_mr;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE non_mr_backup;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE non_multi_region_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE non_multiregion_test_db;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE not_multi_region;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE olddb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE other;
+SET DATABASE = 'other'
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE other_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE other_db; SET DATABASE = other_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE otherdb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE otherdb;
+CREATE SCHEMA otherdb.privs;
+CREATE DATABASE otherdb2;
+CREATE SCHEMA otherdb2.privs;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE owner_grant_option
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE partitioning
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE perms
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE postgres
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE privs
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE public; CREATE TABLE public.public.t(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE publicdb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE regression_105906
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE relkinds
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE rename_db1;
+SET DATABASE = rename_db1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE rename_sc1;
+SET DATABASE = rename_sc1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE roachdb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE rootonly;
+CREATE TABLE rootonly.foo(x int);
+CREATE TABLE rootonly.bar(x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE rowtest
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE samename
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE scdrop4_db;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE scdrop6_db;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE second_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE seq
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE sequence_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE should_have_create
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE should_not_have_create
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE showdbindexestest;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE sidb;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE single_region
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE smtng
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE start_off_non_multi_region;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE t
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE t1
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE t2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE tdb_seq_select;
+SET DATABASE = tdb_seq_select;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE temp_priv_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE temp_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test_cycle;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test_db2
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test_escaping;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test_identity
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test_local_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE test_primary_key;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE testdb; CREATE TABLE testdb.foo(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE testuserdb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE thirddb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE tmpdb
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE to_drop
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE to_drop;
+ALTER DATABASE to_drop OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+CREATE DATABASE view_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX "'t1-esc-index'" ON "'db1-a'"."'t1-esc'"(name)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX "'t1-esc-index'" ON "'t1-esc'"(name)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON a (val)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON a((a + (((1,'a')::b).a)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON d.c (i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON data (c DESC, b ASC); CREATE INDEX ON data (b DESC, a);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON kv(x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON privs.usage_tbl (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON simple (x, y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t (b, a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t (y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t(y);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t1(x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t112099_no_index (r);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t112099_no_index (x, r, y);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t115701_no_index (r);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t115701_no_index (x, r, y);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t163346_partial_stats (j)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t67528 (v DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t68254 ((c->'foo'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t_auto_unlock (j)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t_disable_full_ts (id);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t_enum_virtual (v);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t_pab (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON t_regional (b, crdb_region);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON u(x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON v ((b>0));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON v (b);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ON vec_errors (b, vec1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX a_foo ON a (val)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX a_idx ON t (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX a_plus_b ON bf ((a + b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ab_b ON ab (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX abc_b ON abc(b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ad ON t71655 (a, d);
+CREATE INDEX bd ON t71655 (b, d)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX b_asc ON t (b ASC, c DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX b_asc ON tIndx (b ASC, c DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX b_desc ON t (b DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX b_desc ON tIndx (b DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX b_idx ON b (key);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX b_idx ON b(a_id);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX b_index ON a (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON t (b, b);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON t (c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON tIndex ((a+b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON tIndex (b, b);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON tIndex (c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON test.kv (quantity)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON users (title)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar ON warehouse (item)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX bar2 ON tIndex (abs(b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX baz ON ab (i, s)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX baz ON users (name)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX baz ON users (name, title)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX c_idx ON a(c);
+CREATE INDEX a_idx ON a(a);
+CREATE INDEX b_idx ON a(b);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX cc_udf_idx ON cc_udf_t (cc_udf_const());
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX child_name_collision_auto_index_fk_id ON child_name_collision (other_col)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX created_idx ON t(c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX d_idx ON abcd(d)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX discount_idx ON products(discount_price DESC);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX dist_merge_idx_idx ON dist_merge_idx (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON other ((t.a + 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t ((a + 10), (a + 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t ((a + random()::INT))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t ((a + z))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t ((comp + 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t (a, (NULL), b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t (a, (j->'a'));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t (a, (row(a, b)));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t (a, (v::VECTOR(3)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t (crdb_internal_idx_expr_2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX expr_idx ON expr_idx_tbl (id, (json->>'bar'), (length(id)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX expr_idx ON tbl(lower(c));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX fail ON foo (b DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX failview ON v (b DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX failview ON vIndx (b DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON b (parent_id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON child ((crdb_region::TEXT))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON privs (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON refers (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON t (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON t (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON tIndex (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON tIndex (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON test.kv (quantity)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo ON users (name)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX foo_idx ON foo(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX forward_expr on json_backfill ((j->'a'));
+CREATE INDEX forward on json_backfill (j);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX geog_idx ON geo_table(geog)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX geom_idx ON geo_table(geom)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i ON fake2 (a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i ON fk1 (x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i ON t (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i ON t (x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i ON t(x DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i ON t2 (x);
+CREATE INDEX i2 ON t2 (x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i ON v (y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i on information_schema.tables (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i on pg_catalog.pg_tables (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i1 ON sc (x);
+CREATE INDEX i2 ON sc (y);
+CREATE INDEX i3 ON sc (x, y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i1 ON t1(a);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i1 on t42456 (x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i144384 ON t144384(c);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i2 ON fk1 (x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i2 on t42456 (x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i3 on t42456 (x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i_f_asc ON i (f)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX i_f_desc ON i (f DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON mv(v)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON partition_all_by_nothing(pk)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON s (d)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON t (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON t(v, w)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON t(y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON t4 (v)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON tab3(x, (crdb_internal_mvcc_timestamp + 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON tab3(x, (crdb_internal_origin_id + 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON tab3(x, crdb_internal_mvcc_timestamp)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON tab3(x, crdb_internal_origin_id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON tab3(x, tableoid)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON tbl_ifne (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON u (d)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON u (d, a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON u (d, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx ON u (d, c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx1 ON t1 (data)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx1 ON t_idx(k ASC);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx10a ON t10 (data1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx10b ON t10 (data2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx11 ON t11 (data)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx12 ON t12 (data)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx2 ON t (i)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx2 ON t(j);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx2 ON t2 (region, data)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx3 ON t3 (data)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx4 ON t4 (zone, data)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx8 ON t8 (lower(data))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_a ON partial_indexes (a);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_b ON t1(b);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_b ON t161408 (b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_c1 ON bar (c1);
+CREATE INDEX idx_c3 ON bar (c3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_cat_path ON t_multi_idx2 (category, path)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_child_parent_id ON test.child (parent_id)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_create_idx_drop_column ON create_idx_drop_column (c1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_path ON t_index (path)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_path_status ON t_multi_idx (path, status)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_pg_index_backfill ON pg_index_backfill_test(val)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_quantity ON stock (quantity)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_refcursor ON refcursor_tbl (c);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_sort_path ON t_sort (path)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_status_path ON t_multi_idx (status, path)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_tab4_0 ON tab4 (col4,col0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX idx_x ON t(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX ix ON foo(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX j_idx ON customers (j)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX l_idx ON customers (l)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX lower_a ON bf (lower(a::STRING))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX m_idx ON customers (m)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX my_b_index ON other_schema.table_with_indexes(b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX my_b_index ON table_with_indexes(b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX new_idx ON regional_by_row_table(a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX new_idx ON t(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX non_partitioned_idx ON ok1 (c)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX obits_idx ON obits(x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX on column_used_on_unsharded (crdb_internal_a_shard_10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX on seed (_int8, _float8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX on seed (_int8, _float8, _date);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX on t1 (a, b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX on tab0 (a);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX pauseidx ON tbl(j);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX rbr_idx ON regional_by_row_add_drop_col (k)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t1_i ON t1(i);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t72012_idx ON t72012 ((abs(col)));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_a_plus_b_idx ON t ((a + b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_a_plus_b_idx ON t ((a + b));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_a_plus_ten_idx ON t ((a + 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_a_times_two_idx ON t ((a * 2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_cast_idx ON t (a, (NULL::TEXT), b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_idx ON test_tbl_t((2 + test_tbl_f()));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_idx3 ON test_tbl_t((b + test_tbl_f()));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_idx4 ON test_tbl_t(test_tbl_f(), b, (test_tbl_f() + 1));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_index_name_conflicts_with_primary_key_pkey ON t_index_name_conflicts_with_primary_key (a);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_lower_c_a_plus_b_idx ON t (lower(c), (a + b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_lower_c_idx ON t (lower(c))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX tbl_test_v_idx ON tbl_test (v)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX tmp_idx ON db1.sc1.t1(name)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX v_idx ON sc(v)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX woo ON vals(x,y);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX xy_idx ON xy (x, y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX xy_y ON xy (y);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX xy_yx ON xy (y, x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX xyz_y ON xyz(y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX y_idx ON t (y);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX y_idx ON xy(y);
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX yak ON othertable (y, x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW li AS (SELECT 1 AS test_t1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mat_view AS SELECT id, a, b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mat_view AS SELECT id, username, data FROM base_t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mat_view AS SELECT id, val FROM mat_view_source
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mat_view2 AS SELECT id, a, b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW materialized_view_with_null AS SELECT a, NULL AS b, b AS c FROM test_view
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mqt_doc AS SELECT * FROM documents;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv AS SELECT * FROM xy;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv AS SELECT k, v FROM kv
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv AS SELECT name FROM t1
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv AS SELECT x, y, f_scalar() FROM f_setof();
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv1 AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv1 AS SELECT a, b FROM test_view
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv1 AS SELECT c1, CASE WHEN crdb_region = 'us-east-1' THEN 'east' ELSE 'other' END AS region_type FROM t1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_bob_view AS SELECT * FROM rls_docs;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_bob_view2 AS SELECT * FROM rls_docs;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_forced_view AS SELECT * FROM rls_forced;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_owned_view AS SELECT * FROM rls_owned;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_test AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW t76710_2 AS SELECT fingerprint_id FROM crdb_internal.cluster_statement_statistics;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW test.pg_viewdef_mview AS SELECT b, a FROM test.pg_viewdef_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW v AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW v AS SELECT x FROM t29
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW v AS SELECT x, y FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW v1 AS
+    WITH
+        cte1
+            AS (
+                SELECT
+                    aid, t4.pid
+                FROM
+                    t1
+                    INNER JOIN t2 ON t2.said = t1.said AND t2.mid = (SELECT mid FROM t3 WHERE smid = t1.smid)
+                    INNER JOIN t4 ON t4.pid = t2.pid
+                    INNER JOIN t3 ON t3.smid = t1.smid
+            ),
+        cte2
+            AS (
+                SELECT
+                    aid, t4.pid
+                FROM
+                    t5
+                    INNER JOIN t2 ON t2.said = t5.said AND t2.mid = (SELECT mid FROM t3 WHERE smid = t5.smid)
+                    INNER JOIN t4 ON t4.pid = t2.pid
+                    INNER JOIN t3 ON t3.smid = t5.smid
+            )
+    SELECT
+        aid, pid
+    FROM
+        (
+            SELECT aid, pid FROM cte1
+            UNION
+            SELECT aid, pid FROM cte2
+        );
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW v5 AS SELECT currval('view_seq'), i FROM t3
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW v_dup AS SELECT x FROM dup;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW with_options AS SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW cd_v1 AS SELECT a, b FROM cd_v2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW cd_v1 AS SELECT a, b FROM cd_v3;
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW comedies AS SELECT ARRAY[films.*]::string FROM films;
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW db2.replace AS SELECT a+b FROM db1.public.ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW si_view AS
+  SELECT id, username, data FROM base_t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW t AS VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW tview AS SELECT x AS x, (x+1)::STRING AS x1, x+2 AS x2 FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW tview AS SELECT x AS x, x+1 AS x1 FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW tview AS SELECT x AS x, x+1 AS x1, x+2 AS x2 FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW tview AS SELECT x AS x, x+1 AS x1, x+2 AS x2, x+3 AS x3 FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW tview AS SELECT x AS x, x+1 AS x1, x+2 AS x2, x+3 AS x3 FROM t2
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW tview AS SELECT x AS xy, x+1 AS x1, x+2 AS x2 FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW tview AS VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW v AS (SELECT 1 FROM (VALUES (1)) val(i) WHERE 'foo'::db106602a.e = 'foo'::db106602a.e)
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW v3 AS (SELECT 'a' AS k)
+
+-- sqlfmt-corpus-separator --
+
+CREATE OR REPLACE VIEW v3 AS (SELECT 'a'::typ2::string AS k)
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE "none"
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE CURRENT_USER
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE SESSION_USER
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE a;
+CREATE ROLE b;
+GRANT a, b TO testuser;
+ALTER DATABASE d OWNER TO a
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE admin
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE alice LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE alice;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE alter_policy_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE anotherrolewithcreate CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE auth_check_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE aux1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE bob LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE bob;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE can_bypassrls_global;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE can_createdb WITH CREATEDB;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE can_createdb_global;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE can_createrole WITH CREATEROLE;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE can_createrole_global;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE cannot_bypassrls;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE cannot_createdb;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE cannot_createrole;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE child
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE child_role
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE child_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE crdb_internal_otan
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE creator_of_databases
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE creator_of_logins
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE db_owner_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE foo☂
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE granter
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE greeter
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE invalidate;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE jobcontroller
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE jobviewer
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mc;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE meeter
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mix_u
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mv_alice LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mv_bob LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mv_forcedowner LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mv_forcehelper LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mv_helper LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE mv_tblowner LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE my_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE my_user
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE myrole
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE new_role
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE new_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE newgroup
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE newrole LOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE node
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE old_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE other_admin;
+GRANT admin TO other_admin;
+ALTER ROLE other_admin CREATEDB
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE other_admin;
+GRANT admin TO other_admin;
+ALTER ROLE other_admin SET application_name = 'g';
+ALTER ROLE other_admin RESET application_name
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE other_owner
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE otherrole
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE otherrole2 LOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE otherrole4 LOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE owner1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE owner2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE owner;
+CREATE ROLE invoker;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE parent
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE parent1;
+CREATE ROLE child1;
+GRANT parent1 TO child1
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE parent3;
+CREATE ROLE child3
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE parent_role
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE parent_with_createrole
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE parentrole WITH CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE pat LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE pg_otan
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE public
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE r
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE r1
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE r102962
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE r2
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rinvisible
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rls_invoker LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rls_view_owner LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role10;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role11;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role3;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role4;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role5;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role6;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role7;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role8;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role9;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role_bar;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role_foo;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE role_test_login with LOGIN;
+CREATE ROLE role_test_nologin;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolea
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE roleb
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolec
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE roled
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolee
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolef
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE roleg WITH CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE roleh WITH CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolej
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithcreate NOCREATEROLE CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithcreate WITH CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithcreate WITH CREATEROLE CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithcreate WITH NOCREATEROLE CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithcreate WITH NOCREATEROLE NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithcreate3 WITH CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithlogin LOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithnologin NOLOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE rolewithoutcreate WITH NOCREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE root
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE schema_owner
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE self_referencing_role
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE some_users
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE table_owner;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE test1;
+CREATE ROLE test2;
+GRANT test1, test2 TO root;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE test3;
+CREATE ROLE test4;
+GRANT test3, test4 TO root;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE test_role LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE test_role1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE test_role2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE test_set_role;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE test_set_role;
+CREATE DATABASE test_set_db
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testrole
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testrole3 LOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testrole;
+REVOKE admin FROM testuser2;
+GRANT testuser TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser2
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser2 WITH LOGIN;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser2;
+GRANT CREATE ON DATABASE test TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser4
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser4;
+GRANT testuser4 TO root;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser6
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE testuser;
+GRANT CREATE ON DATABASE test TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE thisshouldntwork LOGIN LOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE thisshouldntwork LOGIN NOLOGIN
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE tmp;
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE u_create_role_priv
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE user1
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE user2
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE user4 CREATEROLE
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE user_158154
+
+-- sqlfmt-corpus-separator --
+
+CREATE ROLE view_owner;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "'db1-a'".sc1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "'db1-a'".sc2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "Another-Schema"
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "MixedCase"
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "MixedCaseDB"."MixedCaseSchema"
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "rEgReSsIoN 105906"
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "testSchema"
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA "➖➖"
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA IF NOT EXISTS crdb_internal
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA IF NOT EXISTS create_schemas.schema1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA IF NOT EXISTS derp
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA IF NOT EXISTS information_schema
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA IF NOT EXISTS pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA IF NOT EXISTS public
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA SC1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA SC2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA a.s
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA acl_test_schema
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA another_db.seq_schema_allow;
+CREATE SCHEMA another_db.seq_schema_deny;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA comment_db.foo
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA concurrent_drop_sc;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA crdb_internal
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA create_schemas.schema1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA d1.s1
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA d1.s2
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA d1.s3
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA d1.s4
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA d2.s1
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA d2.s2
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA db.schema1
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA db1.sc1
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA db2.s1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA db2.sc3;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA db_new.sc
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA derp
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA drop_me
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA drop_schema_with_triggers;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA dropped
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA droptest;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA empty;
+DROP SCHEMA empty
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA foo
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA foo;
+CREATE SCHEMA bar
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA information_schema
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA my_pg_temp_123_123;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA myschema
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA myschema2
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA myschema2;
+CREATE TABLE myschema2.tb2 (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA myschema;
+CREATE TABLE myschema.abc();
+CREATE TABLE abc();
+SELECT table_schema, table_name FROM information_schema.tables WHERE table_name = 'abc';
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA new_db.s1
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA newsc
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA oldsc
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA other_sc
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA other_schema
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA other_schema;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA otherschema;
+SET search_path=invalidschema,otherschema,public
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA owner_grant_option
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA pg_temp
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA privs
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA public
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA regression_105906
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA roach_prod;
+CREATE SCHEMA roach_dev;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA roachema;
+GRANT USAGE ON SCHEMA roachema TO public;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA root;
+CREATE TABLE root.root_table ();
+CREATE SCHEMA testuser;
+GRANT ALL ON SCHEMA testuser TO testuser;
+CREATE TABLE testuser.testuser_table ();
+GRANT ALL ON TABLE testuser.testuser_table TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s1
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s2
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s3
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s4
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s5
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s;
+ALTER SCHEMA s OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s;
+CREATE SCHEMA s2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s;
+CREATE TABLE s.t()
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s;
+GRANT CREATE ON SCHEMA s TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s_72322
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA s_seqname
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA samename
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc1
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc102962
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc2
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc64398;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc93002
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc;
+COMMENT ON SCHEMA defaultdb.sc IS 'This is a schema';
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc;
+CREATE SCHEMA sc_new
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc;
+CREATE TABLE sc.xy (x INT, y INT);
+INSERT INTO sc.xy VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc_95364;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc_rls_dep;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc_test_priv;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sc_tr_dep;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA scdrop1;
+CREATE SCHEMA scdrop2;
+CREATE SCHEMA scdrop3;
+CREATE TABLE scdrop1.scdrop1_t1 (x INT);
+CREATE TABLE scdrop1.scdrop1_t2 (x INT);
+CREATE TABLE scdrop2.scdrop2_t1 (x INT);
+CREATE VIEW scdrop2.scdrop2_v1 AS SELECT x FROM scdrop1.scdrop1_t1;
+CREATE VIEW scdrop3.scdrop3_v1 AS SELECT x FROM scdrop2.scdrop2_v1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA scdrop4_db.scdrop4;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA scdrop4_db.scdrop4;
+CREATE SCHEMA scdrop5;
+CREATE SCHEMA scdrop6_db.scdrop6;
+CREATE TABLE scdrop4_db.scdrop4.scdrop4_t1 (x INT);
+CREATE TABLE scdrop5.scdrop5_t1 (x INT);
+CREATE TABLE scdrop6_db.scdrop6.scdrop6_t1 (x INT);
+CREATE VIEW scdrop4_db.scdrop4.scdrop4_v1 AS SELECT x FROM scdrop4_db.scdrop4.scdrop4_t1;
+CREATE VIEW scdrop5.scdrop5_v1 AS SELECT x FROM scdrop5.scdrop5_t1;
+CREATE VIEW scdrop6_db.scdrop6.scdrop6_v1 AS SELECT x FROM scdrop6_db.scdrop6.scdrop6_t1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA scdrop5;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA scdrop6_db.scdrop6;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA sch;
+CREATE TABLE sch.table_to_rename();
+CREATE TABLE sch.table_exists();
+CREATE TABLE public_table_to_rename();
+CREATE TABLE public_table_exists();
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA schema; CREATE TABLE schema.bar (y INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA schema_123539;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA schema_a
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA schema_to_drop;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA system.schema3;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA system;
+CREATE TABLE system.comments (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA test
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA test2
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA test;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA test_sc
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA test_schema
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA test_schema;
+CREATE TABLE test_schema.test (
+  a INT PRIMARY KEY,
+  b INT
+);
+CREATE index on test_schema.test(b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA testing
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA testuser_s2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA testuser_s;
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA the_schema
+
+-- sqlfmt-corpus-separator --
+
+CREATE SCHEMA yourschema
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE  t1 (k INT PRIMARY KEY, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE """".t (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "$peci@l".table1 (key1 INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "$peci@l".table2 (key2 INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "'db1-a'"."'t1-esc'"(name int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "'t1-esc'"(name int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "Another-Schema"."DuplicateTable"(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "MixedCase" ("Col1" INT, "Col2" INT, "Col3" INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "MixedCase"."DuplicateTable"(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "MixedTable"(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "foo-bar".t(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "purchase" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "amount" amount NOT NULL,
+    "timestamp" TIMESTAMP NOT NULL DEFAULT now()
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "quotedCase" (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "regression_53686""" (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "show ranges".t (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE "testSchema"."testTable" (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE Amelie("Amélie" INT, "Amélie" INT); INSERT INTO Amelie VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS a (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS attrdef_test (id INT PRIMARY KEY, val TEXT DEFAULT 'hello')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS b (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS chain_test (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS cpk (
+  key VARCHAR(255) NOT NULL,
+  value INTEGER NOT NULL,
+  extra INTEGER NOT NULL,
+  PRIMARY KEY (key, value)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS db1.t ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS db2.t ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS drop_earlier_hash_column (
+    i INT PRIMARY KEY,
+    j INT,
+    k INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS example (
+  id SERIAL PRIMARY KEY
+ ,value string NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS multipleinstmt (
+	key STRING PRIMARY KEY, value STRING
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS new_table();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS parent_cascade (p INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS smtng.something (
+ID SERIAL PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS t1 (
+  id1 UUID NOT NULL DEFAULT gen_random_uuid(),
+  id2 UUID NOT NULL DEFAULT gen_random_uuid(),
+  ts TIMESTAMPTZ NOT NULL DEFAULT statement_timestamp(),
+  val JSONB,
+  PRIMARY KEY(id1, id2)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS t43894 (PRIMARY KEY (a), a UUID NOT NULL, b JSONB NOT NULL DEFAULT '5')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE IF NOT EXISTS t_48638 (
+  key INTEGER NOT NULL,
+  value INTEGER NOT NULL,
+  PRIMARY KEY (key, value))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE J1_TBL ( i integer, j integer, t text )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE J2_TBL ( i integer, k integer )
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE MaxIntTest (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE NumToSquare (x INT PRIMARY KEY, xsquared INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE NumToStr (y INT PRIMARY KEY, str STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE PARENT_TABLE_A(id UUID PRIMARY KEY);
+CREATE TABLE CHILD_TABLE_B(
+  id UUID PRIMARY KEY,
+  a_id UUID,
+  CONSTRAINT fk_b_to_a FOREIGN KEY (a_id) REFERENCES PARENT_TABLE_A (id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE T1_FOR_SEQ (C1 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEST1 (COL1 SERIAL PRIMARY KEY, COL2 INT8, COL3 INT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEST1 (COL1 SERIAL PRIMARY KEY, COL2 INT8, COL3 INT8, CONSTRAINT duplicate_name FOREIGN KEY (col2) REFERENCES TEST2(COL1), CONSTRAINT duplicate_name FOREIGN KEY (col3) REFERENCES TEST2(COL1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TEST2 (COL1 SERIAL PRIMARY KEY, COL2 INT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE TIMESTAMPTZ_TBL (id SERIAL, d1 timestamp(2) with time zone);
+INSERT INTO TIMESTAMPTZ_TBL (d1) VALUES
+  ('1997-06-10 17:32:01 -07:00'),
+  ('2001-09-22T18:19:20');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE T_FOR_FUNCTION (C1 INT, C2 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE __test_array_agg(a TEXT PRIMARY KEY, b TEXT, c TEXT);
+INSERT INTO __test_array_agg VALUES ('a', 'b', 'c'), ('aa', 'bb', 'cc'), ('aaa', 'bbb', 'ccc');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  id INT PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  id STRING PRIMARY KEY
+ ,x INT
+ ,UNIQUE (id, x)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  id STRING PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  id1 INT
+ ,id2 INT
+ ,PRIMARY KEY (id2, id1)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  id_a_1 INT UNIQUE,
+  id_a_2 INT,
+  PRIMARY KEY (id_a_1, id_a_2)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  x INT
+ ,y INT
+ ,UNIQUE (x, y)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  x STRING NULL
+ ,y STRING NULL
+ ,CONSTRAINT "primary" PRIMARY KEY (y, x)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  x STRING NULL
+ ,y STRING NULL
+ ,z STRING NULL
+ ,CONSTRAINT "primary" PRIMARY KEY (z, y, x)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  x STRING NULL,
+  y STRING NULL,
+  CONSTRAINT "primary" PRIMARY KEY (y, x)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  x STRING NULL,
+  y STRING NULL,
+  z STRING NULL,
+  CONSTRAINT "primary" PRIMARY KEY (z, y, x)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (
+  x STRING NULL,
+  y STRING NULL,
+  z STRING NULL,
+  CONSTRAINT "primary" PRIMARY KEY (z, y, x)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT DEFAULT (((1, 'hi')::t).a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT PRIMARY KEY, b INT);
+INSERT INTO a VALUES (1, 2), (2, 3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT PRIMARY KEY, t TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT, b INT, c INT4, PRIMARY KEY (a, b));
+INSERT INTO a SELECT g//2, g, g FROM generate_series(0,2000) g(g)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a INT, b INT, c INT4, PRIMARY KEY (a, b));
+RESET vectorize;
+INSERT INTO a SELECT g//2, g, g FROM generate_series(0,2000) g(g);
+SET vectorize = experimental_always
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a STRING DEFAULT 'a')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a TEXT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a int); INSERT INTO a VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b BOOL[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b BYTES[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b DATE[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b DECIMAL[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b FLOAT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b INTERVAL[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b INT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b OID[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b SMALLINT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b STRING[] COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b STRING[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b TIMESTAMP[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (b UUID[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (i int); INSERT INTO a VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (id INT PRIMARY KEY, b INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (id INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (id SERIAL NOT NULL, self_id INT, b_id INT NOT NULL, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (id int UNIQUE, name string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (j JSONPATH)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (j JSONPATH[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (k INT PRIMARY KEY, i INT, f FLOAT, s STRING, j JSON);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (k INT, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (k STRING PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (v tsvector, q tsquery)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a (x INT PRIMARY KEY, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(a INT DEFAULT nextval('owned_seq'));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(a INT PRIMARY KEY, b TEXT);
+INSERT INTO a VALUES(1,'2')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(a INT, b INT, c INT, PRIMARY KEY(a, b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(a1 INT, a2 INT, a3 INT, a4 INT, PRIMARY KEY(a1, a2, a3, a4))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a(x INT, y INT, CONSTRAINT Foo PRIMARY KEY(x)); CREATE INDEX I ON a(y)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a.b (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a.c (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a1 (
+  k INT PRIMARY KEY,
+  a INT[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a47704 (foo UUID);
+CREATE TABLE b47704 (foo UUID)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE a_50712(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE aa (
+  a INT,
+  b INT,
+  UNIQUE (a, b)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (
+  a INT PRIMARY KEY,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (
+  s STRING,
+  i INT
+); INSERT INTO ab VALUES ('a', 1), ('b', 1), ('c', 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a INT PRIMARY KEY, b INT);
+INSERT INTO ab VALUES (1, 10), (2, 20), (3, 30), (4, 40);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a INT PRIMARY KEY, b INT); INSERT INTO ab(a, b) VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a INT, b INT);
+CREATE VIEW vab (x) AS SELECT ab.a FROM ab, ab AS ab2
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a INT4, b INT8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a TEXT, b TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab(
+    a INT PRIMARY KEY,
+    b INT, CHECK (b < 1)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab(a INT DEFAULT nextval('owned_seq'), b INT DEFAULT nextval('owned_seq'));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab(a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ab104009(a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (
+  a STRING,
+  b STRING,
+  c STRING,
+  PRIMARY KEY (a, b, c)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (
+  a VARCHAR PRIMARY KEY,
+  b FLOAT,
+  c BOOLEAN,
+  d DECIMAL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (a INT PRIMARY KEY, b INT, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (a INT, b INT, C INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (a INT, b INT, c INT);
+CREATE VIEW vabc AS SELECT abc.a, abc2.b, abc3.c FROM abc, abc AS abc2, abc AS abc3
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (a INT, b INT, c INT, PRIMARY KEY (a, b));
+INSERT INTO abc VALUES (1, 1, 2), (2, 1, 1), (2, 2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (a INT, b INT, c INT, PRIMARY KEY (a, c));
+INSERT INTO abc VALUES (1, 1, 2), (2, 1, 1), (2, NULL, 2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc (a int primary key, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc(a INT DEFAULT nextval('seq'), b INT default nextval('seq'), c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc_check (a int primary key, b int, c int, check (a > 0), check (b > 0 AND b < 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc_check(
+    a INT PRIMARY KEY,
+    b INT,
+    c INT,
+    CHECK (b < 1),
+    CHECK (c > 1)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abc_decimal (a DECIMAL, b DECIMAL, c DECIMAL);
+INSERT INTO abc_decimal VALUES (1, 1, 1), (1, 1, 1), (1.0, 1.0, 1.0), (1.00, 1.00, 1.00)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abcd (a INT, b INT, c INT, d INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE abcd(
+  a INT PRIMARY KEY,
+  b INT,
+  c INT,
+  d INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ac (a INT, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE accounts (
+    id INT PRIMARY KEY,
+    owner TEXT,
+    balance INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE acl_mid_upgrade (id INT PRIMARY KEY, acl aclitem)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE acl_test (id INT PRIMARY KEY, acl aclitem)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE aclitem_test (a aclitem)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE add_col_test_tbl (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE add_default (a int primary key, b int not null)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE add_self_fk_fail (k int primary key, a int unique, b int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE aggtab (a INT PRIMARY KEY);
+INSERT INTO aggtab (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE all_null (k INT PRIMARY KEY, c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE all_tab (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE all_types (
+    _bool        BOOL,
+    _bytes       BYTES,
+    _date        DATE,
+    _decimal     DECIMAL,
+    _int2        INT2,
+    _int4        INT4,
+    _int         INT8,
+    _oid         OID,
+    _float       FLOAT8,
+    _string      STRING,
+    _uuid        UUID,
+    _timestamp   TIMESTAMP,
+    _timestamptz TIMESTAMPTZ,
+    _interval    INTERVAL,
+    _inet        INet,
+    _json        JSON
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_db.t();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_table_add_column_with_invalid_geometry_expression (
+  id INT PRIMARY KEY
+);
+INSERT INTO alter_table_add_column_with_invalid_geometry_expression VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_table_alter_primary_key_duplicate_storage_params_a (
+  a INT PRIMARY KEY,
+  b TEXT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE alter_table_duplicate_storage_params_a (
+  a INT PRIMARY KEY,
+  b TEXT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE anon_args(k INT PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE any_tab (
+  a INT,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE anykey_json_tab (
+  a INT PRIMARY KEY,
+  b JSONB
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arbiter_index (a INT, b INT, c INT, PRIMARY KEY (a, b), UNIQUE (c))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arr (x INT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arr_composite_tab (x arr_composite)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arr_t (i STRING DEFAULT ('{a}'::_typ)[1]::STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arr_t2 (i typ DEFAULT ('{a, b, c}'::typ[])[2])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arr_t4 (i typ DEFAULT ARRAY['a'::typ][1], j typ DEFAULT ARRAY['a'::typ, 'b'::typ, 'c'::typ][2])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arr_t5 (i typ[] default ARRAY['a'::typ, 'b'::typ])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE array_tab (
+  a INT PRIMARY KEY,
+  b INT[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE array_tab_not_idx (
+  a INT PRIMARY KEY,
+  b INT[]
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE array_test_t (statuses STRING[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arrays (ips INET[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE arrays (times TIME[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast (
+  c CHAR,
+  vc VARCHAR(1),
+  qc "char",
+  b BIT,
+  i INT,
+  i2 INT2,
+  f4 FLOAT4,
+  t timestamp,
+  d DECIMAL(10, 0),
+  a DECIMAL(10, 0)[],
+  s STRING,
+  ca CHAR[],
+  vba VARBIT(1)[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast_char_default (
+  c CHAR DEFAULT 'foo'::TEXT,
+  c2 CHAR(2) DEFAULT 'bar',
+  qc "char" DEFAULT 'baz'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast_dec_default (
+  k INT,
+  d DECIMAL(10, 0) DEFAULT 1.56::DECIMAL(10, 2),
+  d1 DECIMAL(10, 1) DEFAULT 1.58
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast_do_nothing (
+  k INT PRIMARY KEY,
+  d DECIMAL(10, 0) UNIQUE,
+  c CHAR UNIQUE
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast_do_update (
+  k INT PRIMARY KEY,
+  d DECIMAL(10, 0) UNIQUE,
+  c CHAR UNIQUE
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast_int_default (
+  k INT,
+  -- TODO(mgartner): This should not cause the CREATE TABLE statement to fail.
+  -- See #74090.
+  -- i1 INT2 DEFAULT 9999999,
+  i2 INT2 DEFAULT 9999999::INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast_p (p DECIMAL(10, 2) PRIMARY KEY, d DECIMAL(10, 2) UNIQUE);
+INSERT INTO assn_cast_p VALUES (1.0, 10.0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE assn_cast_upsert (
+  k INT PRIMARY KEY,
+  c CHAR,
+  qc "char",
+  i2 INT2,
+  d DECIMAL(10, 0),
+  a DECIMAL(10, 0)[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE atyp(a t[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE audit_log (
+    id SERIAL PRIMARY KEY,
+    table_name TEXT,
+    operation TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE audit_log (op TEXT, val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE audit_log (src TEXT, val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE author (
+  id INT PRIMARY KEY,
+  name TEXT,
+  genre TEXT
+);
+INSERT INTO author VALUES
+  (1, 'Alice', 'Action'),
+  (2, 'Bob', 'Biography'),
+  (3, 'Carol', 'Crime'),
+  (4, 'Dave', 'Action'),
+  (5, 'Eve', 'Crime'),
+  (6, 'Bart', null);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE authors (name STRING, book STRING);
+INSERT INTO authors VALUES
+  ('Hal Abelson', 'SICP'),
+  ('Geral Jay Sussman', 'SICP'),
+  ('Thomas H Cormen', 'Intro to Algo'),
+  ('Charles E Leiserson', 'Intro to Algo'),
+  ('Ronald Rivest', 'Intro to Algo'),
+  ('Clifford Stein', 'Intro to Algo'),
+  ('Donald Knuth', 'Art of Computer Programming')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  a_y STRING NULL
+ ,a_x STRING NULL
+ ,a_z STRING NULL
+ ,CONSTRAINT fk_ref FOREIGN KEY (a_z, a_y, a_x) REFERENCES a (z, y, x)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  a_y STRING NULL
+ ,a_x STRING NULL
+ ,a_z STRING NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  a_y STRING NULL
+ ,a_x STRING NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  a_y STRING NULL,
+  a_x STRING NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  a_y STRING NULL,
+  a_x STRING NULL,
+  a_z STRING NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  id_b_1 INT,
+  id_b_2 INT,
+  PRIMARY KEY (id_b_1, id_b_2),
+  CONSTRAINT my_fkey FOREIGN KEY (id_b_1, id_b_2) REFERENCES a (id_a_1, id_a_2)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  id_b_1 INT,
+  id_b_2 INT,
+  id_b_3 INT,
+  PRIMARY KEY (id_b_1, id_b_2, id_b_3),
+  CONSTRAINT my_fkey FOREIGN KEY (id_b_1) REFERENCES a (id_a_1)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+  id_b_1 INT,
+  id_b_2 INT,
+  id_b_3 INT,
+  PRIMARY KEY (id_b_1, id_b_2, id_b_3),
+  CONSTRAINT my_fkey FOREIGN KEY (id_b_1, id_b_2) REFERENCES a (id_a_1, id_a_2)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (
+ a_y STRING NULL
+ ,a_x STRING NULL
+ ,CONSTRAINT fk_ref FOREIGN KEY (a_y, a_x) REFERENCES a (y, x)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b ( key INT );
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (a INT, b INT, c STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (a INT, b STRING, PRIMARY KEY (b,a));
+INSERT INTO b VALUES
+  (0, 'a'),
+  (1, 'a'),
+  (0, 'b'),
+  (1, 'b');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (a INTEGER PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (a int, b int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (b BOOLEAN DEFAULT false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (b INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (b int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (i int, b bool); INSERT INTO b VALUES (2, true), (3, true), (4, false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (id INT PRIMARY KEY, id INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (id INT PRIMARY KEY, id2 INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (id INT, a_id INT, FOREIGN KEY (a_id) REFERENCES a (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (id SERIAL NOT NULL, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (j JSONB)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (parent_id INT REFERENCES parent(id));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b (x INT, y INT);
+INSERT INTO b VALUES (1, 10), (2, 20), (3, 30)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b(b INT DEFAULT nextval('seq'));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b(b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b.a (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b.t (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b.t()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b.t2 (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE b26483()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE backfill_a (i INT, s STRING, j JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE backfill_b (i INT, s STRING, j JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE backfill_c (i INT, j JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE backfill_d (i INT, s enum, j JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE backfill_test (
+  id INT PRIMARY KEY,
+  username STRING COLLATE en_US_u_ks_level2,
+  data INT NOT NULL,
+  enc VECTOR(3),
+  prefix_enc VECTOR(3)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad (a INT CHECK(sum(a) > 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad (a INT CHECK(sum(a) OVER () > 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad (a INT DEFAULT count(1) OVER ())
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad (a INT DEFAULT count(1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad (crdb_internal_mvcc_timestamp int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad (tableoid int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad_geog_table(bad_pk geography primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bad_geom_table(bad_pk geometry primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE badtable (b INT2VECTOR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE badtable (b INT[][])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bar (
+  a INT,
+  b FLOAT,
+  c FLOAT,
+  d INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bar (a int PRIMARY KEY, c int); INSERT INTO bar VALUES (0, 1), (1, 2), (2, 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bar (c1 INT, c3 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bar (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bar(x INT, CHECK(pg_typeof(123) = 'bigint'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE base_t (
+  id INT PRIMARY KEY,
+  username TEXT,
+  data TEXT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE baz (
+  id   int NOT NULL,
+  name varchar NOT NULL,
+  PRIMARY KEY (id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE baz (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bbox_units (d INT PRIMARY KEY, f FLOAT4);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bf (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bf (a enum)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE big (i INT PRIMARY KEY);
+INSERT INTO big SELECT generate_series(1, 20000)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bit_count_test (a BIT(3), b varbit, c bytea)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bits (b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blindcput (
+  x INT,
+  v INT,
+  PRIMARY KEY (x)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blocker();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blocks (
+  block_id  INT,
+  writer_id STRING,
+  block_num INT,
+  raw_bytes BYTES,
+  PRIMARY KEY (block_id, writer_id, block_num)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blocks (block_id INT PRIMARY KEY, raw_bytes BYTES NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blog(
+  id string NOT NULL,
+  name string NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blog_posts (id INT PRIMARY KEY DEFAULT nextval('blog_posts_id_seq'), title text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blog_posts (id INT PRIMARY KEY, val int DEFAULT nextval('sq1'), title text);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blog_posts2 (id INT PRIMARY KEY, val int DEFAULT nextval('sq1'), title text);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE blog_properties(
+  blog_id string NOT NULL,
+  property_name string NOT NULL,
+  property_value string NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE books (title STRING, edition INT, shelf INT, PRIMARY KEY (title, edition));
+INSERT INTO books VALUES
+  ('SICP', 1, 2),
+  ('Intro to Algo', 1, 1),
+  ('Intro to Algo', 2, 1),
+  ('Intro to Algo', 3, 2),
+  ('Art of Computer Programming', 1, 2),
+  ('Art of Computer Programming', 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE books2 (title STRING, edition INT, shelf INT, PRIMARY KEY (title, edition));
+INSERT INTO books2 VALUES
+  ('SICP', 1, 2),
+  ('Intro to Algo', 1, 1),
+  ('Intro to Algo', 2, 1),
+  ('Intro to Algo', 3, 2),
+  ('Art of Computer Programming', 1, 2),
+  ('Art of Computer Programming', 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bool_table (a bool PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE boolean_table (
+  id INTEGER PRIMARY KEY NOT NULL,
+  value BOOLEAN
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bools (a INT, b BOOL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bools (b BOOL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bools (b BOOL, i INT, PRIMARY KEY (b, i)); INSERT INTO bools VALUES (true, 0), (false, 1), (true, 2), (false, 3);
+CREATE TABLE nulls (a INT, b INT);
+INSERT INTO nulls VALUES (NULL, NULL), (NULL, 1), (1, NULL), (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE box2d_tbl (
+  dsc string PRIMARY KEY,
+  b box2d
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE builtin_test (x STRING, y INT);
+INSERT INTO builtin_test VALUES ('Hello', 3), ('There', 2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bypassrls (id INT PRIMARY KEY, val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bytes_string(_group INT, _bytes BYTES, _string STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE bytes_t (
+  b BYTES PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c (a INT, b INT, PRIMARY KEY (a, b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c (a INT, b STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c (c CHAR DEFAULT 'c')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c (c INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c (c_id INT PRIMARY KEY, bill TEXT);
+CREATE TABLE o (o_id INT PRIMARY KEY, c_id INT, ship TEXT);
+INSERT INTO c VALUES
+    (1, 'CA'),
+    (2, 'TX'),
+    (3, 'MA'),
+    (4, 'TX'),
+    (5, NULL),
+    (6, 'FL');
+INSERT INTO o VALUES
+    (10, 1, 'CA'), (20, 1, 'CA'), (30, 1, 'CA'),
+    (40, 2, 'CA'), (50, 2, 'TX'), (60, 2, NULL),
+    (70, 4, 'WY'), (80, 4, NULL),
+    (90, 6, 'WA');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c(c1 INT, c2 INT, c3 INT, c4 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c.t (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE c1 (
+  a STRING COLLATE en_u_ks_level1 PRIMARY KEY,
+  b STRING COLLATE en_u_ks_level1
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE calls_func (a INT CHECK(abs(a) < 2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cast_udf_enum_t (c STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_array_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_builtins_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_case_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_casts_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_coalesce_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_mixed_t (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_multi_stmt_alter_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_multi_t (x INT PRIMARY KEY, y INT, label TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_multi_unnamed_t (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_ordinal_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_param_t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_strict_t (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cc_udf_t (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cd (c INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cd (c INT, d INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cd104009(c INT PRIMARY KEY, d INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE chars (
+  bp BPCHAR,
+  c CHAR(20)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_table (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_table (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_table (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE check_table (k INT PRIMARY KEY, a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (
+  k INT PRIMARY KEY,
+  parent_k INT,
+  crdb_region crdb_internal_region,
+  CONSTRAINT foo FOREIGN KEY (crdb_region, parent_k) REFERENCES parent_rbr (crdb_region, k)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (a INT PRIMARY KEY, b INT REFERENCES parent (b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (a INT REFERENCES t(crdb_internal_idx_expr_2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (c INT PRIMARY KEY, p INT NOT NULL REFERENCES parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (c INT PRIMARY KEY, p INT NOT NULL REFERENCES parent(p));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (c INT PRIMARY KEY, p INT REFERENCES db1.public.parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child (c INT PRIMARY KEY, p INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child1 (c INT PRIMARY KEY, p INT REFERENCES parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child2 (c INT PRIMARY KEY, p INT REFERENCES db1.public.parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child2 (c INT PRIMARY KEY, p1 INT, p2 INT, FOREIGN KEY (p1, p2) REFERENCES parent2 (p1, p2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child2 (k INT PRIMARY KEY, v INT REFERENCES parent(k));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_54265 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_71089 (a INT, b INT REFERENCES parent_71089 (id) NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_composite_index (id SERIAL NOT NULL, parent_a_id INT, parent_b_id INT, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_duplicate_cols (id INT, parent_id INT, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_implicit2 (
+  z INT,
+  y INT,
+  x INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_lt (c INT PRIMARY KEY, p INT REFERENCES parent_lt (p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_name_collision (id SERIAL NOT NULL, parent_id INT, other_col INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE child_u (c INT PRIMARY KEY, u INT NOT NULL REFERENCES parent(u))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE childid (
+    id INT NOT NULL PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE citext_with_width_tbl (a CITEXT(10));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE class (k CHAR PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cnt (counter INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE col_cascade_t1 (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE col_cascade_t2 (id INT PRIMARY KEY, a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE collation_name_case (s STRING COLLATE en_us_u_ks_level2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE colref (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY);
+CREATE TABLE colsource (id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE colref (rename_c1 INT, rename_c2 INT, C3 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE coltab (a STRING COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE column_add (x greeting);
+INSERT INTO column_add VALUES ('hello')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE comp (v typ);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE companies(
+  id string PRIMARY KEY,
+  company_name string NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE composite_citext_tbl (k INT PRIMARY KEY, a ctype);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE composite_test_t (id INT, coord STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE compound_pk (
+  cust_id INT NOT NULL,
+  dept_id INT NOT NULL,
+  embedding VECTOR(3),
+  PRIMARY KEY (cust_id, dept_id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE concurrent_drop_sc.t1 (id INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE conflict (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE const (a INT, b INT,
+CONSTRAINT id_unique UNIQUE (a),
+CONSTRAINT b_unique UNIQUE (b)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE constraint_db.t1 (
+  p FLOAT PRIMARY KEY,
+  a INT UNIQUE CHECK (a > 4),
+  CONSTRAINT c2 CHECK (a < 99)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE corr (
+  k INT PRIMARY KEY,
+  i INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE corr2 (i INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE corrupt_backref_fk (k INT PRIMARY KEY, v STRING);
+INSERT INTO corrupt_backref_fk (k, v) VALUES (1, 'a');
+CREATE TABLE corrupt_fk (k INT NOT NULL, FOREIGN KEY (k) REFERENCES corrupt_backref_fk (k));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE corrupt_backref_view (k INT PRIMARY KEY, v STRING);
+INSERT INTO corrupt_backref_view (k, v) VALUES (1, 'a');
+CREATE VIEW corrupt_view AS SELECT k, v FROM corrupt_backref_view
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE corrupt_combine (
+  y float,
+  x float
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE corruptdesc (v INT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE crdb_internal.example (abc INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE crdb_internal.t (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE create_idx_drop_column (c0 INT PRIMARY KEY, c1 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE create_index_concurrently_tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE create_index_duplicate_storage_params_a (
+  a INT PRIMARY KEY,
+  b INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE create_inverted_index_duplicate_storage_params_a (
+  a INT PRIMARY KEY,
+  b JSONB
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE create_table_with_as_duplicate_storage_params_a (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cross_error (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE cross_error (x other.t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE current_time_test (
+  id INTEGER PRIMARY KEY,
+  a TIMETZ(3) DEFAULT CURRENT_TIME,
+  b TIMETZ DEFAULT CURRENT_TIME
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customers (
+    id INT PRIMARY KEY,
+    name TEXT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customers (id INT PRIMARY KEY, email STRING UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customers (k CHAR PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE customers(id INT PRIMARY KEY NOT NULL); CREATE TABLE orders(id INT, cust INT REFERENCES customers(id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (
+  a INT PRIMARY KEY,
+  b JSONB
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (
+  id    INT PRIMARY KEY NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (a INT, j JSON);
+CREATE INDEX json_expr_index on d ((j->'a'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (d DATE DEFAULT '1999-12-31')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (d INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (i INT, v DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d (x DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.a (
+  id STRING PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.a ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.c (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.kv2 (k CHAR PRIMARY KEY, v CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.t()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.t1 (x d.d_t);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.t2 (y d.d_t[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d.t2();
+ALTER TABLE d.t2 OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d1.s1.t1 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d1.s1.t2 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d1.t1 (k STRING PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d1.t2 (k STRING PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d2.t1 (k STRING PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE d2.t1()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE data (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE data (a INT, b INT, c FLOAT, d DECIMAL, PRIMARY KEY (a, b, c, d))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE data (a INT, b INT, c INT, d INT, PRIMARY KEY (a, b, c, d))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE data_test (
+  id INT PRIMARY KEY,
+  region STRING,
+  city STRING,
+  population INT,
+  area_km2 INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE date_test (date_val date, time_val time, interval_val interval)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db.kv (k INT NOT NULL, v STRING);
+INSERT INTO db.kv (k, v) VALUES (1, 'a')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db.other(t STRING);
+INSERT INTO db.other (t) VALUES ('other')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db.t();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db.t2();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db1.public.child3 (c INT PRIMARY KEY, p INT REFERENCES db1.public.parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db1.public.t1 (id INT PRIMARY KEY, name varchar(256), val int DEFAULT nextval('db1.public.sq1'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db1.sc1.child (c INT PRIMARY KEY, p INT REFERENCES db1.public.parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db1.sc1.t1 (id INT PRIMARY KEY, name varchar(256), val int DEFAULT nextval('db1.sc1.sq1'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db1.sc2.cd (c INT, d INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db1.t (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db1.t (m db1.mytype)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.a (a int default nextval('a_seq') + nextval('db2.b_seq') + 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.a (a int default nextval('a_seq') + nextval('db2.public.b_seq') + 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.a (a int default nextval('a_seq') + nextval('public.b_seq') + 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.foo (k int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.public.child (c INT PRIMARY KEY, p INT REFERENCES db1.public.parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.public.child (c INT PRIMARY KEY, p INT REFERENCES parent(p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.s1.foo (k int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.t (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db2.t2 (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db50997.t250997(a INT DEFAULT nextval('db50997.seq50997'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db50997.t50997(a INT DEFAULT nextval('db50997.seq50997'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db50997.t50997(a INT DEFAULT nextval('seq50997'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db69713.s.pg_indexdef_test (
+    a INT PRIMARY KEY,
+    e s.testenum
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db_50712.a_50712(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db_50712.t_50712(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db_51782.t_51782(a int, b int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db_type_test.public.child_1 (id INT8 PRIMARY KEY, parent_id INT4 NULL REFERENCES db_type_test.public.parent(id), name STRING NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db_type_test.public.child_2 (id INT8 PRIMARY KEY, parent_id INT4 NULL, name STRING NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE db_type_test.public.parent (id INT8 PRIMARY KEY, name STRING NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE decimal (
+  a DECIMAL PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE decode_key_priv_test (
+  id INT PRIMARY KEY,
+  name STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE def (d INT, e INT, f INT, PRIMARY KEY (d, e));
+INSERT INTO def VALUES (1, 1, 2), (2, 1, 0), (1, 2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE def (d INT, e INT, f INT, PRIMARY KEY (f, e));
+INSERT INTO def VALUES (1, 1, 2), (2, 1, 1), (NULL, 2, 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE def_assn_cast (
+  id INT4,
+  a INT4 DEFAULT 1.0::FLOAT4,
+  b VARCHAR DEFAULT 'true'::BOOL,
+  c NAME DEFAULT 'foo'::CHAR
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE def_decimal (d DECIMAL, e DECIMAL, f DECIMAL);
+INSERT INTO def_decimal VALUES (1, 1, 1), (1.0, 1.0, 1.0), (1.00, 1.00, 1.00)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE def_e_decimal (d INT, e DECIMAL, f INT, PRIMARY KEY (f, e));
+INSERT INTO def_e_decimal VALUES (1, 1, 2), (2, 1, 1), (NULL, 2, 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_arrays (
+  id INT8 NOT NULL PRIMARY KEY,
+  string_array text[] DEFAULT '{cat, dog}',
+  weird_array text[] DEFAULT '{a,"", "b,c", "a''::string","''::string", "a''::string, ''::string",null}',
+  int_array int[] default '{1, 2}',
+  varchar_array varchar(32)[] DEFAULT '{cat, dog}'
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE default_err_test (foo text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE defaultdb.customers (id INT PRIMARY KEY, email STRING UNIQUE);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE defaultdb.public.in_other_db (x INT PRIMARY KEY);
+CREATE TABLE public.in_this_db (x INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE defaultdb.shipments (
+    tracking_number UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    carrier STRING,
+    status STRING,
+    customer_id INT,
+    rand_col INT DEFAULT nextval('defaultdb.sq2'),
+    CONSTRAINT fk_customers FOREIGN KEY (customer_id) REFERENCES defaultdb.customers(id),
+    CONSTRAINT fk_orders FOREIGN KEY (customer_id) REFERENCES defaultdb.orders(customer)
+ );
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE defaultdb.sq1dep (
+	rand_col INT8 DEFAULT nextval('defaultdb.sq1')
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE defaultdb.t1 (id INT PRIMARY KEY, name VARCHAR(256), money INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE defaultdb.ttyp (id INT PRIMARY KEY, name varchar(256), x defaultdb.typ);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dep_test (id INT PRIMARY KEY, value INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE depth_a (id INT NOT NULL PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE depth_after (id INT NOT NULL PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE depth_b (id INT NOT NULL PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE depth_c (id INT NOT NULL PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE derived(x CHAR(3) REFERENCES src(x),
+                     y VARCHAR CHECK(length(y) < 4) REFERENCES src(x));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE desc_compat_test (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dest (s STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE disallowed(a text COLLATE "C")
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE disallowed(a text COLLATE "POSIX")
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dist_merge_idx (a INT NOT NULL PRIMARY KEY, b INT NOT NULL, c INT NOT NULL UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE distsql_mj_test (k INT, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE django_37 (a TIMESTAMPTZ); INSERT INTO django_37 VALUES ('2018-09-28T12:42:10.234567-05:00'::TIMESTAMPTZ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE documents (
+    id INT PRIMARY KEY,
+    owner TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE documents (shared_users UUID[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE domain_modules (
+  id         BIGSERIAL    NOT NULL PRIMARY KEY,
+  domain_id  BIGINT       NOT NULL,
+  module_id  BIGINT       NOT NULL,
+  CONSTRAINT domain_modules_domain_id_fk FOREIGN KEY (domain_id) REFERENCES domains (id),
+  CONSTRAINT domain_modules_module_id_fk FOREIGN KEY (module_id) REFERENCES modules (id),
+  CONSTRAINT domain_modules_uq UNIQUE (domain_id, module_id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE domains (id BIGSERIAL NOT NULL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dontwant (k CHAR PRIMARY KEY, v CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_col_test_tbl (id INT PRIMARY KEY, foo INT DEFAULT nextval('drop_col_test_seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_default_test_tbl (id INT PRIMARY KEY DEFAULT nextval('drop_default_test_seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_fk_during_addition (name INT8);
+CREATE TABLE drop_fk_during_addition_ref (name INT8 PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_index_test(a int);
+CREATE INDEX drop_index_test_index ON drop_index_test(a);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_prevention_test_tbl (id INT PRIMARY KEY DEFAULT nextval('drop_prevention_test'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_role_chk();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_schema_with_triggers.t1 (
+	n INT8 PRIMARY KEY, j INT8 UNIQUE
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE drop_test_tbl (id INT PRIMARY KEY DEFAULT nextval('drop_test'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropme (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropme_1();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropme_2();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropme_3();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropme_4();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dropped.t (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dst (a int primary key, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dup (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dup_constraint (x INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dup_primary (a int, primary key (a,a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dup_unique (a int, unique (a,a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE duplicate_column (LIKE like_table, c DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE dxby (d INT, x INT, b INT, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e (
+  id    INT NULL PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e (x TEXT);
+INSERT INTO e VALUES ('abc'), ('xyz'), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e.b (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e1 (
+  a STRING COLLATE e
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e104009(e INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE e3 (
+  a INT COLLATE en
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE employee (
+   id INT PRIMARY KEY,
+   manager INT,
+   UNIQUE (manager)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE employees (id SERIAL PRIMARY KEY, name TEXT, department TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE empty ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE empty (a INT PRIMARY KEY, b FLOAT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE empty (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE empty (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enable_disable_t (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enable_disable_t_empty (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enabled (a INT PRIMARY KEY, v VECTOR(3))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE engineer (
+    fellow BOOL NOT NULL, id INT4 NOT NULL, companyname VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id, companyname)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_agg (x greeting, y INT);
+INSERT INTO enum_agg VALUES
+  ('hello', 1),
+  ('hello', 3),
+  ('howdy', 5),
+  ('howdy', 0),
+  ('howdy', 1),
+  ('hi', 10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_array (x _greeting, y greeting[]);
+INSERT INTO enum_array VALUES (ARRAY['hello'], ARRAY['hello']), (ARRAY['howdy'], ARRAY['howdy'])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_array_table (id SERIAL PRIMARY KEY, elems enum_test[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_data_type (x STRING);
+INSERT INTO enum_data_type VALUES ('notagreeting')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_data_type (x STRING, y INT);
+INSERT INTO enum_data_type VALUES ('hello'), ('howdy');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_data_type (x greeting);
+INSERT INTO enum_data_type VALUES ('hello'), ('hi')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_data_type (x greeting);
+INSERT INTO enum_data_type VALUES ('hello'), ('howdy')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_origin (x greeting PRIMARY KEY);
+CREATE TABLE enum_referenced (x greeting PRIMARY KEY);
+INSERT INTO enum_origin VALUES ('hello');
+INSERT INTO enum_referenced VALUES ('howdy')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_table (a e PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE enum_table (id SERIAL PRIMARY KEY, elem enum_test);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE err (i INT DEFAULT p())
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE error (a INT CHECK (a > 5), CONSTRAINT check_a CHECK (a > 5))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eventlogtest.anothertesttable (id int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE eventlogtest.testtable (id int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ex (
+  k BIGINT PRIMARY KEY,
+  element STRING,
+  input TIMESTAMPTZ,
+  extract_result FLOAT,
+  date_trunc_result TIMESTAMPTZ
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ex(
+  foo INT PRIMARY KEY,
+  bar INT UNIQUE,
+  baz INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ex2(
+  a INT PRIMARY KEY,
+  b INT UNIQUE,
+  c INT,
+  d INT,
+  e INT,
+  UNIQUE (c,d)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ex33313(foo INT PRIMARY KEY, bar INT UNIQUE, baz INT);
+  INSERT INTO ex33313 VALUES (1,1,1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE example (a timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE excluded (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE explicit1();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE expr ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE expr_idx_tbl (id string PRIMARY key, json JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE extract_test (x DATE);
+INSERT INTO extract_test VALUES ('2017-01-01');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE f (
+  a INT,
+  b INT,
+  c INT,
+  PRIMARY KEY (a, b, c)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE f (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE f (i int, v float)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE f (x FLOAT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail (a implicit_col)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail (b INT DEFAULT (((1,'a')::b).a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail_assn_cast (
+  a BOOL DEFAULT 'foo'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail_assn_cast (
+  a DATE DEFAULT 1.0::FLOAT4
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fail_assn_cast (
+  b JSONB DEFAULT 'null'::CHAR
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fam_child (
+  k INT PRIMARY KEY,
+  fk INT REFERENCES fam_parent(k)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE films (id int PRIMARY KEY, title text, kind text, classification CHAR(1));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE filter_test (
+  k INT,
+  v INT,
+  mark BOOL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk1 (x INT NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk1 (x int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk2 (
+  p INT PRIMARY KEY,
+  c INT REFERENCES fk(u)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk2 (
+  p INT PRIMARY KEY,
+  q INT,
+  r INT,
+  CONSTRAINT fk FOREIGN KEY (q,r) REFERENCES fk(a,u)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk2 (x int PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fk_including_implicit_columns_against_t (
+  pk INT NOT NULL PRIMARY KEY,
+  ref_t_a INT,
+  ref_t_pk INT,
+  ref_t_c INT,
+  CONSTRAINT a_pk FOREIGN KEY(ref_t_a, ref_t_pk) REFERENCES t(a, pk)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (
+  a INT,
+  b INT,
+  c FLOAT,
+  d FLOAT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (a INT);
+CREATE TABLE bar (b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (a int, b int); INSERT INTO foo VALUES (0, 1), (0, 2), (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (bar INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (i INT PRIMARY KEY);
+CREATE TABLE bar (j INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (i SERIAL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (i int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (k BYTES PRIMARY KEY, v BYTES)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (pk INT DEFAULT unique_rowid(), bar JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo (x CHAR PRIMARY KEY); INSERT INTO foo(x) VALUES ('a'), ('b')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(X INT, "Y" INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(a INT, b CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(a STRING COLLATE en_u_ks_level2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(i int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(x INT DEFAULT length(pg_typeof(1234))-1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo.public.bar (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE foo_bar (i int unique not null, j int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fooba(pk INT PRIMARY KEY, i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fooev (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_view(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_view(x INT);
+CREATE VIEW v as SELECT x FROM for_view;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE for_view(x test);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE force_check (c1 INT NOT NULL PRIMARY KEY, c2 TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE force_t (
+  id INT PRIMARY KEY,
+  val TEXT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE forcedeletemydata (v int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE funcref (c1 int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE fuzzystrmatch_table(
+  id int primary key,
+  a text,
+  b text
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE g (
+  k INT PRIMARY KEY,
+  geom GEOMETRY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE g1 (
+  k INT PRIMARY KEY,
+  geom GEOMETRY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE geography (a geography)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE geom_all(geom geometry)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE geom_linear (
+  dsc  TEXT PRIMARY KEY,
+  geom GEOMETRY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE geom_operators_test (
+  dsc TEXT PRIMARY KEY,
+  geom GEOMETRY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE geom_table_public_schema (
+  geom public.geometry,
+  geog public.geography
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE geometry (a geometry)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE geometry_tbl(
+  dsc string PRIMARY KEY,
+  g GEOMETRY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE global (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE grandchild (
+  g INT PRIMARY KEY,
+  c INT REFERENCES child(c)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE grandchild(
+  c INT PRIMARY KEY,
+  p INT NOT NULL REFERENCES child_cascade(p)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE graph_node (
+  id VARCHAR(16) PRIMARY KEY,
+  parent VARCHAR(16)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE greeting_stats (x greeting PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE greeting_table (x1 greeting, x2 greeting)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE groups (data JSON); INSERT INTO groups VALUES ('{"data": {"domain": "github.com"}}')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE groups(
+  id SERIAL PRIMARY KEY,
+  data JSONB
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE groups(
+  id SERIAL,
+  data jsonb,
+  primary key (id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE guardrails (i INT PRIMARY KEY);
+INSERT INTO guardrails SELECT generate_series(1, 100)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE guardrails2 (i INT PRIMARY KEY);
+INSERT INTO guardrails2 SELECT generate_series(1, 150)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE h (a INT, b enum)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hello (s STRING);
+INSERT INTO hello VALUES ('{hello}'), ('{hello,a🐛b🏠c}')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE hidden_in_vtable_index_test(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i (a INT, b enum)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i (f float)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i (i INT DEFAULT 0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i (i INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i (i int, v int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i4 (i4 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i4_rowid (a SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i4_sql_sequence (a SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i4_virtual_sequence (a SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i8 (i8 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i8_rowid (a SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i8_sql_sequence (a SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE i8_virtual_sequence (a SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ident (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE imp(k INT PRIMARY KEY, a INT, b TEXT);
+INSERT INTO imp VALUES (1, 2, 'a');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE implicit (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE implicit_types (
+  a TEXT, b CHAR, c VARCHAR, d NAME, e INT, f FLOAT, g DECIMAL, h BOOL,
+  i INTERVAL, j DATE, k TIMESTAMP, l REFCURSOR
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE import_desc_test (k INT PRIMARY KEY, v INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE importer (c1 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE impure (x INT); INSERT INTO impure(x) VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE indexed_arr(a INT[]);
+CREATE INDEX ON indexed_arr(a)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE information_schema.t (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inject_stats (k CHAR PRIMARY KEY, v TIMESTAMPTZ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ins (c1 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE insert_t (x INT, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE int_outer_buckets (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE intdecfloat (a INT, b DECIMAL, c INT4, d INT2, e FLOAT8);
+INSERT INTO intdecfloat VALUES (1, 2.0, 3, 4, 3.5)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE intdecfloat (a INT, b DECIMAL, c INT4, d INT2, e FLOAT8);
+INSERT INTO intdecfloat VALUES (1, 2.0, 3, 4, 3.5);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE intervals (
+  a INTERVAL PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ints (_int2 INT2, _int4 INT4, _int8 INT8);
+INSERT INTO ints VALUES (1, 1, 1), (2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE intvl_tbl (id SERIAL, d1 INTERVAL);
+INSERT INTO intvl_tbl (d1) VALUES
+  ('355 months 40 days 123:45:12'),
+  ('-400 months -30 days -100:12:13')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inv_b (k INT PRIMARY KEY, j JSON, s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE inv_c (k INT PRIMARY KEY, j JSON, s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE invalid_table(id UUID PRIMARY KEY, s STRING);
+INSERT INTO invalid_table SELECT gen_random_uuid(), '{';
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE invalid_void_table(col void)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE issue_13962 (a INT PRIMARY KEY, b INT, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE issue_14052 (a INT PRIMARY KEY, b INT, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE issue_14052_2 (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  createdAt INT,
+  updatedAt INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE issue_16873 (col int PRIMARY KEY, date TIMESTAMP);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE issue_17339 (a int primary key, b int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE issue_6710 (a INT PRIMARY KEY, b STRING, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE j (j JSON DEFAULT '{}')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE j(x INT PRIMARY KEY, y JSON);
+  INSERT INTO j VALUES
+     (1, '{"a":123,"b":456}'),
+     (2, '{"c":111,"d":222}')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE j1 (
+  k INT PRIMARY KEY,
+  j JSON
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE jars (j INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE jobs(
+  id string PRIMARY KEY,
+  person_id string NOT NULL REFERENCES persons(id),
+  company_id string NOT NULL REFERENCES companies(id),
+  job_title string NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE json_subscript_test (
+  id SERIAL PRIMARY KEY,
+  j JSONB,
+  extract_field TEXT,
+  extract_int_field INT
+);
+INSERT INTO json_subscript_test (j, extract_field, extract_int_field) VALUES
+  ('{"other_field": 2}', 'other_field', 1),
+  ('{"field": {"field": 2}}', 'field', 0),
+  ('[1, 2, 3]', 'nothing_to_fetch', 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE json_tab (
+  a INT PRIMARY KEY,
+  b JSONB
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE json_tab (
+  a INT PRIMARY KEY,
+  b JSONB,
+  c JSONB
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE jt (a INT PRIMARY KEY); INSERT INTO jt VALUES(1); INSERT INTO jt VALUES('jt'::regclass::int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE k (
+  k INT PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE k (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE k (k INT PRIMARY KEY, CHECK (k > 0), CHECK (true))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kab (k INT PRIMARY KEY, a UUID, b UUID)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kabc (k INT PRIMARY KEY, a UUID, b UUID)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kabcd (
+  k INT PRIMARY KEY,
+  a UUID,
+  b UUID,
+  c UUID DEFAULT gen_random_uuid(),
+  d UUID DEFAULT gen_random_uuid(),
+  e UUID DEFAULT uuid_generate_v4(),
+  f UUID DEFAULT uuid_generate_v4()
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (
+   k INT PRIMARY KEY,
+   v DECIMAL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (
+  k   INT PRIMARY KEY,
+  v   INT,
+  w   INT,
+  s   STRING,
+  i   INTERVAL,
+  arr INT[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (
+  k CHAR PRIMARY KEY,
+  v CHAR
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (
+  k CHAR PRIMARY KEY,
+  v TIMESTAMPTZ
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (
+  k INT PRIMARY KEY,
+  v INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (
+  k INT PRIMARY KEY,
+  v STRING
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (
+  k VARCHAR PRIMARY KEY,
+  v VARCHAR
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k CHAR PRIMARY KEY, v CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k INT PRIMARY KEY, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k INT PRIMARY KEY, v INT);
+INSERT INTO kv VALUES (1, 1), (2, 1), (3, 2);
+SET experimental_distsql_planning = always
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k INT PRIMARY KEY, v INT);
+INSERT INTO kv VALUES (1, 1), (2, 2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k INT PRIMARY KEY, v INT);
+INSERT INTO kv VALUES (1, 2), (3, 4);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k INT PRIMARY KEY, v INT);
+INSERT INTO kv VALUES (1,2), (3,4), (5,6);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k INT PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k INT PRIMARY KEY, v STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k STRING PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k VARCHAR PRIMARY KEY, v VARCHAR);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv (k bytes primary key, v bytes)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv(
+    k INT PRIMARY KEY,
+    v INT CHECK(v < 100)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv(k INT PRIMARY KEY, v INT); CREATE INDEX foo ON kv(v DESC)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv3 (
+  k CHAR PRIMARY KEY,
+  v CHAR NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv4 (
+  int INT PRIMARY KEY,
+  bit BIT,
+  bool BOOLEAN,
+  char CHAR,
+  float FLOAT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kvString (
+  k STRING PRIMARY KEY,
+  v STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kv_enum (
+  k INT PRIMARY KEY,
+  v letter
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kw ("from" INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE kw (k INT PRIMARY KEY, w INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE l (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE l (a INT PRIMARY KEY, b1 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE l (l INT PRIMARY KEY); INSERT INTO l VALUES (1), (2);
+CREATE TABLE r (r INT PRIMARY KEY); INSERT INTO r VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE l (lt LTREE);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE la (lta LTREE[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE large (c INT, d INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE large_numbers (a INT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE legacy();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE like_no_pk_table (
+  a INT, b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE like_none (LIKE like_table)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE log1 (val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE log2 (val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE log_deps (val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE loop_a (
+  id STRING PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE lostdata (v INT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE lots (
+  k1 INT,
+  k2 INT,
+  k3 INT,
+  k4 INT,
+  k5 INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ltable (
+  lk INT PRIMARY KEY,
+  geom1 GEOMETRY,
+  geom2 GEOMETRY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ltable(
+  lk int primary key,
+  geom1 geometry,
+  geom2 geometry
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE m (mints DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE maintain_analyze_t (a INT PRIMARY KEY);
+INSERT INTO maintain_analyze_t VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE maintain_priv_t (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE maintain_t (a INT PRIMARY KEY);
+INSERT INTO maintain_t VALUES (1), (2), (3);
+CREATE MATERIALIZED VIEW maintain_mv AS SELECT * FROM maintain_t
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE many_types (
+    _bool        BOOL,
+    _bytes       BYTES,
+    _date        DATE,
+    _decimal     DECIMAL,
+    _int2        INT2,
+    _int4        INT4,
+    _int         INT8,
+    _oid         OID,
+    _float       FLOAT8,
+    _string      STRING,
+    _uuid        UUID,
+    _timestamp   TIMESTAMP,
+    _timestamptz TIMESTAMPTZ,
+    _interval    INTERVAL,
+    _inet        INet,
+    _json        JSON,
+    _stringarray STRING[],
+    _time        Time,
+    _varbit      VARBIT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mat_view_source (id INT PRIMARY KEY, val INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE metatest (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mismatch (customer INT REFERENCES customers (email))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE missing_col (customer INT REFERENCES customers (idz))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE missing_with_col (customer INT REFERENCES customerz (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mix_tab (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mixed_case_table (
+    "CamelCase" INT PRIMARY KEY,
+    "snake_case" TEXT,
+    "UPPERCASE" DECIMAL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mixed_type_a (a INT, b TIMESTAMPTZ);
+CREATE TABLE mixed_type_b (a INT, b INTERVAL, c TIMESTAMP);
+INSERT INTO mixed_type_a VALUES (0, 0::TIMESTAMPTZ);
+INSERT INTO mixed_type_b VALUES (0, INTERVAL '0 days', 0::TIMESTAMP)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mixed_type_a (a INT, b TIMESTAMPTZ);
+CREATE TABLE mixed_type_b (a INT, b INTERVAL, c TIMESTAMP);
+INSERT INTO mixed_type_a VALUES (0, 0::TIMESTAMPTZ);
+INSERT INTO mixed_type_b VALUES (0, INTERVAL '0 days', 0::TIMESTAMP);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mixed_udt_t (status STRING, profile STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mnop (
+  m INT PRIMARY KEY,
+  n FLOAT,
+  o DECIMAL,
+  p BIGINT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE modules (id BIGSERIAL NOT NULL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE moretest_t(k INT, v INT);
+  CREATE VIEW moretest_v AS SELECT v FROM moretest_t WHERE FALSE
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multi_pol_t (
+  id INT PRIMARY KEY,
+  department TEXT,
+  data TEXT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multi_pol_tab1 (c1 INT NOT NULL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multi_pol_tab2 (c1 INT NOT NULL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multi_pol_tab3 (c1 INT NOT NULL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multi_t1 (name INTEGER PRIMARY KEY);
+CREATE TABLE multi_t2 (name INTEGER, other INTEGER, FOREIGN KEY (other) REFERENCES multi_t1(name));
+CREATE VIEW multi_v1 AS (SELECT name FROM multi_t1);
+CREATE VIEW multi_v2 AS (SELECT name FROM multi_v1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multiple (a JSON, b JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multiple_pk_attempt(n INT PRIMARY KEY, j INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multiple_seq_test_tbl (
+  id INT PRIMARY KEY DEFAULT nextval('multiple_seq_test1') + nextval('multiple_seq_test2')
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE multiple_usage_test_tbl (
+  id INT PRIMARY KEY DEFAULT nextval('multiple_usage_test_1'),
+  other_id INT DEFAULT nextval('multiple_usage_test_2')
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvt_edge_test (
+  id INT PRIMARY KEY,
+  geom GEOMETRY,
+  name STRING,
+  value INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvt_null_test (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvt_test (
+  id INT PRIMARY KEY,
+  geom GEOMETRY,
+  name STRING,
+  value INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvt_types_test (
+  id INT PRIMARY KEY,
+  geom GEOMETRY,
+  str_col STRING,
+  int_col INT,
+  bool_col BOOLEAN
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mvt_win_test (
+  id INT PRIMARY KEY,
+  geom GEOMETRY,
+  name STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE mytable (inserted_by TEXT, inserted TIMESTAMP);
+CREATE TABLE c (checked_user TEXT, checked_date TIMESTAMP);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE n (a INT PRIMARY KEY, b INT);
+INSERT INTO n VALUES (1, 5), (2, NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE n (n INT DEFAULT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE n (n INT);
+INSERT INTO n VALUES (NULL), (3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nan (id INT PRIMARY KEY, x REAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nested_t (
+  id INT PRIMARY KEY,
+  username TEXT,
+  data TEXT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_abc (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_db.public.bar()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_db.s1.bar()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_db.testuser.bar()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_enum_values (x build)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_table (a timetz(3))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE new_table()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE no_default_table (
+  id INT PRIMARY KEY
+ ,delete_no_default INT
+ ,update_no_default INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE no_initial_region.t(k INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE no_policies (id INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE no_ttl_table ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE no_unique(
+  a INT,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nocase_strings (s STRING COLLATE "en-US-u-ks-le""vel2");
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nocase_strings (s STRING COLLATE "en-US-u-ks-level2");
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nocase_strings2 (
+  i INT,
+  s STRING COLLATE "en-US-u-ks-level2"
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nocols()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE noind (a INT, b INT, c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE non_mr_table (i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE non_rls (id INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE non_unique (product STRING REFERENCES products (vendor))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nonempty_a (id SERIAL NOT NULL, self_id INT, b_id INT NOT NULL, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nonempty_b (id SERIAL NOT NULL, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nonunique_idx_child (
+  k INT PRIMARY KEY,
+  ref1 INT,
+  ref2 INT,
+  CONSTRAINT "fk" FOREIGN KEY (ref1, ref2) REFERENCES nonunique_idx_parent (k1, k2)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE normal_table()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE not_null_table (
+  id INT PRIMARY KEY
+ ,delete_not_nullable INT NOT NULL
+ ,update_not_nullable INT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE not_seq(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE not_view()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE null_default (ts TIMESTAMP PRIMARY KEY NULL DEFAULT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nullability (a INT NOT NULL, b STRING NOT NULL, c INT, d STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nullables (a INT, b INT, c INT, PRIMARY KEY (a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nulls_last_test (
+    id INT NULL
+);
+INSERT INTO nulls_last_test VALUES
+  (1),
+  (2),
+  (null),
+  (3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nulls_last_test (
+    id INT NULL,
+    k INT NULL,
+    v VARCHAR(3) NULL
+);
+INSERT INTO nulls_last_test VALUES
+  (1, 1, 'foo'),
+  (2, null, null),
+  (null, null, 'bar'),
+  (3, 3, 'baz');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE nulls_test(a INT, b STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_prec (a INT, b FLOAT, c FLOAT(23), d DECIMAL, e DECIMAL(12), f DECIMAL(12, 6), g BOOLEAN)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE num_ref_hidden (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE numeric (
+  a SMALLINT,
+  b INT4,
+  c BIGINT,
+  d FLOAT(1),
+  e FLOAT4,
+  f FLOAT8,
+  g FLOAT(40),
+  h FLOAT,
+  i DECIMAL(12,2),
+  j DECIMAL(4,4)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE o (a OID PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE obits(x VARBIT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE obitsa(x VARBIT(20)[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE olddb.oldsc.tbl2();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE olddb.public.tbl1();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE one (k INT PRIMARY KEY, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE onecolumn (x INT); INSERT INTO onecolumn(x) VALUES (44), (NULL), (42)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE onecolumn_w(w INT); INSERT INTO onecolumn_w(w) VALUES (42),(43)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE opclasses (a INT PRIMARY KEY, b TEXT, c JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE order_line (ol_o_id INT8, ol_i_id INT8);
+INSERT
+INTO
+  order_line (ol_o_id, ol_i_id)
+VALUES
+  (19, 6463), (20, 6463), (100, 6463), (101, 6463);
+CREATE INDEX ol_io ON order_line (ol_i_id, ol_o_id);
+CREATE TABLE stock (s_i_id INT8);
+INSERT INTO stock (s_i_id) VALUES (6463)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ordered_t(x INT PRIMARY KEY);
+  INSERT INTO ordered_t VALUES (0), (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE orders (
+    region STRING NOT NULL, id INT8 NOT NULL, total DECIMAL NOT NULL, seq_num INT NOT NULL,
+    PRIMARY KEY (region, id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE orders (k CHAR PRIMARY KEY, v CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE origin_id_tab (x INT PRIMARY KEY);
+INSERT INTO origin_id_tab VALUES (1), (2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE osagg (
+  f FLOAT,
+  s STRING,
+  i INTERVAL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other (
+  a INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other (b INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other (k INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other (k INT PRIMARY KEY, a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other (k INT, v INT, w INT NOT NULL, x INT, y INT, u UUID)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other (n INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other.tt (x other.t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other_db.t (s SERIAL PRIMARY KEY, i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other_db.xyz (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other_log (val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other_schema.table_with_indexes (a INT PRIMARY key, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other_schema.test_table (id INT PRIMARY KEY, data TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE other_table (blah INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE othercolumn (x INT); INSERT INTO othercolumn(x) VALUES (43),(42),(16)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE otherdb.othertable (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE otherdb.privs.fail_tbl();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE otherdb.public.tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE otherdb2.privs.fail_tbl();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE othertable (a INT PRIMARY KEY, b INT); INSERT INTO othertable (a, b) VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE othertable (a INT PRIMARY KEY, b INT); INSERT INTO othertable (a, b) VALUES (2, 20)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE othertype (x TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE owner(owner_col INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE owner_grant_option()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE p (
+  a STRING COLLATE en_u_ks_level1 PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE p (p INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE p (p INT8 PRIMARY KEY);
+CREATE TABLE c (c INT8 PRIMARY KEY, p INT8 REFERENCES p (p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE p2 (i INT PRIMARY KEY, s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pairs (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pairs (id INT PRIMARY KEY, src INT, dest STRING, UNIQUE (src, dest))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (
+    a INT,
+    b INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (
+    id INT PRIMARY KEY,
+    oid INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (a INT PRIMARY KEY, b INT, UNIQUE (b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (a_id INT, b_id INT, PRIMARY KEY (a_id, b_id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (id int primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (j INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (k INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (k INT PRIMARY KEY, v STRING NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (key INT8 NOT NULL PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (p INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (p INT PRIMARY KEY, other INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (pk INT PRIMARY KEY, p INT UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (pk INT PRIMARY KEY, p INT, q INT, UNIQUE (p,q))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent (x INT, p INT PRIMARY KEY, u INT UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent146889 (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent2 (p1 INT, p2 INT, other INT, PRIMARY KEY (p1, p2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_151663 (
+  p INT PRIMARY KEY,
+  q INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_54265 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_59582(a INT);
+CREATE TABLE child_59582(i INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_71089 (id INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_cascade (p INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_composite_index (a_id INT NOT NULL, b_id INT NOT NULL, PRIMARY KEY (a_id, b_id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_infer_rbr_region_col (k INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_lt (p INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_name_collision (id SERIAL NOT NULL, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parent_table (pk INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parentid (
+    k INT NOT NULL PRIMARY KEY,
+    v INT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parents (k CHAR PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE parse_test (
+  id SERIAL PRIMARY KEY,
+  geom GEOMETRY,
+  geog GEOGRAPHY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partial_child (p INT REFERENCES partial_parent (p))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partition_array (
+  pk INT[] PRIMARY KEY,
+  a INT[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned_table_2 (
+    place places, id INT8,
+    PRIMARY KEY (place, id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioned_table_3 (
+    place places, id INT8,
+    PRIMARY KEY (place, id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE partitioning.inheritance (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE patient (id INT8 NOT NULL, site_id INT8, PRIMARY KEY (id));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE perm_table(a int DEFAULT nextval('pg_temp.temp_seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE permanent_table(a int); CREATE TEMP TABLE temp_table(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE persistent_48233(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE person (id INT PRIMARY KEY, age INT, name STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE persons(
+  id string PRIMARY KEY,
+  name string NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pet (id INT PRIMARY KEY, name STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_catalog.bad (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_catalog.t (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_index_backfill_test (id INT PRIMARY KEY, val INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_indexes (i INT PRIMARY KEY);
+CREATE TABLE pg_attribute (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_lsn_table(id pg_lsn PRIMARY KEY, val pg_lsn)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_type(typname STRING); INSERT INTO pg_type VALUES('test')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pg_type(x INT); INSERT INTO pg_type VALUES(42)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk (k JSON PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pkBA (a INT, b INT, c INT, d INT, PRIMARY KEY(b,a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pkBAC (a INT, b INT, c INT, d INT, PRIMARY KEY(b,a,c))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pkBAD (a INT, b INT, c INT, d INT, PRIMARY KEY(b,a,d))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pkBC (a INT, b INT, c INT, d INT, PRIMARY KEY(b,c))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pk_fk_src(id int8 primary key, legacy_id int8 not null);
+CREATE TABLE pk_fk_ref(a_id int8 references pk_fk_src (id));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pkey_comment (a INT8, b INT8, c INT8, CONSTRAINT pkey PRIMARY KEY (a, b));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pkref_a (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pkt (a TEXT PRIMARY KEY); INSERT INTO pkt VALUES ('abcd'), ('bcde')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE policy_roles_test (id INT PRIMARY KEY, val TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE policy_table (id INT PRIMARY KEY, data TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prep_stmts (which INT, name STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE prim (a INT, b INT, c INT, PRIMARY KEY (a, b, c));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE primary_key_table (
+  id INT PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE priv_t (id INT PRIMARY KEY, val TEXT);
+INSERT INTO priv_t VALUES (1, 'hello'), (2, 'world');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE priv_t (pk INT PRIMARY KEY);
+CREATE TABLE no_priv_t (pk INT PRIMARY KEY);
+GRANT SELECT ON priv_t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE priv_test (id INT PRIMARY KEY, data TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE privatedb.privatetable (k int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE privatedb.publictable (k int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE privs (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE privs.denied (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE privs.tbl (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE products (
+  group_id serial PRIMARY KEY,
+  group_name VARCHAR (255) NOT NULL,
+  product_name VARCHAR (255) NOT NULL,
+  price DECIMAL (11, 2),
+  priceInt INT,
+  priceFloat FLOAT,
+  pDate DATE,
+  pTime TIME,
+  pTimestamp TIMESTAMP,
+  pTimestampTZ TIMESTAMPTZ,
+  pInterval INTERVAL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE products (sku STRING PRIMARY KEY, upc STRING UNIQUE, vendor STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE profiles (
+  userid int not null,
+  property string not null,
+  value string not null
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.fk_ref_to_concurrent_t1 (
+    id INT PRIMARY KEY,
+    fk INT REFERENCES concurrent_drop_sc.t1(id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.public_table(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.t5();
+CREATE TABLE s.t6();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.t7();
+CREATE TABLE s.t8();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.t9();
+CREATE TABLE s.t10();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.t_118626(n int primary key, b int NOT NULL, c int NOT NULL);
+INSERT INTO public.t_118626 VALUES(1, 2, 3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE public.test_table(a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE publicdb.privatetable (k int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE publicdb.publictable (k int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE pws ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE queries (q STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE r (
+  c CITEXT[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE r (a INT PRIMARY KEY, b2 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE r (i INT PRIMARY KEY);
+CREATE TABLE s (i INT PRIMARY KEY);
+INSERT INTO r VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_for_row_decimal(x DECIMAL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE range_for_row_string(x STRING PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rbt_primary (k INT PRIMARY KEY, v STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE records (format STRING, filename STRING, rows INT, bytes INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ref_table (id INT PRIMARY KEY, allowed_user TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE refcursor_tbl (id INT PRIMARY KEY, a INT, c REFCURSOR, d REFCURSOR[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE referee (id INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE reference_constraint_different_order_parent (
+  a INT8 NOT NULL,
+  b INT8 NOT NULL,
+  c INT8 NOT NULL,
+  p_str VARCHAR(10),
+  PRIMARY KEY (a, b, c)
+);
+CREATE TABLE reference_constraint_different_order_child (
+  id INT8,
+  x INT8,
+  y INT8,
+  z INT8,
+  c_str VARCHAR(10)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regional_by_row_like (LIKE regional_by_row)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regional_by_table_no_region (i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_44774 (
+  a interval(3) DEFAULT '1:2:3.123456'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_44774 (
+  a timestamp(3) DEFAULT '1970-02-03 12:13:14.123456',
+  b timestamptz(3) DEFAULT '1970-02-03 12:13:14.123456'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_44774 (
+  a timetz(3) DEFAULT '12:13:14.123456'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_46450 (id UUID PRIMARY KEY, json JSONB)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_46973 (a TIME UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_46973(c0 TIMESTAMP UNIQUE, c1 TIMESTAMPTZ UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_54844 (i int8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_62205(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_66576 ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_67196_like (LIKE regression_67196)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regression_74912 (t1 TIMETZ PRIMARY KEY, t2 TIMETZ);
+INSERT INTO regression_74912 VALUES
+  ('05:00:00.000001', '05:00:00.000001'),
+  ('07:00:00.000001+02:00:00', '07:00:00.000001+02:00:00'),
+  ('09:00:00.000001+04:00:00', '09:00:00.000001+04:00:00'),
+  ('20:59:00.000001+15:59:00', '20:59:00.000001+15:59:00');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE regular_t (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE replace(k INT PRIMARY KEY, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE residents (
+	id INT,
+	name STRING,
+	country STRING,
+	PRIMARY KEY (country, id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE restrict_t (
+  id INT PRIMARY KEY,
+  category TEXT,
+  val TEXT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE return (a INT DEFAULT 3, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rewind_session_test (s string primary key);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rgb_only (col text, check (col = 'red' or col = 'green' or col = 'blue'));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_cache_test (c1 TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_disabled (id INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_docs (
+    id INT PRIMARY KEY,
+    visible_to TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_forced (
+    id INT PRIMARY KEY,
+    category TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE rls_owned (
+    id INT PRIMARY KEY,
+    category TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE roaches()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE roachie(i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE role_exist_chk();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE root_test.t(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s (c CITEXT COLLATE "en_US");
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s (x STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s(x INT); INSERT INTO s(x) VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.other (n INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.t (a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.t()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.t();
+ALTER TABLE s.t OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.t();
+CREATE TABLE s2.t();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.t1()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.t2()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s.xy (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1 (a SERIAL DEFAULT 7)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1 (a SERIAL NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1.t1()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1.t2()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1.t2(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1.t3(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s1.t4(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s2.t();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE s2.t12()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE samename.samename.t (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sanity1();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sbt1 (test INT not null, value INT not null DEFAULT nextval('sqbf1'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc (x greeting NOT NULL, y int NOT NULL);
+INSERT INTO sc VALUES ('hello', 0), ('howdy', 1), ('hi', 2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc1.t (x int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc1.t1 (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc1.tab1 (
+    col1 INT,
+    PRIMARY KEY (col1)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc1.table (k sc2.typ);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc2.t (x int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sc_tr_tbl ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE schema_to_drop.t (k schema_to_drop.typ PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE secret_data (id INT, secret STRING);
+INSERT INTO secret_data VALUES (1, 'Secret');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE seed (_int8 INT8, _float8 FLOAT8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE select_t (x INT, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE self (k int primary key, a int unique, b int references self(a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE self (x INT PRIMARY KEY, y INT NOT NULL REFERENCES self(x))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE self_ab_parent (p INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE self_ref_fk (id INT8 PRIMARY KEY, parent_id INT8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE selfref (
+  y INT PRIMARY KEY,
+  Z INT REFERENCES selfref (y)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sensitive_data_table (C1 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE seq_using_table (id INT PRIMARY KEY DEFAULT nxtvl('foo'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE seqowner(name int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serial (
+  cached SERIAL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serial (
+  cached512 SERIAL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serial_test1 (id INT PRIMARY KEY DEFAULT nextval('serial_test_sequence'), temp string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serial_test2 (id SERIAL PRIMARY KEY, temp string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serial_test3 (id SERIAL, temp string, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE serial_test4 (id SERIAL4, temp string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE set_default_test (id INT PRIMARY KEY DEFAULT nextval('initial_seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE set_default_test_tbl (id INT PRIMARY KEY, foo INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shard_columns_test (
+  c1 INT NOT NULL,
+  c2 INT NOT NULL,
+  c3 INT,
+  c4 INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE shard_columns_test (
+  c1 INT,
+  c2 INT,
+  c3 INT,
+  c4 INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sharded_secondary (
+    a INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sharded_unique (
+  a INT NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE show_test (x INT PRIMARY KEY);
+SHOW INDEXES FROM show_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE show_this_table()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE showdbindexestest.table1 (key1 INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE showdbindexestest.table2 (key2 INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE side_effects (id SERIAL PRIMARY KEY, input_val INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE simple (x INT, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE simple_range_for_row(x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE site (id INT8 NOT NULL, PRIMARY KEY (id));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE small (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE small (a INT PRIMARY KEY, b INT, c INT, d INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE smalldata (a INT, PRIMARY KEY (a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sometable(x INT); SELECT * FROM public.sometable
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE source (a INT, b INT, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE source_table(a INT PRIMARY KEY, b INT, c INT);
+CREATE VIEW depend_view AS SELECT b, c FROM source_table;
+CREATE VIEW view_dependingon_view AS SELECT b, c FROM depend_view;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE square (n INT PRIMARY KEY, sq INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE src (s STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE src(x VARCHAR PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE src(x VARCHAR PRIMARY KEY);
+  INSERT INTO src(x) VALUES ('abc');
+  CREATE TABLE derived(x CHAR(3) REFERENCES src(x),
+                       y VARCHAR CHECK(length(y) < 4) REFERENCES src(x))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE start_off_non_multi_region.public.t(a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE statistics_agg_test (y INT, x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE storage_param_table()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE store_columns_test (
+  c1 INT,
+  c2 INT,
+  c3 INT,
+  c4 INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE store_columns_test (c1 INT, c2 INT, c3 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE str1 (a INT PRIMARY KEY, s STRING COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE str2 (a INT PRIMARY KEY, s STRING COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE str_arr (a STRING[], b STRING COLLATE "en_US_u_ks_level2")
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE str_arr(j JSONB)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE string_agg_test (
+  id INT PRIMARY KEY,
+  company_id INT,
+  employee STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE string_t (
+  s STRING PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE strings(s TEXT);
+INSERT INTO strings VALUES('(1,2)'), ('(5,6)')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stuff (
+    id INT8 NOT NULL DEFAULT unique_rowid(),
+    date DATE,
+    user_id INT8,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stxtest (a INT, b INT, c TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE stxtest_kw ("select" INT, "from" INT, normal INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sub_all (a INT);
+INSERT INTO sub_all VALUES (1), (2), (3), (4), (5), (6)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sub_odd (a INT);
+INSERT INTO sub_odd VALUES (1), (3), (5)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE sums (
+  i INT PRIMARY KEY,
+  sum INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE svals(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+    x INT PRIMARY KEY,
+    y INT,
+    z INT,
+    duped BOOL DEFAULT false
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a INT PRIMARY KEY DEFAULT 42,
+  b TIMESTAMP DEFAULT now(),
+  c FLOAT DEFAULT random(),
+  d DATE DEFAULT now()
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a INT PRIMARY KEY,
+  b INT,
+  c BOOLEAN
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a INT PRIMARY KEY,
+  b INT,
+  c INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a INT PRIMARY KEY,
+  b INT,
+  def INT DEFAULT 10,
+  c INT,
+  drop_sel INT,  cascade_sel INT,
+  drop_ins INT,
+  drop_ins2 INT, cascade_ins2 INT,
+  drop_ups INT,
+  drop_ups2 INT, cascade_ups2 INT,
+  drop_up INT,   cascade_up INT,
+  drop_del INT,  cascade_del INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a INT PRIMARY KEY,
+  b STRING COLLATE en
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a INT,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a INT[],
+  b DECIMAL[],
+  c UUID[],
+  d STRING[],
+  e TIMESTAMPTZ[],
+  f DATE[],
+  g INTERVAL[],
+  h INET[],
+  i VARBIT[],
+  j FLOAT[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a STRING COLLATE da,
+  b INT,
+  c BOOL,
+  PRIMARY KEY (a, b)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a STRING COLLATE de,
+  b INT,
+  c BOOL,
+  PRIMARY KEY (b, a)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a STRING COLLATE en
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  a STRING COLLATE fr PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  c CITEXT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  c1 INT PRIMARY KEY,
+  c2 INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  k INT PRIMARY KEY,
+  i INT,
+  s STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  k INT PRIMARY KEY,
+  v INT
+);
+INSERT INTO t VALUES (1, 10);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+  x INT PRIMARY KEY,
+  y DECIMAL,
+  z INT,
+  w INT,
+  v INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
+id INT PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY DEFAULT (SELECT 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY DEFAULT b)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY DEFAULT false)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY, b INT DEFAULT 0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY, b INT);
+CREATE TABLE u (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY, b INT);
+INSERT INTO t VALUES (1, 2), (2, 3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT PRIMARY KEY, b INT);
+INSERT INTO t VALUES (1, 5), (2, 6), (3, 7);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT);
+INSERT INTO t VALUES (1), (-1), (NULL);
+SET vectorize=off;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT, b INT, c INT PRIMARY KEY, d BOOL, e STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT, b INT, c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT, b INT, c INT, d INT, e INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a INT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a VECTOR(3), PRIMARY KEY (a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a int, b string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (a string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (c INT2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (c int PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (d DATE, t TIMESTAMP)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (d decimal, v decimal(3, 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i INT PRIMARY KEY);
+INSERT INTO t VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i INT, x INT, y INT, z STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (i SERIAL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (id INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (id INT PRIMARY KEY, a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (id INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (id INT, secret STRING);
+INSERT INTO t VALUES (1, 'Confidential');
+GRANT SELECT ON TABLE t TO owner;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT PRIMARY KEY, str STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT PRIMARY KEY, str STRING);
+CREATE TABLE u (l INT PRIMARY KEY, str2 STRING);
+CREATE TABLE v (m INT PRIMARY KEY, str3 STRING);
+INSERT INTO t SELECT i, to_english(i) FROM generate_series(1, 5) AS g(i);
+INSERT INTO u SELECT i, to_english(i) FROM generate_series(1, 5) AS g(i);
+INSERT INTO v SELECT i, to_english(i) FROM generate_series(1, 5) AS g(i);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT PRIMARY KEY, v default_abc DEFAULT 'a')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT PRIMARY KEY, v int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k INT, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k schema_to_drop.typ PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (k1 INT, k2 INT DEFAULT 999, v INT DEFAULT 999, w INT DEFAULT 999, PRIMARY KEY (k1, k2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (partition_by INT, a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (partition_by INT, v INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (pk INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (rowid INT NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (t1 timestamptz, t2 timestamptz);
+INSERT INTO t VALUES ('2022-01-01 00:00:00.000000+00:00', '2022-01-02 00:00:00.000000+00:00');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x BYTES[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x DATE);
+INSERT INTO t VALUES ('5874897-01-01'::DATE), ('1999-01-08'::DATE);
+SET vectorize=off;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x DECIMAL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT PRIMARY KEY, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT PRIMARY KEY, y INT, alice_has_access BOOL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y INT);
+INSERT INTO t VALUES (1, 2), (3, 4), (5, 6)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y INT, b BOOL DEFAULT f());
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y INT, z INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y INT, z INT, PRIMARY KEY (x, y));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y INT[], z INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y STRING);
+INSERT INTO t VALUES (1, 'NotNull'), (1, NULL), (1, NULL),
+(2, 'NotNull'), (2, 'NotNull'), (2, 'NotNull'), (2, 'NotNull');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y TRIGGER, z TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT, y TRIGGER[], z TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT[], y INT[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x INT[], y INT[], z STRING[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x JSONB PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x REFCURSOR, y REFCURSOR[]);
+INSERT INTO t VALUES ('foo', '{bar}'), ('baz', '{}');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x STRING[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (x int, y varchar(10), z int2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(a INT[], t STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(b BYTES); INSERT INTO t(b) VALUES ('\xe697a5e69cace8aa9e'::BYTES)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(row INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(x test)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(x test);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t(x type)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t0 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t0();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t0(c0 BOOL UNIQUE, c1 BOOL CHECK (true))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t0(c0 DECIMAL UNIQUE); INSERT INTO t0(c0) VALUES(0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t0(c0 INT UNIQUE CHECK(true));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t0(c0 INT UNIQUE);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a DATE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT CHECK (a > 0), to_delete INT, b INT CHECK (b < 0) CHECK (b > -100))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT NOT NULL, b INT NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT PRIMARY KEY); CREATE TABLE t2 (a INT DEFAULT 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT, b INT);
+CREATE TABLE t2 (a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT, b INT, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT, b INT, c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT8 PRIMARY KEY);
+CREATE TABLE t2 (a INT8 PRIMARY KEY);
+CREATE TABLE t3 (a INT8 PRIMARY KEY, b INT8 REFERENCES t1 (a), c INT8 REFERENCES t2 (a));
+INSERT INTO t1 VALUES (1);
+INSERT INTO t2 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a INT[]);
+CREATE TABLE t2 (b INT[]);
+INSERT INTO t1 VALUES (ARRAY[1]), (ARRAY[2]), (NULL);
+INSERT INTO t2 VALUES (ARRAY[2]), (ARRAY[3]), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (c0 STRING PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (c1 int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (col1 INT, x INT, col2 INT, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (date string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (foo_bar INT);
+CREATE TABLE t2 ("foo_bar" INT);
+CREATE TABLE t3 ("FOO_BAR" INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (i INT NOT NULL DEFAULT nextval('drop_test'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (id INT PRIMARY KEY, name varchar(256));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (id STRING PRIMARY KEY, other_id STRING NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (id int, str text);
+CREATE TABLE t2 (id int, num int);
+INSERT INTO t1 VALUES (1, 'hello'), (2, NULL);
+INSERT INTO t2 VALUES (1, 1), (2, 2), (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (id1 INT PRIMARY KEY, id2 INT, id3 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (j INT NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (k INT PRIMARY KEY, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (k INT, i INT, f FLOAT, s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (name TEXT, n INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (x INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (x INT PRIMARY KEY);
+INSERT INTO t1 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (x INT PRIMARY KEY, y greeting); INSERT INTO t1(x, y) VALUES (0,'hello');
+CREATE TABLE t2 (x INT PRIMARY KEY, y greeting); INSERT INTO t2(x, y) VALUES (0,'hello');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (x INT[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1 (x t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1();
+ALTER TABLE t1 OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(a INT PRIMARY KEY, b BOOLEAN);
+CREATE DATABASE other_db;
+SET DATABASE = other_db;
+CREATE TABLE t2(c STRING PRIMARY KEY, d DECIMAL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(a INT PRIMARY KEY, b INT);
+CREATE TABLE t2(a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER);
+INSERT INTO t1 VALUES(NULL,2,1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(c0 DECIMAL); INSERT INTO t1(c0) VALUES(0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(n INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(n int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(x INT UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1(x int, y int primary key);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1.numbers (n INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t10()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t100561a (a INT);
+CREATE TABLE t100561b (k INT PRIMARY KEY, b INT);
+INSERT INTO t100561b VALUES (1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t100561a (a INT);
+CREATE TABLE t100561bc (b INT, c INT);
+INSERT INTO t100561bc (b) VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t102110_1 (t TEXT);
+INSERT INTO t102110_1 VALUES ('tt');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t102110_2 (c CHAR);
+INSERT INTO t102110_2 VALUES ('c');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t102864 (c INT4);
+INSERT INTO t102864 (c) VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t103755 (c0 INT4, c1 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t104927 (
+  i INT,
+  s STRING
+);
+INSERT INTO t104927 VALUES (1, 'foo');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t106371 (x INT NOT NULL, y INT NOT NULL);
+INSERT INTO t106371 VALUES (1, 1), (1, 2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t106678 (a INT, b INT);
+INSERT INTO t106678 VALUES (2, 0), (1, 100), (2, 0), (3, 20), (1, -1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t107634 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t107651 (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t107850a (
+  d2 DECIMAL(10, 2) NOT NULL UNIQUE
+);
+CREATE TABLE t107850b (
+  d0 DECIMAL(10, 0) NOT NULL REFERENCES t107850a (d2)
+);
+INSERT INTO t107850a VALUES (1.00);
+INSERT INTO t107850b VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t108166 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t108360_1 (t TEXT);
+INSERT INTO t108360_1 VALUES ('tt');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t108360_2 (c CHAR);
+INSERT INTO t108360_2 VALUES ('c');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t109105 (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t11 (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t11()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t111474_0 (c0 INT);
+CREATE TABLE t111474_1 (c0 INT);
+INSERT INTO t111474_0 (c0) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t111556_in (g GEOMETRY NOT NULL);
+CREATE TABLE t111556_res (g GEOMETRY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t112099 (r REFCURSOR PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t112099 (x INT, y TEXT, r REFCURSOR, PRIMARY KEY (x, r, y));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t112099_no_index (x INT NOT NULL, y TEXT NOT NULL, r REFCURSOR NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t112515 (f FLOAT);
+INSERT INTO t112515 VALUES (-1.5), (-0.5), (0.5), (1.5), (2.5);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t114826 (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t115054_1 (v varchar(2));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t115054_2 (v varchar);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t115290 (
+  id INT PRIMARY KEY,
+  a INT NOT NULL,
+  b INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t115701 (r REFCURSOR[] PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t115701 (x INT, y TEXT, r REFCURSOR[], PRIMARY KEY (x, r, y));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t115701_no_index (x INT NOT NULL, y TEXT NOT NULL, r REFCURSOR[] NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t118273 (x REGROLE PRIMARY KEY, y REGROLE);
+INSERT INTO t118273 VALUES (0, 0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t12 (x INT check (x > 0))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t12()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t122278 (pk INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t122278(x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t124101 (
+  a INT,
+  b INT,
+  c INT,
+  PRIMARY KEY (a, b),
+  UNIQUE (a, c)
+);
+INSERT INTO t124101 VALUES (0, 0, 1), (0, 1, 2);
+SET testing_optimizer_disable_rule_probability = 1.000000;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t125620 (ts TIMESTAMPTZ PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t126042 (
+  id INT8 NOT NULL PRIMARY KEY,
+  b BYTES DEFAULT 'f'::BYTES,
+  bytes_array BYTES[] DEFAULT '{f}'::BYTES[],
+  text_array TEXT[] DEFAULT '{a, b}'::TEXT[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t126444 (
+  a INT PRIMARY KEY,
+  "b
+c" STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t126773 (pk INT PRIMARY KEY, v TSVECTOR);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t127814 (o OID)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t127814_empty (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t128282 (col STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t128294 (r REGCLASS);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t13()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t130759 (
+  i INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t131157 (c1 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t131346b (b BIT);
+INSERT INTO t131346b VALUES ('0');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t131346v (v VARBIT);
+INSERT INTO t131346v VALUES ('11');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t131573 (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t133146 (
+  id INT PRIMARY KEY,
+  a INT NOT NULL,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t133146b (
+  a INT,
+  b INT NOT NULL,
+  id INT PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t134697_x (
+  x INT PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t136167 (id UUID PRIMARY KEY, s TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t14()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t141448 (i INT, f FLOAT, b BOOL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t144384 (c TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t14601 (a STRING, b BOOL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t147186 (a INT, b INT DEFAULT f147186());
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t147559 (
+    a INT,
+    b TEXT COLLATE en_u_ks_level1
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t15 (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t15()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t15050a (c DECIMAL DEFAULT CASE WHEN now() < 'Not Timestamp' THEN 2 ELSE 2 END);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t15050b (c DECIMAL DEFAULT IF(now() < 'Not Timestamp', 2, 2));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t152771 (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t158154 (a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t158154 (a INT, b INT, CONSTRAINT foo CHECK (b > 0));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t158154 (a INT, b typ158154);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t158154 (col1 INT8 NOT NULL, col2 TIMESTAMP NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t158898 (col1 INT8 NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t159043a (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t159043b (b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t15951 (a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t16 (x STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t16()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t160436_patterns (
+    i INT PRIMARY KEY,
+    j INT,
+    pattern_eof STRING,
+    pattern_is_closing STRING,
+    pattern_tls_closed STRING,
+    pattern_network_closed STRING,
+    pattern_closed_pipe STRING,
+    pattern_node_unavailable STRING
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t161408 (
+  a INT PRIMARY KEY,
+  b INT,
+  c STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t163346_partial (
+    k INT PRIMARY KEY,
+    j JSONB
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t163346_partial_stats (
+    k INT PRIMARY KEY,
+    j JSONB
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t163346_pk (
+    k INT,
+    j JSONB,
+    PRIMARY KEY (k, j)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t17()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t18 (x INT NOT NULL PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t18()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t19()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1_57592(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1_64101("bob""b" typ_64101);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1_87919 (
+  a  INT
+);
+CREATE TABLE t2_87919 (
+  b INT,
+  c TIME[]
+);
+INSERT INTO t1_87919 (a) VALUES (NULL);
+INSERT INTO t2_87919 (c) VALUES (ARRAY['03:23:06.042923']);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1_96731(i INT PRIMARY KEY, j INT REFERENCES t2_96731(j));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1_add ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1_unique_array (n INT8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1_with_b_2_ref(j int default altSchema.f_called_by_b() CHECK (altSchema.f_called_by_b() > 0));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1dr(name varchar(256));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t1ev(name varchar(256));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (a INT DEFAULT -1 CHECK (a >= 0), b INT CHECK (b <= 0), CHECK (b < a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (a INT DEFAULT 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (a INT, b INT, c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (a INT, b INT, c INT);
+INSERT INTO t2 VALUES (1,2,3),(4,5,6),(7,8,9);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (b INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (b TIMESTAMPTZ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (c0 STRING COLLATE en PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (c1 int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (col3 INT, y INT, x INT, col4 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (d decimal, v decimal(3, 1), primary key (d, v))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (i INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (k INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (k INT PRIMARY KEY, str STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (k INT PRIMARY KEY, v string DEFAULT 'b'::default_abc::string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (k INT PRIMARY KEY, v2 int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (k INT, i INT, f FLOAT, s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (name TEXT, n INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (x INT PRIMARY KEY, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (x INT[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2 (y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2(
+  a INT PRIMARY KEY,
+  b INT CHECK (f1(b) > 1),
+  CONSTRAINT cka CHECK (f1(a) > 1)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2(
+  x INT REFERENCES t1(x)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2(a smallint DEFAULT 0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2(x INT);
+DROP TABLE t2
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2(x int, y int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2.words (w TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t20()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t21()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t22 (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t23 (x INT);
+INSERT INTO t23 VALUES (-3), (-2), (-1), (0), (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t24 (x STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t25 (x INT);
+INSERT INTO t25 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t26 (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t27 (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t28(x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t29 (x INT8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2_57592(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2_64101("bob""''b" typ_64101[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2_96731(i INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2_drop_schema_with_triggers (
+	n
+		INT8 PRIMARY KEY,
+	j
+		INT8 REFERENCES drop_schema_with_triggers.t1 (j)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t2ev(name varchar(256));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (i INT NOT NULL DEFAULT nextval('s2'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (i INT NOT NULL, j INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (k INT, i INT, f FLOAT, s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (name TEXT, n INTEGER)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3 (y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t3(x int, y int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t30 (x STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t31 (b BOOL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t32054_empty(x INT, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t32762(x INT, y INT, UNIQUE (x,y), CONSTRAINT y_not_null CHECK (y IS NOT NULL))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t32786 (id UUID PRIMARY KEY, parent_id UUID, parent_path text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t32917 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t32917_2 (b INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t34524 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t34901 (x STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t35364(
+    x DECIMAL(10,0) CHECK (x >= 0) PRIMARY KEY,
+    y DECIMAL(10,0) CHECK (y >= 0)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t35364(x DECIMAL(1,0) CHECK (x = 0))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t35364(x DECIMAL(1,0) CHECK (x >= 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t36293 (x bool)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t38754 (a OID PRIMARY KEY);
+INSERT INTO t38754 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t38878 (k1 STRING, k2 STRING, v INT, PRIMARY KEY (k1, k2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t38901 (a INT PRIMARY KEY); INSERT INTO t38901 VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t38908 (x INT);
+INSERT INTO t38908 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t39417 (x int8);
+INSERT INTO t39417 VALUES (10)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t39417 (x int8);
+INSERT INTO t39417 VALUES (10);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (
+  x default_abc3[] DEFAULT '{a}'::default_abc3[],
+  y string DEFAULT '{b}'::_default_abc3::string,
+  z default_abc3 DEFAULT ('{a, b, c}'::default_abc3[])[3])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (a INT CHECK (false - true))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (a INT CHECK(1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (a INT CHECK(a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (a INT, CHECK (a < b), CHECK (a+b+c+d < 20))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (a INT, b INT CHECK (EXISTS (SELECT * FROM t2)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (a INT, b INT CHECK (count(*) = 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (i INT NOT NULL DEFAULT nextval('s3'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (i INT NOT NULL, j INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (i INT, j typ4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (k INT PRIMARY KEY, v INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4 (x INT, y INT, PRIMARY KEY (x, y))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t4()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t40372_1 (
+  a INT,
+  b INT,
+  c FLOAT,
+  d FLOAT
+);
+INSERT INTO t40372_1 VALUES
+  (1, 1, 1, 1),
+  (2, 2, 2, 2),
+  (3, 3, 3, 3);
+CREATE TABLE t40372_2 (
+  a INT,
+  b FLOAT,
+  c FLOAT,
+  d INT
+);
+INSERT INTO t40372_2 VALUES
+  (1, 1, 1, 1),
+  (2, 2, 2, 2),
+  (3, 3, 3, 3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t40417 (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t40574(pk INTEGER PRIMARY KEY, col0 INTEGER, col1 FLOAT, col2 TEXT, col3 INTEGER, col4 FLOAT, col5 TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t42456 (x int primary key);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t42508(x INT); INSERT INTO t42508(x) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t43092(x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t43429(s STRING, i INT);
+INSERT INTO t43429 VALUES ('1', 1), (NULL, 2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t43550(a INT2 PRIMARY KEY); INSERT INTO t43550 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t43855(o OID, r REGPROCEDURE);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44079 (x INT[]);
+INSERT INTO t44079 VALUES (NULL), (ARRAY[NULL])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44133_0(c0 STRING); CREATE TABLE t44133_1(c0 STRING UNIQUE NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44203(c0 BOOL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44207_0(c0 INT UNIQUE); CREATE TABLE t44207_1(c0 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44304(c0 INT); INSERT INTO t44304 VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44466 (c0 INT PRIMARY KEY, c1 BOOL, c2 INT UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44547_0(c0 INT4); CREATE TABLE t44547_1(c0 INT8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44624(c0 STRING, c1 BOOL); INSERT INTO t44624(rowid, c0, c1) VALUES (0, '', true), (1, '', NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44624(c0 STRING, c1 BOOL); INSERT INTO t44624(rowid, c0, c1) VALUES (0, '', true), (1, '', NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44726(c0 INT); INSERT INTO t44726(c0) VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44746_0(c0 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44746_1(c1 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44797_0(a FLOAT, b DECIMAL); CREATE TABLE t44797_1(c INT2, d INT4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44797_2(a FLOAT); CREATE TABLE t44797_3(b DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44798_0(c0 INT4 PRIMARY KEY); CREATE TABLE t44798_1(c0 INT8 PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44822(c0 BYTES); CREATE VIEW v0(c0) AS SELECT min(t44822.c0) FROM t44822;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t44935 (x decimal); INSERT INTO t44935 VALUES (1.0), (1.00);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t45038(c0 INT); INSERT INTO t45038 VALUES(NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t45142(c STRING COLLATE en);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t45453(c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t45481 (a INT, b INT, c FLOAT, d DECIMAL, e STRING, f BYTES, g UUID, PRIMARY KEY (a, b, c, d, e, f, g));
+RESET vectorize;
+INSERT INTO t45481 SELECT a, b, c::FLOAT, d::DECIMAL, d::STRING, d::STRING::BYTES, rpad(d::STRING, 32, d::STRING)::UUID FROM
+   generate_series(1, 7) AS a(a),
+   generate_series(1, 7) AS b(b),
+   generate_series(1, 7) AS c(c),
+   generate_series(1, 7) AS d(d);
+SET vectorize = experimental_always
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46395(c0 INT UNIQUE DEFAULT 0, c1 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46423(c0 INT);
+INSERT INTO t46423(c0) VALUES(0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46675isnotnull (k int, a int, CHECK ((k, a) IS NOT NULL))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46675isnull (k int, a int, CHECK ((k, a) IS NULL))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46714_0(c0 INT4); CREATE TABLE t46714_1(c0 INT4); INSERT INTO t46714_0 VALUES (0); INSERT INTO t46714_1 VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46799 (x INT DEFAULT 1, y INT DEFAULT 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46981_0(c0 INT);
+CREATE VIEW v46981_0(c0) AS SELECT count_rows() FROM t46981_0
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t47131_0(c0 INT2 UNIQUE); INSERT INTO t47131_0 VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t47715 (c0 DECIMAL PRIMARY KEY, c1 INT UNIQUE);
+INSERT INTO t47715(c0) VALUES (1819487610);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t49143 (k INT PRIMARY KEY, j JSON);
+INSERT INTO t49143 VALUES
+  (0, '[]'),
+  (1, '[1]'),
+  (2, '[2]'),
+  (3, '[[1, 2], [3, 4]]'),
+  (4, '[[5, 6], [7, 8]]'),
+  (5, '{}'),
+  (6, '{"a": 1}'),
+  (7, '{"b": 1}'),
+  (8, '{"b": 2}'),
+  (9, '{"b": [1, 2]}'),
+  (10, '{"b": [3, 4]}');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t5 (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t5 (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t5 (i INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t5 (i INT, j STRING DEFAULT 'a'::typ5::string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t5 (x TIMESTAMPTZ(6));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t5()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t50015(id int PRIMARY KEY, a char(100), b char(100) COLLATE en);
+INSERT INTO t50015 VALUES
+  (1, 'hello', 'hello' COLLATE en),
+  (2, 'hello ', 'hello ' COLLATE en),
+  (3, repeat('hello ', 2), repeat('hello ', 2) COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t50069_a (x INT);
+CREATE TABLE t50069_b (x INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t51474 (x greeting);
+INSERT INTO t51474 VALUES ('hello'), ('howdy')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t51690(x INT, y INT, CHECK(x / y = 1));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t53442_a (a INT8 PRIMARY KEY);
+CREATE TABLE t53442_b (b INT2 PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t54456 (c INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t54604 (s STRING);
+INSERT INTO t54604 SELECT g::STRING FROM generate_series(1, 5) AS g
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t54989(
+  no_collation_str text,
+  no_collation_str_array text[],
+  collated_str text COLLATE en,
+  default_collation text COLLATE "default"
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t55672_b (
+    b INT PRIMARY KEY,
+    a INT NOT NULL REFERENCES t55672_a (a)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t55776 (i INT8 PRIMARY KEY, y FLOAT8, x FLOAT8);
+INSERT INTO t55776 (i, y, x) VALUES
+  (1, 1.0, 1),
+  (2, 2.0, 2),
+  (3, 1.0, 2),
+  (4, 1.0, 2),
+  (5, 3.0, 2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t55944 (x decimal);
+INSERT INTO t55944 (x)
+VALUES (1.0),
+       (20.0),
+       (25.0),
+       (41.0),
+       (55.5),
+       (60.9),
+       (72.0),
+       (88.0),
+       (88.0),
+       (89.0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t57108 (id INT PRIMARY KEY, a INT);
+INSERT INTO t57108 VALUES(1, 1), (2, NULL);
+CREATE MATERIALIZED VIEW t57108_v AS SELECT t57108.a from t57108;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t57165(j JSON, s STRING);
+INSERT INTO t57165 VALUES ('{"foo": "bar"}', 'foo'), ('{"bar": "foo"}', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t58438(a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t58439 (a INT, b INT);
+INSERT INTO t58439 VALUES (1, 10), (2, 20), (3, 30);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t59489 (
+  d12_3 DECIMAL(12, 3),
+  d4_2 DECIMAL(4, 2)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t59611 (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t59615 (
+  x INT NOT NULL CHECK (x in (1, 3)),
+  y INT NOT NULL,
+  z INT,
+  PRIMARY KEY (x, y)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t6 (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t6 (i INT NOT NULL DEFAULT nextval('s5'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t6 (x INT CHECK (x = (SELECT 1)))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t6()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t60786(i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t61762 ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t63147 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t63147 (a INT PRIMARY KEY, b INT DEFAULT (nextval('s63147')))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t63646 (e e63646 PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t63792 (c INT);
+INSERT INTO t63792 VALUES (NULL), (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t64429 (_int8 INT8, _int4 INT4);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t64676 (
+  i INT,
+  d DATE,
+  u UUID
+);
+INSERT INTO t64676 VALUES
+  (1, '2021-05-05', '00000000-0000-0000-0000-100000000000'),
+  (2, '2021-05-05', '00000000-0000-0000-0000-200000000000'),
+  (3, '2021-05-05', '00000000-0000-0000-0000-300000000000'),
+  (4, '2021-05-05', '00000000-0000-0000-0000-400000000000'),
+  (5, '2021-05-05', '00000000-0000-0000-0000-500000000000')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t64765 (x INT PRIMARY KEY, y INT, z INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t64793 (b TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t65040 (a INT, b TIMESTAMP);
+INSERT INTO t65040 VALUES (1, '2001-01-01');
+INSERT INTO t65040 VALUES (2, '2002-02-02');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t65631(a "char", b "char" COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t65978 (c INT);
+INSERT INTO t65978 VALUES (1), (2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t66067_b (
+  a INT,
+  v VARCHAR(40)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t66306 (s STRING);
+INSERT INTO t66306 VALUES ('foo');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t67050 (x e67050 PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t67100a (a INT, CHECK (false));
+CREATE TABLE t67100b (a INT, CHECK (true AND 0 > 1));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t67793 (_float4 FLOAT4, _float8 FLOAT8);
+INSERT INTO t67793 VALUES (1, 2), (2, 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t68979 (
+  a INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t7 (x INT DEFAULT 1, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t7()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t70738 (
+    i INTERVAL,
+    i2 INT2,
+    i4 INT4,
+    i8 INT8
+);
+INSERT INTO t70738 VALUES ('1 day'::INTERVAL, 1, 1, 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t71553 (a INT PRIMARY KEY, b INT NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t71926(no_typmod decimal, precision decimal(5), precision_and_width decimal(5,3))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t72012 (col integer);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t72820 (i SERIAL PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t73450 (c CHAR);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t78159 (b BOOL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t78681 (
+  x INT NOT NULL CHECK (x in (1, 3)),
+  y INT NOT NULL,
+  PRIMARY KEY (x, y)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t79384a (
+  k INT NOT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t8 (
+  a INT,
+  CHECK (a > 0),
+  CHECK (t8.a > 0),
+  CHECK (test.t8.a > 0)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t8 (
+  a INT,
+  CHECK (different_database.t8.a > 0)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t8 (
+  a INT,
+  CHECK (different_table.a > 0)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t8 (x STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t8 (x typ8)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t8()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t81315 (a DECIMAL NOT NULL PRIMARY KEY, b INT);
+PREPARE q81315 AS SELECT * FROM t81315 WHERE a = $1::INT8;
+INSERT INTO t81315 VALUES (1, 100), (2, 200)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t81315_2 (
+  k INT PRIMARY KEY,
+  a INT
+);
+PREPARE q81315_2 AS SELECT * FROM t81315_2 WHERE k = $1;
+INSERT INTO t81315_2 VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t81448 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t81647(j JSON);
+INSERT INTO t81647 VALUES ('["a", "b"]')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t81675 (i INT);
+INSERT INTO t81675 VALUES (1), (2), (NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t81698 (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t83756 (i INTERVAL PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t84224 (a STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t85288 (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ts TIMESTAMP
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t86075 (k INT PRIMARY KEY, c REGPROCEDURE, a REGPROCEDURE[]);
+INSERT INTO t86075 VALUES (1, 1, ARRAY[1]), (2, 2, ARRAY[2]), (3, 3, ARRAY[3]);
+CREATE TABLE t86075_2 (k INT PRIMARY KEY, c REGPROCEDURE, a REGPROCEDURE[]);
+INSERT INTO t86075_2 VALUES (1, 1, ARRAY[1]), (2, 2, ARRAY[2]), (3, 3, ARRAY[3]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t86075 (k INT PRIMARY KEY, c REGPROCEDURE, a REGPROCEDURE[]);
+INSERT INTO t86075 VALUES (1, 1, ARRAY[1]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t86790 (x INT8 NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t87605 (col2 FLOAT8 NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t87733a (a INT);
+CREATE TABLE t87733b (b INT);
+INSERT INTO t87733a VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t88128 (i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t88128 (t TIME)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t88141 (i INTERVAL);
+INSERT INTO t88141 (i) VALUES (NULL);
+SET testing_optimizer_random_seed = 6320964980407535657;
+SET testing_optimizer_disable_rule_probability = 0.500000;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t89601 (i INT4);
+INSERT INTO t89601 VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t89779 (a INT);
+INSERT INTO t89779 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t9 (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t9()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t90519 (i int);
+INSERT INTO t90519 VALUES (1),(2),(3),(4);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t91012 (id INT, a_id INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t93370 (i INT);
+INSERT INTO t93370 VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t93396 (c1 TIME PRIMARY KEY, c2 INT8);
+INSERT INTO t93396 VALUES ('0:0:0'::TIME, 0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t94092 (c INT);
+INSERT INTO t94092 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t95158 (c STRING);
+INSERT INTO t95158 VALUES (NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t95315 (c1 INT, c2 FLOAT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t95360 (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t95615 (c1 INET PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t96441 (
+  k INT PRIMARY KEY,
+  i INT,
+  CHECK (k IN (1, 2))
+);
+INSERT INTO t96441 VALUES (1, 10);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t96924 (a INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t97643 (c1 STRING, CHECK (parse_time('abc') = parse_time('abc')));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t98691 (
+  a INT,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tDb3Ref (i INT PRIMARY KEY DEFAULT (nextval('db3.s')));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tDb4Ref (i INT PRIMARY KEY DEFAULT (nextval('db4.s')));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tIndx (
+  a INT PRIMARY KEY,
+  b INT,
+  c INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_105887_job (a INT);
+INSERT INTO t_105887_job values (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_108751 (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_110629 (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_110827 (i typ_110827[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_114316 (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_118246 (i INT PRIMARY KEY);
+INSERT INTO t_118246 VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_120017 (
+  a INT PRIMARY KEY,
+  b TEXT,
+  c INT NOT NULL,
+  CHECK (b IN ('x', 'y'))
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_128420 (i int not null);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_168527 (a INT PRIMARY KEY, b INT, c INT, d INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_38995 (a INT PRIMARY KEY);
+INSERT INTO t_38995 VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_39827 (a STRING);
+INSERT INTO t_39827 VALUES ('hello'), ('world'), ('a'), ('foo');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_47283(k INT PRIMARY KEY, a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_50649(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_50711(a int, b int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_50712(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_52501_invalid(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_52501_valid(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_53504()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_60004 (k INT PRIMARY KEY, v enum_60004[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_85877 (i INT NOT NULL, j INT NOT NULL, PRIMARY KEY (i, j))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_85877 (i INT NOT NULL, j INT NOT NULL, k INT NOT NULL, PRIMARY KEY (i, j))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_85877(i INT NOT NULL, j INT NOT NULL, PRIMARY KEY (i))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_89025 (i int primary key);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_91069 (i INT PRIMARY KEY, j VARCHAR(64) NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_91697(a OID);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_93314_alias (i INT, e _e_93314);
+INSERT INTO t_93314_alias VALUES (1, ARRAY['a', 'b']::_e_93314);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_93398 (c1 INT);
+INSERT INTO t_93398 VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_96115 (i INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_96115 (i INT PRIMARY KEY, j STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_96648 (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_96727_1 (i INT PRIMARY KEY REFERENCES t_96727_2(j));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_96728 (i INT PRIMARY KEY, j INT, k INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_96729 (i INT NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_97538_1 (i INT PRIMARY KEY REFERENCES t_97538_2(j));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_97538_2 (i INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_98269 (i INT PRIMARY KEY);
+INSERT INTO t_98269 VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_99281_other (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_99316(a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_add_column_not_null (i INT PRIMARY KEY);
+INSERT INTO t_add_column_not_null VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_added (i INT PRIMARY KEY);
+INSERT INTO t_added VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_alter (
+  a INT PRIMARY KEY,
+  b TEXT,
+  c INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_alter (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_alter_invalid (id INT PRIMARY KEY, path_text TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_alter_type (id INT PRIMARY KEY, path_text TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_atom (id INT PRIMARY KEY, val d_atom)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_autocommit_rb (x INT PRIMARY KEY);
+INSERT INTO t_autocommit_rb VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_autocommit_test (x INT PRIMARY KEY);
+INSERT INTO t_autocommit_test VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_bool (b BOOL[]);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_boundary (path LTREE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_cascade (id INT PRIMARY KEY, val d_cascade)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_case_null (x INT);
+INSERT INTO t_case_null VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_check (
+  id INT PRIMARY KEY,
+  path LTREE CHECK (path @> 'root.a.b')
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_check(x DECIMAL(1,0) CHECK (x >= 1))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_check1(a INT NULL CHECK(a IS NOT NULL), b CHAR(4) CHECK(length(b) < 4));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_check2 (
+  id INT PRIMARY KEY,
+  path LTREE CHECK (path <@ 'org.company')
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_check2(a INT NOT NULL CHECK(a IS NOT NULL), b CHAR(3) CHECK(length(b) < 4));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_check3 (
+  id INT PRIMARY KEY,
+  path LTREE CHECK (nlevel(path) >= 2)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_checkb(
+  a INT PRIMARY KEY,
+  b INT,
+  CHECK (b > 1)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_child (id INT8 PRIMARY KEY, CONSTRAINT fk FOREIGN KEY (id) REFERENCES t_rowid (rowid))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_child(
+  id INT PRIMARY KEY,
+  pid INT REFERENCES t_parent(id),
+  pid2 INT REFERENCES t_parent(id2)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_col(n INT PRIMARY KEY, j INT, k INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_col_def (a d_tbl_def2 DEFAULT 100)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_col_drop (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_col_other(n INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_collate (x STRING COLLATE en_us);
+INSERT INTO t_collate VALUES ('hi' COLLATE en_us), ('hello' COLLATE en_us), ('howdy' COLLATE en_us)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_composite (x INT PRIMARY KEY, y DECIMAL NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_conditional_bump_udt_version (
+  id INT PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_control_job_priv(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_control_job_priv_inherited(x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_def (a d_tbl_def)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_def_nn (a d_tbl_def_nn)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_defaults (
+  id INT PRIMARY KEY,
+  path LTREE DEFAULT 'default.path',
+  path_null LTREE DEFAULT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_deps (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_disable_full_ts (id UUID PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_dml_rollback_check (x INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_drop_dep (id INT PRIMARY KEY, val d_drop_dep)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_enum(x myenum)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_enum_arr(x myenum[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_hash_pre_split (
+  a INT PRIMARY KEY,
+  b INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_identity_drop_dependency(id INT PRIMARY KEY DEFAULT nextval('public.t_identity_drop_b_seq'));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_idx(n INT PRIMARY KEY, k INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_imp (a INT PRIMARY KEY, b INT);
+INSERT INTO t_imp VALUES (1, 10), (2, 4), (3, 32);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_implicit_type(a INT PRIMARY KEY, b STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_in_db (id INT PRIMARY KEY, val d_in_db)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_index (id INT PRIMARY KEY, path LTREE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_index_name_conflicts_with_primary_key (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_index_params (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_indexed (x INT[] PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_infer_rbr_region_col (
+  a INT PRIMARY KEY,
+  b INT,
+  CONSTRAINT foo FOREIGN KEY (b) REFERENCES parent_infer_rbr_region_col(k)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_inherit (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_inherit_range (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_invalid_default (
+  id INT PRIMARY KEY,
+  path LTREE DEFAULT 'invalid..path'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_lcol(n INT PRIMARY KEY, j INT, k INT);
+CREATE TABLE t_lcol_other(n INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_lidx(n INT PRIMARY KEY, k INT);
+CREATE INDEX lidx1 ON t_lidx(k ASC);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_lookup (k INT, v INT);
+INSERT INTO t_lookup VALUES (1, 100), (2, 200), (3, 300)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_m1 (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_m2 (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_multi (a INT PRIMARY KEY, b INT DEFAULT 0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_multi_idx (id INT PRIMARY KEY, path LTREE, status STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_multi_idx2 (id INT PRIMARY KEY, category INT, path LTREE, name STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_name_check (a INT NOT NULL, CONSTRAINT ctcheck CHECK (a > 0))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_name_check (a INT NOT NULL, CONSTRAINT ctuniq UNIQUE (a))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_nn (a d_tbl_nn)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_no_canary (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_not_valid_dst (i INT PRIMARY KEY, j INT, c CHAR);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_not_valid_src (i INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_notice_check (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_nv1 (a INT PRIMARY KEY, b INT);
+INSERT INTO t_nv1 VALUES (1, 10), (2, 20);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_nv2 (x INT PRIMARY KEY, y INT);
+INSERT INTO t_nv2 VALUES (100, 1000), (200, 2000);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_ocdn (a INT PRIMARY KEY, b INT UNIQUE, c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_ocdu (a INT PRIMARY KEY, b INT UNIQUE, c INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_oid_cmp (a OID)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_oidarr (a OID[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_onecol (a INT);
+INSERT INTO t_onecol VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_orders (customer_id INT, amount DECIMAL);
+INSERT INTO t_orders VALUES (1, 25.50), (1, 75.00), (2, 150.75), (3, 10.25)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_parent (
+  id INT PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_person (name d_tbl_name, age d_tbl_age)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_pk (id d_pk PRIMARY KEY, name TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_pos (a d_tbl_pos)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_pos_nn (a d_tbl_pos_nn)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_pre_commit (x INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_prepare (x int, y varchar(10), z int2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_rel (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_replace (a INT PRIMARY KEY, b TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_rewrite (
+  v INT DEFAULT 0,
+  w weekday DEFAULT 'monday'::weekday
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_rls_dep (k INT PRIMARY KEY, v INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_rowid (k INT NOT NULL, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_schema (id INT PRIMARY KEY, name STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_seq_owner (id BIGSERIAL NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_set_logged (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_sort (id INT PRIMARY KEY, path LTREE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_source (
+  a INT PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_storage_params (
+  id INT PRIMARY KEY,
+  x INT,
+  y INT,
+  geom GEOMETRY,
+  v VECTOR(3)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_sub (id INT, val INT);
+INSERT INTO t_sub VALUES (1, 10), (2, NULL), (3, 30), (NULL, 40)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_text(x TEXT);
+INSERT INTO t_text VALUES ('True');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_tr_policy (id INT PRIMARY KEY, data INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_tr_udf_dep (k INT PRIMARY KEY, v INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_twocol (a INT, b INT);
+INSERT INTO t_twocol VALUES (1,2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_upd (id INT PRIMARY KEY, val d_tbl_upd)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_upd_nn (id INT PRIMARY KEY, val d_tbl_upd_nn)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_upsert (a INT PRIMARY KEY, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_upsert (id INT PRIMARY KEY, val d_upsert)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_vc (val d_vc5)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_view_base (id INT PRIMARY KEY, path LTREE, name STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_vop (a INT PRIMARY KEY, b INT);
+INSERT INTO t_vop VALUES (1, 10), (2, 20);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_with_not_valid_constraints_1 (i INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t_with_not_valid_constraints_2 (i INT PRIMARY KEY, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab (
+  col1 INT PRIMARY KEY,
+  col2 INT,
+  col3 STRING,
+  arr  INT[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab (a t, i int default 0)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab (k typ2 PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab (x ty);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab0(
+  k INT PRIMARY KEY,
+  a INT,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab0(pk INTEGER PRIMARY KEY, a INTEGER, b INTEGER);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab1 (x INT PRIMARY KEY);
+CREATE TABLE tab2 (x INT PRIMARY KEY);
+INSERT INTO tab1 VALUES (1), (2);
+INSERT INTO tab2 VALUES (1), (2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab104242 (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab2 (k greeting)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab4(col0 INTEGER, col1 FLOAT, col3 INTEGER, col4 FLOAT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab41973 ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab_as_of (a INT PRIMARY KEY, b INT, c INT);
+INSERT INTO tab_as_of VALUES (0, 0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab_test_privileges (a INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tab_w0_7 (
+   "col\u000b7ͪ%q_w0_10" UUID,
+   c2 STRING,
+   "MixedCase" INT,
+   PRIMARY KEY(c2, "col\u000b7ͪ%q_w0_10", "MixedCase")
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table41834 ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table57696(col_table TIME NOT NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table58683_2 (col2 BOOL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table8 (col1 TIME, col2 BYTES, col4 OID, col6 NAME, col9 TIMESTAMP, PRIMARY KEY (col1));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table9 (
+    _bool BOOL,
+    _bytes BYTES,
+    _date DATE,
+    _decimal DECIMAL,
+    _float4 FLOAT4,
+    _float8 FLOAT8,
+    _inet INET,
+    _int4 INT4,
+    _int8 INT8,
+    _interval INTERVAL,
+    _jsonb JSONB,
+    _string STRING,
+    _time TIME,
+    _timestamp TIMESTAMP,
+    _timestamptz TIMESTAMPTZ,
+    _uuid UUID
+); INSERT INTO table9 DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table9 (a INT8);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table_1_124732 (col1_6 REGCLASS);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table_71776 (interval_col interval DEFAULT 'P3Y')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table_72116 (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table_ifne (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table_owner_test ();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table_with_indexes (a INT PRIMARY key, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE table_with_nulls (a JSON)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE target (a INT PRIMARY KEY, b INT, c INT, UNIQUE (b, c))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE target (x INT PRIMARY KEY, y INT, z INT, UNIQUE (y, z))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE target();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tarray(x DECIMAL[]);
+INSERT INTO tarray VALUES (ARRAY[1.00]), (ARRAY[1.501])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE task (id INT8 NOT NULL, description VARCHAR(255), patient_id INT8, PRIMARY KEY (id));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tb(unused INT); INSERT INTO tb VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tb2 (x typ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbad (x GEOGRAPHY[] PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (
+  ttz TIMESTAMPTZ,
+  ival INTERVAL
+);
+INSERT INTO tbl VALUES
+  ('2020-08-25 15:16:17.123456', '1 day 15:16:17.123456'::interval)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (c string);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (i INT PRIMARY KEY, j INT NOT NULL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl (pk INT PRIMARY KEY, i INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl(a typ)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl2()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_for_row(i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_ifne (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_owned_by_parent (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_owned_by_root (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_test (k int primary key, v int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_to_add_ttl(
+  id INT PRIMARY KEY,
+  expire_at TIMESTAMPTZ NOT NULL DEFAULT now() + '30 days'
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_to_alter (
+    t_id SERIAL PRIMARY KEY,
+    f_id INT NOT NULL,
+    name STRING NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_to_alter_2 (
+    t_id SERIAL PRIMARY KEY,
+    f_id INT NOT NULL,
+    name STRING NOT NULL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_with_collate (c1 int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_with_dep_2(
+  id1 INT PRIMARY KEY,
+  id INT REFERENCES tbl_with_ttl(id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_with_fk_default_action(
+  id1 INT PRIMARY KEY,
+  name STRING,
+  id INT REFERENCES tbl_to_add_ttl(id)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tbl_with_unique_without_index (i INT DEFAULT 11, j INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE td2 (x DECIMAL(3), y DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE td3 (a decimal, b decimal(3, 1), c decimal(20, 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tdup (x INT PRIMARY KEY, y INT, z INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tdup (x INT PRIMARY KEY, y INT, z INT, UNIQUE (y, z))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE team (
+  id int PRIMARY KEY,
+  name string,
+  likes string[],
+  dislikes string[]
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE telemetry (
+  x INT PRIMARY KEY,
+  y INT,
+  z JSONB
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE telemetry (
+  x INT PRIMARY KEY,
+  y INT,
+  z JSONB,
+  v VECTOR(3)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE telemetry_test (d int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE temp (k INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test(x INT, y INT, z INT); INSERT INTO test(x, y, z) VALUES (0,0,0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.a (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.a (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.child (id int primary key, parent_id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.chill (id int primary key, parent_id int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.dupe_generated (
+  foo INT CHECK (foo > 1),
+  bar INT CHECK (bar > 2),
+  CHECK (foo > 2),
+  CHECK (foo < 10)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.dupe_named_constraints (
+  id        INT CONSTRAINT pk PRIMARY KEY,
+  title     VARCHAR CONSTRAINT one CHECK (1>1) CONSTRAINT one CHECK (1<1)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.dupe_named_constraints (
+  id        INT CONSTRAINT pk PRIMARY KEY,
+  title     VARCHAR CONSTRAINT one CHECK (1>1),
+  name      VARCHAR CONSTRAINT one UNIQUE
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.dupe_named_constraints (
+  id        INT CONSTRAINT pk PRIMARY KEY,
+  title     VARCHAR CONSTRAINT one CHECK (1>1),
+  name      VARCHAR CONSTRAINT pk UNIQUE
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.empty ()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.null_default (
+  ts timestamp NULL DEFAULT NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.parent (id int primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.pg_viewdef_test (a int, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.precision (x DECIMAL(0, 2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.precision (x DECIMAL(2, 4))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.privs.fail_tbl();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test.t1 (a DECIMAL DEFAULT (DECIMAL 'blah'));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test1 (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test2(b INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test2.t (
+  a INT,
+  CHECK (a > 0),
+  CHECK (t.a > 0),
+  CHECK (test2.t.a > 0)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test2.t2(c1 INT, c2 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test20042 (
+  x STRING PRIMARY KEY
+ ,y STRING UNIQUE
+ ,z STRING REFERENCES test20042(y)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test20045 (
+  x STRING PRIMARY KEY
+ ,y STRING UNIQUE REFERENCES test20045(x)
+ ,z STRING REFERENCES test20045(y)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test35040(a INT PRIMARY KEY, b INT NOT NULL, c INT2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_144621 (a INT PRIMARY KEY, v VECTOR(3))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_145973 (a INT PRIMARY KEY, v VECTOR(3))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_49144 (
+    value jsonb
+);
+INSERT INTO test_49144 VALUES ('{"c": 2}'), ('{"c": 2.5}'), ('{"c": 3}')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_alter (p STRING, k STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_backfill_149236 (a INT PRIMARY KEY, b INT, vec1 VECTOR(3));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_collate (
+  id INT8 PRIMARY KEY,
+  "string_field" STRING COLLATE en_US_u_ks_level2 NULL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_fk_base (p STRING PRIMARY KEY, j STRING UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_jsonb (
+    json_type text,
+    test_json jsonb
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_ordering (x INT PRIMARY KEY, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_primary_key.t (
+	i int,
+	CONSTRAINT pk_name PRIMARY KEY (i)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_retry (
+  k INT PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_serial (
+	a INT PRIMARY KEY
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_serial (
+	a INT PRIMARY KEY,
+	b SERIAL
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_t1(a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_table (
+    id INT PRIMARY KEY,
+    col_to_drop STRING,
+    other_col INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_table (col1 string, col2 string, col3 string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_table(a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_table(log int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_triggers (
+    id INT PRIMARY KEY,
+    name TEXT,
+    value INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_view (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE test_virtual (
+    id INT PRIMARY KEY,
+    col_to_drop STRING,
+    other_col INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testdb." ""\'" (i int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testowner_table (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testtab (
+	i	int,
+	ia	int[],
+	t	text,
+	ta	text[],
+	ts	timestamp,
+	j	jsonb
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testuser_t();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE testuser_t2();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE text_array_tab (
+  a INT PRIMARY KEY,
+  b TEXT[]
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE time_datestyle_parse(pk SERIAL PRIMARY KEY, s string);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE times (t time PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE timestamp_datestyle_parse(pk SERIAL PRIMARY KEY, s string);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE timestamp_outer_buckets (a TIMESTAMP PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE timestamp_test (
+  id integer PRIMARY KEY,
+  t TIMESTAMP(5),
+  ttz TIMESTAMPTZ(4)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE timetz_precision_test (
+  id integer PRIMARY KEY,
+  t TIMETZ(5)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE timetz_test (a TIMETZ PRIMARY KEY, b TIMETZ, c INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE timetzs (t timetz PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tjson(x JSONB);
+INSERT INTO tjson VALUES
+  ('1.250'),
+  ('1.0'),
+  ('1.000'),
+  ('1.111111'),
+  ('10'),
+  ('[1, 2.0, 1.21, 1.00]'),
+  ('{"a": [1, 1.1], "b": 1.0000, "c": 10.0}')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tmp (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tn(x INT NULL CHECK(x IS NOT NULL), y CHAR(4) CHECK(length(y) < 4));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tn(x INT NULL CHECK(x IS NOT NULL), y CHAR(4) CHECK(length(y) < 4));
+  INSERT INTO tn(x, y) VALUES (123, 'abc');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tn2(x INT NOT NULL CHECK(x IS NOT NULL), y CHAR(3) CHECK(length(y) < 4));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tn2(x INT NOT NULL CHECK(x IS NOT NULL), y CHAR(3) CHECK(length(y) < 4));
+  INSERT INTO tn2(x, y) VALUES (123, 'abc');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tnull(a INT, b INT);
+INSERT INTO tnull VALUES(NULL, 238);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE to_drop();
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE toberenamed( id SERIAL PRIMARY KEY );
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE token_payload(algorithm STRING, "expiresAt" TIMESTAMPTZ, "issuedAt" TIMESTAMPTZ, "user" STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE top_secret_data (id INT, secret STRING);
+INSERT INTO top_secret_data VALUES (1, 'Top Secret');
+GRANT SELECT ON TABLE top_secret_data TO owner;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE topics (
+  ts TIMESTAMP,
+  tstz TIMESTAMPTZ,
+  "date" DATE
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE toreg();
+CREATE VIEW vregclass AS SELECT 'toreg'::regclass
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE torename (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE transaction_entries (c1 int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE transform_test(geom geometry); INSERT INTO transform_test VALUES
+  ('SRID=4326;POINT(1.0 1.0)'::geometry),
+  ('SRID=3857;POINT(1.0 1.0)'::geometry),
+  ('SRID=4326;LINESTRING(1.0 1.0, 2.0 2.0)'::geometry),
+  ('SRID=3857;LINESTRING(1.0 1.0, 2.0 2.0)'::geometry),
+  ('SRID=4326;POLYGON((0.0 0.0, 1.0 0.0, 1.0 1.0, 0.0 1.0, 0.0 0.0))'::geometry),
+  ('SRID=3857;POLYGON((0.0 0.0, 1.0 0.0, 1.0 1.0, 0.0 1.0, 0.0 0.0))'::geometry),
+  ('SRID=4326;MULTIPOINT((1.0 1.0), (2.0 2.0))'::geometry),
+  ('SRID=3857;MULTIPOINT((1.0 1.0), (2.0 2.0))'::geometry),
+  ('SRID=4326;MULTILINESTRING((1.0 1.0, 2.0 2.0), (3.0 3.0, 4.0 4.0))'::geometry),
+  ('SRID=3857;MULTILINESTRING((1.0 1.0, 2.0 2.0), (3.0 3.0, 4.0 4.0))'::geometry),
+  ('SRID=4326;MULTIPOLYGON(((0.0 0.0, 1.0 0.0, 1.0 1.0, 0.0 1.0, 0.0 0.0)))'::geometry),
+  ('SRID=3857;MULTIPOLYGON(((0.0 0.0, 1.0 0.0, 1.0 1.0, 0.0 1.0, 0.0 0.0)))'::geometry),
+  ('SRID=4326;GEOMETRYCOLLECTION (POINT (40 10),LINESTRING (10 10, 20 20, 10 40))'::geometry),
+  ('SRID=3857;GEOMETRYCOLLECTION (POINT (40 10),LINESTRING (10 10, 20 20, 10 40))'::geometry)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trig_test (id INT PRIMARY KEY, val TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_audit (
+  id SERIAL PRIMARY KEY,
+  trigger_name TEXT,
+  op TEXT,
+  old_a INT,
+  new_a INT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_dep_single_t1 (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_dep_single_t2 (id INT PRIMARY KEY, a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_dep_t1 (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_dep_t2 (id INT PRIMARY KEY, a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_dep_t2 (id INT PRIMARY KEY, a INt, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_rls_table (id INT PRIMARY KEY, value INT, owner STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_source (id INT PRIMARY KEY, data TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trigger_target (id INT PRIMARY KEY, data TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trm (
+    id UUID NOT NULL,
+    trid UUID NOT NULL,
+    ts12 TIMESTAMP NOT NULL
+);
+INSERT INTO trm VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9882',
+                       '5ebfedee-0dcf-41e6-a315-5fa0b51b9882',
+                       '1999-12-31 23:59:59');
+INSERT INTO trm VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9883',
+                       '5ebfedee-0dcf-41e6-a315-5fa0b51b9883',
+                       '1999-12-31 23:59:58');
+INSERT INTO trm VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9882',
+                       '5ebfedee-0dcf-41e6-a315-5fa0b51b9882',
+                       '1999-11-30 23:59:59');
+INSERT INTO trm VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9883',
+                       '5ebfedee-0dcf-41e6-a315-5fa0b51b9883',
+                       '1999-11-30 23:59:58');
+INSERT INTO trm VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9884',
+                       '5ebfedee-0dcf-41e6-a315-5fa0b51b9884',
+                       '1999-11-30 23:59:57');
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE trtab4 (
+    id UUID NOT NULL,
+    trid UUID NOT NULL,
+    dec1 DECIMAL(19,2) NOT NULL
+);
+INSERT INTO trtab4 VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9882', '5ebfedee-0dcf-41e6-a315-5fa0b51b9882', 1.0);
+INSERT INTO trtab4 VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9883', '5ebfedee-0dcf-41e6-a315-5fa0b51b9883', 2.0);
+INSERT INTO trtab4 VALUES('5ebfedee-0dcf-41e6-a315-5fa0b51b9884', '5ebfedee-0dcf-41e6-a315-5fa0b51b9884', 3.0);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ts (d DATE PRIMARY KEY, x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tsarray(a tsquery[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tsarray(a tsvector[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tt (x t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tu (a INT UNIQUE)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tval (val int primary key);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE two (a int, b int, primary key (a, b))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE two (k INT PRIMARY KEY, v INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE twocolumn (x INT, y INT); INSERT INTO twocolumn(x, y) VALUES (44,51), (NULL,52), (42,53), (45,45)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tx (
+  id INT NOT NULL PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE txn_test (id INT PRIMARY KEY DEFAULT nextval('txn_test_seq'), something text)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE txn_timestamps (ts TIMESTAMP);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE types (
+  a TEXT PRIMARY KEY,
+  b FLOAT,
+  c BPCHAR,
+  d VARCHAR(64),
+  e BIT,
+  f VARBIT(16),
+  g DECIMAL(12, 2)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE types(a timestamptz, b integer)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE tzarrays (timetzs TIMETZ[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u (
+  a BIGINT PRIMARY KEY,
+  b TIMESTAMP,
+  c TIMESTAMPTZ,
+  d DATE,
+  e INTERVAL
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u (b string)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u (ip inet PRIMARY KEY,
+                ip2 inet)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u (key INT PRIMARY KEY, val STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u (x INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u(x INT); INSERT INTO u(x) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u_a (
+    a INT NOT NULL PRIMARY KEY,
+    b STRING,
+    c INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u_b (
+  a INT NOT NULL PRIMARY KEY,
+  b STRING
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u_c (
+  a INT NOT NULL PRIMARY KEY,
+  b STRING,
+  c INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE u_d (
+  a INT,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unindexed (
+  k INT PRIMARY KEY,
+  v INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uniontest (
+  k INT,
+  v INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uniq (
+  x STRING PRIMARY KEY,
+  y STRING UNIQUE,
+  z STRING UNIQUE
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uniq (rls_col TEXT, uniq_col INT8 UNIQUE);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unique_array (a INT[] UNIQUE, b INT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unique_without_index_error (
+  a INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE unique_without_index_partial (
+  a INT,
+  b INT,
+  c INT
+);
+INSERT INTO unique_without_index_partial VALUES
+  (1, 1, 1),
+  (2, 2, 2),
+  (1, 3, -3),
+  (2, -2, -2),
+  (NULL, 4, 4),
+  (NULL, 5, 5);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uniqueness_check_complex (
+  crdb_region test.region_enum NOT NULL,
+  filler TEXT,
+  id INT64 DEFAULT unordered_unique_rowid(),
+  data TEXT,
+  PRIMARY KEY (crdb_region, filler, id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE untyped (b bool, n INT, f FLOAT, e DECIMAL, d DATE, ts TIMESTAMP, tz TIMESTAMPTZ, i INTERVAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE update_test (
+  id INT PRIMARY KEY,
+  c1 INT,
+  c2 INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ups (pk INT NOT NULL PRIMARY KEY, comment TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE ups (pk INT NOT NULL PRIMARY KEY, comment TEXT, c SMALLINT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE upsert_returning (a INT PRIMARY KEY, b INT, c INT, d INT DEFAULT -1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE use_greetings(k INT PRIMARY KEY, v greetings)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE use_greetings2(k INT PRIMARY KEY, v greetings);
+INSERT INTO use_greetings2 VALUES (1, 'hello')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE user_data (
+  id INT PRIMARY KEY,
+  owner_name TEXT,
+  secret TEXT
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE user_networks(
+  userid int not null references users(userid),
+  network_name string not null,
+  user_account_id string not null
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE users (
+    id INT8 NOT NULL DEFAULT unique_rowid(),
+    name VARCHAR(50),
+    PRIMARY KEY (id)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE users (
+  profile_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  last_updated TIMESTAMP DEFAULT now(),
+  user_profile JSONB
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE users (
+  userid int primary key,
+  user_name string not null
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE using_alphabets2_60004(k INT PRIMARY KEY, v1 alphabets_60004, v2 alphabets_60004[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE using_alphabets_60004(k INT PRIMARY KEY, v1 alphabets_60004[], v2 alphabets_60004[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uu (x INT CHECK (generate_series(1, 3) < 3))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uu (x INT DEFAULT generate_series(1, 3))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uv (u INT PRIMARY KEY, v INT);
+INSERT INTO uv SELECT x, x*10 FROM generate_series(2, 8) AS g(x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uvw (
+  u INT,
+  v INT,
+  w INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE uwi_child (
+  d INT REFERENCES unique_without_index (d),
+  e INT,
+  CONSTRAINT fk_d_e FOREIGN KEY (d, e) REFERENCES unique_without_index (d, e),
+  CONSTRAINT fk_e_d FOREIGN KEY (e, d) REFERENCES unique_without_index (e, d)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v (
+  a INT PRIMARY KEY,
+  b TIMESTAMP NULL DEFAULT NULL,
+  c INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v (v vector(0))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v (v vector(16001))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v (v vector(2) PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v (v vector);
+CREATE TABLE v2 (v vector(2))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v (y INT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v(x INT, y INT, UNIQUE (x,y))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v0 (c1 BIT PRIMARY KEY );
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v00 (c01 INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v00 (c01 INT, c02 STRING);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v3 (v1 vector(1), v2 vector(1));
+INSERT INTO v3 VALUES
+('[1]', '[2]'),
+('[1]', '[-2]'),
+(NULL, '[1]'),
+('[1]', NULL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE v_133399 (c01 INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vals (
+  v VARBIT,
+  b BIT(8)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vals (k STRING PRIMARY KEY, v INT);
+INSERT INTO vals VALUES ('zero', 0), ('one', 1), ('large', 9223372036854775806), ('maxint64', 9223372036854775807);
+CREATE TABLE probe (a INT PRIMARY KEY);
+INSERT INTO probe VALUES (1), (2), (3), (4);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vals(f FLOAT);
+  INSERT INTO vals VALUES (0.0), (123.4567890123456789), (12345678901234567890000), (0.0001234567890123456789)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vec_b (k INT PRIMARY KEY, v VECTOR(2), s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vec_c (k INT PRIMARY KEY, v VECTOR(2), s STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE view_rls_t (id INT PRIMARY KEY, val INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE visible_table (a int primary key)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE vt (
+  id INT PRIMARY KEY,
+  v VECTOR(3)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE want (k CHAR PRIMARY KEY, v CHAR)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE warning (x INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE wide (id INT4 NOT NULL, a INT4, b VARCHAR(255), c INT4, d VARCHAR(255), e VARCHAR(255), f INT4, g VARCHAR(255), h VARCHAR(255), i VARCHAR(255), j VARCHAR(255), k INT4,
+                   l FLOAT4, m FLOAT8, n INT2, PRIMARY KEY (id))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE with_defaults (a INT DEFAULT 9, b STRING DEFAULT 'default', c INT, d STRING)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE wxyz (w INT PRIMARY KEY, x INT, y INT, z INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (
+    k INT PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (
+  a INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (a INT PRIMARY KEY, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (a INT8); CREATE TABLE y (b INT8); INSERT INTO x VALUES (1); INSERT INTO y VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (a STRING[], b INT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (a float[], b real[], c float4[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (j JSONB)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE x (y JSONB[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xor_bytes (a bytes, b int, c int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xx (
+  a INT,
+  b INT,
+  UNIQUE (a, b)
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (
+  x INT NOT NULL,
+  y INT NOT NULL,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT PRIMARY KEY, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT PRIMARY KEY, y INT);
+CREATE TABLE fk_ref (r INT NOT NULL REFERENCES xy (x));
+CREATE TABLE empty (v INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT, y INT);
+INSERT INTO xy VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT, y INT);
+INSERT INTO xy VALUES (1, 2), (3, 4), (5, 6);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT, y INT);
+INSERT INTO xy VALUES (1, 2), (3, 4);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT, y INT);
+INSERT INTO xy VALUES (1, 2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x INT, y INT);
+INSERT INTO xy VALUES (1,1),(1,2),(2,1),(2,2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy (x int, y int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy(x INT PRIMARY KEY, y INT);
+CREATE TABLE ab(a INT PRIMARY KEY, b INT);
+INSERT INTO ab VALUES (1, 1), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy(x INT, y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy108057 (x DECIMAL(10, 2) PRIMARY KEY, y DECIMAL(10, 2));
+CREATE TABLE ab108057 (a DECIMAL(10, 0), b DECIMAL(10, 0));
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xy_158154 (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xyu (x INT, y INT, u INT, PRIMARY KEY(x,y,u))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xyv (x INT, y INT, v INT, PRIMARY KEY(x,y,v))
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xyz (
+  id INT PRIMARY KEY,
+  x INT,
+  y INT,
+  z INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xyz (
+  x INT PRIMARY KEY,
+  y INT,
+  z INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xyz (
+  x INT,
+  y INT,
+  z INT,
+  pk1 INT,
+  pk2 INT,
+  PRIMARY KEY (pk1, pk2)
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xyz (
+  x INT,
+  y INT,
+  z TEXT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE xyz (x INT PRIMARY KEY, y INT, z INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE y (y INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE y(x JSONB PRIMARY KEY);
+INSERT INTO y VALUES
+  ('1.00'),
+  ('1.250'),
+  ('10'),
+  ('[1, 2.0, 1.21, 1.00]'),
+  ('{"a": [1, 1.1], "b": 1.0000, "c": 10.0}')
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE z (
+  x INT PRIMARY KEY,
+  y INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE z (c INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE z (z INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE z1 (c1 text);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE zc (
+  a INT PRIMARY KEY,
+  b INT
+)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE zone_inherit (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE zone_test (id INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE a (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE a(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE a_temp(a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE myschema.tmp (x int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE ref_temp_table (a SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE regression_47030(c0 INT); INSERT INTO regression_47030 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE regression_48233(a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE t(a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE t_102964 (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE t_tmp(X int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE tbl (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE temp1 (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE temp2 (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE temp_priv_t (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE temp_priv_t2 (a INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE temp_table_142780 (a int primary key, b int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE temp_table_142783 (a int primary key);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE temp_table_ref (a timetz PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE tempy (a int)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE tempy (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE test (a int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE test2 (a uuid);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP TABLE users (userid INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP VIEW a_view AS SELECT a FROM bob.pg_temp.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP VIEW a_view AS SELECT a FROM second_db.pg_temp.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP VIEW public.bad_temp_view AS SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP VIEW t_108751_view (x) AS SELECT x FROM t_108751
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP VIEW temp_priv_v AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP VIEW view_on_permanent AS SELECT a FROM permanent_table
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMP VIEW view_on_temp AS SELECT a FROM temp_table
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMPORARY TABLE from_other_session(i INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMPORARY TABLE root_temp (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMPORARY TABLE t (i INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMPORARY TABLE t()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMPORARY TABLE temp()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMPORARY TABLE temp1()
+
+-- sqlfmt-corpus-separator --
+
+CREATE TEMPORARY VIEW indexes AS
+  SELECT i.relname, indkey::INT2[], indexrelid
+    FROM pg_catalog.pg_index
+    JOIN pg_catalog.pg_class AS t ON indrelid   = t.oid
+    JOIN pg_catalog.pg_class AS i ON indexrelid = i.oid
+   WHERE t.relname = 'indexed'
+ORDER BY i.relname
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE SC1.COMP1 AS (A INT, B TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE SC2.COMP1 AS (C SMALLINT, D BOOL);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE address AS (
+        street STRING,
+        city STRING,
+        state STRING,
+        zipcode STRING
+    );
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE amount AS ("value" INT, "currency" STRING, "minor_units" INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE arr_composite AS (a INT[], b TEXT[])
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE comp1 AS (foo INT, bar INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE comp2 AS ("FOO" INT, "BAR" INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE comp3 AS (foo INT, "BAR" INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE composite_coord AS (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE foo_typ AS (x INT, y INT);
+CREATE TYPE bar_typ AS (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE my_tuple AS (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE one_typ AS (x INT);
+CREATE TYPE foo_typ AS (x INT, y INT);
+CREATE TYPE bar_typ AS (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE one_typ AS (x INT);
+CREATE TYPE two_typ AS (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE pg_temp.temp_type AS (a int, b int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE s.typ AS (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t AS (a INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t AS (a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t AS (a INT, b TEXT)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t AS (a pg_catalog.pg_class)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t AS (a tab)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t AS (e e)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t114677 AS (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t114677 AS (x INT, y INT);
+CREATE TYPE t114677_2 AS (a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE t2 AS (t1 t, t2 t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE typ AS (a INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE typ AS (a INT, b INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE typ AS (j JSONPATH);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE typ AS (x INT, y INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE typ AS (x INT, y REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE u AS (ufoo char, ubar int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE u AS (ufoo int, ubar int);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE udt AS (x INT, y TRIGGER, z TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE udt AS (x INT, y TRIGGER[], z TEXT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TYPE user_profile AS (name STRING, age INT);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW ";--alsoconcerning" AS SELECT x AS a, y AS b FROM ";--notbetter"
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW "QuotedCaps15951" AS SELECT a, b FROM t15951
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW "YV" AS SELECT X, "Y" FROM foo
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW Caps15951 AS SELECT a, b FROM t15951
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW IF NOT EXISTS v2 (x, y) AS SELECT a, b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW IF NOT EXISTS v2 AS SELECT b, a FROM v1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW XV AS SELECT X, "Y" FROM foo
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW abc_view AS (SELECT k FROM (SELECT 'a'::abc AS k))
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW abc_view2 AS (SELECT 'a'::abc < 'b'::abc)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW alter_test_view AS SELECT id, username FROM base_t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW app_stmts_view
+AS SELECT statement_id, key, count
+FROM crdb_internal.node_statement_statistics
+WHERE application_name = 'throttle_test'
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW arr(a) AS SELECT ARRAY[3]
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW b AS SELECT a[1] FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW b AS SELECT k,v from a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW bar_view AS (SELECT ARRAY['b'::bar])
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW c AS SELECT id FROM b
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW c AS SELECT k,v from b
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW cd_v1 AS SELECT a, b FROM t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW cd_v2 AS SELECT a, b FROM cd_v1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW cd_v3 AS SELECT a, b FROM cd_v2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW comedies AS
+    SELECT *
+    FROM films
+    WHERE kind = 'Comedy';
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW constraint_db.v1 AS SELECT p,a,b,c FROM constraint_db.t1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d AS SELECT k,v FROM a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d.vx AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d1.v1 AS SELECT k,v FROM d1.t1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d1.v2 AS SELECT k,v FROM d1.t2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d1.v2 AS SELECT k,v FROM d1.v1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d2.v1 AS SELECT k,v FROM d2.t1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d2.v2 AS SELECT k,v FROM d1.t1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d2.v3 AS SELECT k,v FROM d1.v2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW d2.v4 AS SELECT count(*) FROM d1.t1 as x JOIN d2.t1 as y ON x.k = y.k
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.public.v2 AS SELECT a+b FROM db1.public.ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.public.v3 AS SELECT a+b+c+d FROM db1.public.ab, db1.sc2.cd
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.sc1.v1 AS (SELECT name FROM db1.sc1.t1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.sc1.v2 AS (SELECT name AS n1, name AS n2 FROM db1.sc1.v1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.sc1.v3 AS (SELECT name, n1 FROM db1.sc1.v1, db1.sc1.v2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.sc1.v4 AS (SELECT n2, n1 FROM db1.sc1.v2);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.sc1.v5 AS (SELECT 'a'::db1.sc1.typ::string AS k, n2, n1 from db1.sc1.v4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.sc1.v6 AS (SELECT 'a'::sc2.typ::string AS k, n2, n1 from db1.sc1.v4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.sc2.v AS SELECT a+b FROM db1.public.ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db1.vm as (select cast('open' as db1.status) from db1.tval as t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db2.replace AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db2.v AS SELECT a+b FROM db1.public.ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db2.v1 AS SELECT a+b FROM db1.public.ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db2.v2 AS SELECT a+b+c+d FROM cd, db1.public.ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db_51782.v_51782 AS SELECT a, b FROM db_51782.t_51782
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW db_51782.w_51782 AS SELECT a FROM db_51782.v_51782
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW default_view AS
+  SELECT id, username, data FROM base_t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW defaultdb.v1 as (select customer_id, carrier from defaultdb.shipments);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW diamond AS SELECT count(*) FROM b AS b JOIN d AS d ON b.k = d.k
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW dt AS SELECT d, t FROM t WHERE d > DATE '1988-11-12' AND t < TIMESTAMP '2017-01-01'
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW dt2 AS SELECT d, t FROM t WHERE d > d + INTERVAL '10h'
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW err AS SELECT a FROM t WHERE a = j
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW err AS SELECT j FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW foo AS SELECT catalog_name, schema_name, sql_path FROM information_schema.schemata
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW foo AS SELECT latitude,longitude FROM system.locations
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW kview AS SELECT k,v FROM kv
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW kview AS VALUES ('a', 'b'), ('c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW kview as SELECT k,v from kv
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW last_inspect_errors AS
+SELECT
+  ie.error_type,
+  COALESCE(t.database_name, '<id:' || ie.database_id::TEXT || '>', '<unknown>') AS database_name,
+  COALESCE(t.schema_name, '<id:' || ie.schema_id::TEXT || '>', '<unknown>') AS schema_name,
+  COALESCE(t.object_name, '<id:' || ie.id::TEXT || '>', '<unknown>') AS table_name,
+  ie.primary_key,
+  jsonb_pretty(ie.details) AS details
+FROM crdb_internal.cluster_inspect_errors ie
+LEFT JOIN crdb_internal.fully_qualified_names t ON ie.id = t.object_id
+WHERE ie.job_id = (
+  SELECT id
+  FROM crdb_internal.system_jobs
+  WHERE job_type = 'INSPECT'
+  AND status IN ('failed', 'succeeded', 'canceled', 'revert-failed')
+  ORDER BY id DESC
+  LIMIT 1
+)
+ORDER BY ie.error_type, database_name, schema_name, table_name, ie.primary_key
+LIMIT 10000
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW last_inspect_job AS
+SELECT status, COALESCE(jsonb_array_length(
+    crdb_internal.pb_to_json('cockroach.sql.jobs.jobspb.Payload', payload)->'inspectDetails'->'checks'
+  ), 0) AS num_checks
+FROM crdb_internal.system_jobs
+WHERE job_type = 'INSPECT'
+ORDER BY created DESC
+LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW last_inspect_job AS
+SELECT status, jsonb_array_length(
+    crdb_internal.pb_to_json('cockroach.sql.jobs.jobspb.Payload', payload)->'inspectDetails'->'checks'
+  ) AS num_checks
+FROM crdb_internal.system_jobs
+WHERE job_type = 'INSPECT'
+ORDER BY id DESC
+LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW maintain_grant_v AS SELECT * FROM maintain_grant_t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW normal_view AS SELECT 1;
+CREATE MATERIALIZED VIEW materialized_view AS SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW other_db.abc AS SELECT i from other_db.xyz
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW other_db.v_xyz AS SELECT i FROM other_db.xyz
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW otherview AS SELECT a, b FROM othertable
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW pg_comedies AS
+    SELECT *
+    FROM comedies
+    WHERE classification = 'PG';
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW pg_temp.temp_view AS SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW priv_v AS SELECT * FROM priv_f();
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW privsview AS SELECT a,b,c FROM privs
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW public.bar (x) AS SELECT 1 AS x
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW q (q) AS SELECT 0
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW r (r) AS SELECT TIMESTAMP '1999-12-31 23:59:59' + i FROM hi WHERE h != '00:00:01'
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW redacted_descriptors AS
+    SELECT
+        id,
+        jsonb_pretty(
+            regexp_replace(
+                regexp_replace(
+                    regexp_replace(
+                        (
+                            crdb_internal.pb_to_json(
+                                'desc',
+                                crdb_internal.redact_descriptor(
+                                    descriptor
+                                )
+                            )
+                        )::STRING,
+                        '"createdAtNanos": "[0-9]+"',
+                        '"createdAtNanos": "0"',
+                        'g'
+                    ),
+                    '"wallTime": "[0-9]+"',
+                    '"wallTime": "0"'
+                ),
+               '"logical": [0-9]+[,]*',
+               ''
+            )::JSONB
+        )
+            AS descriptor
+    FROM
+        system.descriptor;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW repartition_privs.v AS SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW rls_default_view AS
+  SELECT id, username, data FROM base_t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW rv as select val from tval;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW s (s) AS SELECT IF(b, 'abc', 'def') FROM b ORDER BY b AND NOT false LIMIT 10
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW s1 AS SELECT count(*) FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW s1.vx AS SELECT x FROM for_view
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW s2 AS SELECT a FROM t WHERE a IN (SELECT count(*) FROM t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW s3 AS SELECT a, count(*) FROM t GROUP BY a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW s4 AS SELECT a, count(*) FROM t GROUP BY a HAVING a > (SELECT count(*) FROM t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW sbv1 AS SELECT  nextval('sqbf1')
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW sc1.v_tbl AS SELECT a FROM sc1.tbl;
+CREATE VIEW sc1.v_type AS SELECT 'Mon'::sc1.workday;
+CREATE VIEW sc1.v_seq AS SELECT nextval('sc1.sq');
+CREATE VIEW sc2.v_tbl AS SELECT a FROM sc1.tbl;
+CREATE VIEW sc2.v_type AS SELECT 'Mon'::sc1.workday;
+CREATE VIEW sc2.v_seq AS SELECT nextval('sc1.sq');
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW sc_new.v AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star1 AS SELECT * FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star10 AS SELECT t1.*, t2.a AS a2 FROM t AS t1 JOIN t AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star10 AS SELECT t1.*, t2.a FROM t AS t1 JOIN t AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star11 AS SELECT t1.a AS a1, t2.* FROM t AS t1 JOIN t AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star11 AS SELECT t1.a, t2.* FROM t AS t1 JOIN t AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star12 AS SELECT t1.*, t2.* FROM t AS t1 JOIN t AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star13 AS SELECT * FROM t AS t1 JOIN t AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star14 AS SELECT t1.a, t2.a AS a2 FROM (SELECT * FROM t) AS t1 JOIN t AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star15 AS SELECT t1.a, t2.a AS a2 FROM t AS t1 JOIN (SELECT * FROM t) AS t2 ON t1.a = t2.a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star16 AS SELECT t1.a, t2.a AS a2 FROM t AS t1 JOIN t AS t2 ON t1.a IN (SELECT a FROM (SELECT * FROM t))
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star17 AS SELECT * FROM (SELECT a FROM t) JOIN (SELECT a FROM u) ON true;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star17 AS SELECT * FROM (SELECT a FROM t) JOIN (SELECT b FROM u) ON true;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star17 AS SELECT * FROM (SELECT a FROM t) t1 JOIN (SELECT a FROM u) t2 ON true;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star18 AS SELECT * FROM (SELECT * FROM (SELECT a FROM t));
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star19 AS SELECT a FROM (SELECT * FROM (SELECT a FROM t));
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star2 AS SELECT t.* FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star20 AS SELECT ARRAY[z.*]::STRING FROM (SELECT * FROM (SELECT a FROM t), (SELECT a FROM t)) AS z
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star3 AS SELECT a FROM t ORDER BY t.*
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star4 AS SELECT count(1) FROM t GROUP BY t.*
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star5 AS SELECT alias.* FROM t AS alias
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star6 AS TABLE t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star7 AS SELECT a FROM (SELECT * FROM t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star8 AS SELECT a FROM t WHERE NOT a IN (SELECT a FROM (SELECT * FROM t))
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW star9 AS SELECT a FROM t GROUP BY a HAVING a IN (SELECT a FROM (SELECT * FROM t))
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW sys AS SELECT id FROM system.descriptor
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW sys2 AS SELECT id, a+b FROM system.descriptor, ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW t (t, u) AS SELECT jk || '[null]', j->a FROM a JOIN jk ON a = k || 'u' ORDER BY concat(a, 'ut')
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW t AS SELECT a, b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW t.v AS SELECT k,v FROM u.kv
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW test.pg_viewdef_view AS SELECT a, b FROM test.pg_viewdef_test
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW test2.v1 AS SELECT c1,c2 FROM test2.t2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW test_table_view (col1, col2) AS
+SELECT col1, col2 FROM test_table
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW test_view AS SELECT 1 AS log
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW testuser1 AS SELECT k,v FROM a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW testuser2 AS SELECT k,v FROM testuser1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW testuser3 AS SELECT k,v FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW toggle_view AS
+  SELECT id, username, data FROM base_t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW tview AS VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW txn_fingerprint_view
+AS SELECT
+  key, statement_ids, count
+FROM
+  crdb_internal.node_transaction_statistics
+WHERE application_name = 'throttle_test'
+  AND statement_ids[1] in (
+    SELECT
+      statement_id
+    FROM
+      crdb_internal.node_statement_statistics
+    WHERE
+      key LIKE 'SELECT%'
+  )
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW u AS SELECT a FROM a UNION SELECT a FROM a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW upgrade_temp_view AS SELECT a FROM temp_table
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS
+SELECT (
+  CASE WHEN true THEN (SELECT 'foo') ELSE NULL END
+)::e105259
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS
+SELECT (SELECT 'foo')::e105259
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS (SELECT 'a'::typ::string AS k)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS (SELECT 1)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS (SELECT i FROM t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS (SELECT i, nextval('view_seq') FROM t3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS (WITH r AS (SELECT 'a'::typ < 'a'::typ AS k) SELECT k FROM r)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT ((1,'a')::b).a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT (1,'a')::b
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT * FROM xy;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT 1;
+CREATE VIEW v_new AS SELECT 2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT a FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT a+b+c+d FROM cd, db1.public.ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT a, 'hello'::type FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT a,b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT a.a, b.b FROM a CROSS JOIN b
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT b FROM x
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT id FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT id, a, b FROM t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT nextval('s6')
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT v FROM kv
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT x FROM t29
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT x, y FROM t WHERE e > 5
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v AS SELECT x, y, f_scalar() FROM f_setof();
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v as SELECT c1,c2 from t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v as SELECT id FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v as SELECT k,v FROM kv
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v(a) AS SELECT crdb_internal_idx_expr FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v.v AS SELECT k,v FROM v.kv
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v0(c0) AS SELECT DISTINCT t0.c0 FROM t0;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1 AS SELECT a+b FROM ab
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1 AS SELECT a, b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1 AS SELECT a, b, EXISTS(SELECT c FROM cd WHERE cd.c=ab.a) FROM ab;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1 AS SELECT id FROM users WHERE username = 'tom'
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1 AS SELECT x, y FROM test.v2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v10 AS (SELECT i FROM t3 LIMIT nextval('view_seq'))
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v10 AS SELECT 'a'::view_typ
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v104927 AS SELECT json_agg(r) FROM (
+  SELECT i, s
+  FROM t104927
+) AS r
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v11 AS (SELECT 'a'::view_typ_new < 'a'::view_typ_new AS k)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v12 AS (SELECT k FROM (SELECT 'a'::view_typ AS k))
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v128535 AS SELECT json_to_tsvector()
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v13 AS (SELECT 'a'::view_type_new AS k UNION SELECT 'b'::view_type_new)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v14 AS (SELECT ARRAY['a'::view_type, 'b'::view_type])
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v15 AS (SELECT ('{a, b}'::view_type_new[])[2] AS view_type_new)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1Dep AS (SELECT name FROM t1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1dr as (select name from t1dr);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1ev AS (SELECT name FROM T1EV);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1ev AS (SELECT name FROM t1ev);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1nest AS (SELECT name FROM t1nest)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2 AS SELECT c1, crdb_region = 'us-east-1' AS is_us_east1 FROM t1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2 AS SELECT currval FROM (SELECT currval('view_seq'::regclass) FROM t3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2 AS SELECT id from users
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2 AS SELECT id, a, b FROM t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2 AS SELECT last_value FROM db2.seq
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2 AS SELECT name FROM v
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2Dep AS (SELECT name AS N1, name AS N2 FROM v1Dep);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2ev AS (SELECT name FROM t2ev);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v2nest AS (SELECT name AS n1, name AS n2 FROM v1nest)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v3 (x) AS SELECT a, b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v3 AS (SELECT 'a'::typ2::string AS k)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v3 AS SELECT count(*) FROM test.v AS v JOIN test.v2 AS v2 ON v.k > v2.c1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v3Dep AS (SELECT name, n1 FROM v1Dep, v2Dep);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v3ev AS (SELECT name FROM V2EV);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v3nest AS (SELECT name, n1 FROM v1nest, v2nest);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v4 (x, y, z) AS SELECT a, b FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v4 AS (SELECT i FROM t4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v44203(c0) AS SELECT c0 FROM t44203 WHERE t44203.c0 OFFSET NULL
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v47704 AS
+  SELECT first_value(a47704.foo) OVER (PARTITION BY a47704.foo ORDER BY a47704.foo)
+  FROM a47704 JOIN b47704 ON a47704.foo = b47704.foo
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v4Dep AS (SELECT n2, n1 FROM v2Dep);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v4_dep AS (SELECT j FROM t4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v4ev AS (SELECT name FROM V1EV);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v5 AS (SELECT i FROM t5)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v5 AS SELECT a, b FROM dne
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v5_dep AS (SELECT j FROM t5)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v6 (x, y) AS SELECT a, b FROM v1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v6 AS (SELECT j FROM v4_dep)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v63147 AS SELECT nextval('s63147') FROM t63147
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v7 (x, y) AS SELECT a, b FROM v1 ORDER BY a DESC LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v7 AS (SELECT i FROM t6)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v7 AS (SELECT i, (SELECT nextval('view_seq')) FROM t3)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v8 AS (SELECT last_value FROM s)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v9 AS (SELECT sequence_name FROM information_schema.sequences)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v9 AS (WITH w AS (SELECT nextval('view_seq')) SELECT nextval FROM w)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vIndx AS SELECT a,b FROM tIndx
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_64101 AS SELECT ARRAY['c'::reg_64101]
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_builtin AS SELECT * FROM generate_series(1, 4);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_checks AS
+SELECT
+     id,
+     jsonb_pretty(
+       crdb_internal.pb_to_json(
+         'cockroach.sql.sqlbase.Descriptor',
+         descriptor,
+         false
+       )->'table'->'checks'
+     ) as checks
+FROM system.descriptor
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_col_fn_ids AS
+SELECT
+id,
+(json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'id')::INT as col_id,
+json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'computeExpr' as compute_expr,
+json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'usesFunctionIds' as uses_fn_ids
+FROM system.descriptor
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_col_fn_ids AS
+SELECT
+id,
+(json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'id')::INT as col_id,
+json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'defaultExpr' as default_expr,
+json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'onUpdateExpr' as on_update_expr,
+json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'computeExpr' as compute_expr,
+json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'columns'
+)->'usesFunctionIds' as uses_fn_ids
+FROM system.descriptor
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_dep AS (SELECT k FROM t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_engineering AS
+  SELECT id, path, name
+  FROM t_view_base
+  WHERE path <@ 'org.engineering'
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_fn_depended_on_by AS
+SELECT
+     id,
+     jsonb_pretty(
+       crdb_internal.pb_to_json(
+         'cockroach.sql.sqlbase.Descriptor',
+         descriptor,
+         false
+       )->'function'->'dependedOnBy'
+     ) as depended_on_by
+FROM system.descriptor
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_idx_fn_ids AS
+SELECT
+id,
+(json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'indexes'
+)->'id')::INT as idx_id,
+json_array_elements(
+  crdb_internal.pb_to_json(
+    'cockroach.sql.sqlbase.Descriptor',
+    descriptor,
+    false
+  )->'table'->'indexes'
+)->'predicate' as predicate_expr
+FROM system.descriptor
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_nested_1_1 AS SELECT a, b FROM v_nv1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_nested_1_2 AS SELECT x, y FROM v_nv2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_nested_2_1 AS SELECT a, b FROM v_nv1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_nested_2_2 AS SELECT x, y FROM v_nv2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_nv1 AS SELECT a, b FROM t_nv1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_nv2 AS SELECT x, y FROM t_nv2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_seq_rewrite AS SELECT nextval('sc_seq_qualified_name.sq');
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_seq_rewrite_quoted AS SELECT nextval('"sc_seq_qualified_name"."sq"');
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_seq_rewrite_quoted AS SELECT nextval('"sc_seq_qualified_name.sq"');
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_top_level AS
+  SELECT id, path, name
+  FROM t_view_base
+  WHERE path <@ 'org' AND nlevel(path) = 2
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_vop AS SELECT a, b FROM t_vop
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_vop_nested AS SELECT a FROM v_vop
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_with_functions AS
+  SELECT id, path, name, nlevel(path) as depth, subpath(path, 0, 2) as top_level
+  FROM t_view_base
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW view_not_seq AS SELECT x FROM not_seq
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW view_ref AS SELECT a, 1 FROM x
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW view_rls_v AS SELECT * FROM view_rls_t;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW view_test AS SELECT k, v FROM tbl_test ORDER BY v
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW view_with_null AS SELECT 1 AS a, null AS c
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW virt1 AS SELECT table_schema FROM information_schema.columns
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW virt2 AS SELECT range_id, lease_holder FROM crdb_internal.ranges
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vm as (select cast('open' as db1.status) from db1.tval as t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vm as (select s.last_value, t.val as a, v.val as b, cast('open' as db2.status) from db1.tval as t, db1.sq1 as s, db1.rv as v)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vregclass AS SELECT 1 FROM (SELECT 1) AS foo WHERE 'tregclass'::regclass = 'tregclass'::regclass;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vregclass AS SELECT x FROM (SELECT CAST('toreg' AS regclass) AS x)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vregclass AS SELECT x::regclass FROM (SELECT 'does_not_exist' AS x);
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vv as SELECT b FROM x
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vx AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vx1 as SELECT 'hello'::test
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW vx2 as SELECT x FROM for_view
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW w AS WITH a AS (SELECT 1 AS x) SELECT x FROM a
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW w2 AS WITH t AS (SELECT x FROM w) SELECT x FROM t
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW w3 AS (WITH t AS (SELECT x FROM w) SELECT x FROM t)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW x AS SELECT array_agg(bar) FROM foo
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW x AS VALUES (1, 2), (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW y AS SELECT a FROM x
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW y AS SELECT column1, column2 FROM x
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW z AS SELECT b FROM x
+
+-- sqlfmt-corpus-separator --
+
+CREATE table decimals (a DECIMAL, b DECIMAL);
+INSERT INTO decimals VALUES(123.0E200, 12.3);
+
+-- sqlfmt-corpus-separator --
+
+CREATE table t_69647(pk INT PRIMARY KEY, i INT);
+CREATE INDEX i_69647 ON t_69647(i);
+
+-- sqlfmt-corpus-separator --
+
+CREATE table tregclass();
+
+-- sqlfmt-corpus-separator --
+
+CREATE view v6 AS SELECT nextval('view_seq') AS i
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE ALL
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE a
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE a1
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE b
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE insert_returning
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p0
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p1
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p152664
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p159043
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p161993
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p2
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p3
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p4
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p5
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p;
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p;
+PREPARE p AS SELECT 'foo'::BPCHAR = $1
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p;
+PREPARE p AS SELECT bp, length(bp) FROM chars WHERE bp = $1
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE p;
+PREPARE p AS SELECT c, length(c) FROM chars WHERE c = $1
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE psa
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE pscs10
+
+-- sqlfmt-corpus-separator --
+
+DEALLOCATE test_oid_param
+
+-- sqlfmt-corpus-separator --
+
+DECLARE "<unnamed portal 7>" CURSOR FOR SELECT 1;
+DECLARE "<unnamed portal 8>" CURSOR FOR SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+DECLARE "a"" b'c" CURSOR FOR SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+DECLARE "a"" b'c" CURSOR FOR TABLE t;
+DECLARE "a b" CURSOR FOR TABLE t;
+DECLARE "a\b" CURSOR FOR TABLE t;
+
+-- sqlfmt-corpus-separator --
+
+DECLARE bar CURSOR FOR SELECT 1,2,3;
+
+-- sqlfmt-corpus-separator --
+
+DECLARE foo CURSOR FOR SELECT * FROM a
+
+-- sqlfmt-corpus-separator --
+
+DECLARE foo CURSOR FOR SELECT * FROM a ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+DECLARE foo CURSOR FOR SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+DECLARE foo CURSOR FOR SELECT 100;
+
+-- sqlfmt-corpus-separator --
+
+DECLARE foo CURSOR FOR SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+DECLARE foo CURSOR FOR SELECT 1;
+DECLARE bar CURSOR FOR SELECT 2;
+
+-- sqlfmt-corpus-separator --
+
+DECLARE foo CURSOR FOR SELECT teeth FROM a
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM "A"
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM "B"
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM "user content"."customer reviews"
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM "user content"."customer reviews" WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM B
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE EXISTS (SELECT a FROM a)
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE a <= 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 'a-pk1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 'a1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 'delete-me';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 'delete_me';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 'original';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 'pk1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 5;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 7;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id = 9
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id > 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE id1=1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a WHERE x = 2;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM a;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM ab WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM ab WHERE a > 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM ab WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM abc where a = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM abcd WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM abcd where c = 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM accounts WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM accounts WHERE id = 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM assn_cast
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM assn_cast_upsert
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM audit_log;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM b WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM b WHERE id = 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM bbteams WHERE team != 'pirates';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM bbteams;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM bits
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM bools WHERE b
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM child
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM child WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM child WHERE True;
+DELETE FROM parent WHERE True;
+INSERT INTO parent VALUES (1), (2), (3);
+INSERT INTO child VALUES (1, 1), (2, 2), (3, 2), (4, 3);
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM child2 WHERE p1 = 10 AND p2 = 100
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM child_150282;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM cnt;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM cookies WHERE c = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM copy WHERE true
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d WHERE  id = 5
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d WHERE a=1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d WHERE a=6;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d WHERE k = 200
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d.a WHERE id = 'a1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM d1 WHERE id = 'd1-pk1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM data WHERE a > 11
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM data WHERE c > 5
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM distsql_mj_test WHERE TRUE;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM employees WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM employees WHERE id > 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM enum_table WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM example where a = 30;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM family WHERE x=2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM fk
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM foo
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM foo WHERE x = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM grandchild WHERE c = 10
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM grandchild WHERE c = 11
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM indexed WHERE value = 5
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM information_schema.collation_character_set_applicability
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM information_schema.collations
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM information_schema.session_variables
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM information_schema.tables
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM inv WHERE k = 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM jars WHERE j = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM kv
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM kv WHERE k = 100;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM kv WHERE k = 12
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM kv WHERE k=3 OR v=6
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM kv WHERE k=5
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM kv WHERE nonexistent = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM kview
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM large_numbers
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM loop_a WHERE id = 'loop_a-pk1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM messages_rbr WHERE account_id NOT IN (SELECT account_id FROM messages_rbt)
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM messages_rbr WHERE message = 'Hello World!'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM messages_rbt WHERE account_id NOT IN (SELECT account_id FROM messages_rbr)
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM messages_rbt WHERE message_id NOT IN (SELECT message_id FROM messages_rbr)
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM otherdb.othertable WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM p WHERE p = 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM pairs WHERE id = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM pairs WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE k < 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE k = 20 OR k = 30;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE k = 2;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE k > 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE key = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE p <= 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE p = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE p = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE p >= 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE q = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent WHERE true
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent146889 WHERE k = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent2 WHERE p1 = 10 AND p2 = 100
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent80828 WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent_150282;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent_cascade WHERE k = 3 OR k = 4;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent_cascade WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent_multi WHERE pa = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent_multi WHERE pa IS NULL
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM parent_multi WHERE pb = 20
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM pg_catalog.pg_tables
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM pindex USING (VALUES (5.0), (6.0)) v(b) WHERE pindex.a = v.b
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM products
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM products WHERE sku = '750'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM products WHERE sku = 'VP-W9QH-W44L'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM regional_by_row_table WHERE pk = 1000
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM regional_by_row_table WHERE pk = 5;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM rowtest.t1 WHERE a > 1000;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM self WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM self WHERE a = 4
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM self WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM self_ref_fk WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM self_x2 WHERE x = 'pk1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM shard_columns_parent WHERE c1 < 6
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM stored1 WHERE a = 2147483648;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.comments WHERE type = 4294967122
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.comments WHERE type=32;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.eventlog;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.prepared_transactions
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.role_members WHERE member = 'non_cached_user';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.role_options WHERE NOT username in ('root', 'admin')
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.statement_hints WHERE fingerprint = 'foo'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.statement_hints WHERE true
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.statement_hints WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.table_statistics
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.tenants WHERE id = 10
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.users WHERE username = 'non_cached_user'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.users WHERE username = 'non_cached_user';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.users WHERE username = 'roach_a';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.users WHERE username = 'roach_c';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM system.users WHERE username = 'roach_d';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE a = -2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE a = 17
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE a > ('a' COLLATE da) AND a < ('c' COLLATE da)
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE a > ('a' COLLATE de) AND a < ('c' COLLATE de)
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE a > 0
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE a IS NULL
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE i = 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE k = 'a';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE k > 0 AND k < 1000;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE k >= 'b' AND k < 'x'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE partition_by = 1 AND a = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE partition_by = 2;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE pk > 10
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE v = 33
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE v = 9
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE x <> 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE x = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t WHERE x > 2;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t where k = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t1 WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t1 WHERE a = 123
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t1 WHERE pk = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t1 WHERE pk = 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t1 WHERE x IS NULL
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t14601 WHERE a > 'a' AND a < 'c'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t14601a
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t154461 WHERE a = 'e'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t2 WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t2 WHERE k = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t3 WHERE k < 10 AND k > 0
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t3 WHERE k = 3
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t4 WHERE k = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t4 WHERE k = 2;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t4 WHERE k = 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t5 WHERE pk > 5
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t52318
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t54629 WHERE c = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t54629 WHERE c = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t64429 WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t67050 WHERE x = 'a'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t7 WHERE pk > 5
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t_idx WHERE a+b = 10
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t_idx WHERE v = 6
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM t_text WHERE True;
+INSERT INTO t_text VALUES ('False');
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM test20042 WHERE x = 'pk1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM test20042 WHERE x = 'pk2';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM test20045 WHERE x = 'pk1';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM test20045 WHERE x = 'pk2';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM test20045 WHERE x = 'pk3';
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM test_table_enum WHERE p = 'pk2'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM test_tbl_t WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM testing WHERE k = 5
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM trigger_audit;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM trigger_rls_table WHERE id = 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM trunc;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u WHERE a = 2;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u WHERE b IN (-10, -100, -1000)
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u_a USING u_a u_a2 WHERE u_a.a = u_a2.c
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u_a USING u_b WHERE c = u_b.a AND u_b.b = 'd'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u_a USING u_b, LATERAL (SELECT u_c.a, u_c.b, u_c.c FROM u_c WHERE u_b.b = u_c.b) AS other WHERE other.c = 1 AND u_a.c = 45
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM u_a USING u_b, u_c WHERE u_a.c = u_b.a AND u_a.c = u_c.a
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM unindexed
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM unindexed WHERE k=3 OR v=6
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM uniq_fk_parent WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM uniq_partial;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM unique_without_index WHERE e = 1 AND f = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM unique_without_index_partial WHERE a = 1 AND b = 3 AND c = -3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM update_test WHERE j @> '["c"]'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM ups WHERE pk = 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM use_greetings WHERE use_greetings.v = 'yo'
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM users WHERE id = 20
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM users WHERE id = 30
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM uses_alphabets WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM using_alphabets_60004 WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM v WHERE x = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM vals
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM vec WHERE k = 4
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM virt WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM virt1 WHERE c1 = 2147483647;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM virt;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM x
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM x WHERE A IN (0,2);
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM x WHERE A IN (0,2,4);
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE True;
+INSERT INTO xy VALUES (1, 2), (3, 4);
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE x <> 1 AND x <> 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE x = 1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE x = 2;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE x = 3;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE x = 5;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE x >= 100;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy WHERE x=1;
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM xy;
+
+-- sqlfmt-corpus-separator --
+
+DELETE from u
+
+-- sqlfmt-corpus-separator --
+
+DISCARD ALL
+
+-- sqlfmt-corpus-separator --
+
+DISCARD ALL;
+
+-- sqlfmt-corpus-separator --
+
+DISCARD SEQUENCES
+
+-- sqlfmt-corpus-separator --
+
+DISCARD TEMP
+
+-- sqlfmt-corpus-separator --
+
+DISCARD TEMP;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "'db1-a'" cascade;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "DelimitedDB_113782" CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "foo bar" CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "foo-bar" CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "foo-bar" RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "mr-backup-1";
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "mr-backup-2"
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "mr-zone-configs" CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE "rEgReSsIoN 105906"
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE IF EXISTS b
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE IF EXISTS my_db;
+CREATE DATABASE my_db;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE IF EXISTS othereventlogtest CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE IF EXISTS sidb CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE a CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE alice CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE atest CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b3 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b4 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b5 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b6 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE b7 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE bank_151216 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE bob
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE comment_db
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE constraint_column CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE constraint_db CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE crdb_internal
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE create_survive_db;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d1 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d1 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d2
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d2 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d34856 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d34862 CASCADE; SET database=test
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d35145
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d;
+DROP TABLE xy;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d;
+DROP TYPE t;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE d_drop_db_test CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE database_108751 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE database_142780
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE database_142783
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE database_145438
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db1
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db1 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db1 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db1 RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db1;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db2 cascade;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db3 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db50997 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db69713;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_113782 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_121808 RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_50712
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_50712 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_51782 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_73323 RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_95364 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_global
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE db_type_test
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE dbfoo;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE dbt
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE defaultdb;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE deleted_database
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE dfk CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE drop_me CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE e CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE empty
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE eventlogtest CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE foo
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE foo CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE information_schema
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE information_schema CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE mr
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE mr1;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE mr_db CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE newdb CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE olddb CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE other_db
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE other_db CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE postgres
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE pr_sr_test
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE privs CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE public
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE regression_105906
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE relkinds
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE renamed_db_create_db_priv
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE restricted_db
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE restricted_db2
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE roachdb
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE root_test CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE samename CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE seq
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE single_region
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE sr_sec_db
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE sr_validate
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE system
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE temp_priv_db CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE test
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE test CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE test_db CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE test_db2
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE test_set_db
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE testuserdb2
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE tmpdb CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE to_drop CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE to_drop CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE trigger_mr_db CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP DATABASE with_schemas CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX IF EXISTS ark
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX IF EXISTS baw
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX IF EXISTS baz
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX IF EXISTS baz, zap
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX IF EXISTS yak
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX ark
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX b_idx CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX baw
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX blorp
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX column_used_on_unsharded_crdb_internal_a_shard_10_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX column_used_on_unsharded_create_table_crdb_internal_a_shard_10_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX drop_index_test_index
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX dsc_idx_1
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX dsc_idx_1, dsc_idx_2, dsc_idx_4
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX dsc_idx_3
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX dsc_idx_5
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX dsc_idx_6
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX err
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX expr_idx;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX foo CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX forward_expr;
+DROP INDEX forward;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX geom_index;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX h1
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX i14601
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX i14601a
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX i14601a CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX i2
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX i2;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX i;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX idx1
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX idx2;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX idx97551;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX idx;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX idx_b;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX idx_path
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX invalid_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX j_a;
+DROP INDEX j_a_b;
+DROP INDEX i_j_a
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX multiple_indexes_vec1_idx;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX multiple_indexes_vec2_idx;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX nonexistent_index
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX pk_stored_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX secondary
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX sharded_primary_a_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX sharded_secondary_a_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX sharded_secondary_a_idx1
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX simple_vec1_idx2
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t2_96731_idx CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t2_96731_idx2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t2_96731_idx;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t54629_a_key CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t88047_inv_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t96924_b_key CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t96924_c_key CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t96924_e_f_idx CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t96924_g_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t96924_idx_1
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_97538_2_j_key CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_97538_2_j_key;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_a_plus_b_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_b_idx1
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_idx2;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_idx3;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_idx4;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_idx;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_lower_c_a_plus_b_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX t_rbr_pk_crdb_region_key, t_rbr_pk_key;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX tab_w0_7_i1;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX tu_a
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX tu_a_key
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX uniq_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX unique_without_index_c_key CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX v_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX x_b_key CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX y_b_idx CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP INDEX yak
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mat_view;
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mqt_doc;
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv1
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv2
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv;
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv_bob_view2;
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv_bob_view;
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv_forced_view;
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW mv_owned_view;
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW normal_view
+
+-- sqlfmt-corpus-separator --
+
+DROP MATERIALIZED VIEW v1Dep
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY admin
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY r1, r2
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY root
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY testuser
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY testuser RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY testuser2
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY testuser2 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP OWNED BY u_drop_udf;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE CURRENT_USER
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE IF EXISTS invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE IF EXISTS myrole
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE IF EXISTS rolec, roled, rolee
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE IF EXISTS table_owner;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE IF EXISTS view_owner;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE admin
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE admin, myrole
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE admin, root
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE alice, bob;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE alice;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE alter_policy_role, aux1, aux2;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE block_user
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE bob,fred;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE bob;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE can_bypassrls;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE can_createdb;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE can_createdb_global;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE can_createrole;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE can_createrole_global;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE cannot_bypassrls;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE cannot_createdb;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE cannot_createrole;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE child_role
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE creator_of_databases
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE creator_of_logins
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE fred;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE jobcontroller
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE john;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE mv_alice, mv_bob;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE mv_forcedowner, mv_forcehelper;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE mv_tblowner, mv_helper;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE myrole
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE newgroup
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE nontab_owner, tab_owner;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE parent_role
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE parent_with_createrole
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE parentrole
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE public
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE r, r2
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE r102962
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rinvisible
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rls_cache_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rls_view_owner, rls_invoker;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rolea
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rolea, roleb
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rolea, roleb, rolec, roled, rolee
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE roleb
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rolec
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE roled
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rolee
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rolef
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE roleg
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE rolewithlogin
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE root
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE schema_owner
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE self_referencing_role
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test1
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test1;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test2
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test2;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test3
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test3;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test4
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test4;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test_role1;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test_role2;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE test_set_role
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testrole
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser1
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser1;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser2
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser2, testuser
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser2;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser3;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser4
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser4;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE testuser;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE u_create_role_priv
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE user4
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE user4, SESSION_USER
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE user5
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE user_158154;
+
+-- sqlfmt-corpus-separator --
+
+DROP ROLE zeke;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA  my_pg_temp_123_123;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA "rEgReSsIoN 105906"
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA IF EXISTS scdrop4_db.scdrop4, scdrop5, scdrop6_db.scdrop6 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA altSchema CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA bar
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA concurrent_drop_sc CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA crdb_internal
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA db1.sc1
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA db1.sc1 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA db1.sc1 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA drop_me CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA drop_schema_with_triggers CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA dropped
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA droptest CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA foo
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA myschema2
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA myschema2 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA other_sc
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA other_sc CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA other_schema;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA privs
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA public
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA regression_105906
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA s
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA s CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA s, t
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA s1;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA s2
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA s_seqname CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc1
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc1 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc1;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc2 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA sc_95364 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA scdrop1, scdrop2, scdrop3 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA scdrop4_db.scdrop4, scdrop5, scdrop6_db.scdrop6 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA scdrop4_db.scdrop4, scdrop5, scdrop6_db.scdrop6 RESTRICT;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA scdrop4_db.scdrop4, scdrop5, scdrop6_db.scdrop6;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA schema_to_drop CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA system.public
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA test
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA test2.public
+
+-- sqlfmt-corpus-separator --
+
+DROP SCHEMA testuser CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE "A"
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE "B"
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE "MixedCase"
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE "Table-Name"
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE "user content"."customer reviews"
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE B
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS a
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS ab
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS anykey_json_tab;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS attrdef_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS b
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS cast_udf_enum_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS chain_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS child
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS child CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS grandchild CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS hcp_test; CREATE TABLE hcp_test (a INT8, b INT8, c INT8)
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS ifd;
+CREATE TABLE ifd
+(
+    i int,
+    f float,
+    d decimal
+);
+INSERT INTO ifd (i, f, d)
+VALUES (1, 1.1, 1.1),
+       (2, 2.2, 2.2),
+       (5, 3.0, 3.0),
+       (10, 7.8, 7.8),
+       (11, 9.0, 9.0),
+       (18, 11.2, 11.2);
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS osagg
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS parent
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS parent CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS r;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS regional_by_row_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS regional_by_row_table_virt_partial
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS sqrdiff
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t, t2;
+CREATE TABLE t (x INT);
+INSERT INTO t VALUES (1), (2);
+CREATE TABLE t2 (x INT);
+INSERT INTO t2 VALUES (3), (4);
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t1, t2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t1, t2 CASCADE;
+CREATE TABLE t1 (x JSONB PRIMARY KEY);
+CREATE TABLE t2 (x JSONB PRIMARY KEY);
+INSERT INTO t1 VALUES
+  ('[1, [2, 3]]'),
+  ('[1, [2, [3, [4]]]]');
+INSERT INTO t2 VALUES
+  ('[1, [2, 3]]'),
+  ('{}'),
+  ('[1, [2, 4]]')
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t1, t2, t3;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t1, t2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t1, t2;
+CREATE TABLE t1 (j JSONB);
+CREATE TABLE t2 (j JSONB);
+INSERT INTO t1 VALUES ('{"a": "b"}'), ('{"foo": "bar"}'), (NULL);
+INSERT INTO t2 VALUES ('{"c": "d"}'), ('{"foo": "bar"}'), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t1, t2;
+CREATE TABLE t1 (x INT PRIMARY KEY);
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t;
+CREATE TABLE t (x JSONB PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t;
+CREATE TABLE t (x JSONB);
+INSERT INTO t VALUES
+  ('{"foo" : "bar"}'),
+  ('{"foo" : "bar"}'),
+  ('[1, 2]'),
+  ('[2, 1]'),
+  ('[1, 2]'),
+  ('{"foo": {"bar" : "baz"}}')
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t;
+CREATE TABLE t (x JSONB, y INT);
+INSERT INTO t VALUES
+  ('{"foo": "bar"}', 5),
+  ('{"foo": "bar"}', 10),
+  ('[1, 2]', 5),
+  ('[1, 2]', 20),
+  ('{"foo": "bar", "bar": "baz"}', 5),
+  ('{"foo": "bar", "bar": "baz"}', 30),
+  ('{"foo": {"bar" : "baz"}}', 5),
+  ('{"foo": {"bar" : "baz"}}', 40)
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t;
+CREATE TABLE t(a INT PRIMARY KEY);
+INSERT INTO t VALUES(1), (2);
+GRANT ALL ON t TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t; CREATE TABLE t (k INT PRIMARY KEY, a INT, b INT)
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS t_prepare;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS tab1
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS tbl
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS vals
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE IF EXISTS xy;
+CREATE TABLE xy (x INT, y TEXT);
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE J1_TBL
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE J2_TBL
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE T1_FOR_SEQ CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE TEST2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE T_FOR_FUNCTION;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE T_TTL_W_EXPIRE_AT;
+DROP TABLE T_TTL_W_DEFAULT;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE T_WITH_COMPS;
+DROP TYPE SC1.COMP1;
+DROP TYPE SC2.COMP1;
+DROP SCHEMA SC1;
+DROP SCHEMA SC2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE a
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE a CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE a CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE a, b
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE a, no_default_table, no_default_table_on_update, no_default_table_ref2_default_on_delete,
+no_default_table_ref2_default_on_update, no_default_table_ref1_default_on_delete,
+no_default_table_ref1_default_on_update
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE a;
+DROP TYPE t;
+CREATE TYPE t AS (a INT, b TEXT);
+CREATE TABLE a (a INT CHECK (a > (((1, 'hi')::t).a)))
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE aa;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ab
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ab CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ab;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE accounts, non_rls;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE aclitem_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE add_self_fk_fail
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE alt_syntax
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE alter_policy_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE alter_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE anon;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE arr_composite_tab
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE array_single_family
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE array_test_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE assn_cast_c;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE atyp
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE audit_log CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE b
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE b CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE b, a
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE b, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE b4, b3, b2, b1, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE b;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE backfill_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE bar;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE baz
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE bb;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE bbteams;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE bf
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE blocker;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE blog_posts2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE blog_posts;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE boundedtable
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE bypassrls;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE c
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE c, b, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE c2, c1, b2, b1, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE c3, c2, c1, b2, b1, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE cast_udf_enum_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE cb
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE char_len
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE check_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE chgme;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child, parent
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child;
+DELETE FROM parent WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_cascade
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_cascade CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_cascade;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_combined
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_combined2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_composite_index, parent_composite_index
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_implicit
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_implicit2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_multi_1;
+DROP TABLE child_multi_2;
+DROP TABLE parent_multi
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_rbr_implicit
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE child_u
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE cnt;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE colref;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE column_add
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE composite_pk
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE composite_test_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE compound_pk
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE const
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE corrupt_backref_fk
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE corrupt_backref_view
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE create_idx_drop_column;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE create_index_concurrently_tbl
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE created_as_global;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ctas1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE customers;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE d, c2, c1, b2, b1, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE d.t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE d.t2;
+DROP DATABASE d;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE d2, d1, c3, c2, c1, b2, b1, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE data;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE data_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE data_types
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE db.kv
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE db1.t1_with_index_zone CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE db1.t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE db2.a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE db2.foo
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE db2.t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE decode_key_priv_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE decode_key_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE defaultdb.customers CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE defaultdb.customers;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE defaultdb.shipments CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE defaultdb.shipments;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE defaultdb.sq1dep;
+DROP TABLE defaultdb.shipments;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE defaultdb.ttyp;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE del_cascade_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dep_test CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE depth_a, depth_b, depth_c CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE depth_after CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE desc_compat_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dest
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dist_merge_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE documents;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE drop_primary_regions_db.ca
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE drop_primary_regions_db.east
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE drop_region_db.public.t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE drop_role_chk;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE drop_test_tbl
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dropme;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dropme_1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dropme_2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dropme_3;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE dropme_4;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE e, d, c, b, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE east;
+DROP TABLE southeast;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE employees
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE employees CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE empty;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE empty;
+DROP TABLE fk_ref;
+DROP TABLE xy;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enable_disable_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enable_disable_t_empty;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enabled
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enum_checks;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enum_ctas
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enum_ctas;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enum_data_type;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enum_referenced, enum_origin;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE enum_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE example
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE example;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE exec_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE explicit1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE expr
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE f, e, d, c, b, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE fake4
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE fam
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE foo
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE foo, bar
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE foo;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE for_view
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE force_check CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE forcedeletemydata
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE funcref;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE geo_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE geo_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE good_users CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE grandchild
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE grandchild;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE grandchild_cascade;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE greeting_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE hood
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE idx_with_partition_by;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE import_desc_test;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE import_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE importer;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE index_tab
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE indexed
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE information_schema.tables
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ins;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE json_family
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE kv
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE legacy;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE legacy_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE like_hash;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE lim
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE log1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE log2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE log_deps;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE loop_a, loop_b;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE lostdata
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE maintain_priv_t;
+DROP USER maintain_priv_user
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mc;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE messages
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mixed_case
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mixed_udt_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mr1.t;
+DROP TABLE mr1.t2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE multi_pol_tab1
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE multi_pol_tab2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE multi_pol_tab3
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE multi_t1,multi_t2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE multi_type_tbl;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE multip;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE multiple_indexes
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mvt_edge_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mvt_null_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mvt_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mvt_types_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE mvt_win_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE nested_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE no_default_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE non_mr_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE nonempty_a, nonempty_b
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE not_null_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE nullability
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE nullable;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE num_prec
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE operator_class
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE orders
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE orders;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE other CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE other;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE other_log;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE other_schema.test_table CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE otherdb.othertable
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE otherdb.othertable, crossdb
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE othertable
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE owner
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent, child_duplicate_cols
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent_59582, child_59582
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent_cascade;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent_combined
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent_composite_index, child_composite_index
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent_hash_sharded
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE parent_rbr_implicit
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE perm_table; DROP TABLE ref_temp_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE permanent_table; DROP TABLE temp_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE person, pet
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_attrdef_alter_identity
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_attrdef_identity
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_catalog.pg_tables
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_index_backfill_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_index_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_indexes;
+DROP TABLE pg_attribute;
+RESET search_path
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_temp.table_a; DROP TABLE public.table_a
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_type
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pg_type; RESET search_path; SET database = test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pgvector_tbl;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE policy_roles_test;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE policy_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE poor_t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE prefix_cols
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE prep_stmts
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE primary_key_table, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE primary_key_table, delete_no_default_table, a;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE products
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE products RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE products, orders2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE products;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE pws;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE r1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rbr;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE redactable_sql_constants_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ref_table CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ref_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE refcursor_tbl;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE refers1
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_row
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_row;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_row_as;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_row_like
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_row_like;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_row_table;
+DROP TABLE regional_by_table_in_primary_region;
+DROP TABLE regional_by_table_in_ca_central_1;
+DROP TABLE global_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_table_in_primary_region
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_table_in_us_east;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_table_no_region
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regional_by_table_no_region;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regression_44774
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regression_46973
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE regression_74912
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rename_column;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rgb_only;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rlsInsert;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rls_cache_test;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rls_docs;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rls_forced;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE rls_owned;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE roaches;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE role_exist_chk;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE s.t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE s.t;
+DROP TYPE s.typ;
+DROP SCHEMA s;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE s1dr;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE sanity1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE sc
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE self
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE self;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE self_ab, self_ab_parent
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE self_abcd
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE self_ref_fk;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE self_x2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE selfref
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE sensitive_data_table CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE seqowner;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE serial;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE serials, smallbig, serial
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE shard_columns_child
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE shard_columns_parent
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE shard_columns_rename
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE shard_columns_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE sharded_index_with_nulls;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE sharded_primary
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE sharded_secondary
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE side_effects CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE simple
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE source
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE src;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE stmt_ctrl_sub
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE stock
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE storage_params
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE store_columns_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE stored1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE string_agg_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE stuff;
+DROP TABLE users;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE stxtest
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE stxtest_kw
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE supermarket
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE system.users
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t CASCADE;
+CREATE TABLE t (a INT PRIMARY KEY);
+INSERT INTO t SELECT generate_series(0, 9);
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t, t2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t0;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1, t2 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1, t2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1, t3 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t10
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t11
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t112099_no_index;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t12
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t122278 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t160436_patterns;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t161408;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t168748
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t168748_composite
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1;
+DROP TABLE t2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1;
+DROP TABLE t2;
+DROP TABLE t3;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1;
+DROp TABLE t2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1_96731, t2_96731;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1_add
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t1ev,t2ev CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t2 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t2, t3 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t2_fk;
+DROP TABLE t1_fk;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t3
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t3 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t3, t1, t2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t30984
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t35364
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t4
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t43092
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t44466
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t46395
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t5
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t54629;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t6
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t63147
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t7
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t79613
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t79613;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t8
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t81448
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t81675;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t9
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t96924
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t97551;
+DROP TYPE enum97551;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t;
+CREATE TABLE t (x JSONB)
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t;
+CREATE TABLE t (x JSONB);
+INSERT INTO t VALUES
+  ('{}'),
+  ('[]'),
+  ('true'),
+  ('false'),
+  ('null'),
+  ('"crdb"'),
+  ('[1, 2, 3]'),
+  ('1'),
+  ('{"a": "b", "c": "d"}'),
+  (NULL)
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t;
+DROP TABLE t_as
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t; DROP TABLE u
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tIndex
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_114436;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_150484;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_168527
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_168527_part;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_50649
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_50711
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_50712
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_52501_valid
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_65915
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_85877
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_89025
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_96115;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_96648
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_add_column_not_null
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_added
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_alter_invalid
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_alter_type
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_aost;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_atom
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_auto_unlock
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_autocommit_rb;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_autocommit_test, t_autocommit_created;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_before_exc;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_bit_string;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_bool;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_boundary
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_bounded_string
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_bytes;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_cascade
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_check
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_check2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_check3
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_col_drop
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_committed;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_committed_ddl;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_composite
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_computed
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_computed;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_computed_invalid_stored
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_computed_invalid_virtual
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_conditional_bump_udt_version;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_constraints;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_control_job_priv
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_control_job_priv_inherited
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_decimal;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_defaults
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_deps, other_log;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_disable_full_ts
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_dml_rollback_check;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_drop_dep
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_droppedcol;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_enum;
+DROP TABLE t_enum_arr;
+DROP TYPE myenum;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_from_handler;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_hash_sharded;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_index
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_index_params
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_int;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_lookup CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_m1, t_m2, audit_log;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_many;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_multi_1, t_multi_2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_multi_fn;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_multi_idx
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_multi_idx2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_multi_virtual;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_name_check
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_nested_outer, t_nested_inner;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_not_valid_src CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_notice;
+DROP TABLE t_no_canary
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_notice_check;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_oid_cmp
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_oidarr
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_onecol CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_orders CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_pab
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_parent;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_pk
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_post_rollback;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_pre_commit, t_post_ddl;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_rc_explicit;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_rc_no_notice;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_rc_test;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_ref;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_rel, log2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_renamed
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_replace, audit_log;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_rowid CASCADE;
+CREATE TABLE t_rowid (k INT NOT NULL, v STRING)
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_rr_no_notice;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_rr_test;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_schema
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_seqname
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_seqname_cascade
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_seqname_create
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_sl
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_sort
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_sql_proc;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_sub CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_tmp;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_twocol CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_unbounded_string
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_unbounded_varbit
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_vc
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_view_base
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_virtual;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_with_default;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_with_hidden;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_with_not_valid_constraints_1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_with_not_valid_constraints_2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE t_with_on_update;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tab
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tab1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tab_145100
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tab_w0_7;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tab_w_computed;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE table_72116;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE table_ltree_array_leading;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE table_owner_test;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE table_with_nulls
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE target
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE target;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tbl
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tbl2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tbl3
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tbl5
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tbl6
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tbl_drop_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tbl_ifne CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tdup
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE telemetry_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE temp_priv_t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE temp_priv_t2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE temp_table_ref CASCADE; DROP TABLE temp_table_test CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tempy
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test.child, test.parent
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test.othertable
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test.stxtbl2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test1; DROP TABLE test2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test35040
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test_146046
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test_backfill
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test_serial;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test_table
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test_triggers CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE test_virtual
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE time_prec
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tmp
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tmp_table;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE to_drop;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE toreg;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE transaction_entries;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tregclass
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE trewrite
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE trewrite2
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE trewrite_copy
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE trig_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE trigger_audit;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE trunc;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tsquery_tbl;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE tsvector_tbl;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ttc1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ttc2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ttc3;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE types
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE u; DROP TABLE t
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE uniq;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE uniqueness_check;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE uniqueness_check_complex;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE update_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE ups;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE users CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE users;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE uu;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE uvw
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE v1
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE v1dr
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE vals
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE vec
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE vec;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE vec_b
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE vec_c
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE vec_errors
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE view_rls_t;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE virt1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE virt2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE virt3;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE with_defaults
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE x
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE x CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE x CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE x, y
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE xt
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE xx;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE xy
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE xy CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE xy; DROP TABLE ab
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE xy_158154
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE xyz
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE y
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE y CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE y;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE yt
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE yy;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE z1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE zc CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE zone_inherit
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE zone_subzone_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TABLE zone_test
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE IF EXISTS greeting;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE IF EXISTS pet, alien;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE IF EXISTS t
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE _t
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE a
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE address;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE arr_composite
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE array_status;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE cast_udf_enum;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE comp1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE comp2;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE comp3;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE composite_coord;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE d."b+c"
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE d_recreate
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE d_tc;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE db_enum_name_clash.crdb_internal_region;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE defaultdb.typ;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE e
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE e CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE e1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE e;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE enum97551;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE eventlog_renamed
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE greeting;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE mood;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE multi_region_test_db.public.crdb_internal_region
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE my_enum;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE s.typ
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE sc1.ct3;
+DROP TYPE sc1.ct2;
+DROP SCHEMA sc1;
+DROP TYPE et1;
+DROP TYPE ct1;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE sc2.typ;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE status
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE store
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE t
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE t, t
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE t1
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE t2
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE t3
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE t4
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE t;
+DROP TABLE a
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE test
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE test1
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE test_enum
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE ty
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ2
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ3
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ4
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ5
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ6
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ8
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE typ_96115;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE u;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE user_profile;
+
+-- sqlfmt-corpus-separator --
+
+DROP TYPE user_status;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER "none"
+
+-- sqlfmt-corpus-separator --
+
+DROP USER ALICE;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER IF EXISTS a_user_that_does_not_exist;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER IF EXISTS user1
+
+-- sqlfmt-corpus-separator --
+
+DROP USER IF EXISTS user1,user3
+
+-- sqlfmt-corpus-separator --
+
+DROP USER PAT;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER USEr1
+
+-- sqlfmt-corpus-separator --
+
+DROP USER a_user_that_does_not_exist;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER admin
+
+-- sqlfmt-corpus-separator --
+
+DROP USER alice;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER bypassrls_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER cascade_test_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER default_priv_user
+
+-- sqlfmt-corpus-separator --
+
+DROP USER default_priv_user2
+
+-- sqlfmt-corpus-separator --
+
+DROP USER deleter;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER fk_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER foo☂
+
+-- sqlfmt-corpus-separator --
+
+DROP USER ins;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER mc;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER multi_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER myadmin
+
+-- sqlfmt-corpus-separator --
+
+DROP USER myrole
+
+-- sqlfmt-corpus-separator --
+
+DROP USER node
+
+-- sqlfmt-corpus-separator --
+
+DROP USER prov_user1
+
+-- sqlfmt-corpus-separator --
+
+DROP USER prov_user2
+
+-- sqlfmt-corpus-separator --
+
+DROP USER prov_user3
+
+-- sqlfmt-corpus-separator --
+
+DROP USER public
+
+-- sqlfmt-corpus-separator --
+
+DROP USER r1_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER real_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER rgb_only_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER root
+
+-- sqlfmt-corpus-separator --
+
+DROP USER temp_test_user
+
+-- sqlfmt-corpus-separator --
+
+DROP USER test_user1;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER test_user2;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER test_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER testuser
+
+-- sqlfmt-corpus-separator --
+
+DROP USER testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+DROP USER testuser2
+
+-- sqlfmt-corpus-separator --
+
+DROP USER testuser3
+
+-- sqlfmt-corpus-separator --
+
+DROP USER u
+
+-- sqlfmt-corpus-separator --
+
+DROP USER u1;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER u_create_login_priv
+
+-- sqlfmt-corpus-separator --
+
+DROP USER u_test_owner;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER udf_test_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER uniq_user;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER ups;
+
+-- sqlfmt-corpus-separator --
+
+DROP USER usER1
+
+-- sqlfmt-corpus-separator --
+
+DROP USER user1
+
+-- sqlfmt-corpus-separator --
+
+DROP USER user1,user2
+
+-- sqlfmt-corpus-separator --
+
+DROP USER user1,user3
+
+-- sqlfmt-corpus-separator --
+
+DROP USER user2
+
+-- sqlfmt-corpus-separator --
+
+DROP USER userlongpassword
+
+-- sqlfmt-corpus-separator --
+
+DROP USER v
+
+-- sqlfmt-corpus-separator --
+
+DROP USER v;
+DROP USER u
+
+-- sqlfmt-corpus-separator --
+
+DROP USER z;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW alter_test_view
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW b
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW c
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW cd_v1 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW cd_v1;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW d
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW diamond
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW inner_si, inner_sd;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW materialized_view
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW multi_v1, multi_v2
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW mv
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW num_ref_view
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW otherview2
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW outer_si;
+DROP VIEW outer_sd;
+DROP VIEW inner_si;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW outer_si_si, outer_si_sd, outer_sd_si, outer_sd_sd;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW public.bar
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW s1
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW s1dr
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW s2
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW s3
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW s4
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW sc1.v_tbl
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW sc2.v_tbl
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW star1;
+DROP VIEW star2;
+DROP VIEW star3;
+DROP VIEW star4;
+DROP VIEW star5;
+DROP VIEW star6;
+DROP VIEW star7;
+DROP VIEW star8;
+DROP VIEW star9;
+DROP VIEW star10;
+DROP VIEW star11;
+DROP VIEW star14;
+DROP VIEW star15;
+DROP VIEW star16;
+DROP VIEW star17;
+DROP VIEW star18;
+DROP VIEW star19;
+DROP VIEW star20;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW t
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW t.v
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW t1dr;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW t_view_123017;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW temp_priv_v
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW test2.v1
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW testuser1
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW testuser1 CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW testuser1 RESTRICT
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW testuser2
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW testuser3
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v1
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v1Dep CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v1Dep RESTRICT;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v1ev CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v2
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v6
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v7
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v_64101;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v_builtin;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v_engineering
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v_top_level
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW v_with_functions
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW view_on_temp; DROP VIEW view_on_permanent; DROP VIEW upgrade_temp_view
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW view_rls_v;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW virt1
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW virt2
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW vregclass;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW vx1;
+DROP VIEW vx2;
+DROP TABLE t;
+DROP TABLE for_view;
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW x
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW x, y
+
+-- sqlfmt-corpus-separator --
+
+DROP VIEW y, x
+
+-- sqlfmt-corpus-separator --
+
+DROP owned by public;
+
+-- sqlfmt-corpus-separator --
+
+DROP table t1;
+
+-- sqlfmt-corpus-separator --
+
+DROP table t1nest CASCADE
+
+-- sqlfmt-corpus-separator --
+
+DROP type typ4
+
+-- sqlfmt-corpus-separator --
+
+DROP user testuser
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a('foo', 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a((SELECT 3), 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a(1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a(2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a(3, 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a(3.5, 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a(max(3), 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a(rank() over (partition by 3), 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE a1
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE aggprep(10)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE aggprep(20)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE allTypes(0, 0.0, 'foo', 'bar', '2017-08-08', '2015-08-30 03:34:45.34567', '2015-08-30 03:34:45.34567', true, 3.4)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE args_deduce_type(1,2,3,4);
+EXECUTE args_deduce_type('1','2',3,'4');
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE args_deduce_type_1(1,10,100);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE args_test_few(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE args_test_few(1, 2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE args_test_many(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE args_test_many(1, 2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE b
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE b('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE b(3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE bad_max_staleness_stmt
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE bad_min_timestamp_stmt
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE bar;
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE c
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_db
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_db_2
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_db_3
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_drop
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_loc
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_placeholders(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_privileges
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_rename
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_rename_2
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_schema_uncommitted
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_search_path
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE change_view
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE check_custom
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE concat_stmt(':')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE concat_stmt2(':')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE corr_s1(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE ctestmt (10)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE d
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE del (1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE display_appname
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE do_math(3, 7, 11, 17)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE e
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE e1 ('Bill Roacher', 'bill@cockroachlabs.com', 'Jo Roacher', 'jo@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE enum_drop
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE enum_query
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE f
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE foo (100);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE foo;
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE foobar(NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE format_stmt(-10, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE format_stmt(10, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE groupbyhaving(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE i('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE i(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE i(2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE i(3.3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE i(4.3::int)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_a(ARRAY[7.77, 8.88::DECIMAL(10, 2)])
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_a2(20.2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_a3(30.9)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_c(' ')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_c(' '::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_c('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_c('foo'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_ca(ARRAY['a', 'foo'])
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_d(123.45)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_d2(67.89)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d(1, 2, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d(1, 2.0, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d(1, 2.45, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d(1, 2.45::DECIMAL(10, 2), 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d(1, 2.56, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d2(1, 2, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d2(1, 2.0, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d2(1, 2.45, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d2(1, 2.45::DECIMAL(10, 2), 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_nothing_d2(1, 2.56, 'a')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_update_c('b', 'abc')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_update_c('b', 'abc'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_update_c('b', 'c')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_do_update_c('c', 'abc')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_f4(18754999.99)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_i('1')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_i2(99999999)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_qc('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_qc('foo'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_s(2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE insert_vba(ARRAY[B'1', B'11'])
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE jba_stmt(':');
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE jbo_stmt(':');
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE loc_dependent_operator
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE new_table_in_search_path
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE new_table_in_search_path_2
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE nn_stmt('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE nn_stmt(NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE nn_stmt3('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE nn_stmt3(42)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p ('foo', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p (33, 44)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p (33, 44, 55, 66)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p('bar   ')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p('foo   ')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(1);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(1);
+EXECUTE p(10);
+EXECUTE p(100);
+EXECUTE p(1000);
+EXECUTE p(10000);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(1, 10, 100);
+EXECUTE p(1, 10, 100);
+EXECUTE p(1, 10, 100);
+EXECUTE p(1, 10, 100);
+EXECUTE p(1, 10, 100);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(1, 2);
+EXECUTE p(10, 20);
+EXECUTE p(100, 200);
+EXECUTE p(1000, 2000);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(1, 2);
+EXECUTE p(10, 20);
+EXECUTE p(100, 200);
+EXECUTE p(1000, 2000);
+EXECUTE p(10000, 20000);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(10)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(120)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(2);
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(NULL, 3, 33, NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p(f())
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p0(0, 0, 0, 0)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p1 ('Bill Roacher', 'bill@cockroachlabs.com', 'Jo Roacher', 'jo@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p1(1, 1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p1(1, 2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p1(123)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p152664(false, NULL, 4)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p152664(true, 4, NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p158945a(NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p158945b(NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p159043(-1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p159043(10)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p159124
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p161993 ('{}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p2(123)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p2(2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p3(124)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p3(3, 3, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p4(123)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p4(4, 4, 4, 4)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p5(123)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p5(5, 5, NULL, 5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p6(123)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pg_catalog_query
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE psa('matilda')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pscs01(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pscs02(2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pscs03(3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pscs04(4)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pscs05(5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pscs06(6)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pscs11(11)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q('c')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q64765(1, 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q81315 (1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q81315_2(1::DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE query ('a', '"b"')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE r1('abc')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE rcc('t')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE regression_71394(71394)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE right_no_cols
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s('ap-southeast-2')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s('us-east-1')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s1 (1, 1, 1, -5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s1('2')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s2 (6, 7, 8, -5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s3 (7, 7, 7, 7, 6, 7, 8, -5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s4 (7, 7, 7, 7, 6, 7, 8, -5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s73450_a(999999)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s73450_b('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s73450_c('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE s_114867('red')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE selectin(5, 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE selectin2(1, 5, 1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE seqsel
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE set_setting('some string')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE setp('hello'); SHOW application_name
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE sets('hello')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE showOwners('atest')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE show_hints_stmt('SELECT * FROM ab WHERE a = 1')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE subqueryprep(4)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE subqueryprep(5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE subqueryprep(6)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE test_oid_param('1234')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE tview_prep
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_a(ARRAY[7.77, 8.88::DECIMAL(10, 2)])
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_a2(20.2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_a3(30.9)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_c(' ')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_c(' '::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_c('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_c('foo'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_d(123.45)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_d2(67.89)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_i('1')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_i2(99999999)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_privileges(5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_qc('foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE update_qc('foo'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_a(1, ARRAY[7.77, 8.88::DECIMAL(10, 2)])
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_a2(1, 20.2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_a3(1, 30.9)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_c(1, ' ')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_c(1, ' '::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_c(1, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_c(1, 'foo'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_c(2, ' ')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_c(2, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_c(3, ' '::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_d(1, 123.45)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_d2(67.89)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_i2(1, 99999999)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_qc(1, 'bar'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE upsert_qc(1, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE with_max_staleness_prep
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE with_min_timestamp_prep
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE wrongTypeImpossibleCast('crabgas')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x (1, 'fo', 2, 'bar')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x((1,2))
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x((1,2,3))
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x(1, 2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x(2, 3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x(3, 4)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x(NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x21701a(NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x21701b(NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE x21701c(NULL)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE y
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE y (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE y((1,2))
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z(2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z(3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z2(1)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z3(3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z4(3)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z5(3, 5)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE z6(3)
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT *
+FROM child_rbr
+INNER JOIN parent_rbr ON c_p_id = p_id WHERE c_int = 1
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT * FROM t WHERE k=10
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT * FROM t36642 WHERE k=10
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT * FROM t36644 WHERE k=10
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT * FROM t68254 WHERE c->'foo'->'bar' > '{"baz": 0}'
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT * FROM t68254 WHERE e IN ('{"baz": 2}', '{"baz": 3}', '{"baz": 4}')
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT * FROM t68254 WHERE f IN ('{"baz": 2}', '{"baz": 3}', '{"baz": 4}')
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT * FROM xy WHERE x > y
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT nextval('a')
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT users.crdb_region AS user_region, user_settings.crdb_region AS user_settings_region, *
+  FROM users JOIN user_settings ON users.crdb_region = user_settings.crdb_region AND users.id = '5ebfedee-0dcf-41e6-a315-5fa0b51b9882';
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN SELECT users.crdb_region AS user_region, user_settings.crdb_region AS user_settings_region, *
+  FROM users JOIN user_settings ON users.id = user_settings.user_id AND users.id = '5ebfedee-0dcf-41e6-a315-5fa0b51b9882';
+
+-- sqlfmt-corpus-separator --
+
+FETCH 0 foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 "a b";
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 "a"" b'c";
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 "a\b";
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 FROM a
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 bar
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 curs
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH 1 foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH 2 foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH 3 FROM dup;
+
+-- sqlfmt-corpus-separator --
+
+FETCH 3 FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH 3 bar
+
+-- sqlfmt-corpus-separator --
+
+FETCH 3 foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH ALL foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 1 FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 10 FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 2 FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM "<unnamed portal 10>";
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM "<unnamed portal 11>";
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM "<unnamed portal 1>";
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM "<unnamed portal 2>";
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM "<unnamed portal 3>";
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM bar;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM baz;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 3 foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD 5 FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD ALL foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH FORWARD foo
+
+-- sqlfmt-corpus-separator --
+
+FETCH FROM bar;
+
+-- sqlfmt-corpus-separator --
+
+FETCH FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+FETCH foo0;
+
+-- sqlfmt-corpus-separator --
+
+FETCH foo1;
+
+-- sqlfmt-corpus-separator --
+
+FETCH foo;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ADMIN TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ADMIN TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ADMIN to testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON ALL TABLES IN SCHEMA s, s2 TO testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON ALL TABLES IN SCHEMA s2 TO testuser3
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE a TO readwrite
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE a TO readwrite, "test-user"
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE d TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE d1 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE d45707 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE db1 TO role4;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE db1 TO role5;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE db2 TO newgroup
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE db2 TO role7;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE db2 TO role8;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE multi_region_test_db TO testuser;
+ALTER TYPE multi_region_test_db.public.crdb_internal_region OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE root_test TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE rowtest TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE sidb TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE sidb TO table_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE sidb TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE system TO admin
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE system TO root
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE system TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE test TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON DATABASE test to all_user_db;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON SCHEMA public TO bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON SCHEMA test_schema to all_user_schema;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON SCHEMA testuser TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON TABLE child_150282 TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON TABLE child_lt TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON TABLE d45707.t45707 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON TABLE parent_150282 TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON TABLE parent_151663 TO testuser;
+GRANT ALL ON TABLE parent_151663 TO testuser2;
+GRANT ALL ON TABLE parent_151663 TO testuser3;
+GRANT ALL ON TABLE child_151663 TO testuser3
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON TABLE parent_lt TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON TYPE typ2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON a to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON a.t TO readwrite
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON a.t, a.tt TO readwrite
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON accounts TO alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON b to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON bbteams TO buck;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON bypassrls TO bypassrls_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON c to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON child TO fk_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON cnt TO r1_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON crdb_internal.tables TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON ctas1 TO bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d.a TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d1.t1 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d1.v1 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d1.v2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d2.v2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON d2.v3 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON documents TO alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON documents TO bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON employees TO child_role
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON fam_parent TO testuser;
+GRANT ALL ON fam_child TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON force_check TO forcer;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON force_check TO funuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON importer TO z;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON multip TO multi_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON mv TO bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON non_rls TO alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON orders, customers TO u1;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON other TO alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON other TO ins;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON othertable TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON parent TO fk_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON rls_cache_test TO rls_cache_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON root_test.t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON sensitive_data_table TO sensitive_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON seq1 TO alter_policy_role;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t TO bar
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t TO readwrite, "test-user"
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t0 to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t131157 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t158154 TO user_158154;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON t7 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON table_owner_test TO nontab_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON test_retry TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON testuser1 to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON testuser2 to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON testuser3 to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON trigger_rls_table TO alice, bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON trunc TO deleter;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON type TEST to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON uniq TO uniq_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON users to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON v TO bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON v TO readwrite, "test-user"
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON v to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL ON xyz TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON SCHEMA s1 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON SCHEMA s2 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON TABLE s1.t2 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON TABLE t TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON TABLE t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON TABLE t1 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON TABLE t13 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON TABLE t21 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL PRIVILEGES ON TYPE type1 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL on abc TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL on abcde TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL on bbteams TO buck;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL on bcd TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL on rlsInsert TO buck;
+
+-- sqlfmt-corpus-separator --
+
+GRANT ALL on t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE alter_db to testuser;
+ALTER TABLE alter_db.t OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE alter_mr_db TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE atest TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE auth TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE auth_check_db TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE d TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE db TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE db1 TO forcer;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE db1 TO role1;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE db1 TO role3;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE db2 TO role1;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE db2 TO role6;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE dbt TO u
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE my_db TO my_role;
+GRANT my_role TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE perms TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE repartition_privs TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE system TO admin
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE system TO root
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE system TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test TO bar
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test TO new_role
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test TO old_role;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test TO testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test TO testuser;
+GRANT CREATE, SELECT ON TABLE tview, t2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test to testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON DATABASE test2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA another_db.seq_schema_allow TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA other_schema TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA privs TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA privs, otherdb.privs, otherdb2.privs TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO mv_alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO mv_bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO mv_forcedowner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO mv_tblowner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO nvo1, nvo2;
+GRANT SELECT ON t_nv1 TO nvo1;
+GRANT SELECT ON t_nv2 TO nvo2;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA public TO rls_view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA s TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA s TO testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA s1 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA s2 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA sc TO u
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA sc_test_priv TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA test_schema TO bar
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA test_schema TO parent
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON SCHEMA test_schema TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON TABLE alter_db.t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON TABLE auth.t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON TABLE db.t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON TABLE db.t TO testuser;
+GRANT CREATE ON TABLE db.t2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON TABLE information_schema.tables TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON TABLE users TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON audit TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON pg_catalog.pg_tables TO root
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON privs TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE ON repartition_privs.rbr TO testuser;
+GRANT CREATE ON repartition_privs.rbr2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE on DATABASE d TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE, USAGE ON SCHEMA s TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT CREATE, USAGE ON SCHEMA s TO testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT DELETE ON TABLE t TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT DELETE ON TABLE t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT DELETE ON TABLE t to target
+
+-- sqlfmt-corpus-separator --
+
+GRANT DELETE ON d.b TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT DELETE ON t TO bar;
+
+-- sqlfmt-corpus-separator --
+
+GRANT DELETE ON type TEST to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT DELETE, UPDATE ON TABLE t TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON TABLE a,b TO u
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON TABLE kv TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON TABLE t TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON TABLE t1 TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON TABLE t15 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON TABLE t16 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON publicdb.publictable TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON t TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT ON type TEST to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, DELETE ON TABLE t TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, DELETE ON TABLE t10 to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, DELETE ON TABLE t12 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, DELETE ON TABLE t4 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, DELETE ON TABLE t9 to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, DELETE on table t3 to target
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, SELECT ON TABLE t TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT INSERT, UPDATE, SELECT ON TABLE university TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT NODE TO root;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON ALL TABLES IN SCHEMA otherdb.public TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON ALL TABLES IN SCHEMA s TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON ALL TABLES IN SCHEMA s, s2 TO testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE c TO u
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE crdb_internal.tables TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE crdb_internal.tables, t TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE decode_key_priv_test TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE mat_view_source TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE owner_grant_option TO owner_grant_option_child
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE secret_data TO owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE sq TO u
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t, crdb_internal.tables TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t1 TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t11 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t14 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t18 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t7 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE t_vop TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE tbl_owned_by_parent TO other
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE tbl_owned_by_root TO other
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON TABLE test2.information_schema.columns TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON alter_test_view TO invoker_user
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON base_t TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON base_t TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON crdb_internal.feature_usage TO testuser4
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON crdb_internal.tables TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON crdb_internal.tables TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON d.b TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON default_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON foo TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON force_sd_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON force_sd_view TO table_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON force_si_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON force_si_view TO table_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON force_t TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON force_t TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON inner_sd TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON inner_si TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON maintain_mv TO testuser;
+GRANT SELECT ON maintain_t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON multi_pol_t TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON multi_pol_t TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON multi_sd TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON multi_si TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON nested_t TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON nested_t TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON num_ref_view TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON other_db.abc TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON outer_sd TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON outer_sd_sd TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON outer_sd_si TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON outer_si TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON outer_si_sd TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON outer_si_si TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON policy_table TO cascade_test_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON privatedb.publictable TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON public.public_table TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON public.test_table TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON publicdb.publictable TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON restrict_sd TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON restrict_si TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON restrict_t TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON restrict_t TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON revalidate_privs.rbr TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON rls_default_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON rls_docs TO mv_alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON rls_docs TO mv_bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON rls_sd_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON rls_si_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON sd_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON seq TO bar;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON seq TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON si_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t TO bar
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t129145 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t3 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t_nv1 TO nvo1;
+GRANT SELECT ON t_nv2 TO nvo2;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t_nv1 TO nvo1;
+REVOKE SELECT ON t_nv2 FROM nvo2;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON t_vop TO view_owner
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON tab_test_privileges TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON testowner_table TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON toggle_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON type TEST to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON ud_sd_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON ud_si_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON user_data TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON user_data TO view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON v1 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON v6 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON v_nested_1_1, v_nested_1_2, v_nested_2_1, v_nested_2_2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON v_nv1 TO nvo1, nvo2;
+GRANT SELECT ON v_nv2 TO nvo1, nvo2;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON v_vop TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON v_vop_nested TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON view_rls_t TO rls_view_owner;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON view_rls_v TO rls_invoker;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON vo_sd_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON vo_si_view TO invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT ON xy TO bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT on for_view TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT ON TABLE t TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT ON TABLE t17 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT ON TABLE t21 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT, DELETE, UPDATE ON t TO test_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT, UPDATE ON employees TO parent_role
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON child TO test_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON parent_rbr TO test_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON t TO alice, bob;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON t TO alice;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON t TO pat;
+
+-- sqlfmt-corpus-separator --
+
+GRANT SELECT, UPDATE ON kv TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON TABLE t TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON other_db.xyz TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON othertable TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON seq1 TO buck;
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON t129145 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON t2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON t3 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE ON type TEST to testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT UPDATE, SELECT ON priv_test TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON DATABASE a TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON SCHEMA acl_test_schema TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON SCHEMA owner_grant_option TO owner_grant_option_child
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON SCHEMA public TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON SCHEMA sc102962 TO r102962
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON SCHEMA test TO tester;
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON SCHEMA test_schema TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON SCHEMA test_schema TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TABLE crdb_internal.tables TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE _myenum TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE acl_test_type TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE myenum TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE owner_grant_option TO owner_grant_option_child
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE test TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE typ TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE type TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON TYPE type1 TO target
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON seq1 TO buck;
+
+-- sqlfmt-corpus-separator --
+
+GRANT USAGE ON t TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO admin
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO buck;
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO child2
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO newgroup
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO role2;
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO schema_owner
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO user1
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO user2;
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin TO user4;
+
+-- sqlfmt-corpus-separator --
+
+GRANT admin to testuser3
+
+-- sqlfmt-corpus-separator --
+
+GRANT auth_check_role TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT bar_role TO bar_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT child_role TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT child_role TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT creator_of_databases TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT creator_of_logins TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT db_owner_role TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT developer TO roach
+
+-- sqlfmt-corpus-separator --
+
+GRANT foo, bar TO root;
+
+-- sqlfmt-corpus-separator --
+
+GRANT foo_role TO foo_user;
+
+-- sqlfmt-corpus-separator --
+
+GRANT granter TO alice,bob,chuck,dave
+
+-- sqlfmt-corpus-separator --
+
+GRANT jobcontroller TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT jobviewer TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT meeter TO granter
+
+-- sqlfmt-corpus-separator --
+
+GRANT new_role TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT newgroup TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT newgroup TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT node TO root;
+
+-- sqlfmt-corpus-separator --
+
+GRANT old_role TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT parent TO child
+
+-- sqlfmt-corpus-separator --
+
+GRANT parent2 TO child2
+
+-- sqlfmt-corpus-separator --
+
+GRANT parent3 TO child3
+
+-- sqlfmt-corpus-separator --
+
+GRANT parent_role TO child_role
+
+-- sqlfmt-corpus-separator --
+
+GRANT parent_with_createrole TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT parentrole TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT public TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT role1 TO user5;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role11 TO user6;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role2 TO user7;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role3 TO role9;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role4 TO role10;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role5 TO role11;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role5 TO user1;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role6 TO role9;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role7 TO role10;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role8 TO role11;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role9 TO user1;
+
+-- sqlfmt-corpus-separator --
+
+GRANT role_bar TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+GRANT rolea TO rolea
+
+-- sqlfmt-corpus-separator --
+
+GRANT rolea TO roleb
+
+-- sqlfmt-corpus-separator --
+
+GRANT rolea TO rolee
+
+-- sqlfmt-corpus-separator --
+
+GRANT roleb TO rolea
+
+-- sqlfmt-corpus-separator --
+
+GRANT roleb TO rolec
+
+-- sqlfmt-corpus-separator --
+
+GRANT roleb TO rolee
+
+-- sqlfmt-corpus-separator --
+
+GRANT rolec TO rolea
+
+-- sqlfmt-corpus-separator --
+
+GRANT rolec TO roled
+
+-- sqlfmt-corpus-separator --
+
+GRANT rolec TO rolee
+
+-- sqlfmt-corpus-separator --
+
+GRANT rolec TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT roled TO rolea
+
+-- sqlfmt-corpus-separator --
+
+GRANT roled TO rolee
+
+-- sqlfmt-corpus-separator --
+
+GRANT roled TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT roleg to testuser3
+
+-- sqlfmt-corpus-separator --
+
+GRANT root TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT some_users TO bar
+
+-- sqlfmt-corpus-separator --
+
+GRANT temp_test_user TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT testrole TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT testrole TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT testrole TO testuser3
+
+-- sqlfmt-corpus-separator --
+
+GRANT testrole TO unknownuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT testrole to child_role;
+
+-- sqlfmt-corpus-separator --
+
+GRANT testuser TO child_role;
+
+-- sqlfmt-corpus-separator --
+
+GRANT testuser TO public
+
+-- sqlfmt-corpus-separator --
+
+GRANT testuser TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT testuser TO testuser2;
+REVOKE ALL ON DATABASE d FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+GRANT testuser to owner_grant_option_child
+
+-- sqlfmt-corpus-separator --
+
+GRANT testuser, testuser2 TO root;
+
+-- sqlfmt-corpus-separator --
+
+GRANT testuser2 TO testuser
+
+-- sqlfmt-corpus-separator --
+
+GRANT transitiveadmin TO child2
+
+-- sqlfmt-corpus-separator --
+
+GRANT unknownrole TO testuser
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+  INTO all_types
+VALUES (
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+       ),
+       (
+       false,
+       '123',
+       '2019-10-22',
+       1.23,
+       123,
+       123,
+       123,
+       123,
+       1.23,
+       '123',
+       '63616665-6630-3064-6465-616462656562',
+       '2001-1-18 1:00:00.001',
+       '2001-1-18 1:00:00.001-8',
+       '12:34:56.123456',
+       '127.0.0.1',
+       '[1, "hello", {"a": ["foo", {"b": 3}]}]'
+       )
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+  INTO many_types
+VALUES (
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+       ),
+       (
+       false,
+       '123',
+       '2019-10-22',
+       1.23,
+       1,
+       20,
+       312,
+       123,
+       1.23,
+       '123',
+       '63616665-6630-3064-6465-616462656562',
+       '1-1-18 1:00:00.001',
+       '1-1-18 1:00:00.001-8',
+       '12:34:56.123456',
+       '127.0.0.1',
+       '[1, "hello", {"a": ["foo", {"b": 3}]}]',
+       '{2,a}'::STRING[],
+       '1:00:00.001',
+       B'1'
+       ),
+       (
+       true,
+       '456',
+       '2020-05-21',
+       4.56,
+       4,
+       -50,
+       789,
+       456,
+       4.56,
+       '456',
+       '63616665-0000-0000-6465-616462656562',
+       '1-1-18 1:00:00.456',
+       '1-1-18 1:00:00.456-8',
+       '01:23:45.012345',
+       '192.168.0.0/16',
+       '[2, "hi", {"b": ["bar", {"c": 4}]}]',
+       '{2,b}'::STRING[],
+       '1:00:00.456',
+       B'11'
+       ),
+       (
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        2,
+        2,
+        2,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        '[1, "hello", {"a": ["foo", {"b": 3}]}]',
+        '{1,a}'::STRING[],
+        NULL,
+        B'11010'
+       )
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO
+	reference_constraint_different_order_parent
+VALUES (1, 2, 3, 'par_val');
+INSERT
+INTO reference_constraint_different_order_child
+VALUES (99, 1, 3, 2, 'child_val')
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO
+    regional_by_row_table_as4
+SELECT
+    g, g
+FROM
+    ROWS FROM (generate_series(1, 1000)) AS g (g)
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO
+    t
+VALUES
+    (
+        'min',
+        '4714-11-24 BC',
+        -3.40282346638528859811704183484516925440e+38,
+        -1.7976931348623e+308,
+        -32768,
+        -2147483648,
+        -9223372036854775808
+    ),
+    (
+        'max',
+        '5874897-12-31',
+        3.40282346638528859811704183484516925440e+38,
+        1.7976931348623e+308,
+        32767,
+        2147483647,
+        9223372036854775807
+    )
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO
+    t (key, _date)
+VALUES
+    ('+inf', 'infinity'), ('-inf', '-infinity')
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO
+  hash_sharded_rbr_computed (region_id, my_uuid, my_uuid2, another_id, row_ts)
+VALUES
+  ('ap1234', gen_random_uuid(), gen_random_uuid(), 1, TIMESTAMP '2016-01-25 10:10:10.555555')
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO
+  hash_sharded_rbr_computed (region_id, my_uuid, my_uuid2, another_id, row_ts)
+VALUES
+  ('east1234', gen_random_uuid(), gen_random_uuid(), 1, TIMESTAMP '2016-01-25 10:10:10.555555')
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO reference_constraint_different_order_child
+VALUES (99, 1, 2, 3, 'child_val')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "A"(x) VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "B"(x) VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "MixedTable" VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "foo""bar" VALUES (1, 2), (3, 4), (5, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "purchase" (amount) VALUES
+    ((1000,  'GBP', 100)),
+    ((10,    'YEN', 1)),
+    ((10000, 'BHD', 1000))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content"."customer reviews" (id, product, body) VALUES (2, '780', 'would not buy again')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content"."customer reviews" (id, product, body) VALUES (2, '790', 'would not buy again')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content"."customer reviews" (id, product, body, "order") VALUES (3, '780', 'i ordered 100 of them', 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content"."customer reviews" (id, product, body, "order") VALUES (4, '780', 'i ordered 101 of them', 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content"."customer reviews" (id, product, body, "order", shipment) VALUES (5, '780', 'i ordered 101 of them', 9, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content"."customer reviews" (id, product, body, shipment, "order") VALUES (5, '780', 'i ordered 101 of them', 9, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content"."customer reviews" VALUES (1, '780', 2, 1, 1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content".review_stats (id, upvotes) VALUES (2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO "user content".review_stats (id, upvotes) VALUES (5, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO B(x) VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (0, NULL, 'zero')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (1, 4, 'one')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (2, 3, 'two')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (3, 2, 'three')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (4, 1, 'four')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (5, 0, 'five')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (6, 6, 'six')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (7, 7, 'seven')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (8, 8, 'eight')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (NULL, 0, 'zero')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J1_TBL VALUES (NULL, NULL, 'null')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (0, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (1, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (2, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (3, -3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (5, -5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (NULL, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO J2_TBL VALUES (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO MaxIntTest VALUES (9223372036854775807)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO NumToSquare SELECT i, i*i FROM generate_series(1, 100) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO NumToStr SELECT i, to_english(i) FROM generate_series(1, 100*100) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('00:01-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('01:00-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('02:03-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('07:07-05')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('08:08-04')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('11:59-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('11:59:59.99 PM-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('12:00-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('12:01-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('15:36:39 MSK m2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('15:36:39 m2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('2003-03-07 15:36:39 America/New_York')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('2003-07-07 15:36:39 America/New_York')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO TIMETZ_TBL (f1) VALUES ('23:59-07')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a (id) VALUES ('a1');
+INSERT INTO b (id, a_id) VALUES ('b1', 'a1');
+INSERT INTO c (id, a_id) VALUES ('c1', 'a1');
+INSERT INTO d (id, c_id) VALUES ('d1', 'c1');
+INSERT INTO e (id, b_id, d_id) VALUES ('e1', 'b1', 'd1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a (id) VALUES ('original');
+INSERT INTO b (id) VALUES ('original');
+INSERT INTO c (id) VALUES ('original');
+INSERT INTO d (id) VALUES ('original');
+INSERT INTO e (b_id, d_id) VALUES ('original', 'original');
+INSERT INTO f (e_b_id, e_d_id) VALUES ('original', 'original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a (id) VALUES ('original');
+INSERT INTO b (id) VALUES ('original');
+INSERT INTO c (id) VALUES ('original');
+INSERT INTO d (id) VALUES ('original');
+INSERT INTO e (d_id, c_id) VALUES ('original', 'original');
+INSERT INTO f (e_d_id, e_c_id) VALUES ('original', 'original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a (id) VALUES (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (109), (110);
+INSERT INTO b VALUES (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a (id, crdb_region) VALUES ('4227eceb-71d6-422c-808b-6a12ec8a1e54', 'us-east-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a (x, y) VALUES ('x1', 'y1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a (x, y, z) VALUES ('x1', 'y1', 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a SELECT generate_series(1,5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('a', '1'), ('b', '2'), ('c', '3')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('a-pk1'), ('a-default');
+INSERT INTO b1 VALUES ('b1-pk1', 'a-pk1'), ('b1-pk2', 'a-pk1'), ('b1-default', 'a-default');
+INSERT INTO b2 VALUES ('b2-pk1', 'a-pk1'), ('b2-pk2', 'a-pk1'), ('b2-default', 'a-default');
+INSERT INTO c1 VALUES
+  ('c1-pk1-b1-pk1', 'b1-pk1')
+ ,('c1-pk2-b1-pk1', 'b1-pk1')
+ ,('c1-pk3-b1-pk2', 'b1-pk2')
+ ,('c1-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1-b1-pk1', 'b1-pk1')
+ ,('c2-pk2-b1-pk1', 'b1-pk1')
+ ,('c2-pk3-b1-pk2', 'b1-pk2')
+ ,('c2-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO c3 VALUES
+  ('c3-pk1-b2-pk1', 'b2-pk1')
+ ,('c3-pk2-b2-pk1', 'b2-pk1')
+ ,('c3-pk3-b2-pk2', 'b2-pk2')
+ ,('c3-pk4-b2-pk2', 'b2-pk2')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('a-pk1');
+INSERT INTO b1 VALUES ('b1-pk1', 'a-pk1'), ('b1-pk2', 'a-pk1');
+INSERT INTO b2 VALUES ('b2-pk1', 'a-pk1'), ('b2-pk2', 'a-pk1');
+INSERT INTO c1 VALUES
+  ('c1-pk1-b1-pk1', 'b1-pk1')
+ ,('c1-pk2-b1-pk1', 'b1-pk1')
+ ,('c1-pk3-b1-pk2', 'b1-pk2')
+ ,('c1-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1-b1-pk1', 'b1-pk1')
+ ,('c2-pk2-b1-pk1', 'b1-pk1')
+ ,('c2-pk3-b1-pk2', 'b1-pk2')
+ ,('c2-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO c3 VALUES
+  ('c3-pk1-b2-pk1', 'b2-pk1')
+ ,('c3-pk2-b2-pk1', 'b2-pk1')
+ ,('c3-pk3-b2-pk2', 'b2-pk2')
+ ,('c3-pk4-b2-pk2', 'b2-pk2')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('a-pk1');
+INSERT INTO b1 VALUES ('b1-pk1', 'a-pk1'), ('b1-pk2', 'a-pk1');
+INSERT INTO b2 VALUES ('b2-pk1', 'a-pk1'), ('b2-pk2', 'a-pk1');
+INSERT INTO c1 VALUES
+  ('c1-pk1-b1-pk1', 'b1-pk1')
+ ,('c1-pk2-b1-pk1', 'b1-pk1')
+ ,('c1-pk3-b1-pk2', 'b1-pk2')
+ ,('c1-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1-b1-pk1', 'b1-pk1')
+ ,('c2-pk2-b1-pk1', 'b1-pk1')
+ ,('c2-pk3-b1-pk2', 'b1-pk2')
+ ,('c2-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO c3 VALUES ('b2-pk1'), ('b2-pk2');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('a-pk1');
+INSERT INTO b1 VALUES ('b1-pk1', 'a-pk1'), ('b1-pk2', 'a-pk1');
+INSERT INTO b2 VALUES ('b2-pk1', 'a-pk1'), ('b2-pk2', 'a-pk1');
+INSERT INTO c1 VALUES
+  ('c1-pk1-b1-pk1', 'b1-pk1')
+ ,('c1-pk2-b1-pk1', 'b1-pk1')
+ ,('c1-pk3-b1-pk2', 'b1-pk2')
+ ,('c1-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1-b1-pk1', 'b1-pk1')
+ ,('c2-pk2-b1-pk1', 'b1-pk1')
+ ,('c2-pk3-b1-pk2', 'b1-pk2')
+ ,('c2-pk4-b1-pk2', 'b1-pk2')
+;
+INSERT INTO d VALUES ('d-pk1-c2-pk4-b1-pk2', 'c2-pk4-b1-pk2');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('a-pk1', 1);
+INSERT INTO b1 VALUES ('b1-pk1', 'a-pk1', 1, 1), ('b1-pk2', 'a-pk1', 1, 2);
+INSERT INTO b2 VALUES ('b2-pk1', 'a-pk1', 1, 1), ('b2-pk2', 'a-pk1', 1, 2);
+INSERT INTO c1 VALUES
+  ('c1-pk1-b1-pk1', 'b1-pk1', 1)
+ ,('c1-pk2-b1-pk1', 'b1-pk1', 1)
+ ,('c1-pk3-b1-pk2', 'b1-pk2', 1)
+ ,('c1-pk4-b1-pk2', 'b1-pk2', 1)
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1-b1-pk1', 'b1-pk1', 1)
+ ,('c2-pk2-b1-pk1', 'b1-pk1', 1)
+ ,('c2-pk3-b1-pk2', 'b1-pk2', 1)
+ ,('c2-pk4-b1-pk2', 'b1-pk2', 1)
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('delete-me'), ('untouched'), ('default');
+INSERT INTO b VALUES ('b1', 'delete-me'), ('b2', 'untouched');
+INSERT INTO c VALUES
+  ('c1-b1', 'delete-me')
+ ,('c2-b1', 'delete-me')
+ ,('c3-b2', 'untouched')
+ ,('c4-b2', 'untouched')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('delete-me'), ('untouched');
+INSERT INTO b VALUES ('b1', 'delete-me'), ('b2', 'untouched');
+INSERT INTO c VALUES
+  ('c1-b1', 'delete-me')
+ ,('c2-b1', 'delete-me')
+ ,('c3-b2', 'untouched')
+ ,('c4-b2', 'untouched')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('delete_me'), ('untouched'), ('b1-def'), ('b2-def'), ('b3-def'), ('b4-def');
+INSERT INTO b1 VALUES ('b1-pk1', 'untouched'), ('b1-pk2', 'untouched');
+INSERT INTO b2 VALUES ('b2-pk1', 'untouched'), ('b2-pk2', 'delete_me');
+INSERT INTO b3 VALUES ('b3-pk1', 'delete_me'), ('b3-pk2', 'untouched');
+INSERT INTO b4 VALUES ('b4-pk1', 'delete_me'), ('b4-pk2', 'delete_me');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('delete_me'), ('untouched'), ('b1-default'), ('b2-default'), ('b3-default'), ('b4-default');
+INSERT INTO b1 VALUES ('b1-pk1', 'untouched'), ('b1-pk2', 'untouched');
+INSERT INTO b2 VALUES ('b2-pk1', 'untouched'), ('b2-pk2', 'delete_me');
+INSERT INTO b3 VALUES ('b3-pk1', 'delete_me'), ('b3-pk2', 'untouched');
+INSERT INTO b4 VALUES ('b4-pk1', 'delete_me'), ('b4-pk2', 'delete_me');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('delete_me'), ('untouched');
+INSERT INTO b1 VALUES ('b1-pk1', 'untouched'), ('b1-pk2', 'untouched');
+INSERT INTO b2 VALUES ('b2-pk1', 'untouched'), ('b2-pk2', 'delete_me');
+INSERT INTO b3 VALUES ('b3-pk1', 'delete_me'), ('b3-pk2', 'untouched');
+INSERT INTO b4 VALUES ('b4-pk1', 'delete_me'), ('b4-pk2', 'delete_me');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original'), ('default');
+INSERT INTO b VALUES ('b1', 'original'), ('b2', 'default');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original'), ('untouched'), ('b1-default'), ('b2-default'), ('b3-default'), ('b4-default');
+INSERT INTO b1 VALUES ('b1-pk1', 'untouched'), ('b1-pk2', 'untouched');
+INSERT INTO b2 VALUES ('b2-pk1', 'untouched'), ('b2-pk2', 'original');
+INSERT INTO b3 VALUES ('b3-pk1', 'original'), ('b3-pk2', 'untouched');
+INSERT INTO b3 VALUES ('b4-pk1', 'original'), ('b4-pk2', 'original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original'), ('untouched'), ('b1-default'), ('b2-default');
+INSERT INTO b1 VALUES ('b1-pk1', 'original'), ('b1-pk2', 'untouched'), ('b1-default', 'b1-default');
+INSERT INTO b2 VALUES ('b2-pk1', 'original'), ('b2-pk2', 'untouched'), ('b2-default', 'b2-default');
+INSERT INTO c1 VALUES
+  ('c1-pk1-b1-pk1', 'original')
+ ,('c1-pk2-b1-pk1', 'original')
+ ,('c1-pk3-b1-pk2', 'untouched')
+ ,('c1-pk4-b1-pk2', 'untouched')
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1-b1-pk1', 'original')
+ ,('c2-pk2-b1-pk1', 'original')
+ ,('c2-pk3-b1-pk2', 'untouched')
+ ,('c2-pk4-b1-pk2', 'untouched')
+;
+INSERT INTO c3 VALUES
+  ('c3-pk1-b2-pk1', 'original')
+ ,('c3-pk2-b2-pk1', 'original')
+ ,('c3-pk3-b2-pk2', 'untouched')
+ ,('c3-pk4-b2-pk2', 'untouched')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original'), ('untouched'), ('default');
+INSERT INTO b VALUES ('b1', 'original'), ('b2', 'untouched');
+INSERT INTO c VALUES
+  ('c1-b1', 'original')
+ ,('c2-b1', 'original')
+ ,('c3-b2', 'untouched')
+ ,('c4-b2', 'untouched')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original'), ('untouched');
+INSERT INTO b VALUES ('b1', 'original'), ('b2', 'untouched');
+INSERT INTO c VALUES
+  ('c1-b1', 'original')
+ ,('c2-b1', 'original')
+ ,('c3-b2', 'untouched')
+ ,('c4-b2', 'untouched')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original'), ('untouched');
+INSERT INTO b1 VALUES ('b1-pk1', 'original'), ('b1-pk2', 'untouched');
+INSERT INTO b2 VALUES ('b2-pk1', 'original'), ('b2-pk2', 'untouched');
+INSERT INTO c1 VALUES
+  ('c1-pk1-b1-pk1', 'original')
+ ,('c1-pk2-b1-pk1', 'original')
+ ,('c1-pk3-b1-pk2', 'untouched')
+ ,('c1-pk4-b1-pk2', 'untouched')
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1-b1-pk1', 'original')
+ ,('c2-pk2-b1-pk1', 'original')
+ ,('c2-pk3-b1-pk2', 'untouched')
+ ,('c2-pk4-b1-pk2', 'untouched')
+;
+INSERT INTO c3 VALUES
+  ('c3-pk1-b2-pk1', 'original')
+ ,('c3-pk2-b2-pk1', 'original')
+ ,('c3-pk3-b2-pk2', 'untouched')
+ ,('c3-pk4-b2-pk2', 'untouched')
+;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original'), ('untouched');
+INSERT INTO b1 VALUES ('b1-pk1', 'untouched'), ('b1-pk2', 'untouched');
+INSERT INTO b2 VALUES ('b2-pk1', 'untouched'), ('b2-pk2', 'original');
+INSERT INTO b3 VALUES ('b3-pk1', 'original'), ('b3-pk2', 'untouched');
+INSERT INTO b3 VALUES ('b4-pk1', 'original'), ('b4-pk2', 'original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original');
+INSERT INTO b1 VALUES ('b1-pk1', 'original');
+INSERT INTO b2 VALUES ('b2-pk1', 'original');
+INSERT INTO c1 VALUES
+  ('c1-pk1', 'original')
+ ,('c1-pk2', 'original')
+ ,('c1-pk3', 'original')
+ ,('c1-pk4', 'original')
+;
+INSERT INTO c2 VALUES
+  ('c2-pk1', 'original')
+ ,('c2-pk2', 'original')
+ ,('c2-pk3', 'original')
+ ,('c2-pk4', 'original')
+;
+INSERT INTO c3 VALUES ('original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original');
+INSERT INTO b1 VALUES ('b1-pk1', 'original');
+INSERT INTO b2 VALUES ('b2-pk1', 'original');
+INSERT INTO c1 VALUES
+  ('c1-pk1', 'original')
+ ,('c1-pk2', 'original')
+ ,('c1-pk3', 'original')
+ ,('c1-pk4', 'original')
+;
+INSERT INTO c2 VALUES ('c2-pk1', 'original');
+INSERT INTO c3 VALUES ('original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('original');
+INSERT INTO b1 VALUES ('original');
+INSERT INTO b2 VALUES ('original');
+INSERT INTO c1 VALUES ('original');
+INSERT INTO c2 VALUES ('original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES ('pk1');
+INSERT INTO b1 VALUES ('pk1');
+INSERT INTO b2 VALUES ('pk1');
+INSERT INTO c1 VALUES ('pk1');
+INSERT INTO c2 VALUES ('pk1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (-1, -2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (0, 0, 0, 0),(1, 10, 100, 1000);
+INSERT INTO b VALUES (0, 0, 0, 0),(1, 10, 100, 1000);
+INSERT INTO c VALUES (0, 0, 0, 0),(1, 10, 100, 1000);
+INSERT INTO d VALUES (0, 0, 0, 0),(1, 10, 100, 1000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (0, 1), (1, 2), (2, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1), (2), (3), (4), (5);
+INSERT INTO b VALUES (1, 1), (2, 2), (3, 4);
+INSERT INTO c VALUES (2, 1), (1, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1), (2), (3);
+INSERT INTO b VALUES (1), (2);
+INSERT INTO c VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1), (2), (3);
+INSERT INTO b VALUES (1, 1), (2, NULL), (3, 2), (4, 1), (5, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1, 'foozoopa'),
+                     (2, 'Foo'),
+                     (3, 'blah'),
+                     (4, 'Приветhi')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1, 1), (2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1, 1, 1, 'foo', '{"x": "one"}');
+INSERT INTO xy VALUES (1, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1, 10), (2, 20), (3, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (1, NULL, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (101, 200, 3000, 40);
+INSERT INTO a VALUES (102, 5, 60, 70);
+INSERT INTO a VALUES (103, 7, 8, 70);
+INSERT INTO a VALUES (104, 5, 5, 5);
+INSERT INTO a VALUES (50, 5, 5000, 500);
+INSERT INTO a VALUES (80, 11, 110, 11000);
+INSERT INTO b VALUES (30, 7, 40, 2);
+INSERT INTO b VALUES (120, 80, 90, 10);
+INSERT INTO c VALUES (1, 2, 3, 4);
+INSERT INTO d VALUES (5, 6, 7, 8), (9, 10, 11, 12);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (11, 110, 1100, 11000);
+INSERT INTO b VALUES (11, 110, 1100, 11000), (11, 110, 1100, 11000);
+INSERT INTO c VALUES (11, 110, 1100, 11000), (11, 110, 1100, 11000), (11, 110, 1100, 11000);
+INSERT INTO d VALUES (11, 110, 1100, 11000), (11, 110, 1100, 11000), (11, 110, 1100, 11000), (11, 110, 1100, 11000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (12, 120, 1200, 1), (12, 120, 1200, 2);
+INSERT INTO b VALUES (12, 120, 1200, 1), (12, 120, 1200, 2), (12, 120, 1200, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (15,   55, 555, 5555), (15, 55,   500, 5555), (15, 50, 555,  5555);
+INSERT INTO b VALUES (17,   77, 777, 7777), (17, 77,   700, 7777), (17, 70, 777,  7777);
+INSERT INTO b VALUES (NULL, 77, 777, 7777), (17, NULL, 777, 7777), (17, 77, NULL, 7777);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (2, 1, 1), (3, 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (2, 20, 200, 2000), (3, 30, 300, 3000), (4, 40, 400, 4000), (5, 50, 500, 5000), (6, 60, 600, 6000), (7, 70, 700, 7000);
+INSERT INTO b VALUES (2, 20, 200, 2000), (3, 30, 300, 3000),                     (5, 50, 500, 5000), (6, 60, 600, 6000)                    , (8, 80, 800, 8000), (9, 90, 900, 9000);
+INSERT INTO c VALUES (2, 20, 200, 2000),                                         (5, 50, 500, 5000)                                        , (8, 80, 800, 8000)                    , (10, 100, 1000, 10000);
+INSERT INTO d VALUES                                                             (5, 50, 500, 5000), (6, 60, 600, 6000), (7, 70, 700, 7000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (2,2), (3,3);
+INSERT INTO b VALUES (2,2), (3,3);
+INSERT INTO c VALUES (2,2), (3,3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (2,2);
+INSERT INTO b VALUES (2,2);
+INSERT INTO c VALUES (2,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (3),(7),(2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (4, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (5);
+INSERT INTO b VALUES (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY['1-2'::interval])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY['foo' COLLATE en])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY['foo', 'bar', 'baz'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY['foo','bar','baz'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY['foo'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY['hello' COLLATE en]), (ARRAY['goodbye' COLLATE en])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY['hello' COLLATE fr])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[1, 'foo'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[1,2,3,4,5,6,7,8,NULL::INT])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[1,2,3])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[1,2,3]), (ARRAY[4,5]), (ARRAY[6])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[1.1, 2.2, 3.3])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[100000])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[1])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[NULL::INT]), (ARRAY[NULL::INT, 1]), (ARRAY[1, NULL::INT]), (ARRAY[NULL::INT, NULL::INT])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[NULL::STRING, NULL::STRING, NULL::STRING, NULL::STRING, NULL::STRING, NULL::STRING, 'G'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[]), (ARRAY[TRUE]), (ARRAY[FALSE]), (ARRAY[TRUE, TRUE]), (ARRAY[FALSE, TRUE])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[current_date])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[now()])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[uuid_v4()::uuid])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (NULL, NULL), (NULL, 1), (2, NULL), (3, 3);
+INSERT INTO b VALUES (NULL, NULL), (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (NULL, NULL), (NULL, 1), (2, NULL), (3, 3);
+INSERT INTO b VALUES (NULL, NULL), (NULL, 1), (2, NULL), (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (default), (default), (100)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES('foo:1,2 bar:4B'::tsvector, 'foo <2> bar'::tsquery)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES(1,2,3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES(3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a(id) VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a(id) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a(x)
+        (WITH b(z) AS (VALUES (1),(2),(3)) SELECT z+1 AS w FROM b)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a(x)
+      (WITH a(z) AS (VALUES (1)) SELECT z+1 AS w FROM a);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a(x) VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a.b SELECT generate_series(1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a1 VALUES
+  (1, '{}'),
+  (2, '{1}'),
+  (3, '{2}'),
+  (4, '{1, 2}'),
+  (5, '{1, 3}'),
+  (6, '{1, 2, 3, 4}'),
+  (7, ARRAY[NULL]::INT[]),
+  (8, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a_null VALUES (NULL), (1), (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a_null VALUES (NULL), (NULL), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO aa VALUES (3,3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab SELECT i, i*10 FROM generate_series(1, 4) g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 1), (1, 2), (2, 1), (2, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 1), (1, 3), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 1), (2, 2), (3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 1), (2, 2), (3, 3), (4, 1), (5, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 1), (2, 2), (3, 3), (4, 4), (5, 5);
+INSERT INTO xy VALUES (1, 1), (3, 3), (5, 5), (7, 7);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 10), (2, 20), (3, 30), (4, NULL), (NULL, 50), (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 2), (1, 3), (2, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 2), (3, 4), (5, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1, 200), (2, 300)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (1,1), (2,1), (3,3), (4, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (10, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (10, 100), (1, 10), (5, 50)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (2, 20), (3, 30), (4, 40);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (2, 20), (3, 30);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES (20, NULL), (30, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab VALUES('fat rats', 'fat cats chased fat, out of shape rats');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ab(a, b) VALUES (1, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc (a, b, c) VALUES (0, 1, NULL);
+INSERT INTO abc (a, b, c) VALUES (0, 2, NULL);
+INSERT INTO abc (a, b, c) VALUES (1, 1, NULL);
+INSERT INTO abc (a, b, c) VALUES (1, 2, NULL);
+INSERT INTO abc (a, b, c) VALUES (2, 1, 1);
+INSERT INTO abc (a, b, c) VALUES (2, 2, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES
+  ('1', '1', '1'),
+  ('1', '1', '2'),
+  ('1', '2', '2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES
+  ('1', '1', '1'),
+  ('1', '1', '2'),
+  ('1', '2', '2'),
+  ('2', '3', '4'),
+  ('3', '4', '5')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES
+  (1, 10, 20),
+  (2, 10, 20),
+  (3, 10, 20),
+  (4, 10, 30),
+  (5, 10, 30),
+  (6, 10, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES ('one', 1.5, true, 5::decimal), ('two', 2.0, false, 1.1::decimal)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES ((SELECT (10, 11, 12)))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES ((SELECT 10, 11, 12))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES ((SELECT 7), (SELECT 8), (SELECT 9))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (0, 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 10, 100), (2, 20, 200), (3, 30, 300)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 10, 100), (2, 20, 200), (3, 30, 300), (NULL, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 2, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 2, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 2, 3), (4, 5, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 2, 3, 'one'), (4, 5, 6, 'Two')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 2, 4), (1, 1, 4), (0, 0, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1, 20, 300), (2, 30, 400)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (1,2, (SELECT crdb_internal.force_error('foo', 'bar')))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (4, -0, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (4, 5, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (42, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (5, 1, 7), (6, 1, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES (6, 7, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc VALUES(12, 13, 14)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc2 VALUES (2, 30, 400), (1, 30, 500), (3, 30, 300)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc_check VALUES (1, 2, 3), (2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc_check(a, b, c) VALUES (1, 0, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abc_check(a, b, c) VALUES (2, 0, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd (a) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES
+(-2, -20, 900, 9000),
+(-1, -10, 920, 9200),
+(0, -9, 920, 9300);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES
+(1, 10, 100, 1000),
+(2, 20, 200, 2000),
+(3, 30, 300, 3000),
+(4, 40, 400, 4000),
+(5, 50, 500, 5000),
+(6, 60, 600, 6000),
+(7, 70, 700, 7000),
+(8, 80, 800, 8000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES
+(NULL, NULL, NULL),
+(NULL, NULL, 1),
+(NULL, NULL, 5),
+(NULL, NULL, 10),
+(NULL, 1,    NULL),
+(NULL, 1,    1),
+(NULL, 1,    5),
+(NULL, 1,    10),
+(NULL, 5,    NULL),
+(NULL, 5,    1),
+(NULL, 5,    5),
+(NULL, 5,    10),
+(NULL, 10,   NULL),
+(NULL, 10,   1),
+(NULL, 10,   5),
+(NULL, 10,   10),
+(1,    NULL, NULL),
+(1,    NULL, 1),
+(1,    NULL, 5),
+(1,    NULL, 10),
+(1,    1,    NULL),
+(1,    1,    1),
+(1,    1,    5),
+(1,    1,    10),
+(1,    5,    NULL),
+(1,    5,    1),
+(1,    5,    5),
+(1,    5,    10),
+(1,    10,   NULL),
+(1,    10,   1),
+(1,    10,   5),
+(1,    10,   10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES (1, 1, 1, 1), (2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES (1, 2, 3, 4), (5, 6, 7, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES (1, 4, 2, 3), (2, 3, 4, 1), (3, 2, 1, 2), (4, 4, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES (10, 11, 12, 13), (20, 21, 22, 23), (30, 31, 32, 33), (40, 41, 42, 43)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcd VALUES (9, 10, 11, 12, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcde VALUES (45, 46, 47, NULL, 49)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcde VALUES (5, 6, 7, 8, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO abcde VALUES (85, 86, 87, 88, 89)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ac VALUES (1, 300), (2, 400)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO accounts VALUES
+  (1, 'alice', 100),
+  (2, 'bob', 200);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO accounts VALUES (3, 'alice', 300);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO accounts VALUES (5, 'alice', 500);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO acl_mid_upgrade VALUES (1, 'testuser=r/root')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO acl_test VALUES (1, 'testuser=arwdDxt/root')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO aclitem_test VALUES ('root=r/admin')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO add_default (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO add_default (a) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO add_default (a) VALUES (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO add_default (a) VALUES (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO add_default (a) VALUES (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO add_self_fk_fail VALUES (1, 2, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO aliases VALUES (100, 'abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO aliases VALUES (2, 'def')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO all_null VALUES (1, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO all_tab VALUES (1), (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO all_tab VALUES (NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO alter_policy_table VALUES (1, 'one'), (2, 'two'), (3, 'three');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO any_tab VALUES (1, 10), (3, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO any_tab VALUES (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO anykey_json_tab VALUES
+(1, '{"a": {"b": {"c": "d"}}}'),
+(2, '{"a": {"b": {"c": {"d": "e"}}}}'),
+(3, '{"a": {"b": [{"c": {"d": "e"}}]}}'),
+(4, '{"a": {"b": ["c", "d"]}}'),
+(5, '{"a": {"b": "d"}}'),
+(6, '{"a": {"b1": "d"}}'),
+(7, '{"a": {"b1": {"c": {"d": "e"}}}}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr VALUES (ARRAY[1,2]), (ARRAY[1,2]), (ARRAY[3,4]), (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_composite_tab VALUES ((ARRAY[1, 2, 3], ARRAY['a', 'b']))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_composite_tab VALUES (ROW(ARRAY[4, 5], ARRAY['c', 'd', 'e']))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_t VALUES (default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_t2 VALUES (default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_t3 VALUES (default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_t4 VALUES (default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_t5 VALUES (default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arr_t6 VALUES (default, default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(0,ARRAY[])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(1,ARRAY[1])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(2,ARRAY[1,2])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(3,ARRAY[1,2,NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(4,ARRAY[NULL,2,3])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(5,ARRAY[1,NULL,3])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(6,ARRAY[NULL::INT])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(7,ARRAY[NULL::INT,NULL::INT])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_single_family VALUES(8,ARRAY[NULL::INT,NULL::INT,NULL::INT])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_tab VALUES
+  (1, '{}'),
+  (2, '{1}'),
+  (3, '{2}'),
+  (4, '{1, 2}'),
+  (5, '{1, 3}'),
+  (6, '{1, 2, 3, 4}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_tab VALUES
+  (1, '{}'),
+  (2, '{1}'),
+  (3, '{2}'),
+  (4, '{1, 2}'),
+  (5, '{1, 3}'),
+  (6, '{1, 2, 3, 4}'),
+  (7, ARRAY[NULL]::INT[]),
+  (8, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO array_tab_not_idx VALUES
+  (1, '{}'),
+  (2, '{1}'),
+  (3, '{2}'),
+  (4, '{1, 2}'),
+  (5, '{1, 3}'),
+  (6, '{1, 2, 5}'),
+  (7, ARRAY[NULL]::INT[]),
+  (8, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arrays VALUES
+    (ARRAY[]),
+    (ARRAY['192.168.0.1/10', '::1']),
+    (ARRAY['192.168.0.1', '192.168.0.1/10', '::1', '::ffff:1.2.3.4'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO arrays VALUES
+  (ARRAY[]),
+  (ARRAY['00:00:00']),
+  (ARRAY['00:00:00', '12:00:00.000001']),
+  ('{13:00:00}'::TIME[])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast (c) VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(a) VALUES (ARRAY[1.1])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(a) VALUES (ARRAY[2.88, NULL, 15])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(a) VALUES (ARRAY[3.99, NULL, 16]::DECIMAL(10, 2)[])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(a) VALUES (ARRAY[5.55, 6.66::DECIMAL(10, 2)])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(a) VALUES (ARRAY[NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(a) VALUES (ARRAY[])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(b) VALUES (null), ('1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(c) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(c) VALUES ('abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(c) VALUES (1) RETURNING c
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(c) VALUES (123)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(c) VALUES (null), ('b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(ca) VALUES (ARRAY['foo', 'a'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(d) VALUES (11.22), (88.99)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(d) VALUES (22.33::DECIMAL(10, 0)), (99.11::DECIMAL(10, 2))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(d) VALUES (33.11::DECIMAL(10, 0)), (44.44::DECIMAL(10, 0))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(f4) VALUES (18754999.99)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(i) VALUES ('1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(i) VALUES ('1'::STRING)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(i) VALUES (null), ('1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(i2) VALUES (999999999)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(qc) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(qc) VALUES ('abc') RETURNING qc
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(qc) VALUES (123) RETURNING qc
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(qc) VALUES (1234)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(qc) VALUES (null), ('b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(s) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(t) VALUES ('1970-01-01'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(vba) VALUES (ARRAY[B'11', B'1'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(vc) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(vc) VALUES ('abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(vc) VALUES (1) RETURNING vc
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(vc) VALUES (123)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast(vc) VALUES (null), ('b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_c VALUES (1, 1.0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_c VALUES (2, 12)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_c VALUES (2, 2.0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_char_default(c) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_char_default(c, c2) VALUES ('a', 'ab')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_char_default(c2) VALUES ('ab')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_comp(k, d, d2) VALUES (1, 1.56, 2.78)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_comp(k, i) VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_comp(k, t) VALUES (1, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_dec_default(k) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_do_update VALUES (3, 1.23, 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_int_default(k) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO assn_cast_on_update (k, i) VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO atyp VALUES(ARRAY[(1, 2), (3, 4), NULL, (5, NULL)])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x) VALUES ('x1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y) VALUES ('x1', 'y1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y) VALUES ('x1', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y) VALUES (NULL, 'y1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y) VALUES (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x1', 'y1', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x1', NULL, 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x1', NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x2', 'y1', 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x2', 'y2', 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x2', 'y2', 'z2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x2', 'y2', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x2', NULL, 'z2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES ('x2', NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES (NULL, 'y1', 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES (NULL, 'y1', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES (NULL, 'y2', 'z2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES (NULL, 'y2', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES (NULL, NULL, 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES (NULL, NULL, 'z2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_y, a_z) VALUES (NULL, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_z) VALUES ('x1', 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_z) VALUES ('x1', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_x, a_z) VALUES (NULL, 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y) VALUES ('y1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y, a_x) VALUES ('y1', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y, a_x) VALUES ('y2', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y, a_x) VALUES (NULL, 'x1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y, a_x) VALUES (NULL, 'x2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y, a_z) VALUES ('y1', 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y, a_z) VALUES ('y1', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_y, a_z) VALUES (NULL, 'z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (a_z) VALUES ('z1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b (id, a_id, crdb_region) VALUES ('8f6ce660-423e-4823-8e41-bf001a007b46', '4227eceb-71d6-422c-808b-6a12ec8a1e54', 'ca-central-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES ('{"a": [1, 2, 3], "b": "hello"}'), ('{"a": false}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (0), (1), (2), (3), (4), (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (0, 1, 'a'), (2, 1, 'b'), (0, 2, 'c'), (0, 1, 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (1, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (2, NULL, 200, NULL), (3, 30, 300, NULL)    , (NULL, 40, 400, 4000)  , (NULL, NULL, NULL, 5000)                       , (7, NULL, 700, NULL);
+INSERT INTO b VALUES (2, 20, NULL, 200)  , (3, 30, 300, 3000)    , (4, NULL, NULL, NULL)  , (5, 50, NULL, 5000)                            , (7, NULL, 700, NULL);
+INSERT INTO c VALUES                       (3, 30, NULL, NULL)   , (NULL, NULL, 400, 4000), (5, 50, NULL, NULL), (6, NULL, NULL, 6000);
+INSERT INTO d VALUES                       (NULL, 30, NULL, 3000)                                                                                                , (NULL, 90, NULL, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (3, 'foo:1,5 zoop:3')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (3, false)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (82, NULL, 207, NULL), (NULL, 567, NULL, 789);
+INSERT INTO c VALUES (83, 208, NULL, NULL), (NULL, NULL, 84, 209);
+INSERT INTO d VALUES (85, NULL, NULL, 210), (NULL, 86, 211, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (NULL, 120, 1200, 1)   , (12, NULL, 1200, 2);
+INSERT INTO d VALUES (11, NULL, NULL, 11000), (NULL, 110, 1100, 11000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b VALUES (NULL, NULL, NULL, NULL), (NULL, NULL, NULL, NULL);
+INSERT INTO d VALUES (NULL, NULL, NULL, NULL), (NULL, NULL, NULL, NULL), (NULL, NULL, NULL, NULL), (NULL, NULL, NULL, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO b.a VALUES (3),(7),(2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO backfill_a VALUES
+    (1, 'foo', '[7]'),
+    (2, 'bar', '[7, 0, 7]'),
+    (3, 'baz', '{"a": "b"}'),
+    (4, 'baz', '["a", "b"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO backfill_b VALUES
+    (1, 'foo', '[7]'),
+    (2, 'bar', '[7, 0, 7]'),
+    (3, 'baz', '{"a": "b"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO backfill_c VALUES
+    (1, '[7]'),
+    (2, '[7, 0, 7]'),
+    (3, '{"a": "b"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO backfill_d VALUES
+    (1, 'foo', '[7]'),
+    (2, 'bar', '[7, 0, 7]'),
+    (3, 'baz', '{"a": "b"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO backfill_test VALUES
+  (1, 'jack', 10, '[1.0, 2.0, 3.0]', '[3.0, 2.0, 1.0]'),
+  (2, 'jill', 20, '[4.0, 5.0, 6.0]', '[6.0, 5.0, 4.0]'),
+  (3, 'ash',  30, '[7.0, 8.0, 9.0]', '[9.0, 8.0, 7.0]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO backfill_test VALUES
+  (4, 'jill', 40, '[1.0, 2.0, 3.5]', '[3.5, 2.0, 1.0]'),
+  (5, 'jack', 50, '[4.0, 5.5, 6.0]', '[6.0, 5.5, 4.0]'),
+  (6, 'ash',  60, '[7.5, 8.0, 9.0]', '[9.0, 8.0, 7.5]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO backfill_test VALUES
+  (7, 'ash',  70, '[3.0, 2.0, 1.0]', '[1.0, 2.0, 3.0]'),
+  (8, 'jack', 80, '[4.0, 5.0, 6.0]', '[6.0, 5.0, 4.0]'),
+  (9, 'jill', 90, '[7.0, 8.0, 9.0]', '[9.0, 8.0, 7.0]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bank VALUES (17, 1000.0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bar VALUES
+  (1, 1, 1, 1),
+  (2, 2, 2, 2),
+  (3, 3, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bar VALUES (0, NULL), (1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bar VALUES (1, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bar VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bar VALUES (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bar VALUES (default, default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO base_t VALUES
+  (1, 'table_owner', 'owner-data'),
+  (2, 'view_owner', 'vowner-data'),
+  (3, 'invoker_user', 'invoker-data'),
+  (4, 'other', 'other-data');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO baz VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bb VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bb VALUES (4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bbox_units VALUES (1, 1.0), (2, 'NaN');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bbteams VALUES ('jays', 'AL'), ('tigers', 'AL'), ('cardinals', 'NL'), ('orioles', 'AL'), ('nationals', 'NL');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bbteams(team, league) VALUES ('guardians', 'AL'), ('royals', 'AL'), ('expos', 'NL');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bcd VALUES (20, 200, 2000), (30, 300, 3000), (40, 400, 4000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bcd VALUES (6, 1, 5), (7, 1, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bf VALUES ('Foo'), ('BAR'), ('baz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bf VALUES (1, 1), (6, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bf VALUES (1, 10), (6, 60)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO big VALUES(102,'argh2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bit_count_test VALUES (B'101', B'00', '\x10'), (B'100', B'101', '\x10A2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits VALUES (12), (25)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits VALUES(105)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits VALUES(NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(a) VALUES (B'')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(a) VALUES (B'1'), (B'0');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(a) VALUES (B'1110')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(b) VALUES (B'')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(b) VALUES (B'0000'), (B'1001');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(b) VALUES (B'0110'), (B'0011')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(b) VALUES (B'111')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(b) VALUES (B'111000111')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(c) VALUES (B'0'), (B'1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(c) VALUES (B'1'), (B'0'), (B''), (B'1110'),
+(B'0101010101010101001101010101010101010101010101010101010101010101010010101') -- more than 64 bits
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(c) VALUES (B'1010'), (B'11')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(d) VALUES
+(B'0101010101010101001101010101010101010101010101010101010101010101010010101') -- more than 64 bits
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bits(d) VALUES (B'1'), (B'0'), (B''), (B'1110')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blindcput values (1, 1), (2, 2), (3, 3), (4, 4), (1, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blocks VALUES (1, b'\x01')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blog VALUES ('1', 'Test Blog')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blog_posts (title) VALUES ('par_test_1') RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blog_posts (title) VALUES ('par_test_2') RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blog_posts (title) VALUES ('par_test_3') RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blog_posts (title) values ('bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blog_posts (title) values ('foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO blog_properties VALUES
+('1', 'Application Name', 'Instagram'),
+('1', 'Admin Email', 'admin@email.com'),
+('1', 'Blog Name', 'Wordpress Blog'),
+('1', 'Application Name', 'Twitter'),
+('1', 'KeepAlive', 'true'),
+('1', 'Session Timeout', '1000ms')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bool_table VALUES (true), (false)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO boolean_table (id, value) VALUES (1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bools VALUES
+(0, NULL),
+(1, true),  (1, true),
+(2, false), (2, false),
+(3, false), (3, true), (3, true),
+(4, NULL),  (4, true),
+(5, false), (5, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bools VALUES (false), (false)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bools VALUES (true), (true), (true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO box2d_encoding_test VALUES
+  (1, 'BOX(1 2,3 4)', 'BOX(3 4,5 6)', array['BOX(-1 -2,-3 -4)']),
+  (2, 'BOX(10.1 20.1,30.5 40.6)', 'BOX(30 40,50 60)', array['BOX(-1 -2,-3 -4)'::box2d, 'BOX(3 -4,5 -6)'::box2d])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO box2d_tbl VALUES
+  ('NULL', NULL),
+  ('box at origin', 'box(0 0, 0 0)'),
+  ('box from origin to 1 1', 'box(0 0, 1 1)');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bypassrls VALUES (0, 'visible: 0'), (1, 'hidden: 1'), (2, 'visible: 2');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bytes_string VALUES
+(0, NULL, NULL),
+(1, b'1', '1'),
+(2, b'2', '2'), (2, b'2', '2'),
+(3, b'3', '3'), (3, NULL, NULL), (3, b'3', '3')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bytes_t SELECT * FROM string_t
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO bytes_t VALUES ('byte')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES (0), (1), (2), (3), (4), (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES (1, 'a'), (1, 'b'), (2, 'c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES (1,2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES (3, 30), (300, 3000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES (3,4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES(0, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES(1, ARRAY[], ARRAY['foo', 'bar', 'baz'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES(2, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES(3, ARRAY[0,1,NULL], ARRAY['a',NULL,'b',NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES(4, ARRAY[1,2,3], ARRAY['b',NULL,'c'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c VALUES(5, ARRAY[], ARRAY[NULL, NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c1 VALUES ('A' COLLATE en_u_ks_level1, 'apple' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c1 VALUES ('b' COLLATE en_u_ks_level1, 'banana' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c1 VALUES ('p' COLLATE en_u_ks_level1, 'pear' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c2 VALUES ('A' COLLATE en_u_ks_level1, 'apple' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c2 VALUES ('b' COLLATE en_u_ks_level1, 'banana' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c2 VALUES ('p' COLLATE en_u_ks_level1, 'pear' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c_delete_cascade VALUES (2), (3);
+INSERT INTO c_delete_set VALUES (2, 2), (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO c_update VALUES (1, 1, 1), (2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO calls_func VALUES (-5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO calls_func VALUES (1), (-1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cast_udf_enum_t VALUES ('a'), ('a'), ('b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cb VALUES
+  (0, ARRAY[], ARRAY[]),
+  (1, ARRAY[0], ARRAY[NULL]),
+  (2, ARRAY[1], ARRAY['cat']),
+  (3, ARRAY[0,1], ARRAY['mouse']),
+  (4, ARRAY[NULL], ARRAY['cat', 'mouse']),
+  (5, ARRAY[0,1,2], ARRAY['cat', NULL, 'mouse']),
+  (6, ARRAY[3,4,5], ARRAY['rat']),
+  (7, ARRAY[1,2,1], ARRAY['rat', NULL]),
+  (8, ARRAY[0,1,NULL], ARRAY[''])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cb VALUES
+  (0, ARRAY[], ARRAY[], ARRAY[]),
+  (1, ARRAY[0], ARRAY[NULL, ''], ARRAY[2]),
+  (2, ARRAY[1], ARRAY['cat'], ARRAY[3]),
+  (3, ARRAY[0,1], ARRAY['mouse'], ARRAY[2,3]),
+  (4, ARRAY[NULL], ARRAY['cat', 'mouse'], ARRAY[2]),
+  (5, ARRAY[0,1,2], ARRAY['cat', NULL, 'mouse'], ARRAY[2,3,5]),
+  (6, ARRAY[3,4,5], ARRAY['rat'], ARRAY[2,3]),
+  (7, ARRAY[1,2,1], ARRAY['rat', NULL, ''], ARRAY[2,3]),
+  (8, ARRAY[0,1,NULL], ARRAY[''], ARRAY[7]),
+  (9, NULL, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cb2 VALUES
+  (0, '{}'),
+  (1, '[]'),
+  (2, '1'),
+  (3, '"a"'),
+  (4, 'true'),
+  (5, 'null'),
+  (6, '{"a": "b"}'),
+  (7, '{"a": {"b": "c", "d": "e"}}'),
+  (8, '{"a": {"b": "c"}, "d": "e"}'),
+  (9, '{"a": {"b": [1, 2]}}'),
+  (10, '{"a": {"b": {"c": [1, 2, 3]}}}'),
+  (11, '{"a": {"b": {"c": {"d": "e"}}}}'),
+  (12, '{"a": {"b": {"d": 2}}}'),
+  (13, '{"a": [{"b": {"c": [1, 2]}}]}'),
+  (14, '{"b": {"c": [1, 2]}}'),
+  (15, '{"a": []}'),
+  (16, '{"a": {}}'),
+  (17, '{"a": [[2]]}'),
+  (18, '[[2]]'),
+  (19, '[1, 2]'),
+  (20, '[1, 2, 3]'),
+  (21, '[{}]'),
+  (22, '[{"a": "b"}]'),
+  (23, '[{"a": "b", "c": ["d", "e"]}]'),
+  (24, '[[1], [2]]'),
+  (25, '[[1, 2]]'),
+  (26, '["a", "b", "b"]'),
+  (27, '[1, 2, {"b": "c"}]'),
+  (28, '[{"a": {"b": "c"}}, "d", "e"]'),
+  (29, '{"a": {"d": null}}'),
+  (30, '{"d": null}'),
+  (31, '[null]'),
+  (32, '[[], null]'),
+  (33, '[null, []]'),
+  (34, '[null, {}]'),
+  (35, '[[null]]'),
+  (36, '[1, 2, null]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_array_t VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_builtins_t VALUES (-3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_case_t VALUES (-5), (0), (10);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_casts_t VALUES (42);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_coalesce_t VALUES (0), (5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_mixed_t VALUES (1, 10), (2, 20);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_multi_t VALUES (1, 2, 'game1'), (5, 3, 'game2'), (4, 4, 'game3');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_multi_unnamed_t VALUES (1, 10), (2, 20);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_ordinal_t VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_param_t VALUES (1), (2), (3), (4), (5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_strict_t VALUES (1, 10), (2, NULL), (3, 30), (4, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cc_udf_t VALUES (1, 10), (2, 20), (3, 30);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cd VALUES (2, 2), (3, 3), (4, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO chars VALUES ('foo   ', 'bar    ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO check_table VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO check_table VALUES (0, 0), (1, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO check_table VALUES (0, 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO check_table VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO chgme VALUES (0),(1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child (c, p) VALUES (100, 1), (101, 2), (102, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child (c, p) VALUES (200, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child (crdb_region, c_id, c_p_id)
+VALUES ('ap-southeast-2', 10, 10), ('ca-central-1', 20, 20), ('us-east-1', 30, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child (crdb_region, c_id, c_p_id) VALUES('ap-southeast-2', 11, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child (k) (VALUES (1), (2), (3), (NULL))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child (k, crdb_region) (VALUES (4, 'ap-southeast-2'))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child (k, crdb_region) (VALUES (4, 'ca-central-1'), (5, 'ap-southeast-2'), (6, 'us-east-1'), (NULL, 'us-east-1'))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child SELECT x,y FROM xy
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES ('bedroom', 1), ('office', 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES ('bedroom', 4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES ('bedroom', 7);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES ('deck', 7);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES ('hall', 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES ('hall', 7);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (0, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (0,4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (1,1), (2,2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (1,1), (2,2), (3,3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (1,11)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (10, 1), (11, 1), (20, 2), (21, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (10, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child VALUES(10, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child2 VALUES
+  (1, 10, 100),
+  (2, 10, NULL),
+  (3, 10, 150),
+  (4, 20, 200),
+  (5, NULL, 100)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_151663 VALUES (10, 1), (20, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_cascade VALUES (1, 1), (2, 2), (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_cascade VALUES (1, 1), (2, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_cascade VALUES (100,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_cascade VALUES (100,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_cascade VALUES (100,3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_cascade VALUES (101,2), (102,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_cascade VALUES(101, 4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_combined (k, v, crdb_region) VALUES
+  (1, 1, 'ca-central-1'),
+  (2, 2, 'ap-southeast-2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_combined (k, v, crdb_region) VALUES (99, 99, 'ca-central-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_combined2 (k, v, crdb_region) VALUES
+  (1, 1, 'ca-central-1'),
+  (2, 2, 'ap-southeast-2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_combined2 (k, v, crdb_region) VALUES (99, 99, 'ca-central-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_composite_index VALUES (1, 100, 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_composite_index VALUES (2, 100, 300)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_implicit VALUES (1, 1, 1), (2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_implicit VALUES (99, 99, 99)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_implicit2 VALUES (1, 1, 1), (2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_implicit2 VALUES (99, 99, 99)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_lt VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_rbr (crdb_region, c_id, c_p_id, c_int, c_int2) VALUES ('us-east-1', 2, 2, 2, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_rbr VALUES (1, 1, 1, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_rbr_implicit (k, parent_k, crdb_region) VALUES
+  (1, 1, 'ca-central-1'),
+  (2, 2, 'ap-southeast-2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_rbr_implicit (k, parent_k, crdb_region) VALUES (99, 99, 'ca-central-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO child_u VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO children (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO city VALUES ('Vancouver', 'Hollywood North', 'BC')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO city VALUES ('Vancouver', 'The ''Couve', 'BC')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO class (k) VALUES ('b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cnt VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO comp VALUES (ROW(1, 2)), (ROW(3, 4));
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO companies VALUES
+('1', 'Facebook'),
+('2', 'Google'),
+('3', 'Twitter'),
+('4', 'IBM'),
+('5', 'Cockroach Labs')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_citext_tbl VALUES (1, ROW(1, 'TeSt')), (2, ROW(2, 'TESTER')), (3, ROW(3, 'tEsT'));
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('Bäaz', 5, '[13, 14, 15]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('Bäaz', 6, '[19, 20, 21]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('Bär', 1, '[1, 2, 3]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('Bär', 2, '[4, 5, 6]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('Bäz', 3, '[7, 8, 9]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('Bäz', 4, '[10, 11, 12]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('aBäz', 7, '[22, 23, 24]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO composite_pk VALUES ('aBäz', 8, '[22, 23, 24]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (1, 1, '[1, 2, 3]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (1, 2, '[4, 5, 6]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (2, 1, '[7, 8, 9]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (2, 2, '[10, 11, 12]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (3, 1, '[13, 14, 15]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (3, 2, '[16, 17, 18]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (4, 1, '[19, 20, 21]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO compound_pk VALUES (4, 2, '[22, 23, 24]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO computed VALUES (1, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO computed VALUES (3, 4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO computed VALUES (5, 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO computed VALUES (7, 8);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cookies VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO corr VALUES (1, 10), (2, 22), (3, 30), (4, 40), (5, 50)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO corrupt_combine (y, x) VALUES
+  (1.0, 10.0),
+  (2.0, 25.0),
+  (3.0, 35.0),
+  (4.0, 50.0),
+  (5.0, 70.0),
+  (6.0, 70.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO cpk VALUES ('k1', 1, 1), ('k2', 2, 2), ('k3', 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO created_as_global (pk) VALUES (1) RETURNING crdb_region
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO created_as_global VALUES (0, 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO created_as_global VALUES (0, 1, 2, 'us-east-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO crossdb VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ct(x) SELECT c FROM sw
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO current_time_test (id) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO current_time_test (id, a, b) VALUES
+  (2, current_time, current_time),
+  (3, current_time, current_time(3))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO current_time_test (id, a, b) VALUES
+  (2, current_time, current_time),
+  (3, current_time, current_time(3)),
+  (4, localtime, localtime(3))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO customers (k) VALUES ('b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO customers (k) VALUES ('z'), ('x')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO customers VALUES ('69a1c2c2-5b18-459e-94d2-079dc53a4dd0', 'ACME Sprockets')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO customers VALUES ('jordan', 12), ('cuong', 13)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO customers VALUES (1, 'a@co.tld'), (2, 'b@co.tld')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO customers VALUES (1, 'bob');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d (a, c) VALUES (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES
+        (1, '{"a": "hello"}'),
+        (2, '{"a": "b"}'),
+        (3, '{"a": "bye"}'),
+        (4, '{"a": "json"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES
+        (5, '{"a": "forward", "json": "inverted"}'),
+        (6, '{"a": "c", "b": "d"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES
+    (1, 1, 1.0, 'foo', true),
+    (2, 2, 2.0, 'foo', false),
+    (3, 3, 3.0, 'bar', true),
+    (100, 100, 100.0, 'foo', true),
+    (200, 200, 200.0, 'foo', false),
+    (300, 300, 300.0, 'bar', true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES
+  (1, 0.0),
+  (2, -0.0),
+  (3, 0.00::decimal),
+  (4, -0.00::decimal),
+  (5, (-0.000)::decimal),
+  (6, 0::decimal),
+  (7, -0::decimal),
+  (8, '0.0000'::decimal),
+  (9, '-0.0000'::decimal),
+  (10, 0),
+  (11, -0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (0), (1), (2), (3), (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (19, '["a", "a"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (20, '[{"a": "a"}, {"a": "a"}]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (21,  '[[[["a"]]], [[["a"]]]]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (22,  '[1,2,3,1]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (23,  '{"a": 123.123}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (24,  '{"a": 123.123000}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (25,  '{"a": [{}]}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (26,  '[[], {}]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (27,  '[true, false, null, 1.23, "a"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (29,  NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (30,  '{"a": []}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (31,  '{"a": {"b": "c", "d": "e"}, "f": "g"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES (32, '[[1, 2]]');
+INSERT INTO d VALUES (33, '[[1], [2]]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(1, '{"a": "b"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(10, '"a"')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(11, 'null')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(12, 'true')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(13, 'false')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(14, '1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(15, '1.23')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(16, '[{"a": {"b": [1, [2]]}}, "d"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(17, '{}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(18, '[]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(2, '[1,2,3,4, "foo"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(3, '{"a": {"b": "c"}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(4, '{"a": {"b": [1]}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(5, '{"a": {"b": [1, [2]]}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(6, '{"a": {"b": [[2]]}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(7, '{"a": "b", "c": "d"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(8, '{"a": {"b":true}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d VALUES(9, '{"a": {"b":false}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d(x) VALUES (((9 / 3) * (1 / 3))), (2.0), (2.4 + 4.6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d.a VALUES ('a1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d.b VALUES ('b1', 'a1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d.kv (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d.kv (k,v) VALUES ('c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d.kv2 (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d.kv2 (k,v) VALUES ('c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d1 VALUES ('d1-pk1', 'original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d2 VALUES ('original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d_desc VALUES (0, 0), (5, 50);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d_desc VALUES (1, 10), (2, 20), (3, 30), (4, 40);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO d_desc VALUES (NULL, NULL), (NULL, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c FROM
+  generate_series(11, 14) AS a(a),
+  generate_series(11, 14) AS b(b),
+  generate_series(11, 14) AS c(c)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c FROM
+  generate_series(15, 25) AS a(a),
+  generate_series(15, 25) AS b(b),
+  generate_series(15, 25) AS c(c)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c, d FROM
+   generate_series(1, 10) AS a(a),
+   generate_series(1, 10) AS b(b),
+   generate_series(1, 10) AS c(c),
+   generate_series(1, 10) AS d(d)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c, d FROM
+   generate_series(1, 3) AS a(a),
+   generate_series(1, 3) AS b(b),
+   generate_series(1, 3) AS c(c),
+   generate_series(1, 3) AS d(d)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c::FLOAT, 1 FROM
+   generate_series(1, 10) AS a(a),
+   generate_series(1, 10) AS b(b),
+   generate_series(1, 10) AS c(c)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c::FLOAT, NULL FROM
+   generate_series(1, 10) AS a(a),
+   generate_series(1, 10) AS b(b),
+   generate_series(1, 10) AS c(c)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c::FLOAT, d::DECIMAL FROM
+   generate_series(1, 10) AS a(a),
+   generate_series(1, 10) AS b(b),
+   generate_series(1, 10) AS c(c),
+   generate_series(1, 10) AS d(d)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT a, b, c::FLOAT, d::DECIMAL, (a+b+c+d) % 2 = 0 FROM
+   generate_series(1, 4) AS a(a),
+   generate_series(1, 4) AS b(b),
+   generate_series(1, 4) AS c(c),
+   generate_series(1, 4) AS d(d)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data SELECT generate_series(0, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO data_test VALUES
+  (1, 'west', 'seattle', 750000, 217),
+  (2, 'west', 'portland', 650000, 376),
+  (3, 'west', 'san_francisco', 875000, 121),
+  (4, 'east', 'boston', 675000, 125),
+  (5, 'east', 'new_york', 8400000, 783),
+  (6, 'east', 'philadelphia', 1600000, 347),
+  (7, 'central', 'chicago', 2700000, 589),
+  (8, 'central', 'dallas', 1300000, 999)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO date_test VALUES ('2019-01-15'::date, '16:17:18'::time, '1 hour'::interval)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO db2.foo VALUES (1),(2),(3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dd.kv (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dd.kv (k,v) VALUES ('c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO decimal VALUES (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO decimals SELECT generate_series(0, 1023), 101;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO decomputed_column VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO decomputed_column VALUES (3, NULL), (4, 99)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO def VALUES (1, 1, 1), (2, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO def_assn_cast(id) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO default_err_test VALUES ('foo'), ('bar'), ('baz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO defvals(id) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO defvals2(id) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO del_cascade_test(delete_cascade, j) VALUES (1, '["a", "b"]'), (2, '{"a":"b", "c":"d"}'), (3, '["b", "c"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO delivery ("order", shipment, item) VALUES
+  (1, 1, '867072000006'), (1, 1, '867072000006'), (1, 1, '885155001450'), (1, 1, '867072000006')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO delivery ("order", shipment, item) VALUES
+  (1, 1, '867072000006'), (1, 1, 'missing'), (1, 1, '885155001450'), (1, 1, '867072000006')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO delivery ("order", shipment, item) VALUES
+  (1, 1, '867072000006'), (1, 99, '867072000006')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO depth_a VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO depth_after VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO derived(x) VALUES('abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO derived(x) VALUES('xxx')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO derived(x, y) VALUES ('abc', 'abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO derived(y) VALUES('abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO didx VALUES
+  (1, 0.0),
+  (2, -0.0),
+  (3, 0.00::decimal),
+  (4, -0.00::decimal),
+  (5, (-0.000)::decimal),
+  (6, 0::decimal),
+  (7, -0::decimal),
+  (8, '0.0000'::decimal),
+  (9, '-0.0000'::decimal),
+  (10, 0),
+  (11, -0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dist_merge_idx VALUES (1,1,1), (2,2,2), (3,3,3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO distance_metrics (a, v) VALUES
+  (1, '[0, 0]'),
+  (2, '[-2, -2]'),
+  (3, '[2, 2]'),
+  (4, '[4, 4]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO distance_metrics (a, v) VALUES
+  (5, '[-2, 2]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO distsql_mj_test VALUES (0, NULL), (0, 1), (2, 4), (NULL, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO distsql_mj_test VALUES (0, NULL), (1, NULL), (2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO distsql_mj_test VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO documents
+VALUES
+    (ARRAY[]),
+    (ARRAY['3ae3560e-d771-4b63-affb-47e8d7853680'::UUID,
+           '6CC1B5C1-FE4F-417D-96BD-AFD1FEEEC34F'::UUID]),
+    (ARRAY['C6F8286C-3A41-4D7E-A4F4-3234B7A57BA9'::UUID])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO documents (id, owner, content) VALUES
+  (1, 'alice', 'Alice’s first document'),
+  (2, 'alice', 'Alice’s second document'),
+  (3, 'bob',   'Bob’s only document so far'),
+  (4, 'admin', 'Admin’s secret doc');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO domain_modules VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dontwant (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dup VALUES (1), (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dxby VALUES (2, 2, 2, 2), (3, 3, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO e VALUES
+    (1, 10),
+    (2, 20),
+    (3, 30),
+    (4, 40),
+    (5, 50),
+    (6, 60)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO e VALUES
+  (0, '{"a": "b"}'),
+  (1, '{"a": {}, "b": null}'),
+  (2, '{"a": [], "b": 2, "c": 3}'),
+  (3, '{"b": {"a": "c"}}'),
+  (4, '["a", "b"]'),
+  (5, '["b", "a", "c"]'),
+  (6, '["a"]'),
+  (7, '["aargh"]'),
+  (8, '"a"'),
+  (9, '[]'),
+  (10, '3'),
+  (11, NULL),
+  (12, 'null'),
+  (13, 'true'),
+  (14, '{"aargh": 3, "b": 2, "c": 3}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO e VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ef VALUES (NULL, 1), (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees (
+  crdb_region,
+  emp_no,
+  birth_date,
+  first_name,
+  last_name,
+  gender,
+  hire_date,
+  email,
+  zip_code
+)
+  SELECT
+    CASE trunc(random() * 10) % 3 WHEN 0 THEN 'ap-southeast-2' WHEN 1 THEN 'ca-central-1' ELSE 'us-east-1' END,
+    generate_series(0, 100),
+    (now() - trunc(random() * 365)::int * '1 day'::interval - 20 * '1 year'::interval - trunc(random() * 60)::int * '1 year'::interval)::date,
+    f_random_text(10),
+    f_random_text(10),
+    f_random_gender(),
+    (now() - trunc(random() * 365)::int * '1 day'::interval - trunc(random() * 10)::int * '1 year'::interval)::date,
+    f_random_text(10) || '@cockroachlabs.com',
+    f_random_zip_code();
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees (id, name, department) VALUES (2, 'Bob', 'Engineering')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees (id, name, department) VALUES (3, 'Carol', 'Sales')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees (id, name, department) VALUES (3, 'Eve', 'Engineering')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees (id, name, department) VALUES (4, 'Dave', 'Finance')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees VALUES (1, 'Alice', 'Engineering')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees VALUES (1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees VALUES (2, 1), (3, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO employees VALUES (4, 2), (5, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (1, 100);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (10, 1000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (11, 1100);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (12, 1200);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (13, 1300);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (14, 1400);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (2, 200);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enable_disable_t VALUES (3, 300);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enum_array_table (elems) VALUES (array['a']), (array['b']), (array['a', 'b'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enum_checks VALUES ('hello')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enum_data_type VALUES ('hi')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enum_origin VALUES ('howdy')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enum_table (elem) VALUES ('a'), ('b');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enum_table VALUES
+    (1, 'foo'),
+    (2, 'bar'),
+    (3, 'baz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO enum_table VALUES ('hello'), ('howdy'), ('hi')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO error_check VALUES(1, '1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO error_check VALUES(2, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO et VALUES ('hello', 'hello', '{hello}'), ('howdy', 'howdy', '{howdy}'), ('hi', 'hi', '{hi}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ex VALUES
+  (1,  'year',         '2001-04-10 12:04:59',              2001,              '2001-01-01 00:00:00'),
+  (2,  'year',         '2016-02-10 19:46:33.306157519',    2016,              '2016-01-01 00:00:00'),
+  (3,  'years',        '2016-02-10 19:46:33.306157519',    2016,              '2016-01-01 00:00:00'),
+  (4,  'quarter',      '2001-04-10 12:04:59',              2,                 '2001-04-01 00:00:00'),
+  (5,  'quarter',      '2016-02-10 19:46:33.306157519',    1,                 '2016-01-01 00:00:00'),
+  (6,  'quarter',      '2016-05-10 19:46:33.306157519',    2,                 '2016-04-01 00:00:00'),
+  (7,  'quarter',      '2016-09-09 19:46:33.306157519',    3,                 '2016-07-01 00:00:00'),
+  (8,  'quarter',      '2016-10-10 19:46:33.306157519',    4,                 '2016-10-01 00:00:00'),
+  (9,  'month',        '2001-04-10 12:04:59',              4,                 '2001-04-01 00:00:00'),
+  (10, 'month',        '2016-02-10 19:46:33.306157519',    2,                 '2016-02-01 00:00:00'),
+  (11, 'months',       '2016-02-10 19:46:33.306157519',    2,                 '2016-02-01 00:00:00'),
+  (12, 'week',         '2001-04-10 12:04:59',              15,                '2001-04-09 00:00:00'),
+  (13, 'weeks',        '2001-01-05 12:04:59',              1,                 '2001-01-01 00:00:00'),
+  (14, 'day',          '2001-04-10 12:04:59',              10,                '2001-04-10 00:00:00'),
+  (15, 'day',          '2016-02-10 19:46:33.306157519',    10,                '2016-02-10 00:00:00'),
+  (16, 'days',         '2016-02-10 19:46:33.306157519',    10,                '2016-02-10 00:00:00'),
+  (17, 'dayofweek',    '2001-04-10 12:04:59',              2,                 null),
+  (18, 'dow',          '2001-04-12 12:04:59',              4,                 null),
+  (19, 'dayofyear',    '2001-04-10 12:04:59',              100,               null),
+  (20, 'doy',          '2001-04-12 12:04:59',              102,               null),
+  (21, 'epoch',        '1970-01-02 00:00:01.000001',       86401.000001,      null),
+  (22, 'epoch',        '1970-01-02 00:00:01.000001-04',    100801.000001,     null),
+  (23, 'epoch',        '2001-04-10 12:04:59',              986904299,         null),
+  (24, 'hour',         '2001-04-10 12:04:59',              12,                '2001-04-10 12:00:00'),
+  (25, 'hour',         '2016-02-10 19:46:33.306157519',    19,                '2016-02-10 19:00:00'),
+  (26, 'hour',         '2016-02-10 19:46:33.306157519-04', 23,                '2016-02-10 19:00:00-04'),
+  (27, 'hours',        '2016-02-10 19:46:33.306157519',    19,                '2016-02-10 19:00:00'),
+  (28, 'hours',        '2016-02-10 19:46:33.306157519-04', 23,                '2016-02-10 19:00:00-04'),
+  (29, 'minute',       '2001-04-10 12:04:59',              4,                 '2001-04-10 12:04:00'),
+  (30, 'minute',       '2016-02-10 19:46:33.306157519',    46,                '2016-02-10 19:46:00'),
+  (31, 'minutes',      '2016-02-10 19:46:33.306157519',    46,                '2016-02-10 19:46:00'),
+  (32, 'second',       '2001-04-10 12:04:59.234',          59.234,            '2001-04-10 12:04:59'),
+  (33, 'second',       '2016-02-10 19:46:33.306157519',    33.306158,         '2016-02-10 19:46:33'),
+  (34, 'seconds',      '2016-02-10 19:46:33.306157519',    33.306158,         '2016-02-10 19:46:33'),
+  (35, 'millisecond',  '2001-04-10 12:04:59.234567',       59234.567,         '2001-04-10 12:04:59.234'),
+  (36, 'millisecond',  '2016-02-10 19:46:33.306157519',    33306.158,         '2016-02-10 19:46:33.306'),
+  (37, 'milliseconds', '2016-02-10 19:46:33.306157519',    33306.158,         '2016-02-10 19:46:33.306'),
+  (38, 'microsecond',  '2001-04-10 12:04:59.34565423',     59345654,          '2001-04-10 12:04:59.345654'),
+  (39, 'microsecond',  '2016-02-10 19:46:33.306157519',    33306158,          '2016-02-10 19:46:33.306158'),
+  (40, 'microseconds', '2016-02-10 19:46:33.306157519',    33306158,          '2016-02-10 19:46:33.306158'),
+  (41, 'isodow',       '2001-04-10 12:04:59',              2,                 null),
+  (42, 'isodow',       '2001-04-08 12:04:59',              7,                 null),
+  (43, 'isoyear',      '2007-12-31 12:04:59',              2008,              null),
+  (44, 'isoyear',      '2008-01-01 12:04:59',              2008,              null),
+  (45, 'decade',       '2001-04-10 12:04:59',              200,               '2000-01-01 00:00:00'),
+  (46, 'decade',       '2016-02-10 19:46:33.306157519 BC', -202,              '2021-01-01 00:00:00 BC'),
+  (47, 'century',      '2016-02-10 19:46:33.306157519',    21,                '2001-01-01 00:00:00'),
+  (48, 'century',      '0004-02-10 19:46:33.306157519 BC', -1,                '0100-01-01 00:00:00 BC'),
+  (49, 'millennium',   '2016-02-10 19:46:33.306157519',    3,                 '2001-01-01 00:00:00'),
+  (50, 'millennium',   '1004-02-10 19:46:33.306157519 BC', -2,                '2000-01-01 00:00:00 BC'),
+  (51, 'julian',       '4714-11-24 BC',                     0,                null),
+  (52, 'julian',       '2016-02-10 19:46:33.306157519',    2457429.823996599, null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ex(foo,bar,baz) VALUES (1,1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ex2(a,b,c,d,e) VALUES (0,0,0,0,0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO example VALUES
+  ('2010-11-06 23:59:00'),
+  ('2010-11-07 23:59:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO example VALUES (20, NULL);
+INSERT INTO example VALUES (30, 20);
+INSERT INTO example VALUES (NULL, 30);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO exec_test (a, b, vec1) VALUES
+  (1, 1, '[1, 2, 3]'),
+  (2, 1, '[4, 5, 6]'),
+  (3, 2, '[7, 8, 9]'),
+  (4, 2, '[10, 11, 12]'),
+  (5, 2, '[13, 14, 15]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO exec_test (a, b, vec1) VALUES
+  (6, NULL, '[16, 17, 18]'),
+  (7, NULL, '[1, 1, 1]'),
+  (8, NULL, NULL),
+  (9, 3, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO exec_test (a, b, vec1) VALUES (10, 1, '[1]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO expression VALUES (1, 1, '{"a": "b"}'), (2, 10, '{"c": "d"}'), (3, 1, '{"e": "f"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO f VALUES
+  (0, '{"a": 1}'),
+  (1, '{"a": 10}'),
+  (2, '{"b": 2}'),
+  (3, '{"b": 2, "a": 1}'),
+  (4, '{"a": 1, "c": 3}'),
+  (5, '{"a": [1, 2]}'),
+  (6, '{"a": {"b": 1}}'),
+  (7, '{"a": {"b": 1, "d": 2}}'),
+  (8, '{"a": {"d": 2}}'),
+  (9, '{"a": {"b": [1, 2]}}'),
+  (10, '{"a": {"b": {"c": 1}}}'),
+  (11, '{"a": {"b": {"c": 1, "d": 2}}}'),
+  (12, '{"a": {"b": {"d": 2}}}'),
+  (13, '{"a": {"b": {"c": [1, 2]}}}'),
+  (14, '{"a": {"b": {"c": [1, 2, 3]}}}'),
+  (15, '{"a": []}'),
+  (16, '{"a": {}}'),
+  (17, '{"a": {"b": "c"}}'),
+  (18, '{"a": {"b": ["c", "d", "e"]}}'),
+  (19, '{"a": ["b", "c", "d", "e"]}'),
+  (20, '{"a": ["b", "e", "c", "d"]}'),
+  (21, '{"z": {"a": "b", "c": "d"}}'),
+  (22, '{"z": {"a": "b", "c": "d", "e": "f"}}'),
+  (23, '{"a": "b", "x": ["c", "d", "e"]}'),
+  (24, '{"a": "b", "c": [{"d": 1}, {"e": 2}]}'),
+  (25, '{"a": {"b": "c", "d": "e"}}'),
+  (26, '{"a": {"b": "c"}, "d": "e"}'),
+  (27, '[1, 2, {"b": "c"}]'),
+  (28, '[{"a": {"b": "c"}}, "d", "e"]'),
+  (29, '{"a": null}'),
+  (30, '{"a": [1, 2, null]}'),
+  (31, 'null'),
+  (32, '{}'),
+  (33, '[]'),
+  (34, '{"a": {"b": []}}'),
+  (35, '["a"]'),
+  (36, '[[]]'),
+  (37, '[{"a": [0, "b"]}, null, 1]'),
+  (38, '[[0, 1, 2], {"b": "c"}]'),
+  (39, '[[0, [1, 2]]]'),
+  (40, '[[0, 1, 2]]'),
+  (41, '[[{"a": {"b": []}}]]'),
+  (42, '{"a": "a"}'),
+  (43, '[[0, 1, 2], [0, 1, 2], "s"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO f VALUES
+  (1, 0.0),
+  (2, -0.0),
+  (3, 0.00::float),
+  (4, -0.00::float),
+  (5, (-0.000)::float),
+  (6, 0::float),
+  (7, -0::float),
+  (8, '0.0000'::float),
+  (9, '-0.0000'::float),
+  (10, 0),
+  (11, -0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO f VALUES (1, 1, 1, 1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO f VALUES (1, 10), (6, 60)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO f(x) VALUES (3/2), (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fake6 VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fam VALUES (1, NULL, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fam VALUES (10, 10, 1, 1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fam_child VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fam_parent VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO favorites (customerid, guid_id, resource_type, device_group, jurisdiction, brand, locale, resource_key)
+  VALUES (1, '1', 'GAME', 'web', 'MT', 'xxx', 'en_GB', 'tp'),
+         (2, '2', 'GAME', 'web', 'MT', 'xxx', 'en_GB', 'ts'),
+         (3, '3', 'GAME', 'web', 'MT', 'xxx', 'en_GB', 'ts1'),
+         (4, '4', 'GAME', 'web', 'MT', 'xxx', 'en_GB', 'ts2'),
+         (5, '5', 'GAME', 'web', 'MT', 'xxx', 'en_GB', 'ts3'),
+         (6, '6', 'GAME', 'web', 'MT', 'xxx', 'en_GB', 'ts4')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO filter_test VALUES
+(1, 2, false),
+(3, 4, true),
+(5, NULL, true),
+(6, 2, true),
+(7, 2, true),
+(8, 4, true),
+(NULL, 4, true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk1 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk1 VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk2 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk2 VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk2 VALUES (3);
+INSERT INTO fk1 VALUES (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk_using_implicit_columns_against_t VALUES (1, 1, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fk_using_implicit_columns_against_t VALUES (2, 2, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES
+  (1, 1, 1, 1),
+  (2, 2, 2, 2),
+  (3, 3, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES ('aBcD' COLLATE en_u_ks_level2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (1, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (42);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (default, default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo VALUES (default, default, default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(a, b) VALUES (4, 'c'), (5, 'c'), (6, 'c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(bar) VALUES
+  ('{"a": "b"}'),
+  ('[1, 2, 3]'),
+  ('"hello"'),
+  ('1.000'),
+  ('true'),
+  ('false'),
+  (NULL),
+  ('{"x": [1, 2, 3]}'),
+  ('{"x": {"y": "z"}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(bar) VALUES ('{"a": {"c": "d"}}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(i) VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(i) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(i) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(j) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(x) VALUES ('c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo(x) VALUES (42) RETURNING pg_typeof(x)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO foo.public.bar VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO force_check VALUES (10, 'ten'), (20, 'twenty'), (50, 'fifty')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO force_check VALUES (30, 'thirty')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO force_check VALUES (33, 'thirty-three')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO force_check VALUES (34, 'thirty-four')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO force_t VALUES (1, 'a'), (2, 'b'), (3, 'c'), (4, 'd');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO forcedeletemydata VALUES(5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO forcedeletemydata VALUES(7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO fuzzystrmatch_table VALUES
+  (1, 'apple', 'banana'),
+  (2, '', 'pear'),
+  (3, '😄', '🐯'),
+  (4, null, 'a'),
+  (5, 'a', null),
+  (6, null, null),
+  (7, 'apple', 'apple'),
+  (8, 'a', 'abcd'),
+  (9, '', ''),
+  (10, '', 'abc'),
+  (11, 'xyz', ''),
+  (12, 'extensive', 'exhaustive'),
+  (13, '🌞', 'a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO g VALUES
+  (1, ST_MakePolygon('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'::geometry)),
+  (2, ST_MakePolygon('LINESTRING(0 0, 0 2, 2 2, 2 0, 0 0)'::geometry))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO g1 VALUES
+  (1, ST_MakePolygon('LINESTRING(0 0, 0 15, 15 15, 15 0, 0 0)'::geometry)),
+  (2, ST_MakePolygon('LINESTRING(0 0, 0 2, 2 2, 2 0, 0 0)'::geometry))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO gen_as_id_seqopt (a) VALUES (7), (8), (9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO gen_as_id_seqopt (a, b) VALUES (10, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO gen_as_id_seqopt (a, c) VALUES (10, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO generated_as_id_t (a) VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO generated_as_id_t (a) VALUES (7), (8), (9);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO generated_as_id_t (a, b) VALUES (4, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO generated_as_id_t (a, c) VALUES (4, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_array_table VALUES (
+  1,
+  array['POINT(1.0 1.0)'::geography, 'LINESTRING(2.0 2.0, 3.0 3.0)'::geography],
+  array['POINT(1.0 1.0)'::geometry, 'LINESTRING(2.0 2.0, 3.0 3.0)'::geometry]
+)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_st_srid VALUES
+  (1, ST_GeogFromText('SRID=4004;POINT(1.0 2.0)'), ST_GeomFromText('POINT(5.0 5.0)', 0)),
+  (2, ST_GeogFromText('SRID=4326;POINT(1.0 2.0)'), ST_GeomFromText('POINT(5.0 5.0)', 4326)),
+  (3, ST_SetSRID(ST_GeogFromText('SRID=4326;POINT(1.0 2.0)'), 4004), ST_SetSRID(ST_GeomFromText('POINT(5.0 5.0)', 4326), 3857))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table (id, geog) VALUES
+  (3, 'POINT Z(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table (id, geog) VALUES
+  (3, 'SRID=4004;POINT(1.0 2.0)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table (id, geom) VALUES
+  (3, 'POINT Z(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table (id, geom) VALUES
+  (3, 'SRID=4004;LINESTRING(0.0 0.0, 1.0 2.0)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table VALUES
+  (1, 'POINT(1.0 1.0)'),
+  (2, 'LINESTRING(1.0 1.0, 2.0 2.0)'),
+  (3, 'POINT(3.0 3.0)'),
+  (4, 'LINESTRING(4.0 4.0, 5.0 5.0)'),
+  (5, 'LINESTRING(40.0 40.0, 41.0 41.0)'),
+  (6, 'POLYGON((1.0 1.0, 5.0 1.0, 5.0 5.0, 1.0 5.0, 1.0 1.0))')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table VALUES
+  (1, 'POINT(1.0 1.0)', 'POINT(2.0 2.0)', 'POINT(3.0 3.0)'),
+  (2, 'LINESTRING(1.0 1.0, 2.0 2.0)', 'POINT(1.0 1.0)', 'POINT(3.0 3.0)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table VALUES
+  (1, 'SRID=26918;POINT(400001 4000001)'),
+  (2, 'SRID=26918;LINESTRING(400001 4000001, 400002 4000002)'),
+  (3, 'SRID=26918;POINT(400003 4000003)'),
+  (4, 'SRID=26918;LINESTRING(400004 4000004, 400005 4000005)'),
+  (5, 'SRID=26918;LINESTRING(400040 4000040, 400041 4000041)'),
+  (6, 'SRID=26918;POLYGON((400001 4000001, 400005 4000001, 400005 4000005, 400001 4000005, 400001 4000001))')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table VALUES
+  (1, 'foo', 'POINT(1 1)'),
+  (2, 'foo', 'LINESTRING(1 1, 2 2)'),
+  (3, 'foo', 'POINT(3 3)'),
+  (4, 'bar', 'LINESTRING(4 4, 5 5)'),
+  (5, 'bar', 'LINESTRING(40 40, 41 41)'),
+  (6, 'bar', 'POLYGON((1 1, 5 1, 5 5, 1 5, 1 1))'),
+  (7, 'foo', 'LINESTRING(1 1, 3 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table VALUES
+  (3, 'POINT(-1.25 3.375)', 'POINT(2.220 -2.445)', 'POINT(3.0 -3.710)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table VALUES (1, 'LINESTRING(0 0, 100 100)', ST_GeomFromText('LINESTRING(0 0, 100 100)', 3857));
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geo_table2 VALUES
+  (1, 'LINESTRING(1.0 1.0, 2.0 2.0)', 2),
+  (2, 'POLYGON((1.0 1.0, 5.0 1.0, 5.0 5.0, 1.0 5.0, 1.0 1.0))', 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d VALUES ('pointm(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d VALUES ('pointz(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d VALUES ('pointzm(1 2 3 4)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d VALUES('point(1 2)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d_m VALUES ('point(1 2)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d_m VALUES ('pointm(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d_m VALUES ('pointz(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_2d_m VALUES ('pointzm(1 2 3 4)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_3d VALUES ('point(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_3d VALUES ('point(1 2)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_3d VALUES ('pointm(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_3d VALUES ('pointz(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_3d VALUES ('pointzm(1 2 3 4)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_4d VALUES ('point(1 2 3 4)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_4d VALUES ('point(1 2)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_4d VALUES ('pointm(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_4d VALUES ('pointz(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_4d VALUES ('pointzm(1 2 3 4)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_all VALUES ('pointm(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_all VALUES ('pointz(1 2 3)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_all VALUES ('pointzm(1 2 3 4)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_all VALUES('point(1 2)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_linear VALUES
+  ('Empty LineString', 'LINESTRING EMPTY'),
+  ('LineString anticlockwise covering all the quadrants', 'LINESTRING(1 -1, 2 2, -2 2, -1 -1)'),
+  ('LineString clockwise covering all the quadrants with SRID 4004', 'SRID=4004;LINESTRING(1 -1, -1 -1, -2 2, 2 2)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_operators_test VALUES
+  ('NULL', NULL),
+  ('Square (left)', 'POLYGON((-1.0 0.0, 0.0 0.0, 0.0 1.0, -1.0 1.0, -1.0 0.0))'),
+  ('Point middle of Left Square', 'POINT(-0.5 0.5)'),
+  ('Square (right)', 'POLYGON((0.0 0.0, 1.0 0.0, 1.0 1.0, 0.0 1.0, 0.0 0.0))'),
+  ('Point middle of Right Square', 'POINT(0.5 0.5)'),
+  ('Square overlapping left and right square', 'POLYGON((-0.1 0.0, 1.0 0.0, 1.0 1.0, -0.1 1.0, -0.1 0.0))'),
+  ('Line going through left and right square', 'LINESTRING(-0.5 0.5, 0.5 0.5)'),
+  ('Faraway point', 'POINT(5.0 5.0)'),
+  ('Empty LineString', 'LINESTRING EMPTY'),
+  ('Empty Point', 'POINT EMPTY'),
+  ('Empty GeometryCollection', 'GEOMETRYCOLLECTION EMPTY'),
+  ('Nested Geometry Collection', 'GEOMETRYCOLLECTION(GEOMETRYCOLLECTION(POINT(0 0)))'::geometry)
+  -- ('Partially Empty GeometryCollection', 'GEOMETRYCOLLECTION ( LINESTRING EMPTY, POINT (0.0 0.0) )') -- some of these cases crash GEOS.
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geom_table_public_schema VALUES ('POINT(1 0)', 'POINT(3 2)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO geometry_tbl VALUES
+  ('NULL', NULL),
+  ('empty point', 'POINT EMPTY'),
+  ('point 0.5 0.5', 'POINT(0.5 0.5)'),
+  ('linestring from origin to 1 1', 'LINESTRING(0 0, 1 1)');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO global_t VALUES (1, 'a');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO good_users VALUES (40, 40)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO good_users(id, id2) VALUES (1, 10), (2, 20), (3, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild VALUES (0,0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild VALUES (100, 10), (101, 10), (110, 11), (200, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild VALUES (100, 10), (101, 10), (110, 11);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild VALUES (11,11), (12,13), (13,12);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild_cascade VALUES (1000,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild_cascade VALUES (11, 1), (12, 2), (13, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO grandchild_cascade VALUES (11, 1), (12, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO graph_node (id, parent) VALUES
+  ('A', null),
+  ('B', 'A'),
+  ('C', 'B'),
+  ('D', 'C')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO great_grandparent (i, gg, crdb_region) VALUES (1, 1, 'us-east-1'), (2, 2, 'us-east-1'), (3, 3, 'us-east-1');
+INSERT INTO grandparent (g, gg, crdb_region) VALUES (10, 1, 'us-east-1'), (20, 2, 'us-east-1'), (30, 3, 'us-east-1');
+INSERT INTO parent (p, g, crdb_region) VALUES (100, 10, 'us-east-1'), (200, 20, 'us-east-1'), (300, 30, 'us-east-1');
+INSERT INTO child (c, p, crdb_region) VALUES (1000, 100, 'us-east-1'), (2000, 200, 'us-east-1'), (3000, 300, 'us-east-1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO greeting_stats VALUES ('hi');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO greeting_table VALUES ('bye', 'hi')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO greeting_table VALUES ('hi', 'hello')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO greeting_table VALUES ('howdy', 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO group_ord VALUES
+(1, 2, 3),
+(3, 4, 5),
+(5, NULL, 5),
+(6, 2, 3),
+(7, 2, 2),
+(8, 4, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO groups(data) VALUES('{"name": "Group 1", "members": [{"name": "admin", "type": "USER"}, {"name": "user", "type": "USER"}]}');
+INSERT INTO groups(data) VALUES('{"name": "Group 2", "members": [{"name": "admin2", "type": "USER"}]}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO h VALUES (1, 'foo'), (2, 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO i VALUES
+  (1, 0),
+  (2, -0),
+  (3, 0::int),
+  (4, -0::int),
+  (5, '0'::int),
+  (6, '-0'::int)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO i VALUES (0), ('-0'::float)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO i VALUES (1, 'foo'), (2, 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO i VALUES (COALESCE(1, 'foo'))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO i(x) VALUES ('1970-01-01'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO i(x) VALUES (2.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO i(x) VALUES (9223372036854775809)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO imp VALUES (100, 200, 'z')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(a) VALUES ('foo'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(b) VALUES ('a'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(c) VALUES ('foo'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(d) VALUES ('foo'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(e) VALUES ('1'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(f) VALUES ('1.0'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(g) VALUES ('1.0'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(h) VALUES ('False'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(i) VALUES ('34h2s'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(j) VALUES ('2015-08-30'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(k) VALUES ('2015-08-30 03:34:45.34567'::REFCURSOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES ('2015-08-30 03:34:45.34567'::TIMESTAMP);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES ('2015-08-30'::DATE);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES ('34h2s'::INTERVAL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES ('a'::CHAR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES ('foo'::NAME);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES ('foo'::TEXT);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES ('foo'::VARCHAR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES (1.0::DECIMAL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES (1.0::FLOAT);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES (1::INT);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES (False::BOOL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO implicit_types(l) VALUES (NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO import_test VALUES (1, '[1, 2, 3]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO indexed VALUES (1, 1, 1); INSERT INTO indexed VALUES (2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO indexed_arr SELECT ARRAY[g] FROM generate_series(1,10000) g(g)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO indexes VALUES (1,1), (2,2), (3,3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO information_schema.collation_character_set_applicability VALUES ('abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO information_schema.collations VALUES ('abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO information_schema.session_variables VALUES ('abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO information_schema.tables VALUES ('abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (1),(2),(3),(4) RETURNING c1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (1),(2),(3),(4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (11) RETURNING (select 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (13) RETURNING (SELECT k FROM other);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (2),(4) RETURNING c1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (2),(4),(-2),(-4) RETURNING c1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (5) RETURNING *;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (7) RETURNING (select ins.c1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ins VALUES (9) RETURNING 'foo';
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO insert_t SELECT * FROM select_t LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO insert_t TABLE select_t ORDER BY v DESC LIMIT 3 RETURNING x, v
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO int_outer_buckets SELECT generate_series(-10, -1) UNION ALL SELECT generate_series(10000, 10009);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO int_outer_buckets VALUES (-9223372036854775808), (9223372036854775807);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO interval_duration_type (id, regular, regular_precision, second, second_precision, minute, minute_to_second_precision) VALUES
+  (1, '12:34:56.123456', '12:34:56.123456', '12:34:56.123456', '12:34:56.123456', '12:34:56.123456', '12:34:56.123456'),
+  (2, '12:56.123456', '12:56.123456', '12:56.123456', '12:56.123456', '12:56.123456', '12:56.123456'),
+  (3, '366 12:34:56.123456', '366 12:34:56.123456', '366 12:34:56.123456', '366 12:34:56.123456', '366 12:34:56.123456', '366 12:34:56.123456'),
+  (4, '1-2 3.1', '1-2 3.1', '1-2 3.1', '1-2 3.1', '1-2 3.1', '1-2 3.1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO interval_parsing VALUES
+  (1, '-10 years 22 months 1 day 01:02:03'),
+  (2, '-10 years -22 months 1 day 01:02:03'),
+  (3, '-10 years 22 months -1 day 01:02:03'),
+  (4, '-10 years 22 months -1 day -01:02:03')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO intervals VALUES
+  (1, '-2 years -11 mons 1 days 04:05:06.123'),
+  (2, '1 day 04:06:08.123'),
+  (3, '2 years 11 mons -2 days +03:25:45.678')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO intervals VALUES (INTERVAL '1 year 2 months 3 days 4 seconds'), (INTERVAL '2 year 3 months 4 days 5 seconds'), (INTERVAL '10000ms')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ints
+VALUES (1), (1), (1), (2), (4), (4), (4), (4), (5), (5),
+  (6), (7), (7), (7), (8), (9), (9), (9), (9), (9);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO inv
+SELECT k+17, 20, j FROM inv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO inv VALUES
+    (1, '{"x": "y", "num": 1}', 'foo'),
+    (2, '{"x": "y", "num": 2}', 'baz'),
+    (3, '{"x": "y", "num": 3}', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO inv VALUES
+  (1, 1, 'null'),
+  (2, 1, 'true'),
+  (3, 1, '1'),
+  (4, 1, '""'),
+  (5, 1, '"x"'),
+  (6, 1, '{}'),
+  (7, 1, '[]'),
+  (8, 1, '{"a": null}'),
+  (9, 1, '{"a": true}'),
+  (10, 1, '{"a": 1}'),
+  (11, 1, '{"a": ""}'),
+  (12, 1, '{"a": "x"}'),
+  (13, 1, '{"a": []}'),
+  (14, 1, '{"a": [null, 1, true, ""]}'),
+  (15, 1, '{"a": ["x", "y", "z"]}'),
+  (16, 2, '{"a": ["x", "y", "z"]}'),
+  (17, 1, '{"a": ["p", "q"]}'),
+  (18, 1, '{"a": [1, "x"]}'),
+  (19, 2, '{"a": [1, "x"]}'),
+  (20, 1, '{"a": {}}'),
+  (21, 1, '{"a": {"b": null}}'),
+  (22, 1, '{"a": {"b": true}}'),
+  (23, 1, '{"a": {"b": 1}}'),
+  (24, 1, '{"a": {"b": ""}}'),
+  (25, 1, '{"a": {"b": "x"}}'),
+  (26, 1, '{"a": {"b": []}}'),
+  (27, 1, '{"a": {"b": [null, 1, true, ""]}}'),
+  (28, 1, '{"a": {"b": ["x", "y", "z"]}}'),
+  (29, 1, '{"a": {"b": ["p", "q"]}}'),
+  (30, 1, '{"a": {"b": [1, "x"]}}'),
+  (31, 1, '{"a": {"b": {}}}'),
+  (32, 1, '{"a": {"b": {"x": "y"}}}'),
+  (33, 1, '{"a": {"b": {"p": "q"}}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO inv VALUES
+  (1, 10, NULL),
+  (2, 10, '1'),
+  (3, 10, '"a"'),
+  (4, 10, 'true'),
+  (5, 10, 'null'),
+  (6, 10, '{}'),
+  (7, 10, '[]'),
+  (8, 10, '{"a": "b"}'),
+  (9, 10, '{"a": "b", "c": "d"}'),
+  (10, 10, '{"a": {}, "b": "c"}'),
+  (11, 10, '{"a": {"b": "c"}, "d": "e"}'),
+  (12, 10, '{"a": {"b": "c", "d": "e"}}'),
+  (13, 10, '{"a": [], "d": "e"}'),
+  (14, 10, '{"a": ["b", "c"], "d": "e"}'),
+  (15, 10, '["a"]'),
+  (16, 10, '["a", "b", "c"]'),
+  (17, 10, '[{"a": "b"}, "c"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO inv_b VALUES
+    (1, '{"x": "y", "num": 1}', 'foo'),
+    (2, '{"x": "y", "num": 2}', 'baz'),
+    (3, '{"x": "y", "num": 3}', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO inv_c VALUES
+    (1, '{"x": "y", "num": 1}', 'foo'),
+    (2, '{"x": "y", "num": 2}', 'baz'),
+    (3, '{"x": "y", "num": 3}', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO issue_13962 VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO issue_14052 (a, b) VALUES (1, 1), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO issue_14052_2 (id, name, createdAt, updatedAt) VALUES
+  (1, 'original', 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO issue_17339 VALUES (1, 1), (2, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO issue_6710 (a, b) VALUES (1, 'foo'), (2, 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO j VALUES ('{"1":"10"}'), ('{"2":"20"}'),  ('{"3":"30"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO j VALUES (1, 1), (6, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO j VALUES('{"str": "zzz"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO j1 VALUES
+  (1, '{"a": "b"}'),
+  (2, '[1,2,3,4, "foo"]'),
+  (3, '{"a": {"b": "c"}}'),
+  (4, '{"a": {"b": [1]}}'),
+  (5, '{"a": {"b": [1, [2]]}}'),
+  (6, '{"a": {"b": [[2]]}}'),
+  (7, '{"a": "b", "c": "d"}'),
+  (8, '{"a": {"b":true}}'),
+  (9, '{"a": {"b":false}}'),
+  (10, '"a"'),
+  (11, 'null'),
+  (12, 'true'),
+  (13, 'false'),
+  (14, '1'),
+  (15, '1.23'),
+  (16, '[{"a": {"b": [1, [2]]}}, "d"]'),
+  (17, '{}'),
+  (18, '[]'),
+  (19, '["a", "a"]'),
+  (20, '[{"a": "a"}, {"a": "a"}]'),
+  (21, '[[[["a"]]], [[["a"]]]]'),
+  (22, '[1,2,3,1]'),
+  (23, '{"a": 123.123}'),
+  (24, '{"a": 123.123000}'),
+  (25, '{"a": [{}]}'),
+  (26, '[[], {}]'),
+  (27, '[true, false, null, 1.23, "a"]'),
+  (28, '{"a": {}}'),
+  (29, NULL),
+  (30, '{"a": []}'),
+  (31, '{"a": {"b": "c", "d": "e"}, "f": "g"}'),
+  (32, '{"a": [1]}'),
+  (33, '[1, "bar"]'),
+  (34, '{"a": 1}'),
+  (35, '[1]'),
+  (36, '[2]'),
+  (37, '[[1]]'),
+  (38, '[[2]]'),
+  (39, '["a"]'),
+  (40, '{"a": [[]]}'),
+  (41, '[[1, 2]]'),
+  (42, '[[1], [2]]'),
+  (43, '[{"a": "b", "c": "d"}]'),
+  (44, '[{"a": "b"}, {"c": "d"}]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO j1 VALUES (1, '{"a": "b"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO j2 VALUES (1, '{"a": "b"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO jars VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO jobs VALUES
+('1', '1', '1', 'Developer'),
+('2', '1', '2', 'Full Stack'),
+('3', '1', '4', 'Research'),
+('4', '2', '3', 'Frontend'),
+('5', '2', '5', 'DB Developer'),
+('6', '2', '2', 'DevOps')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO join_small VALUES (1, 1), (2, 2), (3, 3);
+INSERT INTO join_large VALUES (1, 'foo'), (2, 'not'), (3, 'bar'), (4, 'not');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_backfill VALUES
+  (1, '[1, 2, 3]'),
+  (2, '{"a": [1, 2, 3], "b": [4, 5, 6]}'),
+  (3, '{"a": {"a": "b"}, "d": {"e": [1, 2, 3]}}'),
+  (4, '{"a": [4, 5]}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_family VALUES(0,'{}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_family VALUES(1,'{"a":123,"c":"asdf"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_tab VALUES
+  (1, '{"a": "b"}'),
+  (2, '[1,2,3,4, "foo"]'),
+  (3, '{"a": {"b": "c", "d": "e"}}'),
+  (4, '{"a": {"b": [1, 2, 3, 4]}}'),
+  (5, '{"a": {}}'),
+  (6, '{"a": {"b": {"c": "d"}, "d": "e"}}'),
+  (7, '{"a": [{"b": {"x": "y"}}, {"b": "e"}]}'),
+  (8, '{"a": [{"b":[]}]}'),
+  (9, '{"a": {"b": "c"}}'),
+  (10, '{"a": {"d": "e"}}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_tab VALUES
+  (1, '{"a": "b"}'),
+  (2, '[1,2,3,4, "foo"]'),
+  (3, '{"a": {"b": "c"}}'),
+  (4, '{"a": {"b": [1]}}'),
+  (5, '{"a": {"b": [1, [2]]}}'),
+  (6, '{"a": {"b": [[2]]}}'),
+  (7, '{"a": "b", "c": "d"}'),
+  (8, '{"a": {"b":true}}'),
+  (9, '{"a": {"b":false}}'),
+  (10, '"a"'),
+  (11, 'null'),
+  (12, 'true'),
+  (13, 'false'),
+  (14, '1'),
+  (15, '1.23'),
+  (16, '[{"a": {"b": [1, [2]]}}, "d"]'),
+  (17, '{}'),
+  (18, '[]'),
+  (19, '["a", "a"]'),
+  (20, '[{"a": "a"}, {"a": "a"}]'),
+  (21, '[[[["a"]]], [[["a"]]]]'),
+  (22, '[1,2,3,1]'),
+  (23, '{"a": 123.123}'),
+  (24, '{"a": 123.123000}'),
+  (25, '{"a": [{}]}'),
+  (26, '[[], {}]'),
+  (27, '[true, false, null, 1.23, "a"]'),
+  (28, '{"a": {}}'),
+  (29, NULL),
+  (30, '{"a": []}'),
+  (31, '{"a": {"b": "c", "d": "e"}, "f": "g"}'),
+  (32, '{"a": [1]}'),
+  (33, '[1, "bar"]'),
+  (34, '{"a": 1}'),
+  (35, '[1]'),
+  (36, '[2]'),
+  (37, '[[1]]'),
+  (38, '[[2]]'),
+  (39, '["a"]'),
+  (40, '{"a": [[]]}'),
+  (41, '[[1, 2]]'),
+  (42, '[[1], [2]]'),
+  (43, '[{"a": "b", "c": "d"}]'),
+  (44, '[{"a": "b"}, {"c": "d"}]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_tab VALUES
+  (1, '{"a": "b"}'),
+  (2, '[1,2,3,4, "foo"]'),
+  (3, '{"a": {"b": "c"}}'),
+  (4, '{"a": {"b": [1]}}'),
+  (5, '{"a": {"b": [1, [2]]}}'),
+  (6, '{"a": {"b": [[2]]}}'),
+  (7, '{"a": "b", "c": "d"}'),
+  (8, '{"a": {"b":true}}'),
+  (9, '{"a": {"b":false}}'),
+  (10, '"a"'),
+  (11, 'null'),
+  (12, 'true'),
+  (13, 'false'),
+  (14, '1'),
+  (15, '1.23'),
+  (16, '[{"a": {"b": [1, [2]]}}, "d"]'),
+  (17, '{}'),
+  (18, '[]'),
+  (19, '["a", "a"]'),
+  (20, '[{"a": "a"}, {"a": "a"}]'),
+  (21, '[[[["a"]]], [[["a"]]]]'),
+  (22, '[1,2,3,1]'),
+  (23, '{"a": 123.123}'),
+  (24, '{"a": 123.123000}'),
+  (25, '{"a": [{}]}'),
+  (26, '[[], {}]'),
+  (27, '[true, false, null, 1.23, "a"]'),
+  (28, '{"a": {}}'),
+  (29, NULL),
+  (30, '{"a": []}'),
+  (31, '{"a": {"b": "c", "d": "e"}, "f": "g"}'),
+  (32, '{"a": [1]}'),
+  (33, '[1, "bar"]'),
+  (34, '{"a": 1}'),
+  (35, '[1]'),
+  (36, '[2]'),
+  (37, '[[1]]'),
+  (38, '[[2]]'),
+  (39, '["a"]'),
+  (40, '{"a": [[]]}'),
+  (41, '[[1, 2]]'),
+  (42, '[[1], [2]]'),
+  (43, '[{"a": "b", "c": "d"}]'),
+  (44, '[{"a": "b"}, {"c": "d"}]'),
+  (45, '{"a": "a"}'),
+  (46, '{"a": "c"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_tab VALUES
+(11, '{"a": [{"b": [{"x": {"y": {"z": "y"}}}, {"x": {"y": {"z": "yuu"}}}, {"x": {"y": {"z": ["y", "yuu"]}}}, [{"x": "y"}], [[[{"x": "y"}]]], {"xx": [{"zz":"oo"}]}]}, {"b": "e"}]}'),
+(12, '{"a": [{"b": [{"x": {"y": {"ztrue": true}}},  {"x": {"y": {"ztrue": [true, "y1"]}}}]}]}'),
+(13, '{"a": [{"b": [{"x": {"y": {"zfalse": false}}},  {"x": {"y": {"zfalse": [false, "y1"]}}}]}]}'),
+(14, '{"a": [{"b": [{"x": {"y": {"zint": 10}}},  {"x": {"y": {"zint": [10, "y1"]}}}]}]}'),
+(15, '{"a": [{"b": [{"x": {"y": {"znull": null}}},  {"x": {"y": {"znull": [null, "y1"]}}}]}]}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_tab VALUES
+(16, '{"a": [[{"b": 1, "c": "aaa"}, {"b": 2, "c": "bbb"}, {"b": 1, "c": "ccc"}], [{"b": 1, "c": "zzz"}, {"b": 2, "c": "xxx"}, {"b": 1, "c": "yyy"}]]}'),
+(17, '{"a": [[[{"b": 1, "c": "aaa"}, {"b": 2, "c": "bbb"}, {"b": 1, "c": "ccc"}], [{"b": 1, "c": "zzz"}, {"b": 2, "c": "xxx"}, {"b": 1, "c": "yyy"}]]]}'),
+(18, '{"a": [[[[{"b": 1, "c": "aaa"}, {"b": 2, "c": "bbb"}, {"b": 1, "c": "ccc"}], [{"b": 1, "c": "zzz"}, {"b": 2, "c": "xxx"}, {"b": 1, "c": "yyy"}]]]]}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_tab VALUES
+(20,'[{"b": {"x": "y"}, "a": "x"}, null]'),
+(21,'[[{"b": {"x": "y"}, "a": "x"}], null]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO json_tab VALUES (19, '{"a": {"b": "c"}}', '{"a": {"b": "c"}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO k VALUES (1), (2), (3), (4), (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO k VALUES (1, 1), (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kab VALUES (1, gen_random_uuid(), gen_random_uuid())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kab VALUES (2, gen_random_uuid(), gen_random_uuid())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kab VALUES (3, gen_random_uuid(), gen_random_uuid()),
+                       (4, gen_random_uuid(), gen_random_uuid()),
+                       (5, gen_random_uuid(), gen_random_uuid()),
+                       (6, gen_random_uuid(), gen_random_uuid())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabc VALUES (1, uuid_generate_v4(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabc VALUES (2, uuid_generate_v4(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabc VALUES (3, uuid_generate_v4(), uuid_generate_v4()),
+                       (4, uuid_generate_v4(), uuid_generate_v4()),
+                       (5, uuid_generate_v4(), uuid_generate_v4()),
+                       (6, uuid_generate_v4(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabcd VALUES (1, gen_random_uuid(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabcd VALUES (2, gen_random_uuid(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabcd VALUES (3, gen_random_uuid(), uuid_generate_v4()),
+                         (4, gen_random_uuid(), uuid_generate_v4()),
+                         (5, gen_random_uuid(), uuid_generate_v4()),
+                         (6, gen_random_uuid(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (crdb_region, k, v) VALUES ('us-east-1', 1, 1);
+INSERT INTO kv (crdb_region, k, v) VALUES ('ca-central-1', 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k) SELECT 'a', 'b'
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k) VALUES ('nil1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k) VALUES ('nil2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k, v) VALUES (99, 100) RETURNING sum(v)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k, v) VALUES (99, 100) RETURNING sum(v) OVER ()
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k, v) VALUES (99, count(1) OVER ())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k, v) VALUES (99, count(1))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES ('a', 'b'), ('c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES ('a', 'b'); INSERT INTO kv (k,v) VALUES ('c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES ('a', 'b'); INSERT INTO kv (k,v) VALUES ('e', 'f')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES ('a', transaction_timestamp())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES ('b', transaction_timestamp());
+SELECT * FROM kv;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES ('g', 'h'); INSERT INTO kv (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (1, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (2, cluster_logical_timestamp());
+SELECT * FROM kv;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (2, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (3, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (4, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (5, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (6, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (v) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv SELECT 'a', 'b', 'c'
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv SELECT i, i FROM generate_series(1,5) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES
+(1, 2, 3, 'a', '1min', '{1, 2, NULL}'),
+(3, 4, 5, 'a', '2sec', '{3, 4, 5}'),
+(5, NULL, 5, NULL, NULL, NULL),
+(6, 2, 3, 'b', '1ms', '{6, 2, 3}'),
+(7, 2, 2, 'b', '4 days', '{7, 2, 2}'),
+(8, 4, 2, 'A', '3 years', '{NULL, 4, 2}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES
+(1, 2, 3, 1.0, 1, 'a', true, '1min'),
+(3, 4, 5, 2, 8, 'a', true, '2sec'),
+(5, NULL, 5, 9.9, -321, NULL, false, NULL),
+(6, 2, 3, 4.4, 4.4, 'b', true, '1ms'),
+(7, 2, 2, 6, 7.9, 'b', true, '4 days'),
+(8, 4, 2, 3, 3, 'A', false, '3 years')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES
+(9, 2, 9, .1, DEFAULT, DEFAULT, DEFAULT),
+(10, 4, 9, .2, DEFAULT, DEFAULT, DEFAULT),
+(11, NULL, 9, .3, DEFAULT, DEFAULT, DEFAULT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('A')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('a', 'b', 'c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('f', 'g')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('foo', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('h', 'f')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('h', 'g')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('nil3', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES ('nil4', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 'one')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 'one'), (2, 'two'), (3, 'three'), (4, 'four'), (5, null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 1), (2, 1), (3, 1), (4, 1), (5, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 1), (2, 2), (3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 1), (2, 2), (3, NULL), (4, NULL), (5, 5), (6, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 2) RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 2), (2, 3), (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 2), (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 2), (3, 4), (5, 6), (7, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (1, 9), (8, 2), (3, 7), (6, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (111, 222)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (12, -1, DEFAULT, DEFAULT, DEFAULT, DEFAULT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (2, 3) RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (3, 4) RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (4, 4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (4, 5) RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (5, 5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (5, 6) RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (5, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES (7, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES('foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES('k', 'v')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES('k', 'v');
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv VALUES('unique_key', 'some value');
+INSERT INTO kv VALUES('a', 'c');
+INSERT INTO kv VALUES('unique_key2', 'some value');
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv(k,v) VALUES (123,456);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv2 VALUES ('a', 'b'), ('c', 'd'), ('e', 'f'), ('f', 'g')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv3 (k) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv3 VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv3 VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv3 VALUES ('a', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, bit) VALUES (2, 'a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, bit) VALUES (2, B'1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, bool) VALUES (3, 'a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, bool) VALUES (3, true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, char) VALUES (4, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, char) VALUES (4, 11)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, char) VALUES (5, 'a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, float) VALUES (6, 1::INT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv4 (int, float) VALUES (7, 2.3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv5 (k, v) SELECT 'a'
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv5 (k, v) VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv5 VALUES ('a', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv5 VALUES ('b'), ('c', DEFAULT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kvString VALUES ('like1', 'hell%'), ('like2', 'worl%')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv_enum VALUES (1, 'a'), (2, 'b'), (3, 'c'), (4, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kview VALUES ('e', 'f')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kw SELECT i, i FROM generate_series(1,5) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kw VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l SELECT g FROM generate_series(0,10000) g(g)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l VALUES ('A'), ('A.B'), ('A.B.C'), ('A.B.D'), ('Z'), (''), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l VALUES ((SELECT string_agg('A', '.') FROM generate_series(1, 65536))::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l VALUES (1, 1), (2, 1), (3, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l VALUES (1, 1), (6, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l VALUES (1, 1), (7, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l VALUES (1, 10), (2, 20), (3, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO l VALUES (repeat('A', 1001)::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO la VALUES (ARRAY['A', 'A.B']), (ARRAY['A.B.C', 'A.B.D', 'Z']), (ARRAY['X', 'Y']), (ARRAY[]), (ARRAY['']), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO large SELECT 11 + i * 100, 'b' FROM generate_series(1, 4) AS g(i);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO large SELECT 2*x, 4*x FROM
+  generate_series(1, 10) AS a(x)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO large SELECT g % 7, repeat('a', 52) FROM generate_series(0, 69999) as g;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO large SELECT x, 2*x, 3*x, 4*x FROM
+  generate_series(1, 10) AS a(x)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO large_numbers VALUES (-9223372036854775808),(-1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO large_numbers VALUES (9223372036854775807),(1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO lookup_expr VALUES
+  ('east', 1, 1, 10, 10, 5),
+  ('east', 2, NULL, 20, 10, 5),
+  ('east', 3, 3, NULL, 10, 5),
+  ('east', 4, 4, 40, 20, 5),
+  ('east', 5, NULL, 50, 20, 5),
+  ('west', 6, 1, 10, 20, 5),
+  ('west', 7, NULL, NULL, 20, 5),
+  ('west', 8, 2, 20, 20, 5),
+  ('west', 9, 3, 30, 10, 5),
+  ('west', 10, 4, 40, 10, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO loop_a (id, cascade_delete) VALUES ('loop_a-pk1', NULL);
+INSERT INTO loop_b (id, cascade_delete) VALUES ('loop_b-pk1', 'loop_a-pk1');
+INSERT INTO loop_a (id, cascade_delete) VALUES ('loop_a-pk2', 'loop_b-pk1');
+INSERT INTO loop_b (id, cascade_delete) VALUES ('loop_b-pk2', 'loop_a-pk2');
+INSERT INTO loop_a (id, cascade_delete) VALUES ('loop_a-pk3', 'loop_b-pk2');
+INSERT INTO loop_b (id, cascade_delete) VALUES ('loop_b-pk3', 'loop_a-pk3');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO loop_a VALUES ('original');
+INSERT INTO loop_b VALUES ('original');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO lostdata VALUES (23);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO lostdata VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO lostdata VALUES (5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO lots VALUES (1, 2, 3, 4, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ltable VALUES
+  (1, 'POINT(3.0 3.0)', 'POINT(3.0 3.0)'),
+  (2, 'POINT(4.5 4.5)', 'POINT(3.0 3.0)'),
+  (3, 'POINT(1.5 1.5)', 'POINT(3.0 3.0)')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ltable VALUES
+  (1, 'POINT(3.0 3.0)', 'POINT(3.0 3.0)'),
+  (2, 'POINT(4.5 4.5)', 'POINT(3.0 3.0)'),
+  (3, 'POINT(1.5 1.5)', 'POINT(3.0 3.0)'),
+  (4, NULL, 'POINT(3.0 3.0)'),
+  (5, 'POINT(1.5 1.5)', NULL),
+  (6, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO m VALUES (cluster_logical_timestamp())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mat_view_source VALUES (1, 10), (2, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO match_full VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO match_simple VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mc VALUES (1, 1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages (user_id_1, user_id_2, text) VALUES
+  (1, 2, 'hi jordan'),
+  (2, 1, 'hi oliver'),
+  (1, 2, 'you are a good user jordan'),
+  (1, 3, 'you are a good user too rohan'),
+  (3, 1, 'lucy is a good user')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages (user_id_1, user_id_2, text) VALUES
+  (10, 40, 'oh hi mark'),
+  (40, 10, 'youre tearing me apart lisa!')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages (user_id_1, user_id_2, text) VALUES
+  (999, 1, 'you are a bad user')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages (user_id_1, user_id_2, text) VALUES
+  (999, 40, 'johnny is my best friend')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages_global SELECT * FROM messages_rbr WHERE crdb_region != 'ap-southeast-2'
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages_rbr (account_id, message) VALUES (1, 'Hello, Region!');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages_rbr (crdb_region, account_id, message) VALUES ('us-east-1', 2, 'Hola, Region!');
+INSERT INTO messages_rbr (crdb_region, account_id, message) VALUES ('ca-central-1', 3, 'Guten Tag, Region!');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages_rbr SELECT * FROM messages_rbt
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages_rbt (account_id, message) VALUES (1, 'Hello, Zone!');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages_rbt (account_id, message) VALUES (2, 'Hello, Nest!');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO messages_rbt SELECT * FROM messages_rbr
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mno (m, n) SELECT i, i % 50 FROM generate_series(0, 999) s(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mno VALUES (3, 3, 3), (4, 4, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mnop (m, n) SELECT i, (1e9 + i/100.0)::float FROM
+  generate_series(1, 100) AS i(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO modules VALUES(3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multi_col VALUES (1, 'foo', '{"a": "b"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multi_pol_t VALUES
+  (1, 'eng', 'eng-1'),
+  (2, 'sales', 'sales-2'),
+  (3, 'eng', 'eng-3'),
+  (4, 'hr', 'hr-4'),
+  (5, 'sales', 'sales-5');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multi_region_test_db.regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES
+  ('ca-central-1', 5, 5, 5, 5),
+  ('ca-central-1', 6, 6, 5, -5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multi_region_test_db.regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES ('ca-central-1', 5, 5, 5, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multi_type_tbl VALUES
+  (1, 10, 'word1 word2'::TSVECTOR, 'search'::TSQUERY, '[1.0, 2.0]'::VECTOR(2)),
+  (2, 20, NULL, 'query'::TSQUERY, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES
+ (0, 'key out of bounds'),
+ (1, 'okay'),
+ (1, 'sensitive - filtered out'),
+ (2, 'okay'),
+ (2, 'confidential - filtered out'),
+ (3, 'okay'),
+ (2, 'sensitive - filtered out'),
+ (4, 'key out of bounds'),
+ (4, 'confidential');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (0, 'key out of bounds');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (1, 'okay');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (1, 'sensitive - filtered out');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (2, 'confidential - filtered out')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (2, 'okay')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (2, 'sensitive - filtered out')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (3, 'okay')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (4, 'confidential');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multip VALUES (4, 'key out of bounds')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multiple VALUES ('{"a":"b"}', '[1,2,3,4,"foo"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multiple_uniq
+VALUES (1,12,13,14), (15,16,17,18)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multiple_uniq
+VALUES (1,2,3,4), (5,6,7,8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multiple_uniq (a,b,c,d)
+VALUES (11,12,13,14), (15,16,17,18)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multiple_uniq (a,c,b,d)
+VALUES (11,3,2,14), (15,16,17,18)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multipleinstmt (key, value) VALUES ('a', 'a');
+INSERT INTO multipleinstmt (key, value) VALUES ('b', 'b');
+INSERT INTO multipleinstmt (key, value) VALUES ('c', 'c');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multiregion_pstats (a, b, crdb_region) VALUES (1, 1, 'ap-southeast-2'), (2, 2, 'ca-central-1'), (3, 3, 'us-east-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO multiregion_pstats (a, b, crdb_region) VALUES (4, 4, 'ap-southeast-2'), (5, 5, 'ca-central-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mutation VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mvt_edge_test VALUES
+  (1, 'POINT EMPTY', 'empty_point', NULL),
+  (2, 'LINESTRING EMPTY', 'empty_line', 42),
+  (3, 'POLYGON EMPTY', 'empty_poly', 99),
+  (4, 'POINT(1 2)', 'valid_point', 10),
+  (5, 'LINESTRING(0 0, 1 1)', 'valid_line', 20),
+  (6, 'POLYGON((0 0, 4 0, 4 4, 0 4, 0 0))', 'valid_poly', 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mvt_test VALUES 
+  (1, 'POINT(100 200)', 'point1', 42),
+  (2, 'LINESTRING(0 0, 10 10, 20 0)', 'line1', 24),
+  (3, 'POLYGON((0 0, 10 0, 10 10, 0 10, 0 0))', 'poly1', 33)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mvt_types_test VALUES
+  (1, 'POINT(0 0)', 'test string', 42, true),
+  (2, 'POINT(1 1)', NULL, NULL, NULL),
+  (3, 'POINT(2 2)', '', 0, false)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO mvt_win_test VALUES
+  (1, 'POINT(100 200)', 'a'),
+  (2, 'POINT(300 400)', 'b'),
+  (3, 'POINT(500 600)', 'c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO my_schema.my_table SELECT k, NULL FROM
+   generate_series(1, 10) AS k(k)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO n VALUES (1, 1), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO n VALUES (1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nan VALUES (1, 'NaN'), (2, -1), (3, 1), (4, 'NaN')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nested_t VALUES
+  (1, 'view_owner', 'vo-data'),
+  (2, 'invoker_user', 'inv-data'),
+  (3, 'other', 'other-data');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO new_abc VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO new_abc VALUES (1, 2, 3), (2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO new_enum_values VALUES ('g')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO new_other_db.public.t VALUES (default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO new_test_schema.foo VALUES (default, default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO no_default_table VALUES (6, 2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO no_default_table_on_update VALUES (0, 4, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO no_unique(a,b) VALUES (1,2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nocase_strings VALUES ('Aaa' COLLATE "en-US-u-ks-level2"), ('Bbb' COLLATE "en-US-u-ks-level2");
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nocase_strings2 VALUES (1, 'Aaa' COLLATE "en-US-u-ks-level2"), (2, 'Bbb' COLLATE "en-US-u-ks-level2");
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nocols VALUES (true, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO noind VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO non_rls VALUES (1), (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO noncover VALUES (1, 2, 3, 4), (5, 6, 7, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nonempty_a VALUES (1, NULL, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nonempty_b VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nonunique_idx_child VALUES (0, 1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nonunique_idx_parent VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nullable VALUES (1, 1), (2, 2), (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nullables VALUES (1,1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nullables VALUES (2,NULL,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO nulls_test VALUES(1, 'foo'), (1, NULL), (NULL, 'foo'), (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO num_ref VALUES (1, 10, 101), (2, 20, 200), (3, 30, 300)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO num_ref_hidden VALUES (1, 10), (2, 20), (3, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO o VALUES (1), (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO obits(x) VALUES
+ (B'0'),
+ (B'1'),
+ (B'0000'),
+ (B'0001'),
+ (B'010'),
+ (B'10'),
+ (B'11'),
+ (B''),
+ (B'00100'),
+ (B'00110'),
+ (B'00001'),
+ (B'1001001010101'),
+ (B'01001001010101'),
+ (B'11001001010101')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO obitsa(x) VALUES
+ (ARRAY[B'01', B'']),
+ (ARRAY[B'01', B'0']),
+ (ARRAY[B'01', B'1']),
+ (ARRAY[B'01', B'0000']),
+ (ARRAY[B'01', B'0001']),
+ (ARRAY[B'01', B'010']),
+ (ARRAY[B'01', B'10']),
+ (ARRAY[B'01', B'11']),
+ (ARRAY[B'01', B'']),
+ (ARRAY[B'01', B'00100']),
+ (ARRAY[B'01', B'00110']),
+ (ARRAY[B'01', B'00001']),
+ (ARRAY[B'01', B'1001001010101']),
+ (ARRAY[B'01', B'01001001010101']),
+ (ARRAY[B'01', B'11001001010101'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ok1 (a, b) VALUES (1, NULL), (2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ok12 (a, b, c) VALUES (NULL, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ok3 VALUES (1,1), (2,2), (3,3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO one VALUES (1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,7), (8,8), (9,9), (10,10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO only_null VALUES (NULL), (NULL), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO opt_test VALUES (1, NULL), (2, 10), (3, NULL), (4, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders ("customer_id", "total", "balance", "dispatch_ts", "delivery_ts") VALUES
+  ('bdeb232e-12e9-4a33-9dd5-7bb9b694291a', 100, 100, NULL, NULL),
+  ('0dc59725-d20b-4370-a05d-11db025a0064', 200, 0, NULL, NULL),
+  ('d53d4021-9390-4b3a-9e5a-4bf1ff3e5a4c', 300, 0, now(), NULL),
+  ('d53d4021-9390-4b3a-9e5a-4bf1ff3e5a4c', 400, 0, now(), now())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders VALUES ('69a1c2c2-5b18-459e-94d2-079dc53a4dd0', '69a1c2c2-5b18-459e-94d2-079dc53a4dd0', 'Super Deluxe Sprocket')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders VALUES (1, 1, '780', 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders VALUES (1000, 1), (1001, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders VALUES (2, 1, '780', 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders VALUES (2, 1, '780', 43)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders VALUES (2, 1, '790', 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders VALUES (2, 2, 'fake', 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO osagg VALUES
+(NULL, NULL, NULL),
+(0.00, NULL, '1 months'),
+(0.05, NULL, '1 months'),
+(1.0, 'v1', '1 year 1 months'),
+(3.0, 'v3', '1 year 3 months'),
+(5.0, 'v5', '1 year 5 months'),
+(2.0, 'v2', '1 year 2 months'),
+(4.0, 'v4', '1 year 4 months'),
+(6.0, 'v6', '1 year 6 months')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO other VALUES (1, -1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO other VALUES (10, 10, 1, 1, 1, '8597b0eb-7b89-4857-858a-fabf86f6a3ac')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO other VALUES (9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO other VALUES (99);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO other_db.t (i) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO other_db.t VALUES (default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO otherdb.othertable VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p VALUES ('-0'::float)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p VALUES ('A' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p VALUES ('a' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p VALUES ('b' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p VALUES (0), (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p VALUES (NULL), ('NaN'::float), ('Inf'::float), ('-Inf'::float), ('0'::float), (1), (-1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p76852 (p, i) VALUES ('foo', 1);
+INSERT INTO c76852 (b, p) VALUES (true, 'foo');
+DELETE FROM p76852 WHERE i = 1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO p76852 (p, i) VALUES ('foo', 1);
+INSERT INTO c76852 (b, p) VALUES (true, 'foo');
+DELETE FROM p76852 WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pairs VALUES (1, 100, 'one'), (2, 200, 'two')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pairs VALUES (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (2,3), (2,4), (2,5), (2,6), (3,4), (3,5), (3,6), (4,5), (4,6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent (crdb_region, p_id)
+VALUES ('ap-southeast-2', 10), ('ca-central-1', 20), ('us-east-1', 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent (crdb_region, p_id) VALUES('ca-central-1', 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent (p) VALUES (1), (2), (3), (4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent (p) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent (p, u) VALUES (1, 10), (2, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent (p, u) VALUES (2, 10), (3, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent SELECT * FROM generate_series(1,6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent SELECT x FROM xy
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (0), (2), (4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (2), (3);
+INSERT INTO child VALUES (1), (2), (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (2), (3);
+INSERT INTO child VALUES (1, 1), (2, 2), (3, 2), (4, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (2), (3);
+INSERT INTO child VALUES (1, 1), (2, 2), (3, 2), (4, 3);
+INSERT INTO child2 VALUES (1, 1), (2, 2), (3, 2), (4, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (2), (3);
+INSERT INTO child VALUES (1, 1), (2, 2), (3, 3);
+INSERT INTO child2 VALUES (1, 1), (2, 2), (3, 3);
+INSERT INTO grandchild VALUES (1, 1, 1), (2, 2, 2), (3, 2, 2), (4, 3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (2);
+INSERT INTO child VALUES (1, 1), (2, 2), (10, 1), (20, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1, 1), (2, 2);
+INSERT INTO child VALUES (1, 1), (2, 1), (3, 2), (4, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1, 1, 1), (2, 2, 2);
+INSERT INTO child VALUES (1, 1, 1), (2, 1, 1), (3, 2, 2), (4, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES (1,11)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent VALUES(1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent146889 VALUES (1);
+INSERT INTO child146889 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent2 VALUES
+  (10, 100),
+  (10, 150),
+  (20, 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_150282 VALUES (1, 2, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_151663 VALUES (1, 0), (2, 0), (3, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_cascade (k, crdb_region) (SELECT k, crdb_region FROM parent_rbr);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_cascade VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_cascade VALUES (1), (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_cascade VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_cascade VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_combined (k, v, data, crdb_region) VALUES
+  (1, 1, 100, 'ca-central-1'),
+  (2, 2, 200, 'ap-southeast-2'),
+  (3, 3, 300, 'us-east-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_composite_index VALUES (100, 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_hash_sharded VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_lt VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_multi VALUES (1, 10, 100), (2, 20, 200), (3, 30, 300), (NULL, NULL, NULL);
+INSERT INTO child_multi_1(a,b,c) VALUES (1, 10, 100), (2, 20, 200), (1, 10, 100), (2, 20, 200), (NULL, NULL, NULL);
+INSERT INTO child_multi_2(a,b,c) VALUES (2, 20, 200), (3, 30, 300)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_rbr (crdb_region, p_id, p_data, p_int) VALUES ('us-east-1', 2, 'bar', 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_rbr VALUES (1, 'foo', 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parent_rbr_implicit (k, v, crdb_region) VALUES
+  (1, 10, 'ca-central-1'),
+  (2, 20, 'ap-southeast-2'),
+  (3, 30, 'us-east-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parentid (k, v) VALUES (0, 1); INSERT INTO childid (id) VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO parents (k) VALUES ('b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO partial VALUES (1, 1, 1, 1, '{"a": "b"}'), (2, 2, 2, 10, '{"c": "d"}'), (3, 3, 3, 1, '{"e": "f"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO partial_indexes SELECT g, g FROM generate_series(1, 10) AS g;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO patient(site_id, id) VALUES (NULL, 4);
+INSERT INTO patient(site_id, id) VALUES (1, 5);
+INSERT INTO patient(site_id, id) VALUES (1, 6);
+INSERT INTO patient(site_id, id) VALUES (2, 7);
+INSERT INTO patient(site_id, id) VALUES (3, 8);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO perm_table VALUES (default), (default), (101)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO permanent_table VALUES (1); INSERT INTO temp_table VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO person VALUES (0, 18, 'Hermione Granger')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO persons VALUES
+('1', 'Alice'),
+('2', 'Bob')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pet VALUES (0, 'crookshanks')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pg_catalog.pg_tables VALUES ('abc')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pg_lsn_table VALUES ('10/10', 'A01/A100'), ('100/100', 'A01/A1000'), ('FFFFF100/100', 'A001/A100')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pgvector_tbl VALUES
+  (1, 10, '[1.0, 2.0, 3.0]'::VECTOR(3)),
+  (2, 20, '[4.0, 5.0, 6.0]'::VECTOR(3));
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pindex VALUES (1.0), (2.0), (3.0), (4.0), (5.0), (8.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pks VALUES (1, 2, 3), (4, 5, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO policy_table VALUES (1, 'test');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO prep_stmts SELECT 3, name FROM pg_catalog.pg_prepared_statements
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO prim VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO priv_test VALUES (1, 'from_old_node')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO priv_test VALUES (1, 'hello'), (2, 'world')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO privs VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO products (group_name, product_name, price, priceInt, priceFloat, pDate, pTime, pTimestamp, pTimestampTZ, pInterval) VALUES
+('Smartphone', 'Microsoft Lumia', 200, 200, 200, '2018-07-30', TIME '01:23:45', TIMESTAMP '2018-07-30 01:23:45', TIMESTAMPTZ '2018-07-30 01:23:45', INTERVAL '1 months 2 days 3 hours 4 minutes 5 seconds'),
+('Smartphone', 'HTC One', 400, 400, 400, '2018-07-31', TIME '12:34:56', TIMESTAMP '2018-07-31 12:34:56', TIMESTAMPTZ '2018-07-31 12:34:56', INTERVAL '1 days 2 hours 3 minutes 4 seconds'),
+('Smartphone', 'Nexus', 500, 500, 500, '2018-07-30', TIME '11:23:45', TIMESTAMP '2018-07-30 11:23:45', TIMESTAMPTZ '2018-07-30 11:23:45', INTERVAL '1 hours 2 minutes 3 seconds'),
+('Smartphone', 'iPhone', 900, 900, 900, '2018-07-31', TIME '07:34:56', TIMESTAMP '2018-07-31 07:34:56', TIMESTAMPTZ '2018-07-31 07:34:56', INTERVAL '1 minutes 2 seconds'),
+('Laptop', 'HP Elite', 1200, 1200, 1200, '2018-07-30', TIME '01:23:45', TIMESTAMP '2018-07-30 01:23:45', TIMESTAMPTZ '2018-07-30 01:23:45', INTERVAL '1 months 2 days 3 hours 4 minutes 5 seconds'),
+('Laptop', 'Lenovo Thinkpad', 700, 700, 700, '2018-07-31', TIME '12:34:56', TIMESTAMP '2018-07-31 12:34:56', TIMESTAMPTZ '2018-07-31 12:34:56', INTERVAL '1 days 2 hours 3 minutes 4 seconds'),
+('Laptop', 'Sony VAIO', 700, 700, 700, '2018-07-30', TIME '11:23:45', TIMESTAMP '2018-07-30 11:23:45', TIMESTAMPTZ '2018-07-30 11:23:45', INTERVAL '1 hours 2 minutes 3 seconds'),
+('Laptop', 'Dell', 800, 800, 800, '2018-07-31', TIME '07:34:56', TIMESTAMP '2018-07-31 07:34:56', TIMESTAMPTZ '2018-07-31 07:34:56', INTERVAL '1 minutes 2 seconds'),
+('Tablet', 'iPad', 700, 700, 700, '2018-07-30', TIME '01:23:45', TIMESTAMP '2018-07-30 01:23:45', TIMESTAMPTZ '2018-07-30 01:23:45', INTERVAL '1 months 2 days 3 hours 4 minutes 5 seconds'),
+('Tablet', 'Kindle Fire', 150, 150, 150, '2018-07-31', TIME '12:34:56', TIMESTAMP '2018-07-31 12:34:56', TIMESTAMPTZ '2018-07-31 12:34:56', INTERVAL '1 days 2 hours 3 minutes 4 seconds'),
+('Tablet', 'Samsung', 200, 200, 200, '2018-07-30', TIME '11:23:45', TIMESTAMP '2018-07-30 11:23:45', TIMESTAMPTZ '2018-07-30 11:23:45', INTERVAL '1 hours 2 minutes 3 seconds')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO products (title, price) VALUES ('Test Product', '55');
+INSERT INTO products (title, price) VALUES ('Test Product B', '60');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO products VALUES
+(1, 1, 10.00, 'active', '2025-01-01'),
+(2, 1, 15.00, 'active', '2025-01-02'),
+(3, 2, 20.00, 'inactive', '2025-01-03'),
+(4, 2, 25.00, 'active', '2025-01-04'),
+(5, 3, 30.00, 'inactive', '2025-01-05'),
+(6, 1, 35.00, 'active', '2025-01-06'),
+(7, 2, 40.00, 'active', '2025-01-07'),
+(8, 3, 45.00, 'inactive', '2025-01-08'),
+(9, 1, 50.00, 'active', '2025-01-09'),
+(10, 2, 55.00, 'active', '2025-01-10')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO products VALUES ('VP-W9QH-W44L', '867072000006', 'Dave'), ('780', '885155001450', 'iRobot')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO products VALUES (11, NULL, 60.00, 'active', '2025-01-11')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO profiles VALUES
+(1, 'email', 'user1@gmail.com'),
+(1, 'phone', '111111111111111'),
+(1, 'home_page', 'user1.org1.com'),
+(2, 'email', 'user2@gmail.com'),
+(2, 'phone', '222222222222222'),
+(2, 'home_page', 'user2.org1.com')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO promos VALUES ('7fe2dce4-ecac-4d12-87b6-e1c1f837d835', 50, '{"some": "info"}');
+INSERT INTO orders
+  VALUES ('94e4b847-8f2f-4ac5-83f1-641d6e3df727', 100, '7fe2dce4-ecac-4d12-87b6-e1c1f837d835', '{"some": "info"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO prune (a, b, c, d) VALUES (1, 2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pstat_allindex VALUES
+  (1, 1, 1, 1, 1, 1, '{"1": "1"}'),
+  (2, 2, 2, 2, 2, 2, '{"2": "2"}'),
+  (3, 3, 3, 3, 3, 3, '{"3": "3"}'),
+  (4, 4, 4, 4, 4, 4, '{"4": "4"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO pstat_allindex VALUES
+  (5, 5, 5, 5, 5, 5,'{"5": "5"}'),
+  (6, 6, 6, 6, 6, 6, '{"6": "6"}'),
+  (7, 7, 7, 7, 7, 7, '{"7": "7"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO public.t VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO publicdb.publictable VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO r VALUES (1, ARRAY['test', 'TESTER'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO r VALUES (2, 1), (3, 1), (4, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO r VALUES (2, 200), (3, 300), (4, 400)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO r VALUES (ARRAY['test', 'TESTER'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rbr (p, s) VALUES (1, 'hi')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rbt_primary VALUES (1, 'a');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ref_table VALUES (1, 'testuser'), (2, 'admin');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO refcursor_tbl VALUES
+  (1, 10, 'cursor1', ARRAY['c1a', 'c1b']::REFCURSOR[]),
+  (2, 20, 'cursor2', ARRAY['c2a', 'c2b']::REFCURSOR[]);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO refpairs VALUES (100, 'one', 3), (200, 'two', null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO refpairs VALUES (100, 'two'), (200, 'two')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row (pk, i) VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_as (pk, i) VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES
+('ca-central-1', 7, 7, 8, 9)
+RETURNING crdb_region, pk
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES
+(gateway_region()::crdb_internal_region, 23, 23, 24, 25)
+RETURNING crdb_region, pk
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES ('us-east-1', 2, 3, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (pk, pk2, a, b) VALUES
+  (1, 1, 1, -5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (pk, pk2, a, b) VALUES
+  (16, 16, 15, -5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (pk, pk2, a, b) VALUES (1000, 1, 1000, 2000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (pk, pk2, a, b, j) VALUES
+  (1, 1, 2, 3, '{"a": "b"}'),
+  (4, 4, 5, 6, '{"c": "d"}');
+INSERT INTO multi_region_test_db.regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES
+  ('ca-central-1', 6, 6, 5, -5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table (pk, pk2, a, b, j) VALUES
+(1, 1, 2, 3, '{"a": "b"}'), (4, 4, 5, 6, '{"c": "d"}')
+RETURNING crdb_region, pk
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table VALUES (1, 1, 1, 1, NULL), (2, 1, 1, 2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_as (pk) VALUES (1), (10), (20)
+RETURNING crdb_region_col, pk
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_as (pk, a, b) VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_as (pk, a, b) VALUES (2, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_as (pk, a, b) VALUES (30, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_as1 (pk) VALUES (1), (2), (3), (10), (20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt (pk, a, b) VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt (pk, a, b) VALUES (2, 1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt (pk, a, b) VALUES (2, 2, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt_partial (pk, a, b) VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt_partial (pk, a, b) VALUES (2, -1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt_partial (pk, a, b) VALUES (2, 3, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt_partial (pk, a, b) VALUES (3, -2, -2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_table_virt_partial (pk, a, b) VALUES (4, -3, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_row_to_regional_by_row_as (pk, i) VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_table_in_us_east VALUES (0, 1, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_table_in_us_east VALUES (0, 1, 2, 'us-east-1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_table_no_region VALUES (0, 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regional_by_table_no_region VALUES (0, 1, 2, 'us-east-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regression_44774 VALUES (default), ('19:21:57.261286')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regression_44774 VALUES (default), ('4:5:6.123456')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regression_44774 VALUES (default, default), ('2020-02-05 19:21:57.261286', '2020-02-05 19:21:57.261286')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regression_46973 VALUES ('1970-01-01 00:00:00', '1970-01-01 00:00:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regression_46973 VALUES ('23:59:59.999999'), ('24:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regression_47030 VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO regression_54844 VALUES (-9223372036854775807)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rename_add_alter_pk_tbl VALUES (1, 10), (2, 20);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rename_column VALUES (1, 2, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO restrict_t VALUES
+  (1, 'public', 'pub-1'),
+  (2, 'public', 'pub-2'),
+  (3, 'secret', 'sec-3'),
+  (4, 'secret', 'sec-4'),
+  (5, 'public', 'pub-5');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return (a) VALUES (1) RETURNING *
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return (a) VALUES (default) RETURNING b
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return (a) VALUES (default), (8) RETURNING a, 2, a+4
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return (b) VALUES (1) RETURNING *, a+1
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return (b) VALUES (default), (8) RETURNING a, a+4, b
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (1) RETURNING *
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (1, 2) RETURNING x.*[1]
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (1, 2) RETURNING x[1]
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (1, 2), (3, 4) RETURNING *
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (1, 2), (3, 4) RETURNING return.* as x
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (1, 2), (3, 4) RETURNING return.*, a + b AS c
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (1, 2), (3, 4) RETURNING return.a, b
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (5, 6) RETURNING test.return.a
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (default) RETURNING *
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (default) RETURNING a, b
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (default) RETURNING a, b AS c, 4 AS d
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (default) RETURNING return.a
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (default) RETURNING rowid != unique_rowid()
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rgb_only VALUES ('blue')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rgb_only VALUES ('brown')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rgb_only VALUES ('green')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rgb_only VALUES ('red')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rides VALUES (567, 'lagos', 'lagos', 10, 100)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO river VALUES ('ap-southeast-2', 'Skykomish', 'Snohomish')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO river VALUES ('ap-southeast-2', 'Skykomish', 'Snoqualmie')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rlsInsert SELECT c1 + 5, c2, c3 FROM rlsInsert WHERE c3 not between '2012-01-01' and '2012-12-31';
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rlsInsert SELECT c1 + 5, c2, c3 FROM rlsInsert;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rlsInsert VALUES (1, 'first', '2012-06-30'),(0, 'zero', NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rlsInsert VALUES (2, 'second', '2010-06-30');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rlsInsert VALUES (3, 'third', '2012-07-08');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rlsInsert VALUES (4, 'four', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rlsInsert VALUES (4, 'fourth', '2022-10-08');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rls_cache_test VALUES ('a'), ('b'), ('c');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rls_docs (id, visible_to, content) VALUES
+  (1, 'mv_alice', 'Alice secret 1'),
+  (2, 'mv_alice', 'Alice secret 2'),
+  (3, 'mv_bob',   'Bob secret 1'),
+  (4, 'everyone', 'Public doc');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rls_forced VALUES
+  (1, 'public', 'Public doc 1'),
+  (2, 'secret', 'Secret doc 1'),
+  (3, 'public', 'Public doc 2'),
+  (4, 'secret', 'Secret doc 2');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rls_owned VALUES
+  (1, 'public', 'Public doc 1'),
+  (2, 'secret', 'Secret doc 1'),
+  (3, 'public', 'Public doc 2'),
+  (4, 'secret', 'Secret doc 2');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rtable VALUES
+  (11, 'POINT(1.0 1.0)'),
+  (12, 'LINESTRING(1.0 1.0, 2.0 2.0)'),
+  (13, 'POINT(3.0 3.0)'),
+  (14, 'LINESTRING(4.0 4.0, 5.0 5.0)'),
+  (15, 'LINESTRING(40.0 40.0, 41.0 41.0)'),
+  (16, 'POLYGON((1.0 1.0, 5.0 1.0, 5.0 5.0, 1.0 5.0, 1.0 1.0))')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rtable VALUES
+  (11, 10, 'POINT(1.0 1.0)'),
+  (12, 10, 'LINESTRING(1.0 1.0, 2.0 2.0)'),
+  (13, 10, 'POINT(3.0 3.0)'),
+  (14, 10, 'LINESTRING(4.0 4.0, 5.0 5.0)'),
+  (15, 10, 'LINESTRING(40.0 40.0, 41.0 41.0)'),
+  (16, 10, 'POLYGON((1.0 1.0, 5.0 1.0, 5.0 5.0, 1.0 5.0, 1.0 1.0))'),
+  (17, 20, 'POINT(1.0 1.0)'),
+  (18, 20, 'LINESTRING(1.0 1.0, 2.0 2.0)'),
+  (19, 20, 'POINT(3.0 3.0)'),
+  (20, 20, 'LINESTRING(4.0 4.0, 5.0 5.0)'),
+  (21, 20, 'LINESTRING(40.0 40.0, 41.0 41.0)'),
+  (22, 20, 'POLYGON((1.0 1.0, 5.0 1.0, 5.0 5.0, 1.0 5.0, 1.0 1.0))')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO rtable2 VALUES
+  (11, 'POINT(1.0 1.0)', 22),
+  (12, 'LINESTRING(1.0 1.0, 2.0 2.0)', 24),
+  (13, 'POINT(3.0 3.0)', 26),
+  (14, 'LINESTRING(4.0 4.0, 5.0 5.0)', 28),
+  (15, 'LINESTRING(40.0 40.0, 41.0 41.0)', 30),
+  (16, 'POLYGON((1.0 1.0, 5.0 1.0, 5.0 5.0, 1.0 5.0, 1.0 1.0))', 32)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s VALUES
+  ('-0'::decimal),
+  ('-0.0'::decimal),
+  ('-0.00'::decimal),
+  ('-0.00E-1'::decimal),
+  ('-0.0E-3'::decimal)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s VALUES
+  ('10'::decimal),
+  ('10.0'::decimal),
+  ('10.00'::decimal),
+  ('10.000'::decimal),
+  ('100000E-4'::decimal),
+  ('1000000E-5'::decimal),
+  ('1.0000000E+1'::decimal)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s VALUES
+  (null),
+  ('NaN'::decimal),
+  ('-NaN'::decimal),
+  ('Inf'::decimal),
+  ('-Inf'::decimal),
+  ('0'::decimal),
+  (1),
+  (-1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s VALUES ('a'), ('b'), ('f');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s VALUES ('c'), ('d'), ('e');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s VALUES (COALESCE(1, 'foo'))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s(x) VALUES (b'\xfffefd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s(x) VALUES (b'qwe'), ('start' || b'end')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s1.t VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s1.t2 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO s1.t3 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sc VALUES (1, 10), (2, 20), (3, 30);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sc VALUES (10, 10), (11, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sc VALUES (20, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sec VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO seed DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO select_t VALUES (1, 9), (8, 2), (3, 7), (6, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (1, 1, 1, 1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (1, 2), (2, 3), (3, 4), (4, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (1, NULL);
+INSERT INTO self SELECT x, x-1 FROM generate_series(2, 10) AS g(x)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (1, NULL);
+INSERT INTO self SELECT x, x-1 FROM generate_series(2, 20) AS g(x)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (1, NULL);
+INSERT INTO self VALUES (2, 1);
+INSERT INTO self VALUES (3, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (1, NULL);
+INSERT INTO self VALUES (2, 1);
+INSERT INTO self VALUES (3, 2);
+INSERT INTO self VALUES (4, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self VALUES (2, 1, 2, 1, 2);
+INSERT INTO self VALUES (3, 2, 3, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self_ab VALUES (1, 2), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self_ab_parent VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self_abcd VALUES (1, 2, 3, 4), (4, 1, 2, 3), (3, 4, 1, 2), (2, 3, 4, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self_ref_fk VALUES (1, NULL), (2, 1), (3, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self_ref_fk VALUES (2, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO self_x2 (x, y, z) VALUES ('pk1', NULL, NULL);
+INSERT INTO self_x2 (x, y, z) VALUES ('pk2', 'pk1', NULL);
+INSERT INTO self_x2 (x, y, z) VALUES ('pk3', 'pk2', 'pk1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO selfref VALUES (1, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO selfref VALUES (1,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sensitive_data_table VALUES (0),(1),(2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO serial (a, b) VALUES (0, 2), (DEFAULT, DEFAULT), (DEFAULT, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO serial (a, b) VALUES (1, 2), (DEFAULT, DEFAULT), (DEFAULT, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO serial (b) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO serial (cached) VALUES (DEFAULT);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO serial (cached512) VALUES (DEFAULT);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO serials (d) VALUES (9), (9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO shard_columns_child VALUES (1, 1, 1, 1), (5, 5, 5, 5), (9, 9, 9, 9), (11, 11, 11, 11)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO shard_columns_child VALUES (101, 101, 101, 101)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO shard_columns_parent
+  SELECT generate_series(1,20), generate_series(1,20), generate_series(1,20), generate_series(1,20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO shard_columns_rename
+  SELECT generate_series(1,10), generate_series(6,15), generate_series(16,25), generate_series(21,30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sharded_index_with_nulls VALUES (1, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sharded_primary VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sharded_primary values (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sharded_primary values (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sharded_secondary values (1), (2), (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sharded_secondary values (3), (2), (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sharded_unique VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO simple VALUES (DEFAULT, DEFAULT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO simple VALUES (DEFAULT, DEFAULT);
+INSERT INTO simple VALUES (0, DEFAULT);
+INSERT INTO simple VALUES (DEFAULT, 0);
+INSERT INTO simple VALUES (0, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO site(id) VALUES (1);
+INSERT INTO site(id) VALUES (2);
+INSERT INTO site(id) VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO small SELECT x, 2*x, 3*x, 4*x FROM
+  generate_series(1, 10) AS a(x)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO small SELECT x, 3*x FROM
+  generate_series(1, 10) AS a(x)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO smallbig (c) VALUES (7), (7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO smalldata VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sorted_data VALUES
+(1, 4, 5.0),
+(2, 3, 3.4),
+(3, 9, 2.2),
+(4, 13, 1.99),
+(5, 2, 5.7),
+(6, 7, 6.2),
+(7, 9, 8.9),
+(8, 1, 1.22),
+(9, -2, 23.0),
+(10, 100, -3.1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO source
+VALUES
+    (1, 1, 2),
+    (1, 2, 1),
+    (1, 2, 2),
+    (2, 3, 3),
+    (4, 1, NULL),
+    (5, 1, NULL),
+    (6, NULL, NULL),
+    (7, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO source
+VALUES (1, 1, 1), (2, 1, 1), (3, 1, NULL), (4, 1, NULL), (5, NULL, NULL), (6, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO source VALUES (1, 1, 2), (1, 2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO square VALUES (1,1), (2,4), (3,9), (4,16), (5,25), (6,36)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO src
+SELECT
+	'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+FROM
+	generate_series(1, 50000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO src SELECT repeat('a', 100000) FROM generate_series(1, 60)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO src(x) VALUES ('abc');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x) VALUES
+  (0, 1.797693134862315708145274237317043567981e+308, 0, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x) VALUES
+  (1.797693134862315708145274237317043567981e+308, 0, 0, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x) VALUES
+  (1.797693134862315708145274237317043567981e+408, 0, 0, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx)
+VALUES (0.0,   0.09561,    1,   10,   0.0, 0.09561),
+       (42.0,   324.78,    2,   25,  42.0,  324.78),
+       (42.0,   324.78,    2,   25,  42.0,  324.78),
+       (56.0,      7.8,    3,   40,  56.0,     7.8),
+       (56.0,      7.8,    3,   40,  56.0,     7.8),
+       (56.0,      7.8,    3,   40,  56.0,     7.8),
+       (100.0,  99.097,    4,  100, 100.0,  99.097),
+       (100.0,  99.097,    4,  100, 100.0,  99.097),
+       (100.0,  99.097,    4,  100, 100.0,  99.097),
+       (100.0,  99.097,    4,  100, 100.0,  99.097),
+       (NULL,     NULL, NULL, NULL,  NULL,    NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx) VALUES
+  (0, 1.797693134862315708145274237317043567981e+408, 0, 0, 0, 1.797693134862315708145274237317043567981e+408)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx) VALUES
+  (1.0,   10.0,    1,   10, 1.0,   10.0),
+  (2.0,   25.0,    2,   25, 2.0,   25.0),
+  (2.0,   25.0,    2,   25, 2.0,   25.0),
+  (3.0,   40.0,    3,   40, 3.0,   40.0),
+  (3.0,   40.0,    3,   40, 3.0,   40.0),
+  (3.0,   40.0,    3,   40, 3.0,   40.0),
+  (4.0,  100.0,    4,  100, 4.0,  100.0),
+  (4.0,  100.0,    4,  100, 4.0,  100.0),
+  (4.0,  100.0,    4,  100, 4.0,  100.0),
+  (4.0,  100.0,    4,  100, 4.0,  100.0),
+  (NULL,  NULL, NULL, NULL, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx) VALUES
+  (1.0,  10.0, 1,  10, 1.0,  10.0),
+  (2.0, -20.0, 2, -20, 2.0, -20.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx) VALUES
+  (1.0, -1.0, 1, -1, 1.0, -1.0),
+  (1.0,  1.0, 1,  1, 1.0,  1.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx) VALUES
+  (1.0, 10.0, 1, 10, 1.0, 10.0),
+  (2.0, 20.0, 2, 20, 2.0, 20.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx) VALUES
+  (1.797693134862315708145274237317043567981e+308, 0, 0, 0, 1.797693134862315708145274237317043567981e+308, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test (y, x, int_y, int_x, dy, dx) VALUES
+  (NULL, NULL, NULL, NULL, NULL, NULL),
+  (NULL, NULL, NULL, NULL, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO statistics_agg_test SELECT y, y%10 FROM generate_series(1, 100) AS y
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO stock VALUES ('spoons', 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO store VALUES (0, NULL, 10), (1, NULL, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO store_columns_test VALUES
+  (1, 10, 100, 1000),
+  (1, 20, 200, 2000),
+  (2, 10, 300, 3000),
+  (2, 20, 400, 4000),
+  (3, 10, 500, 5000),
+  (3, 20, 600, 6000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO stored1 VALUES (-1000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO stored1 VALUES (10),(150),(190),(2000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO stored1 VALUES (2147483648),(2147483647);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO str VALUES (1, 'A'), (4, 'AB'), (2, 'ABC'), (5, 'ABCD'), (3, 'ABCDEZ'), (9, 'ABD'), (10, '\CBA'), (11, 'A%'), (12, 'CAB.*'), (13, 'CABD')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO str1 VALUES (1, 'a' COLLATE en_u_ks_level1), (2, 'A' COLLATE en_u_ks_level1), (3, 'c' COLLATE en_u_ks_level1), (4, 'D' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO str2 VALUES (1, 'A' COLLATE en_u_ks_level1), (2, 'B' COLLATE en_u_ks_level1), (3, 'C' COLLATE en_u_ks_level1), (4, 'E' COLLATE en_u_ks_level1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO str_arr
+VALUES
+    ('{"a": ["foo", "bar", "z"]}'),
+    ('{"a": ["1", "2", "3"]}'),
+    ('{"a": []}'),
+    ('{"b": "not-array"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO str_arr VALUES ('{d,e,f}', 'd'), ('{h,i,j}', 'h'), (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO string_agg_test VALUES
+  (1, 1, 'A'),
+  (2, 1, 'B'),
+  (3, 1, 'C'),
+  (4, 1, 'D')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO string_agg_test VALUES
+  (1, 1, 'A'),
+  (2, 2, 'B'),
+  (3, 3, 'C'),
+  (4, 4, 'D'),
+  (5, 3, 'C'),
+  (6, 4, 'D'),
+  (7, 4, 'D'),
+  (8, 4, 'D'),
+  (9, 3, 'C'),
+  (10, 2, 'B')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO string_t SELECT * FROM bytes_t
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO string_t VALUES ('str')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO student (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO stuff(id, date, user_id) VALUES (1, '2007-10-15'::DATE, 1);
+INSERT INTO stuff(id, date, user_id) VALUES (2, '2007-12-15'::DATE, 1);
+INSERT INTO stuff(id, date, user_id) VALUES (3, '2007-11-15'::DATE, 1);
+INSERT INTO stuff(id, date, user_id) VALUES (4, '2008-01-15'::DATE, 2);
+INSERT INTO stuff(id, date, user_id) VALUES (5, '2007-06-15'::DATE, 3);
+INSERT INTO stuff(id, date, user_id) VALUES (6, '2007-03-15'::DATE, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO supermarket (person, aisle)
+  VALUES ('abbie', 1), ('gideon', 2), ('matilda', 3), ('michael', 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO supermarket (person, aisle) VALUES ('grandma', wrangle('matilda'))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw (b, c, d, e, f, g, bc, cc, dc, ec, fc) VALUES (
+   'b22', 'c22', 'd22', 'e22', 'f22', 'g22',
+   'B22' COLLATE en, 'C22' COLLATE en, 'D22' COLLATE en, 'E22' COLLATE en, 'F22' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw VALUES (
+   '', '', '', '', '', '', '',
+   '' COLLATE en, '' COLLATE en, '' COLLATE en, '' COLLATE en, '' COLLATE en, '' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw VALUES (
+   'a', 'b', 'c', 'd', 'e', 'f', 'g',
+   'A' COLLATE en, 'B' COLLATE en, 'C' COLLATE en, 'D' COLLATE en, 'E' COLLATE en, 'F' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(a) VALUES ('ab')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(ac) VALUES ('ab' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(b) VALUES ('abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(bc) VALUES ('abcd' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(d) VALUES ('abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(dc) VALUES ('abcd' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(f) VALUES ('abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO sw(fc) VALUES ('abcd' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.comments VALUES (32, 11111, 0, 'abc');
+INSERT INTO system.comments VALUES (32, 1, 0, 'abc');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.comments VALUES (4294967122, 't_99316'::regclass::OID, 0, 'bar');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.jobs (id, owner, status, job_type)
+VALUES (999, 'testuser', 'succeeded', 'INSPECT');
+INSERT INTO system.job_info (job_id, info_key, value)
+VALUES (
+  999,
+  'legacy_payload',
+  crdb_internal.json_to_pb(
+    'cockroach.sql.jobs.jobspb.Payload',
+    json_build_object(
+      'inspectDetails', json_build_object(
+        'checks', json_build_array()
+      )
+    )
+  )
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.scheduled_jobs (schedule_name, owner, executor_type,execution_args) values('schedule', 'user1', 'invalid', '');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.settings (name, value) VALUES ('somesetting', 'somevalue')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.settings (name, value, "valueType") VALUES ('kv.protectedts.reconciliation.interval', '45s', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_hints (row_id, fingerprint, hint, created_at, hint_type, hint_name, database)
+(VALUES
+  (100, 'foo', 'DEADBEEF', '2018-01-01 1:00:00.00000+00:00', 'rewrite_inline_hints', 'foo_hint', 'test'),
+  (200, 'bar', 'BEEFDEAD', '2018-01-02 1:00:00.00000+00:00', 'pin_plan', 'bar_hint', NULL),
+  (300, 'baz', 'BEADFEED', '2018-01-03 1:00:00.00000+00:00', 'rewrite_inline_hints', NULL, 'defaultdb')
+)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['alteration : ALTER INDEX t1_i NOT VISIBLE'],
+  '2023-07-05 15:10:13+00:00',
+  x'0000000000000003',
+  x'0000000000000013',
+  'ph_3',
+  'app_3',
+  3,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-06-29 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['creation : CREATE INDEX t1_k ON t1(k)'],
+  '2023-07-05 15:10:11+00:00',
+  x'0000000000000001',
+  x'0000000000000011',
+  'ph_1',
+  'app_1',
+  1,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-07-05 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['creation : CREATE INDEX t1_k_i ON t1(i, k)'],
+  '2023-07-05 15:10:15+00:00',
+  x'0000000000000005',
+  x'0000000000000015',
+  'ph_5',
+  'app_5',
+  5,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-07-05 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['creation : CREATE INDEX t1_k_i ON t1(k, i)'],
+  '2023-07-05 15:10:14+00:00',
+  x'0000000000000004',
+  x'0000000000000014',
+  'ph_4',
+  'app_4',
+  4,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-07-05 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['creation : CREATE INDEX t2_k ON t2(k) storing (i, f)', 'creation : CREATE INDEX t2_k_f ON t2(k, f)', 'creation : CREATE INDEX t2_k_i_s ON t2(k, i, s)'],
+  '2023-07-05 15:10:17+00:00',
+  x'0000000000000007',
+  x'0000000000000017',
+  'ph_7',
+  'app_7',
+  7,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-07-05 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['creation : CREATE INDEX t3_k_i_f ON t3(k, i, f)', 'creation : CREATE INDEX t3_k_i_s ON t3(k, i, s)', 'creation : CREATE INDEX t3_k1 ON t3(k) storing (i, f)'],
+  '2023-07-05 15:10:18+00:00',
+  x'0000000000000008',
+  x'0000000000000018',
+  'ph_8',
+  'app_8',
+  8,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-07-05 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['replacement : CREATE INDEX t1_i2 ON t1(i) storing (k); DROP INDEX t1_i;'],
+  '2023-07-05 15:10:12+00:00',
+  x'0000000000000002',
+  x'0000000000000012',
+  'ph_2',
+  'app_2',
+  2,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-06-15 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.statement_statistics (
+  index_recommendations,
+  aggregated_ts,
+  fingerprint_id,
+  transaction_fingerprint_id,
+  plan_hash,
+  app_name,
+  node_id,
+  agg_interval,
+  metadata,
+  statistics,
+  plan
+)
+VALUES (
+  ARRAY['replacement : CREATE INDEX t1_i2 ON t1(i) storing (k); DROP INDEX t1_i;'],
+  '2023-07-05 15:10:16+00:00',
+  x'0000000000000006',
+  x'0000000000000016',
+  'ph_6',
+  'app_6',
+  6,
+  '1 hr',
+  'null',
+  '{"statistics": {"lastExecAt" : "2023-07-05 15:10:10+00:00"}}'::JSONB,
+  'null'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.tenants VALUES (15)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.users (username, "hashedPassword", "isRole", user_id) VALUES  ('node', NULL, true, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.users (username, "hashedPassword", "isRole", user_id) VALUES ('cat', null, true, 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.users (username, user_id) VALUES ('non_cached_user', 12345)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.users (username, user_id) VALUES ('non_cached_user', 12345);
+INSERT INTO system.role_members (role, member, role_id, member_id, "isAdmin") VALUES ('admin', 'non_cached_user', 2, 12345, true);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.users VALUES ('node', NULL, true, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.users VALUES('test-user','',false,3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a) VALUES (-3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a) VALUES (11)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a) VALUES (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a) VALUES (7), (8), (9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a) VALUES(4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, b) DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, b) VALUES (10, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, d) VALUES (13, 14)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, d) VALUES (23, 24)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, d, x, y, z) VALUES (33, 34, DECIMAL '2.0', DECIMAL '2.1', DECIMAL '2.2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, d, y) VALUES (21, 22, DECIMAL '1.0')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, f) VALUES (-2, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (a, rowid) VALUES (10, 11)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (b) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (c) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (i) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (id) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (x) VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (x) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (x, crdb_internal_mvcc_timestamp) VALUES (1, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t (x, y, z) VALUES (3, 11, 111)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t SELECT generate_series(0, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t SELECT generate_series(1, 10000);
+INSERT INTO t SELECT generate_series(-10000, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t SELECT generate_series(1, 100000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t SELECT i, NULL FROM generate_series(1, 599) AS g(i);
+INSERT INTO t VALUES (600, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t SELECT i, i+1 FROM generate_series(1,10) AS tmp(i);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t SELECT i, to_english(i) FROM generate_series(1, 5) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+    (1, 'foo', '{"x": "y", "num": 1}'),
+    (2, 'bar', '{"x": "y", "num": 2}'),
+    (3, 'baz', '{"x": "y", "num": 3}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('"a"'::JSONB)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('"a"'::JSONB),
+  ('"b"'::JSONB),
+  ('"aa"'::JSONB),
+  ('"abcdefghi"'::JSONB),
+  ('100'::JSONB),
+  ('1'::JSONB),
+  ('{"a": "b"}'),
+  ('[]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('2015-08-30 03:34:45.34567', '2015-08-30', '34h2s'),
+  ('2015-08-25 04:45:45.53453', '2015-08-25', '2h45m2s234ms'),
+  ('2015-08-29 23:10:09.98763', '2015-08-29', '234h45m2s234ms')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('2015-08-30 03:34:45.34567-07:00', '2015-08-31', '35h2s')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('A' COLLATE da, 1, TRUE),
+  ('A' COLLATE da, 2, NULL),
+  ('a' COLLATE da, 2, FALSE),
+  ('a' COLLATE da, 3, TRUE),
+  ('B' COLLATE da, 3, NULL),
+  ('b' COLLATE da, 4, FALSE),
+  ('ü' COLLATE da, 6, TRUE),
+  ('ü' COLLATE da, 5, NULL),
+  ('x' COLLATE da, 5, FALSE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('A' COLLATE de, 1, TRUE),
+  ('A' COLLATE de, 2, NULL),
+  ('a' COLLATE de, 2, FALSE),
+  ('a' COLLATE de, 3, TRUE),
+  ('B' COLLATE de, 3, NULL),
+  ('b' COLLATE de, 4, FALSE),
+  ('ü' COLLATE de, 6, TRUE),
+  ('ü' COLLATE de, 5, NULL),
+  ('x' COLLATE de, 5, FALSE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('A' COLLATE en),
+  ('B' COLLATE en),
+  ('a' COLLATE en),
+  ('b' COLLATE en),
+  ('x' COLLATE en),
+  ('ü' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('X' COLLATE de),
+  ('y' COLLATE de)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('[1, [2, 3]]'),
+  ('[1, [2, [3, [4]]]]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('[]'),
+  ('[null]'),
+  ('[1]'),
+  ('[null, null, false, true, "a", 1]'),
+  ('[{"a":"b"}]'),
+  ('[{"a":"b", "c": [1, 2, 3, 4, 5]}]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('true'),
+  ('false'),
+  ('null'),
+  ('"aaaaaaayouube"'),
+  ('"testing spaces"'),
+  ('"Testing Punctuation?!."')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('{}'),
+  ('[]'),
+  ('true'),
+  ('false'),
+  ('null'),
+  ('"crdb"'),
+  ('[1, 2, 3]'),
+  ('1'),
+  ('{"a": "b", "c": "d"}'),
+  ('[null]'),
+  ('[1]'),
+  ('[null, null, false, true, "a", 1]'),
+  ('[{"a":"b"}]'),
+  ('[{"a":"b", "c": [1, 2, 3, 4, 5]}]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  ('{}'),
+  ('{"a": 1}'),
+  ('{"a": "sh", "b": 1}'),
+  ('{"a": ["1"]}'),
+  ('{"a": [{"b":"c"}]}'),
+  ('{"c": true, "d": null, "newkey": "newvalue"}'),
+  ('{"e": {"f": {"g": 1}}, "f": [1, 2, 3]}'),
+  ('{ "aa": 1, "c": 1}'),
+  ('{"b": 1, "d": 1}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (0, 1, 0, true, 'foo'),
+  (1, 1, 1, false, 'bar'),
+  (0, 2, 2, true, 'baz'),
+  (1, 2, 3, false, 'deadbeef')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (1, 1, 2, 'hello'),
+  (2, 1, 2, 'hello'),
+  (3, 1, 2, 'hello there')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (1, 10, 100, 'Foo'),
+  (2, 20, 200, 'FOO'),
+  (3, 10, 100, 'foo'),
+  (4, 40, 400, 'BAR'),
+  (5, 100, 10, 'Food')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (1, 2, 3, 4, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (1, ARRAY[1, 2, 3], 3),
+  (NULL, ARRAY[1, NULL, 3], NULL),
+  (2, ARRAY[NULL, NULL, NULL], NULL),
+  (NULL, ARRAY[NULL, NULL], 3),
+  (2, ARRAY[4, 5], 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (ARRAY['']),
+  (ARRAY['hello', 'hi\nthere']),
+  (ARRAY['another', 'string', 'in', 'my', 'array']),
+  (ARRAY['this', 'array', NULL, 'has', NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (ARRAY[1, 2]),
+  (ARRAY[1, 2]),
+  (ARRAY[1, 2]),
+  (ARRAY[NULL, NULL]),
+  (ARRAY[NULL, NULL]),
+  (ARRAY[1,2,NULL,4,NULL]),
+  (ARRAY[1,2,NULL,4,NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (ARRAY[1, 2], ARRAY[3, 4]),
+  (ARRAY[NULL, NULL], ARRAY[NULL, NULL]),
+  (ARRAY[], ARRAY[]),
+  (ARRAY[], ARRAY[NULL, 2]),
+  (ARRAY[NULL], ARRAY[])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (ARRAY[1]),
+  (ARRAY[5]),
+  (ARRAY[4]),
+  (ARRAY[1,4,5]),
+  (ARRAY[1,4,6]),
+  (ARRAY[1,NULL,10]),
+  (ARRAY[NULL]),
+  (ARRAY[NULL, NULL, NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES
+  (ARRAY[b'\xFF', b'\x00']),
+  (ARRAY[NULL, b'\x01', b'\x01', NULL]),
+  (ARRAY[NULL, b'\xFF'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (
+  '{1, 2}',
+  '{1.1, 2.2}',
+  '{18e7b17e-4ead-4e27-bfd5-bb6d11261bb6, 18e7b17e-4ead-4e27-bfd5-bb6d11261bb7}',
+  '{cat, dog}',
+  '{2010-09-28 12:00:00.1, 2010-09-29 12:00:00.1}',
+  '{2010-09-28, 2010-09-29}',
+  '{PT12H2M, -23:00:00}',
+  '{192.168.100.128, ::ffff:10.4.3.2}',
+  '{0101, 11}',
+  '{12.34, 45.67}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES ('a', 'val1'), ('b', 'val2'), ('c', 'val3'), ('l', 'val4'), ('m', 'val5'), ('p', 'val6'), ('s', 'val7'), ('t', 'val8'), ('z', 'val9')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES ('cat')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES ('foo'), ('ba'), ('c'), ('foobarbaz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES ('some string', 'short', TIME '20:16:27', '2018-05-23 20:16:27.658082')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES ('test')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (0.000::decimal, 0.00::decimal), (1.00::decimal, 1.00::decimal), (2.0::decimal, 2.0::decimal), (3::decimal, 3::decimal)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1) RETURNING (crdb_region)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1), (2), (3), (4), (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1), (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1),(2),(3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, '01'), (2, '002'), (3, '0003')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 'foo' COLLATE en), (2, NULL), (3, 'bar' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 'one'), (2, 'two')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 'one', 3, 6, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 'test')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 'two', 3, 4, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 1), (2, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 1), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 1), (2, NULL), (3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 1, 1), (1, 2, 2), (2, 1, 1), (2, 2, -2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 1, 1), (2, -4, 8), (3, 9, 27), (4, -16, 94), (5, 25, 125), (6, -36, 216)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 1, 1, 1, 1, 1, 1), (2, 2, 2, 2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 10), (2, 20), (3, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 10), (2, 20), (3, 30), (4, 40)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 10), (2, 20), (3, 30);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 10, true), (2, 20, false);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 10, true);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2),(5,6),(7,8);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3) RETURNING crdb_internal_mvcc_timestamp
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3), (2, 3, 1), (3, 1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3), (3, 4, 5), (5, 6, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3), (4, 5, 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3, 4), (5, 6, 7, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3, 4, '{}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3, 4, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 2, 3, 4, 5), (6, 7, 8, 9, 10), (11, 12, 13, 14, 15);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 9, true), (2, 8, false), (3, 7, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, 99), (2, 98), (3, 97)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1, NULL, NULL), (2, NULL, 1), (3, 1, NULL), (4, 2, 0), (5, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1,1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1,1,1), (2,2,2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1,1,1,1),(-1,-1,-1,-1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1,2), (3,4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1,2,3,4,5),(11,12,13,14,15)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1.0), (1.00), (1.000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (1.00, 2.00, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (10), (15), (17)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (11, 9, 12, DECIMAL '1.0')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (123)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (16, 17, 18, 19, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2);
+INSERT INTO t2 VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2, 'four', 3, 6, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2, 'three', 3, 4, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2, 2), (3, 3), (4, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2, 2, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2, 9, 1, 1), (3, 9, 2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (2,2,2,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (23, 1, 2, 3), (34, 3, 4, 8);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (3,0,0,0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (31, 7, 32)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (4, 16), (5, 25)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (4, 7), (5, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (4, 9, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (5, 6, '7')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (5, 9, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (5.607, 1), (5.6007, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (7, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (7, 8, 9, 1.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (9, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (9, 10, 11, 12)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (ARRAY[1], ARRAY[1, 2], NULL), (ARRAY[1, 1, 1, 1], ARRAY[2], NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (DEFAULT, DEFAULT, DEFAULT, DEFAULT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (NULL), (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (array[1,2,3])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (b'Am\xc3\xa9lie' COLLATE fr)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (b'Ame\xcc\x81lie' COLLATE fr)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES(1), (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES(5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t values(10, 20);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(a) VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(a) VALUES (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(a) VALUES (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(a,b) VALUES (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(a,b,v) VALUES (2, 2, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(x) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t(x) VALUES (123)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t0 (c0) VALUES (NULL), (NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t0 VALUES (0),(1),(2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t0(c0) VALUES (true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 (a) VALUES (10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 (a, b) VALUES (4, -2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 (b) VALUES (-1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 (b, a) VALUES (-2, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 (crdb_region, a, b, c) VALUES ('us-east-1', 1, 1, 1);
+INSERT INTO t1 (crdb_region, a, b, c) VALUES ('ca-central-1', 2, 1, 1);
+INSERT INTO t1 (crdb_region, a, b, c) VALUES ('ap-southeast-2', 3, 1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 (pk, pk2, a, b, j) VALUES
+   (0, 0, 1, 3, '{"a": "b"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 (pk, pk2, a, b, j) VALUES
+   (2, 2, 1, 3, '{"a": "b"}'), (4, 5, 6, 7, '{"a": "b"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 SELECT a FROM generate_series(1, 1024) AS a(a)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 SELECT gen_random_uuid(), 'test' FROM generate_series(1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES
+  (ARRAY[1, 2]),
+  (ARRAY[NULL]),
+  (ARRAY[3, 4]);
+INSERT INTO t2 VALUES
+  (ARRAY[]),
+  (ARRAY[1, 2]),
+  (ARRAY[NULL])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES ( 'bb', 11 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES ('2024-07-26')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES ('3', 0, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES ('3.3', 0, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES ('a'), ('b'), ('c'), ('d'), ('e')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES ('hi'), ('hello'), ('howdy'), ('howdy'), ('howdy'), ('hello')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (-1, -1), (0, 4), (2, 1), (3, 4), (5, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (-3, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (0), (null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (0, 4), (2, 1), (5, 4), (3, 4), (-1, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (0,0,0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1, 1, 1, 1);
+INSERT INTO t2 VALUES (1);
+INSERT INTO t3 VALUES (1);
+INSERT INTO t4 VALUES (1);
+INSERT INTO t5 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1, 2, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1, NULL), (2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1,0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (1,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (10, 1, 11, 1), (20, 2, 21, 1), (30, 3, 31, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (100, 100, 100, 100)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (123);
+INSERT INTO t2 VALUES (123)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (2, 'hello,new,world')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (2, -1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (3, 'a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (3, -101)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (3, 0, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (3, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (32);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1 VALUES (DATE '2018-01-01'); INSERT INTO t2 VALUES (TIMESTAMPTZ '2018-01-01');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1(a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1(n,k) VALUES (1,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1(x) VALUES (1), (null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1(x) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t10 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t10 VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t103755 (c0, c1) VALUES(-10, 1), (-20, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t109105 VALUES (1),(2),(3),(4),(5),(6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t109334 SELECT g*1.23456789, 2::FLOAT8 FROM generate_series(1, 50) AS g;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t111556_in(g)
+SELECT '0103000000010000000500000000000000000000000000000000000000000000000000F03F0000000000000000000000000000F03F000000000000F03F0000000000000000000000000000F03F00000000000000000000000000000000'
+FROM generate_series(1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t111556_res
+SELECT st_union(t2.g) FROM t111556_in t1 JOIN t111556_in t2 ON t1.g = t2.g
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t114826 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_1 (v) VALUES (' c    ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_1 (v) VALUES ('c     ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_1 (v) VALUES ('cc    ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_1 (v) VALUES ('ccc   ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_2 (v) VALUES (' c    ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_2 (v) VALUES ('c     ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_2 (v) VALUES ('cc    ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115054_2 (v) VALUES ('ccc   ');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115377 VALUES (2, 0, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115377 VALUES (2, 0, 0, 'east')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115377 VALUES (2, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t115377 VALUES (2, 1, 1, 'east')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t118537 SELECT generate_series(0, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t12022 VALUES
+  (1, NULL), (1, false), (1, true),
+  (2, NULL), (2, false), (2, true);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t122278 values (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t122312 VALUES ('hi');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t124181 (region, a) VALUES ('ap-southeast-2', 0), ('us-east-1', 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t124181 (region, a) VALUES ('ca-central-1', 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t125620 SELECT '2020-01-01 00:00:00+00'::TIMESTAMPTZ + (i * INTERVAL '3 days') FROM generate_series(1, 100) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t126773 (pk, v) values (1, tsvector('splendid water fowl'));
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t126988 VALUES (1, 10, 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t127814 VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t129145 VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t129145 VALUES (6, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t130591_1 DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t130661 VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t130759 VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t131573 SELECT i FROM generate_series(1, 28) g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t133146 (id, a, b) VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t133146b (id, a, b) VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t134697 VALUES (1, '11', '11', 'ab', 'ab', 1234.12)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t134697_x VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t136167 VALUES ('2b740de9-cd33-449a-9c0e-44ea16150f99', 'string')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t137341 (region, id, u1, u2, s) VALUES ('ca-central-1', 'a', 'u1-a', 'u2-a', 'common')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t137341b (region, id, u1, u2, s) VALUES ('ca-central-1', 'a', 'u1-a', 'u2-a', 'common')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t137341b (region, id, u1, u2, s) VALUES ('us-east-1', 'b', 'u1-b', 'u2-b', 'common')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t138809 (a) VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t139381
+SELECT i, ('{"name": "name_' || i || '", "data": "abcdefghij"}')::JSONB
+FROM (VALUES (1), (2)) v(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t141448 VALUES (NULL, NULL, false), (NULL, 1, false), (1, 1, false);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t144384 VALUES ('i144384');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t145232 VALUES (2,2,2,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t14601 VALUES
+  ('a', FALSE),
+  ('b', FALSE),
+  ('c', FALSE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t14601a VALUES
+  ('a', FALSE),
+  ('b', TRUE),
+  ('c', FALSE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t14601a VALUES
+  ('a', FALSE, 1),
+  ('b', TRUE, 2),
+  ('c', FALSE, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t146637 VALUES
+    (0, 'foo', 'bar'),
+    (0, 'foo2', 'bar2'),
+    (0, 'foo3', 'bar3'),
+    (100, 'foo', 'bar'),
+    (100, 'foo2', 'bar2'),
+    (100, 'foo3', 'bar3'),
+    (2, 'foo4', 'bar4'),
+    (2, 'foo5', 'bar5');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t147559 VALUES (1, 'abc');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t15 VALUES (1, 1), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t152771 VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t154461 VALUES ('e'), ('e'), ('f'), ('g'), ('g')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t156478 VALUES (1, 'foo.bar_'::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t158945 VALUES (1, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t159043b VALUES (33)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t15951 VALUES (1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t16 VALUES ('Backhaus'), ('Bär'), ('Baz');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t160436_patterns VALUES (
+    1,
+    NULL,
+    '{"IYUH31EOF": 0.123}',
+    'the connection is closing now',
+    'error: tls: use of closed connection',
+    'use of closed network connection detected',
+    'io: read/write on closed pipe',
+    'the node unavailable for requests'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t161408 SELECT i, i % 100, repeat('x', 10) FROM generate_series(1, 10000) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t163346_partial_stats VALUES (1, '{"a": 1}'), (2, '{"a": 2}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t163346_partial_stats VALUES (3, '{"a": 3}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t163346_partial_stats VALUES (4, '{"a": 4}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t167620 VALUES
+  (1, 2, 7), (1, 4, 9), (3, 6, 11),
+  (5, 2, 9), (3, 4, 7), (1, 6, 11),
+  (1, 2, 99), (1, 3, 7), (2, 2, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1_64101 VALUES ('a');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t1_add VALUES (100);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2
+  SELECT (chr(97 + (i % 26)) || repeat('x', 500) || i::STRING) COLLATE en
+  FROM generate_series(1, 100) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 (a, c) VALUES (0, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 (a, c) VALUES (2, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 (a, c) VALUES (2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 (b) VALUES (-2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 (x, y, z) VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 SELECT gen_random_uuid(), 'test' FROM generate_series(1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 SELECT i, to_english(i) FROM generate_series(1, 5) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES
+  (1, 1, 1, '11'),
+  (2, 1, 2, '12'),
+  (3, 1, 3, '13'),
+  (4, 2, 1, '21'),
+  (5, 2, 2, '22'),
+  (6, 2, 3, '23'),
+  (7, 3, 1, '31'),
+  (8, 3, 2, '32'),
+  (9, 3, 3, '33')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES
+  (1.00::decimal, 1.00::decimal),
+  (2.0::decimal, 2.0::decimal),
+  (3::decimal, 3::decimal),
+  ('NaN'::decimal, 'NaN'::decimal),
+  ('Inf'::decimal, 'Inf'::decimal),
+  ('-Inf'::decimal, '-Inf'::decimal),
+  ('-0.0000'::decimal, '-0.0000'::decimal)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES ( 'bb', 12 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES ( 'cc', 22 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES ( 'ee', 42 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES ('-NaN'::decimal, '-NaN'::decimal)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES ('5')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES ('a', 'val1'), ('b', 'val2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES ('hello'), ('hello'), ('howdy'), ('hi')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (0), (null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (0, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (0, 5), (1, 3), (1, 4), (3, 2), (3, 3), (4, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1), (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1), (2), (3), (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1, 11)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (1, 3), (4, 6), (0, 5), (3, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (100, 1, 1, 101), (200, 1, 201, 2), (400, 1, 401, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (4, 5, 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (5);
+INSERT INTO t3 VALUES (6);
+INSERT INTO t1 VALUES (7, 5, 6, 8);
+INSERT INTO t4 VALUES (8);
+INSERT INTO t5 VALUES (7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2 VALUES (default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2(x) VALUES (1), (null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t21 VALUES (888),(-32760);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t22 VALUES (0),(-5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t24 VALUES ('1'), ('hello');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t28 VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t29 VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t29494 VALUES (12)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t29494(x) VALUES (123) RETURNING *
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t29494(x) VALUES (123) RETURNING y
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t2_64101 VALUES(ARRAY['b'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 (a, b) VALUES (2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 (a, b) VALUES (3, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES
+  (10, 50, 1),
+  (30, 40, 2),
+  (50, 30, 3),
+  (70, 20, 4),
+  (90, 10, 5),
+  (110, 0, 6),
+  (130, -10, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES ( 'bb', 13 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES ( 'cc', 23 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES ( 'dd', 33 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (1, 1, 1), (2, 2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (1, 1, 1), (2, NULL, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (1,1,1), (2,2,2), (3,3,3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (4,'4',4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t3 VALUES (8, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t30 VALUES (e'a\\01');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t31 VALUES (true),(false);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t32759(x, y, z) VALUES (2, 'c', 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t32759(x, z) VALUES (1, 4) RETURNING *
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t32786 VALUES ('3AAA2577-DBC3-47E7-9E85-9CC7E19CF48A', null)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t32786 VALUES ('5AE7EAFD-8277-4F41-83DE-0FD4B4482169', '3AAA2577-DBC3-47E7-9E85-9CC7E19CF48A')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t32917 VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t32917_2 VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t34901 VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t35364 VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t35364(x) VALUES (0.1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t35364(x, y) VALUES (1, 10.2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t35611 (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t38878 VALUES ('a', 'u', 1), ('b', 'v', 2), ('c', 'w', 3), ('d', 'x', 4), ('d', 'x2', 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 (a) VALUES (6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 (a, b) VALUES (2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 VALUES (1, 2, 3, 19)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 VALUES (1, 2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 VALUES (101)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 VALUES (35, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t4 VALUES (NULL, 2, 22, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t42992 VALUES (now(), NULL, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44132 (c0) VALUES (true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44203(c0) VALUES (false)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44207_0(c0) VALUES (NULL), (NULL); INSERT INTO t44207_1(c0) VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44466 (c0) VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44547_0(c0) VALUES(0); INSERT INTO t44547_1(c0) VALUES(0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44797_0 VALUES (1.0, 1.0), (2.0, 2.0); INSERT INTO t44797_1 VALUES (1, 1), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44797_2 VALUES (1.0), (2.0); INSERT INTO t44797_3 VALUES (1.0), (2.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t44798_0(c0) VALUES(0), (1), (2); INSERT INTO t44798_1(c0) VALUES(0), (2), (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t46675isnotnull VALUES (1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t46675isnull VALUES (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t5 VALUES ('2016-01-25 10:10:10.555555-05:00');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t5 VALUES ('2016-01-26 10:10:10.55-05:00');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t5 VALUES ('2016-01-26 10:10:10.555555-05:00');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t5 VALUES (1,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t51690 VALUES (1, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t52318 (a, b) VALUES (1, 1), (6, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t53922 VALUES (1), (2), (3), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t54629 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t54629 VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t54989 VALUES ('a', '{b}', 'c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t55672_a (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t55672_a (a, t) VALUES (2, now())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t55672_b (b,a) VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t55672_b (b,a) VALUES (2,2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t57085_p1 VALUES (1);
+INSERT INTO t57085_c1 VALUES (10, 1, 100), (20, 1, -100);
+UPDATE t57085_p1 SET p = 2 WHERE p = 1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t57085_p2 VALUES (1);
+INSERT INTO t57085_c2 VALUES (10, 1, true), (20, 1, false);
+UPDATE t57085_p2 SET p = 2 WHERE p = 1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t57085_p3 VALUES (1), (2);
+INSERT INTO t57085_c3 VALUES (10, 1, 100), (20, 2, 200);
+UPDATE t57085_p3 SET p = 3 WHERE p = 1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t58438 VALUES (1, 2), (3, 4), (5, 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t59011(level) SELECT 2 FROM generate_series(1, 10);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t59489 (d12_3) VALUES (6000) RETURNING d12_3
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t59489 (d12_3) VALUES (6e3) RETURNING d12_3
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t59489 (d4_2) VALUES (600)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t59489 (d4_2) VALUES (6e2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t59611 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t59615_inv VALUES (1, '"a"'::JSONB), (3, '"a"'::JSONB)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t6 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t6 VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t6 VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t61414_a VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t63109 VALUES (1, 'one');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t63147 (a) VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t63387 VALUES (1, '{}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t63646 VALUES ('a'), ('b');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t63733_multi VALUES
+  (10, 10, 1),
+  (10, 10, 1),
+  (20, 20, 1),
+  (NULL, NULL, 1),
+  (NULL, 10, 1),
+  (5, NULL, 1),
+  (10, NULL, 1),
+  (15, NULL, 1),
+  (20, NULL, 1),
+  (25, NULL, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t64429 VALUES (-3000000000, -300000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t64429 VALUES (3000000000, 300000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t64793 VALUES
+('alpha'),
+(NULL::TEXT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t65171 VALUES (1, 2), (1, 2), (2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t65631 VALUES ('abc', 'abc' COLLATE en)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t65890_c (k, b, a) VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t65890_c SELECT 1, 1, 1
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t65890_c SELECT 1, 2, 2
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t66067_a VALUES (1, 'foo');
+INSERT INTO t66067_b VALUES (1, 'bar');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t66706 VALUES
+  (NULL, 'bar'),
+  (NULL, 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t67050 VALUES ('a'), ('b'), ('c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t67100a VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t67100b VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t67528 (s) VALUES ('')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t68254 (a, b, c)
+SELECT i, i::STRING, json_build_object('foo', json_build_object('bar', json_build_object('baz', i)))
+FROM generate_series(0, 3) s(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t68254 (a, b, c) VALUES (4, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t68254 (a, b, c) VALUES (5, '5', '{"foo": {"bar": {"baz": 5}}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t68979 VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t7 (y) VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t7 VALUES (3,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t7 VALUES (4,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t7 VALUES (5,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t71080 VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t71553 VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t72012 VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t73024 VALUES (100);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t73372 (i, s) VALUES (0, 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t73450 VALUES ('f')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t78159 VALUES (false)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t78681 VALUES (1, 1), (3, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t79384a VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t79384b VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t8 VALUES ('hello')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t81698 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t83756 VALUES ('-106751 days -23:47:16.854776');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t83756 VALUES ('-3558 months 106752 days');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t83756 VALUES ('106751 days 23:47:16.854775');
+INSERT INTO t83756 VALUES ('-106751 days -23:47:16.854775');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t83756 VALUES ('106751 days 23:47:16.854776');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t83756 VALUES ('3558 months -106752 days');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t86790 VALUES (-4429772553778622992)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t88128 VALUES ('20:00:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t88128 VALUES (100000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t89961 VALUES ('NaN')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t9 VALUES (5, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t9 VALUES (6, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t95315 VALUES (1, 4.3), (2, 5.4), (3, 6), (4, 7);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t95615 VALUES ('192.168.0.1'::INET)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t98691 VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t98691 VALUES (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tIndex VALUES (1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tIndex VALUES (2,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tIndex VALUES (20000,10000)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tIndx VALUES (1,1,1), (2,2,2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_110827 VALUES (ARRAY['a', 'a', 'b']);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_124732 VALUES (1.000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_127136 VALUES (1, 'a');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_47283 VALUES (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_48638 values (1, 4);
+INSERT INTO t_48638 values (4, 3);
+INSERT INTO t_48638 values (3, 2);
+INSERT INTO t_48638 values (4, 1);
+INSERT INTO t_48638 values (1, 2);
+INSERT INTO t_48638 values (6, 5);
+INSERT INTO t_48638 values (7, 8);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_52501_invalid VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_52501_valid VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_60004 VALUES (1, ARRAY['a'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_89025 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_91697 VALUES (321);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_93314_comp VALUES (1, (2,3));
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_96648 VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_96648 VALUES (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_97296 VALUES (0.0, 5, 32);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_add_generated (a,d) VALUES (21,'21'), (22,'22'), (23,'23');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_add_generated (b,d) VALUES (31,'31'), (32,'32'), (33,'33');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_add_generated (d) VALUES ('11'), ('12'), ('13');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_alter_identity DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_alter_invalid VALUES (1, 'valid.path'), (2, 'invalid..path'), (3, 'also.valid')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_alter_pk_with_inverted VALUES ('test', ARRAY[1.0, 2.0]);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_alter_type VALUES (1, 'a.b.c'), (2, 'x.y')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_aost VALUES (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_as VALUES (4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_atom VALUES (1, 100), (2, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_bit_string VALUES (1,B'10101010', B'10101010', 'hello', 'world', 'worldhello'),(2,NULL,NULL,NULL,NULL,NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_bool VALUES (Array[]);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_boundary VALUES
+  ('valid_underscore'::LTREE),
+  ('valid-hyphen'::LTREE),
+  ('MixedCase123'::LTREE),
+  ('a1-b2_c3'::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_boundary VALUES ((SELECT string_agg('a', '.') FROM generate_series(1, 65536))::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_boundary VALUES ((SELECT string_agg('x', '.') FROM generate_series(1, 1000))::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_boundary VALUES ((repeat('a', 1000))::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_boundary VALUES ((repeat('b', 1001))::LTREE)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_bounded_string VALUES (1, 'hello')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_bytes VALUES ('hello', 'world', 'worldhello'),(NULL,NULL,NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_cascade VALUES (1, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (1, 'root.a.b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (1,1), (5,5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (2, 'root')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (3, 'other.path')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (4, 'roo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (4, 'root.a.b.c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check VALUES (5,5), (6,6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check2 VALUES (1, 'org.company.dept.team')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check2 VALUES (2, 'org.company')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check2 VALUES (3, 'org')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check2 VALUES (4, 'other.org.company')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check3 VALUES (1, 'a.b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check3 VALUES (2, 'a.b.c.d.e')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check3 VALUES (3, 'single')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_check3 VALUES (4, '')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_col VALUES (1, 1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_col_def DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_committed VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_composite VALUES (1, 1.0), (2, 1.001)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_computed (id, path) VALUES
+  (1, 'a.b.c'),
+  (2, 'x.y'),
+  (3, 'p.q.r.s.t')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_computed (id, path) VALUES (4, 'single')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_computed_invalid_stored (id, path) VALUES (1, 'a.b.c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_computed_invalid_virtual (id, path) VALUES (1, 'a.b.c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_control_job_priv VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_control_job_priv_inherited VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_decimal VALUES (12345.6, 1.23456, 44.1234),(NULL,NULL,NULL),(100012.34,4563.21,22.9871),(99.77777,99.77777,-5.51);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_def (a) VALUES (DEFAULT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_def DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_def VALUES (10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_def_nn DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_def_nn VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_defaults (id) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_defaults (id, path) VALUES (2, 'custom.path')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_deps VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_divzero_virtual (a, b, c) VALUES (1, 100, 10);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_divzero_virtual (a, b, c) VALUES (2, 50, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_dml_rollback_check VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_double VALUES (1, 'one', 'one', 10), (2, 'two', 'two', 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_enum_expr VALUES (1, 'red'), (2, 'green'), (3, 'blue');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_enum_virtual VALUES (1, 'red'), (2, 'green'), (3, 'blue');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_every VALUES (NULL), (NULL), (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_every VALUES (NULL), (true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_every VALUES (false), (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_every VALUES (true), (true)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_identity_drop (a) VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_idx VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_idx VALUES (1, 1, 1), (2, 8, 2), (3, 3, 3), (4, 6, 4), (5, 0, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_idx VALUES (10, 10, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_index VALUES (1, 'a.b'), (2, 'a.b.c'), (3, 'x.y.z')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_int VALUES (1, 1, 10), (2, 2, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_int VALUES (1, 2147483648),(2,NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_lcol VALUES (1, 1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_lidx VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_m1 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_m1 VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_m2 VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_m2 VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_multi_alter VALUES (10,'ten','1984-09-06'),(20,'twenty','2024-08-10');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_multi_fn (a, b) VALUES (1, 2), (3, 4), (5, 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_multi_idx VALUES
+  (1, 'org.sales', 'active'),
+  (2, 'org.engineering', 'active'),
+  (3, 'org.sales', 'inactive'),
+  (4, 'org.engineering.backend', 'active'),
+  (5, 'org.engineering.frontend', 'inactive')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_multi_idx2 VALUES
+  (1, 1, 'a.b', 'first'),
+  (2, 1, 'a.b.c', 'second'),
+  (3, 2, 'a.b', 'third'),
+  (4, 2, 'x.y', 'fourth')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_multi_virtual (c1, c4) VALUES (1, 100);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_multiple_cf VALUES (23, 24)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_nn DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_nn VALUES (42)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_nn VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_not_valid_dst VALUES(5,5,5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_notice VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_oid_cmp VALUES (1234)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_oidarr VALUES (ARRAY[0::oid])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_overflow_virtual (a, b) VALUES (1, 100);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_overflow_virtual (a, b) VALUES (2, 4611686018427387904);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_parent VALUES(1, 2), (3, 4), (5, 6), (7, 8), (9, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_person VALUES ('', 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_person VALUES ('Alice', 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_person VALUES ('Bob', -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_person VALUES ('Bob', 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_person VALUES ('Charlie', NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_person VALUES (NULL, 30)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pk VALUES (-1, 'negative')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pk VALUES (1, 'alice')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pk VALUES (1, 'duplicate')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pk VALUES (2, 'bob')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos VALUES (-1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos VALUES (0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos VALUES (42)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos_nn VALUES (-1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos_nn VALUES (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_pos_nn VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_proc_created VALUES (1, 'hello');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_rel VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_rename_computed (x) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_replace VALUES (1, 'hello');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_replace VALUES (2, 'world');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_schema VALUES (1, 'first'), (2, 'second')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_schema VALUES (3, 'third', 'a.b.c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_seqname_create DEFAULT VALUES
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_set_generated (a) VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_set_generated (b) VALUES (4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_set_generated DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_sort VALUES
+  (1, 'org.zoo'),
+  (2, 'org.apple.beta'),
+  (3, 'org.apple'),
+  (4, 'org'),
+  (5, 'prod'),
+  (6, 'org.apple.beta.v1'),
+  (7, ''),
+  (8, 'org.application'),
+  (9, NULL),
+  (10, 'org.apple.alpha')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_test_hsi_change_locality VALUES(1, 2), (3, 4), (5, 6), (7, 8), (9, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_tr_udf_dep VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_tr_udf_dep VALUES (2, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_udf_enum_virtual VALUES (1, 'red'), (2, 'green'), (3, 'blue');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_udf_virtual VALUES (1, 10), (2, 20), (3, 30);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_unbounded_string VALUES (1, repeat('x', 200))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_unbounded_varbit VALUES (1, repeat('1', 200)::VARBIT)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_upd VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_upd_nn VALUES (1, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_upsert VALUES (1, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_vc VALUES ('hello world')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_vc VALUES ('hi')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_view_base VALUES
+  (1, 'org.engineering.backend', 'Backend'),
+  (2, 'org.engineering.frontend', 'Frontend'),
+  (3, 'org.sales', 'Sales'),
+  (4, 'org.engineering.backend.api', 'API')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_virtual (c1, c3) VALUES (1, 10), (2, 20), (3, 30);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_w_expr_index VALUES (1, 1), (2, 2), (3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_with_default VALUES (default);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_with_hidden VALUES (0),(1),(2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_with_hidden VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_with_on_update VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_with_on_update VALUES (10);
+UPDATE t_with_on_update SET a=a+1 WHERE a=10;
+INSERT INTO t_with_on_update VALUES (100);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t_with_on_update VALUES (1000);
+UPDATE t_with_on_update SET a=a+1 WHERE a=1000;
+INSERT INTO t_with_on_update VALUES (10000);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab VALUES ('hello');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab VALUES ((1, 2)), ((1, NULL))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab VALUES ((1, NULL))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab VALUES (-3, 7, 'a', '{-3, 7}'), (-2, 6, 'a', '{-2, 6}'), (-1, 5, 'a', '{-1, 5}'),
+  (0, 7, 'b', '{0, 7}'), (1, 5, 'b', '{1, 5}'), (2, 6, 'b', '{2, 6}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab VALUES (NULL), ((1, 2))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab0 VALUES(0,1,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab1(pk, col0, col3) VALUES
+  (1, 65, 65),
+  (2, 87, 87),
+  (3, 70, 70),
+  (4, 88, 88),
+  (5, 69, 69),
+  (6, 72, 72),
+  (7, 82, 82)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab2 VALUES ('hello')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab2 VALUES ('salud')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab4 VALUES
+(0,293,7467.55,'jkwhh',6395,8729.72,'xmeiz'),
+(1,5525,8713.7,'fnfcd',3378,4275.34,'odjrd'),
+(2,8173,5958.81,'trjpb',6780,9594.81,'sggbf'),
+(3,2106,4158.33,'jhbbu',1728,5864.82,'inypn'),
+(4,7774,8523.9,'mddlq',8059,140.29,'nthlv'),
+(5,8461,5768.10,'yyqjl',6564,6607.98,'wlups'),
+(6,6531,5360.56,'dzwiy',5244,7829.16,'noujl'),
+(7,9681,772.45,'zsopq',5555,5999.20,'fasei'),
+(8,7190,729.20,'clawc',8660,4188.22,'ojbzs'),
+(9,6169,462.25,'cwgrz',1681,7597.69,'ajocf'),
+(10,7810,2954.76,'jvaeh',3945,4805.5,'esksq'),
+(11,3639,192.14,'ptbsi',3237,9020.38,'sqcnh'),
+(12,1763,4418.77,'plemx',2048,9331.99,'pkyie'),
+(13,3120,9378.55,'nphcp',3828,1952.5,'fcxuu'),
+(14,7732,1570.56,'bpsjn',9232,1478.19,'pdvwo'),
+(15,952,1499.68,'mwdqx',2373,2135.20,'hyoox'),
+(16,9715,4921.22,'tsurv',7070,9024.56,'sqaoe'),
+(17,8788,4097.53,'swrfo',3102,9378.15,'fmkub'),
+(18,7020,9042.63,'gdloq',2451,3807.81,'crjan'),
+(19,3593,8776.85,'fawez',5559,7550.99,'yzxry'),
+(20,4269,2570.44,'vjpkz',7574,1726.40,'odsdh'),
+(21,7644,1202.20,'pvqbs',4601,4583.59,'eufrg'),
+(22,1396,8202.10,'ludya',9951,2746.60,'pvszh'),
+(23,8534,1105.91,'bttrp',395,2472.59,'fgnrw'),
+(24,3648,2698.83,'rztcc',2407,893.45,'gqban'),
+(25,9163,2275.9,'nhadl',8422,7273.44,'yuxqx'),
+(26,1584,6881.63,'tlefs',3079,4255.78,'kmezc'),
+(27,7748,2567.65,'pzyxj',9476,9108.34,'avizo'),
+(28,1075,5636.29,'oszsl',5417,4982.20,'kgouj'),
+(29,7817,3898.24,'mkcpn',9664,2157.30,'rvrgg'),
+(30,3306,7912.37,'rkonc',8183,9289.8,'kamst'),
+(31,8208,2245.33,'bfyej',402,4665.8,'wgsll'),
+(32,4772,6717.22,'hdkrq',5452,7451.59,'csfiw'),
+(33,3077,7651.16,'wzuyi',8423,8940.25,'drcrw'),
+(34,7284,9126.96,'hosod',6610,3806.69,'yjwmm'),
+(35,1887,4221.74,'ckvid',5769,1351.14,'spmki'),
+(36,7962,6272.52,'djtwx',6359,6756.10,'zcngn'),
+(37,9417,119.88,'pfhfq',9797,2330.88,'opilx'),
+(38,9241,3355.57,'cgpni',4709,8763.33,'xzcac'),
+(39,5757,7576.15,'xcfrv',3175,6372.37,'diaur'),
+(40,8868,9634.59,'yzguz',6985,6354.68,'cemlj'),
+(41,6310,2883.92,'dunav',3885,2034.29,'rkyua'),
+(42,9901,8432.84,'fjpcp',3826,117.22,'qtknv'),
+(43,1791,6394.34,'decyy',5219,1936.10,'anhyj'),
+(44,711,7135.34,'adnhb',1180,4703.80,'dapmy'),
+(45,8227,2525.32,'jasjr',5783,2759.5,'sjdfj'),
+(46,4984,7189.91,'deslk',309,8825.7,'zcpul'),
+(47,6961,9755.57,'zebnq',9497,5249.17,'xsotu'),
+(48,1716,4105.16,'cjuxv',7789,5259.43,'eiwhe'),
+(49,4643,626.59,'soswp',5590,4212.26,'linyo'),
+(50,5215,7457.45,'zpigs',5507,843.8,'jywbf'),
+(51,3240,1742.64,'cbeel',8607,8518.92,'uzunv'),
+(52,5104,879.95,'nvtmn',662,6479.2,'vhvkr'),
+(53,28,3769.76,'drvni',8403,1099.50,'bnenu'),
+(54,6316,2069.60,'fzksy',5766,7130.98,'orzby'),
+(55,7600,1437.80,'qizfl',147,8951.18,'cvifw'),
+(56,9098,2787.12,'ccomv',8645,1821.53,'fnlvl'),
+(57,3858,3536.36,'acwxg',4319,3129.87,'itucq'),
+(58,9009,8857.1,'xeknc',2435,3641.98,'agfaw'),
+(59,2015,2922.84,'iypmg',6714,8754.29,'whacv'),
+(60,6921,162.56,'chyvy',5586,9742.44,'xgfby'),
+(61,602,6510.41,'iaece',8437,5008.94,'milhh'),
+(62,9017,652.83,'rnguq',1861,1335.79,'nbhss'),
+(63,3458,5279.4,'ikogx',5907,5135.9,'pxhcc'),
+(64,6795,8336.67,'iaczp',333,3698.70,'bdeag'),
+(65,9735,4271.44,'lfoql',854,6442.81,'gbufj'),
+(66,7064,5287.72,'mwjhl',5391,6168.62,'mamjv'),
+(67,3900,2590.16,'iqxhz',322,300.93,'fuapn'),
+(68,1944,7640.36,'cirwy',6734,2146.78,'hhuhw'),
+(69,5729,3402.48,'hwhow',6668,2140.7,'weyna'),
+(70,8870,5593.81,'xprdb',9374,9096.18,'tnnsy'),
+(71,314,3937.48,'ldgzp',7559,1457.63,'hjnlo'),
+(72,589,3407.3,'fxxwt',3636,8544.63,'rkcvv'),
+(73,8057,5485.4,'itgmv',5976,1808.79,'cnogx'),
+(74,5160,9404.77,'zosbj',5157,6078.70,'rosbi'),
+(75,4674,3403.79,'jyqci',213,813.53,'sutab'),
+(76,5954,5969.57,'yvkzf',4886,1349.73,'wrodp'),
+(77,1191,7102.15,'mbrjc',3876,153.58,'djscd'),
+(78,1656,9551.74,'hbhew',9087,8070.87,'clsbt'),
+(79,3951,67.34,'hlpzg',5883,5574.48,'anael'),
+(80,6261,658.39,'crloz',9334,4017.3,'xsfef'),
+(81,4604,9836.35,'dnlwa',466,6882.52,'smcek'),
+(82,9079,3865.38,'xaygm',2513,1029.92,'lewbm'),
+(83,118,8014.93,'xsgjx',7167,7948.80,'fqghp'),
+(84,4733,7806.38,'zosqi',825,5007.0,'msnmg'),
+(85,2769,267.65,'fkwzl',842,6703.20,'dftbu'),
+(86,3154,5179.83,'hsoks',1781,5913.55,'newrh'),
+(87,148,6325.82,'jdcpk',1661,5142.35,'tqufw'),
+(88,9592,2744.95,'kbioy',8208,7774.60,'rjnbq'),
+(89,5158,9979.58,'fkshs',5104,9321.69,'bhjwy'),
+(90,4603,1325.74,'ocpim',8241,8677.99,'shzhl'),
+(91,6014,9082.80,'ithmj',1965,9362.45,'qqnjf'),
+(92,4061,5806.0,'qiahz',5330,775.30,'bvsjy'),
+(93,6244,5553.16,'ytivp',8349,9445.61,'tbchb'),
+(94,9148,5135.27,'flagg',8238,280.93,'wyznr'),
+(95,4689,5368.12,'zahiu',5675,7816.94,'icvoz'),
+(96,6363,2322.92,'nzzhf',1040,7468.5,'vscjf'),
+(97,5500,8571.93,'yenem',674,6781.2,'yhmjs'),
+(98,7513,4441.7,'jpfuy',3122,6678.60,'jddsh'),
+(99,8144,9264.58,'zxgyi',5389,2711.17,'vdpec'),
+(100,9720,2626.62,'hbxku',9184,6311.32,'ngdqw'),
+(101,7398,5615.90,'bxqke',7176,6037.52,'xgstc'),
+(102,5419,2075.28,'nzedc',9239,8829.71,'aedob'),
+(103,3353,9852.45,'oxsqa',8705,1254.97,'rffcy'),
+(104,2355,2048.51,'vezel',8611,759.7,'hcxda'),
+(105,1411,8268.60,'srlaz',7955,6919.20,'itkow'),
+(106,3589,5869.56,'skhao',7938,2689.48,'hbghf'),
+(107,2288,1215.50,'iarfl',8220,5652.67,'tlmsj'),
+(108,7491,922.47,'jmwlj',3168,9270.77,'sjvie'),
+(109,2012,3111.6,'wsgcu',8106,4134.64,'mbqkc'),
+(110,7746,8655.5,'ngnow',5565,9215.60,'yegso'),
+(111,1922,2434.0,'mruys',1532,3111.12,'qiwwv'),
+(112,3350,4579.90,'soush',1703,5301.38,'yuygh'),
+(113,8672,1726.80,'ytxgx',7729,7390.93,'badln'),
+(114,8613,8265.41,'zihnz',3469,4365.30,'jljzj'),
+(115,4228,7591.74,'sxcsj',1239,5840.65,'gxfxf'),
+(116,3155,3351.72,'emlwk',8063,7308.36,'nmujy'),
+(117,5866,696.85,'wasld',1920,1393.66,'jwyge'),
+(118,1912,7532.79,'rapzh',7997,9095.30,'lgkyj'),
+(119,6177,5769.98,'eddtm',4939,1044.11,'dtxtw'),
+(120,5129,2571.32,'oxzik',1096,8750.67,'qdird'),
+(121,3065,1602.74,'agnhv',777,5851.92,'blsyu'),
+(122,8366,4287.83,'pevru',497,9363.79,'mootw'),
+(123,9744,1049.51,'njzxs',5228,932.82,'gwuss'),
+(124,2494,2568.60,'ewdcn',4650,8083.78,'wyarj'),
+(125,4743,1026.48,'jqovv',9398,5470.30,'lzoem'),
+(126,3698,1361.69,'jdxvy',7316,6125.50,'ktpfp'),
+(127,1901,2513.60,'zcfmb',9705,2709.63,'bvhsd'),
+(128,3474,8677.96,'vabnl',7572,8764.64,'inyjr'),
+(129,371,551.60,'ixspl',7881,9958.88,'fidbw'),
+(130,8630,6588.2,'ytibr',9803,5339.64,'ottnv'),
+(131,4619,4244.2,'ehwgd',968,8584.88,'pqgca'),
+(132,1289,1230.30,'tmloj',3710,9250.73,'qaogo'),
+(133,4423,6759.14,'vjhsm',1322,4021.25,'ptoed'),
+(134,8885,2800.97,'ykzol',4305,7961.93,'uzvmj'),
+(135,4873,5324.5,'hkooa',6613,5763.39,'hwatu'),
+(136,4165,5558.2,'uvmrz',1912,2998.1,'xexia'),
+(137,6371,1231.61,'gqcri',9821,7367.50,'jblrw'),
+(138,5186,7827.19,'jyjzg',2169,9949.56,'mibgl'),
+(139,4634,9834.46,'alhfh',9240,6452.52,'enoai'),
+(140,5321,1993.3,'hdxuo',6025,8465.93,'sdlbq'),
+(141,688,550.4,'obkpu',8474,4702.21,'tmyeg'),
+(142,3255,4503.83,'vsipm',9743,2260.27,'lhdrv'),
+(143,875,6857.54,'nwqma',6444,7861.10,'seeuz'),
+(144,2983,5868.71,'ybvht',4897,9109.47,'fnelk'),
+(145,6847,6297.95,'egcyf',7380,5734.49,'mwquy'),
+(146,3815,660.54,'hokae',8375,850.25,'crkyv'),
+(147,5569,474.5,'mrsfu',824,2194.46,'ywtks'),
+(148,372,7514.98,'draet',2376,3385.8,'zoqzu'),
+(149,9319,5055.38,'anlwj',1635,5170.90,'tnsdb'),
+(150,2588,9128.47,'kvmlr',4413,6677.22,'hzoue'),
+(151,5688,9768.27,'bibsr',9979,6659.45,'gdsuw'),
+(152,5711,2263.23,'qopvh',7309,4751.73,'evusx'),
+(153,7579,8406.84,'nohwq',1337,2717.55,'jetjf'),
+(154,298,7741.27,'dkaob',9203,5697.41,'jbwld'),
+(155,3206,8821.98,'yvsth',6504,3464.40,'sawgi'),
+(156,2222,448.37,'txhep',3544,1665.87,'ipebe'),
+(157,6098,2931.37,'pqxav',1585,3081.1,'odxap'),
+(158,2667,9331.9,'bqyns',9095,8869.51,'ekbsm'),
+(159,5094,6714.45,'hqgrr',7998,9815.15,'ubqrn'),
+(160,8128,7400.79,'gfhsi',9929,7584.48,'qmtaq'),
+(161,4349,213.48,'qkdxi',2475,5971.38,'zguhv'),
+(162,417,1729.58,'firbo',5434,2148.74,'cwkvm'),
+(163,3326,7530.46,'ustgl',7059,7919.4,'lhxli'),
+(164,6653,3452.39,'mqhhs',311,963.2,'rqbew'),
+(165,6805,6833.20,'qehnw',9106,6092.25,'ztnub'),
+(166,9271,7767.90,'exfid',4570,6492.82,'awrmx'),
+(167,4874,351.28,'qouuq',1285,4983.91,'egake'),
+(168,6018,3935.58,'eulkl',3538,5261.44,'otckv'),
+(169,2938,4375.6,'yqfmw',1575,3151.70,'fltpy'),
+(170,9953,5280.68,'zdyzj',7850,7858.95,'gjcya'),
+(171,1711,9259.69,'lekdw',3272,3215.9,'zzwzw'),
+(172,9446,9182.25,'stmyt',3457,8935.21,'wyjha'),
+(173,7221,9419.9,'ozeuc',4980,1857.32,'yqojp'),
+(174,8183,7094.9,'emugr',1621,7203.86,'stlzp'),
+(175,809,3335.96,'kzepe',619,9822.42,'ibwzx'),
+(176,5161,4525.81,'vdoii',8917,5440.30,'tzvun'),
+(177,9128,3549.80,'vazbx',9418,1916.19,'xcqfr'),
+(178,4686,1047.77,'usgub',7232,484.75,'sxyvw'),
+(179,4142,6663.87,'gadyf',5923,7009.24,'fmvuc'),
+(180,6383,295.15,'wbjoj',3764,3236.17,'vxbkv'),
+(181,3129,3345.23,'txzhd',9988,8034.92,'jccsi'),
+(182,5184,9967.88,'kfgux',1028,8658.33,'cijfr'),
+(183,8681,8323.70,'bswmz',6781,1986.38,'dudhw'),
+(184,1336,1825.68,'pcdao',6848,5777.78,'emzdy'),
+(185,8699,390.89,'rlzcc',6785,9920.57,'zmnbe'),
+(186,399,1689.6,'bvfyh',4360,7682.83,'ivyjf'),
+(187,6399,2398.21,'pcmac',5793,6958.20,'bbswc'),
+(188,3244,9446.30,'hjnqe',2014,1522.59,'lvdlj'),
+(189,309,1266.82,'puimr',4910,2280.75,'cncvk'),
+(190,6054,9044.46,'ixbko',3573,8512.94,'dxkci'),
+(191,4270,7971.69,'zpmxq',554,9132.51,'mvxie'),
+(192,328,8491.40,'vmsvv',8111,3928.56,'sqnje'),
+(193,7433,7555.55,'wrtac',4458,4820.54,'izkdp'),
+(194,2872,9862.74,'eihwr',16,7107.89,'zmcoe'),
+(195,4265,9122.91,'xfyxf',3664,716.67,'kcqda'),
+(196,5811,9292.89,'lolpv',8987,1451.16,'paqjv'),
+(197,4543,5838.8,'mkquh',528,2249.53,'afppy'),
+(198,6576,6979.5,'gkune',36,4423.39,'sxrpq'),
+(199,3357,4934.15,'olliw',2719,8916.51,'hleba'),
+(200,7915,7181.17,'ydvhu',3489,7549.36,'fsnlj'),
+(201,1111,7700.96,'vpujn',3217,4273.80,'wygib'),
+(202,7888,8223.2,'nazax',4982,6417.65,'qdljx'),
+(203,3520,9489.17,'ofbae',317,5940.36,'cwnnb'),
+(204,9865,2490.14,'qjpxy',5465,679.61,'evpci'),
+(205,1611,9720.21,'vpmsr',7624,5599.94,'bmoad'),
+(206,2530,6429.83,'pnwol',1200,4046.38,'qodqu'),
+(207,1725,1870.27,'dbiff',4056,8995.7,'kzzkn'),
+(208,9881,552.19,'iwyva',3762,4297.88,'pcyir'),
+(209,5515,3481.34,'xapma',3845,5934.5,'kqdrt'),
+(210,1226,9427.11,'muwwq',38,3268.80,'ddzrn'),
+(211,9946,6157.20,'zyiup',6533,287.97,'ctlbi'),
+(212,1187,1694.24,'isoaf',2228,6861.63,'bpapz'),
+(213,7295,5565.39,'zfjsl',6978,9986.70,'crcab'),
+(214,9698,50.2,'ucxbz',7844,5039.62,'xhufx'),
+(215,5154,1434.25,'eipaj',5347,7024.90,'tthiv'),
+(216,2006,1255.67,'kmpxf',9711,1827.82,'sbwzg'),
+(217,6425,7556.89,'murxg',7121,7460.0,'xkbcs'),
+(218,8669,6130.20,'mkkvl',5966,5315.5,'jwtne'),
+(219,9324,1782.20,'megsd',3094,1413.20,'gajpy'),
+(220,5559,9563.39,'wjvkg',59,7654.92,'eqxwz'),
+(221,7377,6031.85,'jbveg',9372,3065.51,'bcdox'),
+(222,3861,499.81,'dzikl',751,5055.80,'iirhd'),
+(223,9426,6283.31,'aavez',7373,661.71,'eccub'),
+(224,70,1951.81,'nwiya',2119,7797.88,'nygif'),
+(225,9624,2577.81,'aspav',3829,6507.34,'gpznf'),
+(226,5997,989.50,'wsdkz',3548,216.10,'fptua'),
+(227,7434,9019.37,'nujgm',781,6974.76,'mbjec'),
+(228,8762,8751.81,'rewmr',9738,714.18,'kghvl'),
+(229,7637,3775.79,'jzipt',5587,2494.8,'tdtpu'),
+(230,800,433.42,'dysbn',703,1754.64,'vbuup'),
+(231,322,9072.64,'czmer',916,7561.19,'qknsk'),
+(232,9857,5295.81,'cvqka',1765,9861.77,'xdcjs'),
+(233,891,1205.31,'vpvjk',4747,732.80,'hnaxh'),
+(234,8992,6661.22,'aooby',3564,5626.65,'pqame'),
+(235,60,525.91,'lpfuf',375,4627.35,'qelsw'),
+(236,6577,1915.69,'czhse',2047,3697.13,'puekn'),
+(237,3857,1451.40,'jvkko',6405,5928.9,'dbxbv'),
+(238,6296,2506.4,'cwont',8479,2789.84,'iueql'),
+(239,3623,2460.45,'tcdkc',6756,5380.6,'zxmcy'),
+(240,7146,3944.87,'meaux',9432,5678.20,'rxnzw'),
+(241,6009,6094.58,'jixhp',659,7789.5,'zncfc'),
+(242,3435,5800.55,'jtfex',6795,9201.41,'jjont'),
+(243,2981,8957.4,'rlgvz',2657,2027.67,'qroel'),
+(244,4786,1712.24,'oonoj',7767,4260.45,'spppi'),
+(245,1818,1716.88,'tjpci',2606,1024.27,'beryf'),
+(246,6131,9376.88,'lokew',4861,5818.9,'qwvww'),
+(247,5109,9100.94,'kcfjw',5676,1775.1,'czbwv'),
+(248,7719,553.20,'ctamh',5900,2902.85,'uolfw'),
+(249,758,9900.83,'zriib',2344,5337.82,'dxhkv'),
+(250,5108,1065.70,'idpgo',4023,8598.8,'mdiwz'),
+(251,1979,6971.95,'pcbvl',8408,6831.42,'ixvmy'),
+(252,9169,797.66,'lvdmw',7679,59.86,'oznia'),
+(253,7301,7228.45,'ymkcr',4972,5437.30,'lxafb'),
+(254,6086,3699.14,'owsnl',630,8498.10,'spuix'),
+(255,564,1651.32,'kxinr',8454,4402.74,'wyfzf'),
+(256,7357,7778.0,'jjdzu',1951,9190.45,'dmxyu'),
+(257,921,5281.27,'bmqxm',586,1031.80,'saolp'),
+(258,9790,5110.87,'fnftn',6030,1474.36,'telmx'),
+(259,2836,7222.84,'olcgf',8411,6695.31,'reeqn'),
+(260,5508,1828.14,'dnqyi',2565,8751.7,'cgaos'),
+(261,6088,641.31,'hzjvg',4284,6825.90,'enatn'),
+(262,1943,8130.2,'voaae',6569,8483.58,'libbu'),
+(263,5768,2767.78,'fgyhd',5875,917.97,'fdajg'),
+(264,1842,8277.48,'pwwtd',8367,2198.68,'pzxev'),
+(265,2277,4891.10,'aqilk',6164,2527.69,'oezgn'),
+(266,3265,592.26,'mtpck',3595,5484.96,'dxwit'),
+(267,1332,2367.92,'aixmz',3445,9275.4,'nvqoh'),
+(268,9584,7459.91,'bnnjk',3205,7990.76,'fubgp'),
+(269,3960,4612.66,'fryvt',1324,2843.77,'ciqos'),
+(270,9481,5327.73,'rnwcr',3458,3431.22,'rjqzp'),
+(271,6501,5105.53,'ebodv',8718,8977.38,'awlab'),
+(272,6955,4705.83,'gcuex',5927,9583.26,'bjnvc'),
+(273,609,1387.51,'gwylo',9860,7482.21,'osovu'),
+(274,1313,167.9,'mrhtx',7502,8283.57,'mppip'),
+(275,3248,5063.39,'imabi',4293,2228.32,'tfgel'),
+(276,7178,348.15,'oriet',381,5434.65,'txsju'),
+(277,6697,1798.69,'bkrls',6872,1148.60,'erwpv'),
+(278,4483,7945.47,'lotfo',2077,998.73,'ibobn'),
+(279,8546,1322.77,'sctnn',7766,6237.70,'emnwv'),
+(280,8476,9719.27,'swjus',5414,9001.88,'kaswt'),
+(281,1697,7427.72,'dbyjo',2456,3551.4,'rzgbm'),
+(282,9716,6492.54,'pbteq',8530,7531.91,'rqslp'),
+(283,4367,7965.45,'xwxjy',1735,3210.85,'hqbmb'),
+(284,4072,3150.8,'atoxz',4874,8739.43,'qwyvl'),
+(285,82,4855.63,'hacfw',1710,9396.11,'gxuuy'),
+(286,2731,8641.45,'nnfvn',3209,8840.82,'isvgr'),
+(287,7684,4074.71,'efzxs',3798,355.61,'ohgxp'),
+(288,2188,5974.99,'izczg',7609,8107.25,'nemgx'),
+(289,1324,5664.93,'abxqa',4732,8392.90,'shdyu'),
+(290,4253,2223.83,'guovf',7462,881.68,'qhdqx'),
+(291,469,3730.31,'cecxl',6553,9877.32,'zlali'),
+(292,6047,8522.89,'wpszt',7466,5562.82,'scvpq'),
+(293,9895,6438.66,'gispv',6619,5244.0,'gjkdf'),
+(294,4,70.86,'jfsje',7635,4612.19,'mslle'),
+(295,9695,6017.54,'yguse',7597,8985.82,'bqraq'),
+(296,3871,6127.19,'nhogd',3293,4559.8,'igxxs'),
+(297,5270,8757.33,'jqirp',7469,9660.49,'pyflv'),
+(298,708,16.16,'wqedi',5078,5990.57,'gxzxr'),
+(299,7335,5014.17,'iidcm',9528,9886.45,'tydzj'),
+(300,8884,9121.79,'ncivr',8938,3557.51,'ywhqp'),
+(301,1919,9205.99,'ieayf',2380,6346.96,'airnv'),
+(302,2085,4892.90,'hlvie',6136,5973.53,'tilrf'),
+(303,361,9806.48,'mzrkl',9944,9786.5,'owufz'),
+(304,9307,2835.9,'rqfba',3248,6013.6,'royvi'),
+(305,9316,9362.14,'orrzy',1450,5011.51,'ghlmt'),
+(306,4860,2527.73,'tmcpp',2159,516.29,'kveca'),
+(307,747,4474.24,'zdnlr',1442,892.94,'mlnbi'),
+(308,8364,7601.98,'hzyxk',70,382.21,'emkxl'),
+(309,1933,5811.82,'yjpvr',9775,361.71,'mdryw'),
+(310,4755,5757.79,'tcadc',9494,577.56,'awwwx'),
+(311,5464,8100.73,'chemf',1619,411.97,'zgqku'),
+(312,4277,8753.88,'evqun',8254,124.90,'njrxx'),
+(313,9243,133.56,'xznas',7455,2102.66,'mryas'),
+(314,2492,2413.74,'idyqr',9487,2113.55,'zjugc'),
+(315,6486,4765.71,'lktir',3074,552.49,'cibqi'),
+(316,269,6621.67,'pearp',1645,3694.61,'hifig'),
+(317,5719,8912.37,'lswqw',9585,4942.95,'ndkim'),
+(318,3794,5326.73,'bzvgr',8489,6081.98,'dtszj'),
+(319,784,3553.48,'gzuid',3405,8519.31,'fefpg'),
+(320,4563,6538.76,'krgyi',9093,4549.30,'rbben'),
+(321,834,3729.78,'xjjfm',6265,8589.65,'hkrav'),
+(322,9384,2329.40,'aldrd',7845,8438.5,'wwwha'),
+(323,333,8544.80,'dzjgd',5208,6522.80,'kwwqn'),
+(324,380,8835.5,'wlcpx',4443,1147.44,'fsrxg'),
+(325,9059,1166.82,'gckul',2591,7749.37,'arwrv'),
+(326,4985,6254.91,'sxtdn',3902,141.48,'afzyu'),
+(327,2104,8822.94,'hxblv',6082,1766.77,'dynrm'),
+(328,5945,8846.95,'ubrza',6545,6945.97,'bzcnk'),
+(329,9869,2805.2,'xrtzz',8662,2129.18,'muqlf'),
+(330,1318,4933.91,'eeffs',8010,7147.49,'yriey'),
+(331,8069,8468.69,'jswrs',8624,6458.57,'jkybb'),
+(332,4478,6901.34,'mqrcy',9246,399.38,'vzvon'),
+(333,7734,5227.39,'tisvz',9575,6436.68,'wacxb'),
+(334,4108,1197.55,'zrjff',6516,413.78,'oqrsh'),
+(335,5203,6563.32,'pwlgx',432,7806.4,'qwoqp'),
+(336,4204,8333.63,'stjjh',1393,4967.61,'pkwyp'),
+(337,2129,17.47,'gtdwu',5427,377.96,'yewfb'),
+(338,4076,2880.47,'fgrsz',766,5897.57,'dbgva'),
+(339,5477,7191.60,'qjuzz',4103,8017.52,'wihvb'),
+(340,8345,3474.73,'uoiri',6835,9105.13,'aksgf'),
+(341,7525,3754.28,'ieiee',1317,8659.60,'zoczi'),
+(342,6945,2812.84,'jedym',7110,4555.57,'qiwhz'),
+(343,5863,9433.82,'prnfb',7236,4298.84,'ohklu'),
+(344,5122,7655.3,'nqvmt',4418,6271.92,'driji'),
+(345,3395,8021.34,'kjbgn',7341,990.68,'qyjhm'),
+(346,3437,8826.29,'nkcpq',6895,2344.0,'ijrgk'),
+(347,8336,7371.73,'gvqsr',2427,8855.34,'twxwr'),
+(348,7761,1210.42,'fbntt',7991,4923.42,'qjhxm'),
+(349,4213,9400.68,'josgr',8598,2076.80,'fpwvs'),
+(350,9277,3755.99,'efovx',6468,221.56,'dqmob'),
+(351,9867,88.63,'rftux',7274,8896.86,'wobad'),
+(352,4481,9470.33,'qmpwb',6401,8515.60,'pdous'),
+(353,9450,9474.83,'slbqx',5186,1624.5,'kierq'),
+(354,5185,5429.57,'lnyhg',7177,4144.48,'kzokf'),
+(355,2428,1664.29,'pwxhi',4376,6628.73,'ylufb'),
+(356,8507,2768.63,'dzuuv',3495,5507.92,'qepnm'),
+(357,3580,4824.81,'hglnb',2201,4341.1,'llllk'),
+(358,6884,6681.20,'wqege',5369,5069.45,'zwqnq'),
+(359,2994,1183.97,'fhslb',1330,9258.80,'lzniv'),
+(360,8062,6432.74,'mefyv',8122,9355.36,'wdmcw'),
+(361,6074,7033.14,'osqln',9742,9935.78,'dshgr'),
+(362,5099,5343.51,'lktio',2392,8953.71,'geyeo'),
+(363,3535,2727.47,'djedr',733,8992.41,'jiati'),
+(364,6366,799.55,'ydpff',4129,8516.36,'wesai'),
+(365,1406,2681.86,'lczlb',2907,3112.93,'qlwsn'),
+(366,5550,4248.67,'tfnsw',4595,6754.95,'bihcv'),
+(367,1026,5376.4,'prwqf',183,3039.38,'dxuiz'),
+(368,1645,1199.47,'jmeds',364,6445.90,'uyfgx'),
+(369,9048,3352.49,'jbida',1792,3580.56,'sltzr'),
+(370,8961,1226.32,'wxacc',3324,4428.40,'thwoq'),
+(371,7438,3214.47,'fewsi',2277,3604.6,'vvplr'),
+(372,7119,7964.39,'ajonn',675,1603.43,'fqoie'),
+(373,3473,5628.5,'gxxmf',1495,6045.25,'qycrf'),
+(374,1054,9111.61,'hvcqr',4927,2933.76,'fklhu'),
+(375,9745,5322.4,'fhttz',4614,7896.29,'wqwzt'),
+(376,1012,6426.71,'thyxj',3908,7444.92,'hysgb'),
+(377,4154,1089.6,'nipda',2115,214.10,'bunwv'),
+(378,2552,5733.20,'dvgbo',753,8225.25,'uqhmo'),
+(379,9918,5783.51,'gaonw',9792,8120.40,'himge'),
+(380,6546,6917.34,'ulcek',3912,2426.84,'qyemd'),
+(381,5563,6319.56,'cnrcg',8749,795.69,'hgegq'),
+(382,9178,3926.22,'wgknf',7147,1261.58,'jjezs'),
+(383,4931,3678.17,'mxwia',5407,1485.23,'nnvfh'),
+(384,1945,4770.68,'akdtk',9534,6.13,'hkzak'),
+(385,7173,2900.7,'kgzyf',1496,7495.10,'bdrwh'),
+(386,1654,1521.34,'paarp',5459,7999.96,'hohym'),
+(387,6755,3090.79,'pvtza',4057,196.13,'petdz'),
+(388,429,316.62,'qgton',4623,8641.28,'ylqjj'),
+(389,3456,7413.62,'juvst',5449,5020.93,'psdjx'),
+(390,5703,1351.71,'vkzud',2036,9397.11,'kpler'),
+(391,2366,3100.64,'titty',3340,1462.92,'avrzr'),
+(392,223,8887.57,'nqebm',8024,1789.23,'qscnc'),
+(393,3886,1441.72,'kuazf',710,3078.27,'ptewe'),
+(394,2048,1247.97,'rhulv',8225,1408.24,'dkvxn'),
+(395,3733,7791.50,'qkynj',5854,7489.95,'spkbh'),
+(396,4549,815.43,'xqcen',3588,7905.46,'bkwzb'),
+(397,2934,1565.41,'lmwuk',2377,6376.70,'ipzze'),
+(398,6410,4041.27,'paiwc',376,4993.6,'gkhvv'),
+(399,7830,6244.65,'llxnk',9196,5485.5,'ezjgd'),
+(400,1629,1433.59,'rvqig',160,448.93,'geasg'),
+(401,74,9368.21,'xrfsr',544,4620.31,'oacwp'),
+(402,9514,7565.27,'smbtx',9832,6108.78,'emzgv')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab4 VALUES (1,1,1,1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab41973 (rowid) VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab_141810 VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab_141810 VALUES (4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab_as_of VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab_as_of VALUES (2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab_as_of VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tab_test_privileges VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table35970 VALUES (1, 1, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table74736 SELECT x * 10000, repeat('a', 200000) FROM generate_series(1, 130) AS g(x);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table8 (col1, col2, col4, col6)
+VALUES ('19:06:18.321589', NULL, NULL, NULL)
+UNION ALL (SELECT NULL, NULL, NULL, NULL FROM table5 AS tab_8);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table9 SELECT lag(a) OVER (PARTITION BY a) FROM table9;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table_1_124732 (col1_6) VALUES (0);
+INSERT INTO table_3_124732 (col3_0) VALUES (0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table_ltree_array_leading VALUES
+    (ARRAY['a.b.c']::LTREE[], 'key1', 1),
+    (ARRAY['d.e.f']::LTREE[], 'key2', 2),
+    (ARRAY['g.h.i']::LTREE[], 'key3', 3),
+    (ARRAY['j.k.l']::LTREE[], 'key4', 4),
+    (ARRAY['m.n.o']::LTREE[], 'key5', 5),
+    (ARRAY['p.q.r']::LTREE[], 'key6', 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table_with_not_null_enum VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table_with_not_null_enum_no_vals VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO table_with_nulls VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tabula VALUES (11, 12, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO task(description, patient_id, id) VALUES ('taskWithoutPatient', NULL, 9);
+INSERT INTO task(description, patient_id, id) VALUES ('taskWithPatientWithoutSite', 4, 10);
+INSERT INTO task(description, patient_id, id) VALUES ('taskWithPatient1WithValidSite1', 5, 11);
+INSERT INTO task(description, patient_id, id) VALUES ('taskWithPatient2WithValidSite1', 6, 12);
+INSERT INTO task(description, patient_id, id) VALUES ('taskWithPatient3WithValidSite2', 7, 13);
+INSERT INTO task(description, patient_id, id) VALUES ('taskWithPatientWithInvalidSite', 8, 14);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tb VALUES (B'001')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tb VALUES (B'011')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tb VALUES (B'111')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tb VALUES (B'1111')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tb VALUES (default, default, default)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tbl VALUES (1, 100), (2, 200), (3, 300);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tbl_owned_by_root VALUES (1);
+INSERT INTO tbl_owned_by_parent VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tbl_with_dft_column_family VALUES(1.0, 1.0, '{"cat": "mouse"}', 'abc');
+INSERT INTO tbl_with_dft_column_family VALUES(2.0, 2.0, '{"lion": "gazelle"}', 'def');
+INSERT INTO tbl_with_dft_column_family VALUES(3.0, 3.0, '{"wolf": "sheep"}', 'ghi');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc VALUES (-32768)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc VALUES (-32769)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc VALUES (32767)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc VALUES (32768)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc VALUES (50)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc VALUES (60000-59999)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc1 VALUES (-2147483648)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc1 VALUES (-2147483649)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc1 VALUES (2147483647)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc1 VALUES (2147483648)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tc1 VALUES (50)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO td VALUES (DECIMAL '13.1415')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO td VALUES (DECIMAL '3.1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO td VALUES (DECIMAL '3.14')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO td VALUES (DECIMAL '3.1415')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO td2 VALUES (DECIMAL '123.1415', DECIMAL '123.1415')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO td3 (c) VALUES (12345678901)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO td3 VALUES (123456789012.123456789012, 12.3, 1234567890.1234567890)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tdup VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO team VALUES (1, 'arulajmani', ARRAY['turkey','coffee','ps5'], ARRAY['going outside in winter','denormalization']);
+INSERT INTO team VALUES (2, 'otan', ARRAY['Sydney suburbs','cricket','vim'], ARRAY['flaky tests','onboarding'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test VALUES ('a')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test VALUES ('ab')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test VALUES ('abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test VALUES ('abcdef')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test VALUES ('áááá')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test VALUES ('ááááß')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test VALUES (1, 2, 3), (4, 5, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test.child VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test.child VALUES (2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test.parent values (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test20042 (x, y, z) VALUES ('pk1', 'k1', null);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test20042 (x, y, z) VALUES ('pk2', 'k2 ', 'k1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test20045 (x, y, z) VALUES ('pk1', NULL, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test20045 (x, y, z) VALUES ('pk2', 'pk1', NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test20045 (x, y, z) VALUES ('pk3', 'pk2', 'pk1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_144621 VALUES (1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_145973 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_146046 (a, b, vec1) VALUES
+  (1, 1, '[1, 2, 3]'),
+  (2, 1, '[4, 5, 6]'),
+  (3, 2, '[7, 8, 9]'),
+  (4, 2, '[10, 11, 12]'),
+  (5, 2, '[13, 14, 15]'),
+  (6, NULL, '[16, 17, 18]'),
+  (7, NULL, '[1, 1, 1]'),
+  (8, NULL, NULL),
+  (9, 3, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_52552_asc DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_52552_desc DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_52552_start DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_alter VALUES ('pk1', 'to_be_changed')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_backfill VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_collate VALUES (1, 'Str_Collate_1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_collate VALUES (2, 'Foo'), (3, 'Bar'), (4, 'Baz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_escaping.";" VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_fk_base VALUES ('pk1', 'val1'), ('pk2', 'val2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_jsonb VALUES
+ ('scalar','"a scalar"'),
+ ('array','["zero", "one","two",null,"four","five", [1,2,3],{"f1":9}]'),
+ ('object','{"field1":"val1","field2":"val2","field3":null, "field4": 4, "field5": [1,2,3], "field6": {"f1":9}}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_ordering VALUES (1, 10), (2, 20), (3, 30), (4, 40);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_simple VALUES ('pk1', 'to_be_changed')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_table (col1, col2, col3) VALUES ('r1c1', 'r1
+c2', 'r1c3'), ('r2c1', 'r2
+c2', 'r2c3'), ('r3c1', 'r3
+c2', 'r3c3');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_table (id, col_to_drop, other_col) VALUES (1, 'test1', 100), (2, 'test2', 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_table_enum VALUES ('pk1', 'y')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_table_enum VALUES ('pk3')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_table_seq VALUES ('pk1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_table_seq VALUES ('pk1', 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_table_seq VALUES ('pk2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_tbl_t VALUES (1, 1), (2, -2), (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_upsert VALUES ('pk1', 'val1', 'whatevs')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_view VALUES (1, 99), (2, 98), (3, 97)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_virtual (id, col_to_drop, other_col) VALUES (1, 'virtual1', 300), (2, 'virtual2', 400)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO test_with_default VALUES ('pk1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO testing (k,v) VALUES (5, 'c');
+INSERT INTO unrelated(x) VALUES (1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO text_array_tab VALUES
+  (1, '{}'),
+  (2, '{a}'),
+  (3, '{a, b}'),
+  (4, '{a, c}'),
+  (5, '{a, b, c}'),
+  (6, '{1}'),
+  (7, NULL);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO time_datestyle_parse VALUES
+  (1, '2007-09-12 11:30:45.123+06'),
+  (2, '2007-09-12 11:30:45.123+03')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO time_precision_test VALUES
+  (1,'12:00:00.123456+03:00'),
+  (2,'12:00:00.12345+03:00'),
+  (3,'12:00:00.1234+03:00'),
+  (4,'12:00:00.123+03:00'),
+  (5,'12:00:00.12+03:00'),
+  (6,'12:00:00.1+03:00'),
+  (7,'12:00:00+03:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO time_precision_test VALUES
+  (100,'12:00:00.123456+03:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO times VALUES
+  ('00:00:00'),
+  ('00:00:00.000001'),
+  ('11:59:59.999999'),
+  ('12:00:00'),
+  ('12:00:00.000001'),
+  ('23:59:59.999999')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamp_datestyle_parse VALUES
+  (1, '07-09-12 11:30:45.123'),
+  (2, '07-09-12')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamp_outer_buckets VALUES
+  ('2024-06-26 00:00:00'),
+  ('2024-06-27 03:30:00');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamp_outer_buckets VALUES
+  ('2024-06-26 01:00:00'),
+  ('2024-06-26 02:00:00'),
+  ('2024-06-27 01:30:00'),
+  ('2024-06-27 02:30:00');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamp_outer_buckets VALUES ('2024-06-28 01:00:00');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamp_test VALUES
+  (1, '2001-01-01 12:00:00.123456', '2001-01-01 12:00:00.123456+4'),
+  (2, '2001-01-01 12:00:00.12345', '2001-01-01 12:00:00.12345+4'),
+  (3, '2001-01-01 12:00:00.1234', '2001-01-01 12:00:00.1234+4'),
+  (4, '2001-01-01 12:00:00.123', '2001-01-01 12:00:00.123+4'),
+  (5, '2001-01-01 12:00:00.12', '2001-01-01 12:00:00.12+4'),
+  (6, '2001-01-01 12:00:00.1', '2001-01-01 12:00:00.1+4'),
+  (7, '2001-01-01 12:00:00', '2001-01-01 12:00:00+4')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamp_test VALUES
+  (100, '2001-01-01 12:00:00.123456', '2001-01-01 12:00:00.123456+4')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamps VALUES ('2020-01-02 01:02:03'), ('2015-08-25 04:45:45.53453+01:00'), (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timestamps VALUES ('tomorrow')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timetz_precision_test VALUES
+  (1,'12:00:00.123456+03:00'),
+  (2,'12:00:00.12345+03:00'),
+  (3,'12:00:00.1234+03:00'),
+  (4,'12:00:00.123+03:00'),
+  (5,'12:00:00.12+03:00'),
+  (6,'12:00:00.1+03:00'),
+  (7,'12:00:00+03:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timetz_precision_test VALUES
+  (100,'12:00:00.123456+03:00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timetz_test VALUES
+  ('11:00:00+0', '12:00:00+1', 1),
+  ('12:00:00+1', '10:00:00-1', 2),
+  ('13:00:00+2', '15:00:00-6', 3),
+  ('14:00:00+3', '24:00:00-1559', 4),
+  ('15:00:00+3', '15:00:00+3', 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO timetzs VALUES
+  ('00:00:00-07'),
+  ('00:00:00.000001+06'),
+  ('11:59:59.999999+10'),
+  ('12:00:00-05'),
+  ('12:00:00.000001-05'),
+  ('23:59:59.999999+00')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO titan VALUES ('cronus', 'time', ARRAY['zeus', 'hera', 'hades', 'poseidon', 'demeter', 'hestia'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tn(x) VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tn(y) VALUES ('abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tn2(x) VALUES (NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tn2(x, y) VALUES (123, 'abcd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO topics VALUES (
+  '2017-12-05 04:04:04.913231+00:00',
+  '2017-12-05 04:04:04.913231+00:00',
+  '2017-12-05 04:04:04.913231+00:00'
+);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_dep_single_t1 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_dep_t1 VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_rls_table VALUES (1, 100, 'alice'), (2, 200, 'bob'), (3, 300, 'alice'), (4, 400, 'bob');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_rls_table VALUES (10, 1000, 'alice');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_rls_table VALUES (5, 500, 'alice');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_rls_table VALUES (6, 600, 'bob');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_rls_table VALUES (7, 700, 'bob');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_rls_table VALUES (8, 800, 'bob');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trigger_rls_table VALUES (9, 900, 'alice');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trunc VALUES (1, 'a'), (2, 'b'), (3, 'c');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO trunc VALUES (7, 'a'), (8, 'b'), (9, 'c');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tsquery_tbl VALUES
+  (1, 10, 'search & term'::TSQUERY),
+  (2, 20, 'another | query'::TSQUERY);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tsvector_tbl VALUES
+  (1, 10, 'hello world'::TSVECTOR),
+  (2, 20, 'foo bar'::TSVECTOR);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO two VALUES (1, 1), (1, 3), (3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO two VALUES (1,1), (2,2), (3,3), (4,4), (5,5), (6,6), (7,7), (8,8), (9,9), (10,10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tx VALUES (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tx_leg VALUES (201, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tx_leg VALUES (202, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tx_leg VALUES (302, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO txn_test (something) VALUES ('bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO txn_test (something) VALUES ('baz')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO txn_test (something) VALUES ('foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tz VALUES
+  (1, timestamp '2015-08-30 03:34:45', timestamptz '2015-08-30 03:34:45',  timestamptz '2015-08-30 03:34:45'),
+  (2, timestamp '2015-08-30 03:34:45+01:00', timestamptz '2015-08-30 03:34:45+01:00',  timestamptz '2015-08-30 03:34:45')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tzarrays VALUES
+  (ARRAY[]),
+  (ARRAY['00:00:00-07']),
+  (ARRAY['00:00:00-07', '12:00:00.000001-07']),
+  ('{13:00:00-07}'::TIMETZ[])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u (ip) VALUES ('::1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u (ip) VALUES ('::ffff:1.2.3.4')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u SELECT i, to_english(i) FROM generate_series(2, 10) AS g(i)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES
+  ('63616665-6630-3064-6465-616462656562', '{63616665-6630-3064-6465-616462656563}', b'kafef00ddeadbeed'),
+  ('urn:uuid:63616665-6630-3064-6465-616462656564', '63616665-6630-3064-6465-616462656565'::uuid, b'kafef00ddeadbeee'),
+  (b'cafef00ddeadbeef', '63616665-6630-3064-6465-616462656567', b'kafef00ddeadbeef')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES
+  (1, 2, 3, 4, 5),
+  (2, 3, 4, 5, 6),
+  (3, 4, 5, 6, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES
+  (123, '2015-08-30 03:34:45.34567', '2015-08-30 03:34:45.34567', '2015-08-30', '34h2s'),
+  (234, '2015-08-25 04:45:45.53453-02:00', '2015-08-25 04:45:45.53453-02:00', '2015-08-25', '2h45m2s234ms')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES
+  (345, '2015-08-29 23:10:09.98763', '2015-08-29 23:10:09.98763', '2015-08-29', '234h45m2s234ms'),
+  (456, '2015-08-29 23:10:09.98763 UTC', '2015-08-29 23:10:09.98763 UTC', '2015-08-29', '234h45m2s234ms')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('192.0.0.0', '127.0.0.1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('192.168.0.0', '192.168.0.1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('192.168.0.1', '192.168.0.1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('192.168.0.1', '192.168.0.2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('192.168.0.1/31', '192.168.0.1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('192.168.0.2', '192.168.0.2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('192.168.0.5/24', '192.168.0.5')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('63616665-6630-3064-6465-61646265656')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('63616665-6630-3064-6465-616462656562'::string)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('63616665-6630-3064-6465-6164626565620')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('63616665-6630-3064-6465-616462656566')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('63616665-6630-3064-6465-616462656567'::uuid)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('63616665-6630-3064-6465-616462656569', '63616665-6630-3064-6465-616462656565')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('bird')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('cafef00ddeadbeef'::bytes)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES ('urn:uuid:63616665-6630-3064-6465-616462656568'::uuid)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (-1, -1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (1), (2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (1, 1), (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (1, 1), (2, 2), (1, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (2, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (b'cafef00ddeadbee')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (b'cafef00ddeadbeefs')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (uuid_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (uuid_v4()::uuid)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_a VALUES (1, 'a', 10), (2, 'b', 20), (3, 'c', 30), (4, 'd', 40)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_a VALUES (1, 'a', 10), (2, 'b', 20), (3, 'c', 30), (4, 'd', 40);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_a VALUES (1, 'a', 5), (2, 'b', 10), (3, 'c', 15), (4, 'd', 20), (5, 'd', 25), (6, 'd', 30), (7, 'd', 35), (8, 'd', 40), (9, 'd', 45)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_a VALUES (5, 'd', 5), (6, 'e', 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_b VALUES (10, 'a'), (20, 'b'), (30, 'c'), (40, 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_c VALUES (1, 'a', 10), (2, 'b', 50), (3, 'c', 50), (4, 'd', 40)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_c VALUES (30, 'a', 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u_d VALUES (1, 10), (2, 20), (3, 30), (4, 40)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO unindexed VALUES (1, 2), (3, 4), (5, 6), (7, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO unindexed VALUES (1, 9), (8, 2), (3, 7), (6, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniontest VALUES
+(1, 1),
+(1, 1),
+(1, 1),
+(1, 2),
+(1, 2),
+(2, 1),
+(2, 3),
+(2, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq SELECT k, v, w, x, y FROM other
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES ('cat', 1), ('cat', 2), ('dog', 3), ('cat', 4), ('hamster', 5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES ('cat', 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES ('cat', 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES ('dog', 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES ('x1', 'y1', 'z1');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (1, 1, 1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (1, 1, 1, 1, 1), (2, 2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (1, 10, 100), (2, 20, 200)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (2, 2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (3, 1, 1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (3, 1, 109)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (3, 3, 1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (3, 3, 3, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (3, 3, 3, 3, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (3, 3, 3, 3, 3), (4, 4, 3, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq VALUES (4, 4, NULL, NULL, 1), (5, 5, NULL, 2, NULL), (6, 6, NULL, NULL, 1), (7, 7, NULL, 2, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_computed_pk (i, s, d) VALUES (1, 'a', 1.0), (2, 'b', 2.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_computed_pk (i, s, d) VALUES (1, 'c', 3.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_computed_pk (i, s, d) VALUES (3, 'b', 3.0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_computed_pk (i, s, d) VALUES (3, 'c', 1.00)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_enum (s, i) VALUES ('foo', 1), ('bar', 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_enum VALUES ('us-west', 'foo', 1, 1), ('eu-west', 'bar', 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_fk_child VALUES (1, 1, 1), (2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_fk_child VALUES (1, 1, 2), (4, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_fk_child VALUES (3, 3, 3), (4, 4, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_fk_parent VALUES (1, 1, 1, 1, 1), (2, 2, 2, 2, 2);
+INSERT INTO uniq_fk_child VALUES (1, 1, 1, 1, 1), (2, 2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_hidden_pk SELECT k, w, x, y FROM other
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_hidden_pk VALUES (1, 1, 1, 1), (2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_json VALUES
+  (1, '{"a": "b"}'),
+  (2, '{"a": "b"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_no_index VALUES (1, 10), (2, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_no_index VALUES (3, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_no_index_multi VALUES (1, 1, 1), (2, 4, 2), (3, 3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_no_index_multi VALUES (4, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_overlaps_pk VALUES (1, 1, 1, 1), (2, 2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_overlaps_pk VALUES (1, 2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_overlaps_pk VALUES (3, 1, 1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_overlaps_pk VALUES (3, 3, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_overlaps_pk VALUES (3, 3, 1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial SELECT w, x FROM other
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (1, -3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (1, 1), (1, -1), (2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (1, 1), (2, 2), (1, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (1, 10), (2, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (1, 3), (3, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (3, 19)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (3, 3), (3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (4, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial VALUES (NULL, 5), (5, 5), (NULL, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial_multi VALUES (1, 1, 1), (2, 4, 2), (3, 3, 2), (10, 10, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial_multi VALUES (15, 5, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial_pred VALUES (1, 1, 1), (2, 4, 2), (3, 3, 2), (10, 10, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_partial_pred VALUES (11, 9, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_simple VALUES (1, 10), (2, 20)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_simple VALUES (3, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_uuid (id1, id2) SELECT gen_random_uuid(), '8597b0eb-7b89-4857-858a-fabf86f6a3ac'
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_uuid (id1, id2) SELECT gen_random_uuid(), u FROM other
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO unique_array VALUES (ARRAY[1], ARRAY[2, 3])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO unique_array VALUES (ARRAY[2], ARRAY[2, 3])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO unique_without_index (e, f) VALUES (1, 1), (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO unique_without_index (f) VALUES (1), (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('ap-southeast-2', 100, 'foo');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('ap-southeast-2', 200, 'titi');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('ca-central-1', 300, 'bar');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('ca-central-1', 400, 'toto');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-east-1', 500, 'baz');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-east1', 100, 'foo');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-west1', 100, 'biz');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-west4', 100, 'toto');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-east1', 200, 'bar');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-west1', 200, 'baz');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-west1', 300, 'titi');
+INSERT INTO uniqueness_check (crdb_region, id, data) VALUES ('us-west4', 300, 'tata');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-east-1', 'filler1', 100, 'foo');
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('ca-central-1', 'filler1', 200, 'bar');
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('ap-southeast-2', 'filler1', 300, 'tata');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-east1', 'filler1', 100, 'foo');
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-west1', 'filler1', 100, 'biz');
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-west4', 'filler1', 100, 'toto');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-east1', 'filler1', 200, 'bar');
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-west1', 'filler1', 200, 'baz');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-west1', 'filler1', 300, 'titi');
+INSERT INTO uniqueness_check_complex (crdb_region, filler, id, data) VALUES ('us-west4', 'filler1', 300, 'tata');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO university (name, mascot, postal_code) VALUES ('Thompson Rivers', 'wolves', 'V2C 0C8')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO university (name, mascot, postal_code) VALUES ('Western Oregon', 'wolves', '97361')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO university VALUES ('CMU', 'Chippewas', '97858');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO university VALUES ('CMU', 'Scottie Dog', '15213');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO university VALUES ('Central Michigan University', 'Chippewas', '97858');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO unsorted_colids VALUES (1, 1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO untyped VALUES ('f', '42', '4.2', '4.20', '2010-09-28', '2010-09-28 12:00:00.1', '2010-09-29 12:00:00.1', 'PT12H2M')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO upd_assn_cast(id) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO update_cascade_test(update_cascade, j) VALUES (1, '["a", "b"]'), (2, '{"a":"b", "c":"d"}'), (3, '["b", "c"]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO update_test SELECT generate_series(1,20), generate_series(21,40), generate_series(41,60)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO update_test VALUES (1, '0');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO update_test VALUES (2, '{"longKey1":"longValue1", "longKey2":"longValue2"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO update_test VALUES (3, '["a", "b", "c"]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO update_test VALUES (4, '["a", "b"]');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ups VALUES (10, 'original value')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ups VALUES (10, 'original value');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ups VALUES (12, 'original value')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ups VALUES (3, 'first value', 5);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ups VALUES (7, 'original value');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO ups VALUES (8, 'original value');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO upsert_returning VALUES (1, 1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO use_greetings VALUES(1, 'yo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_data VALUES
+  (1, 'view_owner', 'vo-secret'),
+  (2, 'invoker_user', 'inv-secret'),
+  (3, 'table_owner', 'to-secret'),
+  (4, 'invoker_user', 'inv-secret-2');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_networks VALUES
+('1', 'Facebook', 'Alice_fb'),
+('1', 'Twitter', '@Alice'),
+('1', 'Instagram', 'AliceInst'),
+('2', 'Facebook', 'Bob_fb'),
+('2', 'LinkedIn', 'Bob The Builder')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_settings (crdb_region, id, user_id, value)
+  VALUES ('ap-southeast-2', 'f1867e8b-3414-425c-b3f8-d7e237f848e6', '5ebfedee-0dcf-41e6-a315-5fa0b51b9882', 'this should work')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_settings (crdb_region, id, user_id, value)
+  VALUES ('ca-central-1', DEFAULT, '5ebfedee-0dcf-41e6-a315-5fa0b51b9882', 'this should work')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_settings2 (crdb_region, id2, user_id, value) VALUES ('us-east-1', 2, '5ebfedee-0dcf-41e6-a315-5fa0b51b9882', 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_settings2 (crdb_region, id2, user_id, value) VALUES ('us-east-1', 2, '5ebfedee-0dcf-41e6-a315-5fa0b51b9889', 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_settings2 (crdb_region, id2, user_id, value) VALUES ('us-east-1', 9, '5ebfedee-0dcf-41e6-a315-5fa0b51b9889', 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO user_settings2 (id, id2, user_id, value)
+VALUES ('5ebfedee-0dcf-41e6-a315-5fa0b51b9883', 2, '5ebfedee-0dcf-41e6-a315-5fa0b51b9889', 'foo'),
+       ('5ebfedee-0dcf-41e6-a315-5fa0b51b9884', 2, '5ebfedee-0dcf-41e6-a315-5fa0b51b9889', 'foo')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users (crdb_region, id, id2, username)
+VALUES ('ap-southeast-2', '5ebfedee-0dcf-41e6-a315-5fa0b51b9889', 19, 'Dale Roacher')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users (crdb_region, id, id2, username)
+VALUES ('ap-southeast-2', '5ebfedee-0dcf-41e6-a315-5fa0b51b9992', 9, 'Craig Roacher')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users (crdb_region, id, id2, username)
+VALUES ('us-east-1', '5ebfedee-0dcf-41e6-a315-5fa0b51b9882', 2, 'Craig Roacher')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users (crdb_region, id, username) VALUES ('ap-southeast-2', '5ebfedee-0dcf-41e6-a315-5fa0b51b9882', 'artem')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users (user_profile) VALUES
+  ('{"first_name": "Lola", "last_name": "Dog", "location": "NYC", "online" : true, "friends" : 547}'),
+  ('{"first_name": "Ernie", "status": "Looking for treats", "location" : "Brooklyn"}'),
+  ('{"first_name": "Ernie", "status": "Looking for treats", "location" : "Brooklyn"}'),
+  (NULL),
+  ('{"first_name": "Carl", "last_name": "Kimball", "location": "NYC", "breed": "Boston Terrier"}'
+)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users (user_profile) VALUES  ('{"first_name": "Lola", "last_name": "Dog", "location": "NYC", "online" : true, "friends" : 547}'),
+                                         ('{"first_name": "Ernie", "status": "Looking for treats", "location" : "Brooklyn"}');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users VALUES
+(1, 'Alice'),
+(2, 'Bob')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users VALUES (1, 'tom', 'cat'),(2, 'jerry', 'rat')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users VALUES (10, 'lagos', 'chimamanda')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users VALUES (40)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users(id) VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users(id, name) VALUES (1, 'user1');
+INSERT INTO users(id, name) VALUES (2, 'user2');
+INSERT INTO users(id, name) VALUES (3, 'user3');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users2 (crdb_region, name, email)
+VALUES ('ap-southeast-2', 'Craig Roacher', 'craig@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users2 (crdb_region, name, email)
+VALUES ('ca-central-1', 'Craig Roacher', 'craig@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users2 (crdb_region, name, email)
+VALUES ('us-east-1', 'Craig Roacher', 'craig@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users2 (name, email)
+VALUES ('Bill Roacher', 'bill@cockroachlabs.com'), ('Jill Roacher', 'jill@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users2 (name, email)
+VALUES ('Bill Roacher', 'bill@cockroachlabs.com'), ('Jo Roacher', 'jo@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users2 (name, email)
+VALUES ('Craig Roacher', 'craig@cockroachlabs.com')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users4 SELECT * FROM users2
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO users_dupe VALUES (1, 'tom', 'cat'),(2, 'jerry', 'rat')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uses_alphabets_2 VALUES (2, 'f')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uses_alphabets_2 VALUES(1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO using_alphabets2_60004 VALUES (1, 'a', ARRAY['b', 'a'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO using_alphabets_60004 VALUES (1, ARRAY['a', 'b', 'c'], ARRAY['a','b']), (2, ARRAY['a', 'b', 'c'], ARRAY['a','d'])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uvw SELECT u, v, w FROM
+  generate_series(0, 3) AS u,
+  generate_series(0, 3) AS v,
+  generate_series(0, 3) AS w;
+UPDATE uvw SET u = NULL WHERE u = 0;
+UPDATE uvw SET v = NULL WHERE v = 0;
+UPDATE uvw SET w = NULL WHERE w = 0
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uvw VALUES (1, 1, 1), (1, 2, 2), (1, 2, 3), (2, 1, 4), (2, 1, 5), (2, 2, 6), (2, 2, 7);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uvw VALUES (1, 2, 3), (1, 2, 3), (3, 2, 1), (3, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO v VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO v VALUES (ARRAY[1, 2])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO v VALUES('[1]'), ('[2,3]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO v2 VALUES('[1,2]'), ('[3,4]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO v2 VALUES('[1]'), ('[2,3]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vals VALUES
+('11111110'::varbit, '11111110'::bit(8)),
+('01111111'::varbit, '01111110'::bit(8)),
+('10111111'::varbit, '10111110'::bit(8)),
+('11011111'::varbit, '11011110'::bit(8)),
+('11101111'::varbit, '11101110'::bit(8))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vals VALUES
+(NULL::varbit),
+(NULL::varbit),
+(NULL::varbit),
+(NULL::varbit)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vals VALUES
+(NULL::varbit, NULL::bit),
+(NULL::varbit, NULL::bit)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vals VALUES (3, 4), (NULL, NULL), (5, 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vec VALUES
+    (1, '[1,2,3]'),
+    (2, '[4,5,6]'),
+    (3, '[7,8,9]'),
+    (4, '[10,11,12]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vec VALUES
+    (1, '[1,2]', 'foo'),
+    (2, '[3,4]', 'foo'),
+    (3, '[5,6]', 'baz'),
+    (4, '[5,6]', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vec VALUES
+    (1, 'foo', '[1,2,3]'),
+    (2, 'bar', '[4,5,6]'),
+    (3, 'baz', '[7,8,9]'),
+    (4, 'bar', '[10,11,12]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vec_b VALUES
+    (1, '[1,2]', 'foo'),
+    (2, '[3,4]', 'foo'),
+    (3, '[5,6]', 'baz'),
+    (4, '[5,6]', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vec_c VALUES
+    (1, '[1,2]', 'foo'),
+    (2, '[3,4]', 'foo'),
+    (3, '[5,6]', 'baz'),
+    (4, '[5,6]', 'bar')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO vehicles VALUES (100, 'lagos', 'toyota', 10, 'mycol')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO view_rls_t VALUES (1, 10), (2, 20), (3, 30), (4, 40);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO virt (a, b) VALUES
+    (1, 0),
+    (2, 2),
+    (3, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO virt VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO virt1 VALUES (-9999);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO virt1 VALUES (100), (2147483647);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO virt2 VALUES ('2024-10-31 16:50:00.123456');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO virt3 VALUES (1.23456),(12.34567),(-123.4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO virtual_pk(a, b, c) values (1, 2, 3), (4, 5, 6);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO volcano
+VALUES ('Mount Hood', 'Fought over Loowit and was transformed by Saghalie.', 'POINT(-121.695833 45.373611)', 'ca-central-1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO volcano VALUES
+('Mount Adams', 'Fought over Loowit and was transformed by Saghalie.', 'POINT(-121.490895 46.202412)', 'ap-southeast-2')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO voyage
+VALUES (DEFAULT, 'odysseus', 'nobody', 'penelope'), ('black', 'jason', 'argonauts', 'golden fleece')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO voyage (hero, quest) VALUES ('perseus', 'medusa'), ('hercules', 'geryon')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO voyage VALUES ('caspian', 'hercules', 'argonauts', 'golden fleece')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO want (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO want (k,v) VALUES ('c', 'd')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO want (k,v) VALUES ('e', 'f')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO warehouse VALUES ('cups', 10), ('plates', 30), ('forks', 15)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO weird_names VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO wide(id, n) VALUES(0, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO with_no_column_refs (a, b) VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO with_no_column_refs (a, c) (SELECT 1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO with_no_column_refs (c) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO with_no_column_refs VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO with_no_column_refs VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO wxyz VALUES
+  (1, 10, 1, 1),
+  (2, 10, 2, 0),
+  (3, 10, 1, 1),
+  (4, 10, 2, 0),
+  (5, 10, 2, 1),
+  (6, 10, 2, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (a) SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (a, b) VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (a, b, c) VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (b) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (b, a, c) VALUES (1, 2, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (c) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (data) VALUES
+ ('{"id": 1, "name": "lucky"}'),
+ ('{"id": 2, "name": "rascal"}'),
+ ('{"id": 3, "name": "captain"}'),
+ ('{"id": 4, "name": "lola"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (k, a) VALUES (1, '{"q":"xyz"}'), (2, '{"q":"abc"}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x (k, a, b) VALUES (1, '{"q":"xyz"}', 'not allowed!'), (2, '{"q":"abc"}', 'also not allowed')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x SELECT generate_series(1, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES ('{"a": [1,2,3]}')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES (0),(1),(2),(3),(4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES (1, 1, 1), (2, 2, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES (3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES (6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES('1970-01-01'::date)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES('[1,2]'::vector, '[3,4]'::vector, '[5,6]'::vector)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO x VALUES(1.4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xor_bytes VALUES
+  (b'\x01\x01', 1, 3),
+  (b'\x02\x01', 1, 1),
+  (b'\x04\x01', 2, -5),
+  (b'\x08\x01', 2, -1),
+  (b'\x10\x01', 2, 0)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xx VALUES (3,3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy (x, y) SELECT a, b FROM ab ORDER BY -b LIMIT 10 RETURNING *;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy (x, y, z) VALUES (0, 0, 0), (1, 1, 1), (2, 2, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy (z, x, y) SELECT z, x, y FROM xyz WHERE x < 1;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy (z, x, y) SELECT z, x, y FROM xyz;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy (z, x, y) VALUES (0, 0, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy (z, x, y) VALUES (1, 1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (-1, 9), (-2, 8), (5, 15), (6, 16)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (0, 10), (1, 11), (2, 12), (3, 13)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 'bar');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 1), (2, 2), (3, 3), (4, 4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 1), (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 2), (3, 4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1, 2, 'foo');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (1,1), (2,2); INSERT INTO ab VALUES (2,2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (10, 10)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (100, 200);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (102, 202);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (2, 2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (2, 20), (8, 80), (4, 41), (4, 40)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (2, 200), (3, 300), (4, 400)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (2, NULL), (NULL, 6), (2, 5), (4, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (3, 3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (4, 4), (5, 5), (6, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (7, 8), (9, 10);
+DECLARE foo CURSOR FOR SELECT * FROM xy ORDER BY x DESC;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (7, 8);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy VALUES (NULL, NULL), (1, NULL), (NULL, 1), (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xy108057 VALUES (1.00, 1.00);
+INSERT INTO ab108057 VALUES (1, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyu VALUES (0, 0, 0), (1, 1, 1), (3, 1, 31), (3, 2, 32), (4, 4, 44)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyv VALUES (1, 1, 1), (2, 2, 2), (3, 1, 31), (3, 3, 33), (5, 5, 55)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz (x, y) VALUES (8, 2), (9, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz (x, y, z) VALUES (10, 11, 12)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz (x, y, z) VALUES (13, 11, 12) RETURNING (y IN (SELECT y FROM xyz))
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz SELECT * FROM abc
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES
+  (1, 1, 1, NULL),
+  (2, 1, 1, 2),
+  (3, 1, 1, 2),
+  (4, 1, 2, 1),
+  (5, 2, 2, 3),
+  (6, 4, 5, 6),
+  (7, 4, 1, 6)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES
+  (1, 1, NULL, 1, 1),
+  (1, 1, 2, 2, 2),
+  (1, 1, 2, 3, 3),
+  (1, 2, 1, 4, 4),
+  (2, 2, 3, 5, 5),
+  (4, 5, 6, 6, 6),
+  (4, 1, 6, 7, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES
+  (1, 2, 3),
+  (2, 5, 6),
+  (3, 2, 3),
+  (4, 5, 6),
+  (5, 2, 6),
+  (6, 3, 5),
+  (7, 2, 9)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES
+  (NULL, NULL, NULL),
+  (1, 1, NULL),
+  (2, 1, 'a'),
+  (3, 1, 'b'),
+  (4, 2, 'b'),
+  (5, 2, 'c')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (0, 0, 0);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (1, 1, 1), (1, 1, 2), (1, 2, 3), (2, 1, 4), (2, 1, 5), (2, 1, 6), (3, 1, 7);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (1, 1, 1), (2, 2, 2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (1, 1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (1, 10, 100), (2, 10, 200), (3, 30, 100)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (1, 2, 3), (2, 2, 7), (3, 2, 1), (4, 2, NULL), (5, 3, -1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (1, 2, 3.0, NULL), (4, 5, 6.0, 2), (7, NULL, 8.0, 3)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (1,1,1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES (111, 222, 333)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyz VALUES(5, 4, 7)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO xyzw VALUES (4, 5, 6, 7), (1, 2, 3, 4)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO y VALUES
+  ('1.0000')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO y VALUES (0),(1),(2);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO y VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO y VALUES (1, 1), (2, 1);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO y VALUES (100)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO y VALUES (5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO yy VALUES (3);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO yy VALUES (4);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO z VALUES (1, 5), (2, 4), (3, 3), (4, 2), (5, 1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO zc VALUES (1,2)
+
+-- sqlfmt-corpus-separator --
+
+INSERT into assn_cast(b) VALUES ('01')
+
+-- sqlfmt-corpus-separator --
+
+INSERT into assn_cast(b) VALUES ('1')
+
+-- sqlfmt-corpus-separator --
+
+INSERT into assn_cast(b) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT into d VALUES
+    (1, '"foo"', '[7]'),
+    (2, '"bar"', '[7, 0, 7]'),
+    (3, '"baz"', '{"a": "b"}'),
+    (4, '"foo"', '[7, 8, 9, 10]'),
+    (5, '"foo"', '[[0], [7, 8, 9, 10]]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT into d VALUES
+    (6, '"backfilling"', '[[0], [1], 2, 3]'),
+    (7, '"q"', '[[0], [1], [2], []]'),
+    (8, '"backfilling"', '[[0], [1], [2], []]')
+
+-- sqlfmt-corpus-separator --
+
+INSERT into sbt1 VALUES(1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT into test.parent values (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT into xy VALUES(1, 1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE a AS SELECT $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE a AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_db AS SELECT current_database()
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_db_2 AS SELECT * FROM othertable
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_db_3 AS SELECT * from othertable AS t1, test.othertable AS t2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_drop AS SELECT * FROM othertable WHERE b=10
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_loc AS SELECT '2000-01-01 18:05:10.123'::timestamptz
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_placeholders AS SELECT * FROM othertable WHERE a=$1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_privileges AS SELECT * FROM othertable
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_rename AS SELECT * FROM othertable
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_schema_uncommitted AS SELECT * FROM othertable
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_search_path AS SELECT * FROM othertable
+
+-- sqlfmt-corpus-separator --
+
+PREPARE change_view AS SELECT * FROM otherview
+
+-- sqlfmt-corpus-separator --
+
+PREPARE check_custom AS SELECT current_setting('my.custom', true)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE concat_stmt AS SELECT concat("foo"."a", $1::STRING) FROM foo
+
+-- sqlfmt-corpus-separator --
+
+PREPARE concat_stmt2 AS SELECT concat("foo"."a", $1) FROM foo
+
+-- sqlfmt-corpus-separator --
+
+PREPARE concat_stmt3 AS SELECT concat("foo"."a", $1) FROM foo
+
+-- sqlfmt-corpus-separator --
+
+PREPARE del AS DELETE FROM parent WHERE a = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE display_appname AS SELECT setting FROM pg_settings WHERE name = 'application_name'
+
+-- sqlfmt-corpus-separator --
+
+PREPARE enum_query AS SELECT x, y FROM greeting_table WHERE y = 2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE fail AS SELECT array_length($1, 1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE foo AS SELECT $1::INT, f144020();
+
+-- sqlfmt-corpus-separator --
+
+PREPARE forbar AS insert into bar (id) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_a AS INSERT INTO assn_cast(a) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_a2 AS INSERT INTO assn_cast(a) VALUES (ARRAY[$1])
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_a3 AS INSERT INTO assn_cast(a) VALUES (ARRAY[30.12, $1, 32.1])
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_c AS INSERT INTO assn_cast(c) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_ca AS INSERT INTO assn_cast(ca) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_d AS INSERT INTO assn_cast(d) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_d2 AS INSERT INTO assn_cast(d) SELECT * FROM (VALUES ($1::DECIMAL(10, 2)))
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_f4 AS INSERT INTO assn_cast(f4) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_i AS INSERT INTO assn_cast(i) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_i2 AS INSERT INTO assn_cast(i2) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_qc AS INSERT INTO assn_cast(qc) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_s AS INSERT INTO assn_cast(s) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE insert_vba AS INSERT INTO assn_cast(vba) VALUES ($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE jba_stmt AS SELECT json_build_array(a, $1::STRING) FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+PREPARE jbo_stmt AS SELECT json_build_object('a', a, 'b', $1::STRING) FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+PREPARE loc_dependent_operator AS
+SELECT
+  extract(EPOCH FROM TIMESTAMP WITH TIME ZONE '2010-11-06 23:59:00-05:00'),
+  extract(EPOCH FROM TIMESTAMP WITH TIME ZONE '2010-11-06 23:59:00-05:00' + INTERVAL '1 day')
+
+-- sqlfmt-corpus-separator --
+
+PREPARE new_table_in_search_path AS SELECT typname FROM pg_type
+
+-- sqlfmt-corpus-separator --
+
+PREPARE new_table_in_search_path_2 AS
+  SELECT a.typname, b.typname FROM pg_type AS a, pg_catalog.pg_type AS b ORDER BY a.typname, b.typname LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE nn_stmt AS SELECT num_nulls(42, $1::STRING, a, b),
+                          num_nulls(b, $1, 42, a),
+                          num_nulls(a, b, $1, 42),
+                          num_nulls($1, a, b, 42),
+                          num_nonnulls(42, $1, a, b),
+                          num_nonnulls(b, $1, 42, a),
+                          num_nonnulls(a, b, $1, 42),
+                          num_nonnulls($1, a, b, 42)
+                     FROM nulls_test
+
+-- sqlfmt-corpus-separator --
+
+PREPARE nn_stmt2 AS SELECT num_nulls(42, $1, a, b) FROM nulls_test
+
+-- sqlfmt-corpus-separator --
+
+PREPARE nn_stmt3 AS SELECT num_nulls(42, $1::INT, a) FROM nulls_test
+
+-- sqlfmt-corpus-separator --
+
+PREPARE nn_stmt4 AS SELECT num_nulls(42, $1, a) FROM nulls_test
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS
+SELECT * FROM (
+  SELECT id FROM t155159 WHERE a = $1 AND b >= $2
+  ORDER BY b, id
+  LIMIT 250
+)
+UNION
+SELECT * FROM (
+  SELECT id FROM t155159 WHERE a = $3 AND b >= $4
+)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS
+SELECT * FROM g
+UNION ALL
+SELECT * FROM g WHERE a IN ($1, $2) AND b > $3
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS
+SELECT * FROM g WHERE a = $1 ORDER BY b LIMIT 10
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS
+SELECT * FROM g WHERE a IN ($1, $2) AND b > $3
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS
+SELECT t.k, c.k, g.k FROM t
+JOIN c ON t.k = c.a
+JOIN g ON c.k = g.a
+WHERE t.a = $1 AND t.c = $2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS
+UPDATE t SET b = 0 WHERE a IN ($1, $2) AND b > $3
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS INSERT INTO t147186 (a) VALUES ($1);
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT $1::INT
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT 'foo'::BPCHAR = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT * FROM t WHERE a = $1 AND c = $2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT * FROM t WHERE a = 1 AND b = 2 AND c = 3
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT * FROM t WHERE k = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT * FROM t WHERE t = now()
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT * FROM xy WHERE x > y
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT * FROM xy WHERE y = $1;
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT f($1::REGCLASS::INT)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT id FROM t155159 WHERE a = $1 AND b >= $2 ORDER BY b, id LIMIT 250
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT k FROM t WHERE c = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT k FROM t WHERE s LIKE $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p AS SELECT k FROM t135151 WHERE a = $1 AND b = $2;
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p0 AS INSERT INTO abcd VALUES ($1, $2, $3, $4)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p1 AS INSERT INTO abcd VALUES ($1, $2, $3, $4)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p1 AS INSERT INTO multiple_uniq
+VALUES ($1, $1, $1, $1), ($2, $2, $2, $2)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p1 AS INSERT INTO users2 (name, email)
+VALUES ($1, $2), ($3, $4)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p158945a AS SELECT k FROM t158945 WHERE a = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p158945b AS SELECT k FROM t158945 WHERE a = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p159043 AS
+SELECT 1 FROM t159043b CROSS JOIN (SELECT min(1) FROM t159043a LIMIT $1) GROUP BY b
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p159043 AS
+SELECT 1 FROM t159043b CROSS JOIN (SELECT min(1) FROM t159043a OFFSET $1) GROUP BY b
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p159124 AS SELECT k FROM t159124 WHERE s = current_user()
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p161993 AS SELECT f161993($1)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p2 AS INSERT INTO abcd VALUES ($1, $2, $3, $4)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p3 AS INSERT INTO abcd VALUES ($1, $2, $3, $4)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p4 AS INSERT INTO abcd VALUES ($1, $2, $3, $4)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p5 AS INSERT INTO abcd VALUES ($1, $2, $3, $4)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pg_catalog_query AS SELECT * FROM pg_catalog.pg_sequence
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs01 AS SELECT $1::bool, 1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs02 AS SELECT $1::float, 2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs03 AS SELECT $1::decimal, 3
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs04 AS SELECT $1::string, 4
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs05 AS SELECT $1::json, 5
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs06 AS SELECT $1::int, 6
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs07 AS SELECT $1::date, 7
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs08 AS SELECT $1::timestamp, 8
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs09 AS SELECT $1::bool, 9
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs10 AS SELECT $1::bytes, 10
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs11 AS SELECT $1::smallint, 11
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs12 AS SELECT $1::time, 12
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs13 AS SELECT $1::bigint, 13
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs14 AS SELECT $1::int, 14
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs15 AS SELECT $1::timetz, 15
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs16 AS SELECT $1::float, 16
+
+-- sqlfmt-corpus-separator --
+
+PREPARE pscs17 AS SELECT $1::interval, 17
+
+-- sqlfmt-corpus-separator --
+
+PREPARE q64765 as SELECT * FROM t64765 WHERE x = $1 AND y = $2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE regression_56193 AS SELECT $1::regclass;
+EXECUTE regression_56193('regression_53686"'::regclass)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE regression_71394 AS SELECT ARRAY[$1]::int[];
+
+-- sqlfmt-corpus-separator --
+
+PREPARE s1 AS SELECT * FROM t1 WHERE a=$1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE s2 AS INSERT INTO regional_by_row_table (pk, pk2, a, b) VALUES ($1, $2, $3, $4);
+
+-- sqlfmt-corpus-separator --
+
+PREPARE s4 AS INSERT INTO regional_by_row_table (pk, pk2, a, b) VALUES ($1, $2, $3, $4), ($5, $6, $7, $8);
+
+-- sqlfmt-corpus-separator --
+
+PREPARE s73450_a AS SELECT $1::INT2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE s73450_b AS SELECT $1::CHAR
+
+-- sqlfmt-corpus-separator --
+
+PREPARE s73450_c AS SELECT * FROM t73450 WHERE c = $1::CHAR
+
+-- sqlfmt-corpus-separator --
+
+PREPARE s_114867 AS INSERT INTO test_114867(colors) VALUES (ARRAY[$1::text]::color[]);
+EXECUTE s_114867('red')
+
+-- sqlfmt-corpus-separator --
+
+PREPARE selectin AS SELECT 1 in ($1, $2)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE selectin2 AS SELECT $1::int in ($2, $3)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE seqsel AS SELECT * FROM seq
+
+-- sqlfmt-corpus-separator --
+
+PREPARE showOwners AS
+  WITH db_id AS (
+                SELECT id
+                  FROM system.namespace
+                 WHERE "parentID" = 0
+                   AND "parentSchemaID" = 0
+                   AND name = $1
+             ),
+       entities AS (
+                    SELECT ns.id
+                      FROM system.namespace AS ns
+                      JOIN db_id ON (ns."parentID" = db_id.id)
+                ),
+      descs AS (
+         SELECT crdb_internal.pb_to_json('cockroach.sql.sqlbase.Descriptor', descriptor) AS jdesc
+           FROM system.descriptor AS sd
+           JOIN entities ON (entities.id = sd.id)
+      )
+SELECT jdesc->'schema'->>'name' AS schema, jdesc->'schema'->'privileges'->>'ownerProto' AS owner,
+       jdesc->'type'->>'name' AS type, jdesc->'type'->'privileges'->>'ownerProto' AS owner,
+       jdesc->'table'->>'name' AS object, jdesc->'table'->'privileges'->>'ownerProto' AS owner
+       FROM descs
+ORDER BY 1,2,3,4,5,6
+
+-- sqlfmt-corpus-separator --
+
+PREPARE subqueryprep AS SELECT * FROM abc WHERE EXISTS(SELECT * FROM xyz WHERE y IN ($1 + 1))
+
+-- sqlfmt-corpus-separator --
+
+PREPARE test_select_statement AS SELECT * FROM types
+
+-- sqlfmt-corpus-separator --
+
+PREPARE tview_prep AS SELECT * FROM tview
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_a AS UPDATE assn_cast SET a = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_a2 AS UPDATE assn_cast SET a = ARRAY[$1]
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_a3 AS UPDATE assn_cast SET a = ARRAY[30.12, $1, 32.1]
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_c AS UPDATE assn_cast SET c = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_d AS UPDATE assn_cast SET d = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_d2 AS UPDATE assn_cast SET d = (SELECT * FROM (VALUES ($1::DECIMAL(10, 2))))
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_i AS UPDATE assn_cast SET i = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_i2 AS UPDATE assn_cast SET i2 = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_privileges AS UPDATE othertable SET b=$1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE update_qc AS UPDATE assn_cast SET qc = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE x AS INSERT INTO foo VALUES ($1 COLLATE en_u_ks_level2) RETURNING a
+
+-- sqlfmt-corpus-separator --
+
+PREPARE x AS INSERT INTO kv VALUES ($1, $2) RETURNING NOTHING
+
+-- sqlfmt-corpus-separator --
+
+PREPARE x AS SELECT $1 = (1,2) AS r FROM tb
+
+-- sqlfmt-corpus-separator --
+
+PREPARE x19597 AS SELECT $1 IN ($2, null);
+
+-- sqlfmt-corpus-separator --
+
+PREPARE x21701a AS SELECT * FROM kv WHERE k = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE x21701b AS SELECT * FROM kv WHERE k IS DISTINCT FROM $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE x21701c AS SELECT * FROM kv WHERE k IS NOT DISTINCT FROM $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE y AS SELECT (1,2) = $1 AS r FROM tb
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY fake_old_role TO new_role
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY old_role TO fake_new_role
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY old_role TO new_role
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY old_role TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY old_role, testuser TO new_role
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY root TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY testuser TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY testuser TO testuser2;
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY testuser TO v
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY testuser, old_role TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY testuser, root TO testuser2
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY testuser2 TO root
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY u TO root
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY u TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REASSIGN OWNED BY u_test_owner TO root;
+
+-- sqlfmt-corpus-separator --
+
+RESET ALL
+
+-- sqlfmt-corpus-separator --
+
+RESET DATABASE;
+
+-- sqlfmt-corpus-separator --
+
+RESET DEFAULT_TRANSACTION_ISOLATION
+
+-- sqlfmt-corpus-separator --
+
+RESET DEFAULT_TRANSACTION_PRIORITY
+
+-- sqlfmt-corpus-separator --
+
+RESET FOO
+
+-- sqlfmt-corpus-separator --
+
+RESET ROLE
+
+-- sqlfmt-corpus-separator --
+
+RESET ROLE;
+
+-- sqlfmt-corpus-separator --
+
+RESET ROLE;
+DROP ROLE child_role
+
+-- sqlfmt-corpus-separator --
+
+RESET ROLE;
+DROP USER db_admin_role
+
+-- sqlfmt-corpus-separator --
+
+RESET ROLE;
+RESET DATABASE
+
+-- sqlfmt-corpus-separator --
+
+RESET SEARCH_PATH
+
+-- sqlfmt-corpus-separator --
+
+RESET SERVER_VERSION
+
+-- sqlfmt-corpus-separator --
+
+RESET SERVER_VERSION_NUM
+
+-- sqlfmt-corpus-separator --
+
+RESET application_name
+
+-- sqlfmt-corpus-separator --
+
+RESET autocommit_before_ddl
+
+-- sqlfmt-corpus-separator --
+
+RESET autocommit_before_ddl;
+
+-- sqlfmt-corpus-separator --
+
+RESET bytea_output
+
+-- sqlfmt-corpus-separator --
+
+RESET client_encoding; RESET NAMES
+
+-- sqlfmt-corpus-separator --
+
+RESET client_min_messages;
+
+-- sqlfmt-corpus-separator --
+
+RESET close_cursors_at_commit;
+
+-- sqlfmt-corpus-separator --
+
+RESET close_cursors_at_commit;
+CLOSE ALL;
+
+-- sqlfmt-corpus-separator --
+
+RESET create_table_with_schema_locked
+
+-- sqlfmt-corpus-separator --
+
+RESET create_table_with_schema_locked;
+
+-- sqlfmt-corpus-separator --
+
+RESET database
+
+-- sqlfmt-corpus-separator --
+
+RESET default_int_size
+
+-- sqlfmt-corpus-separator --
+
+RESET default_text_search_config
+
+-- sqlfmt-corpus-separator --
+
+RESET default_transaction_isolation
+
+-- sqlfmt-corpus-separator --
+
+RESET default_transaction_quality_of_service
+
+-- sqlfmt-corpus-separator --
+
+RESET direct_columnar_scans_enabled
+
+-- sqlfmt-corpus-separator --
+
+RESET distsql
+
+-- sqlfmt-corpus-separator --
+
+RESET distsql_workmem
+
+-- sqlfmt-corpus-separator --
+
+RESET distsql_workmem;
+
+-- sqlfmt-corpus-separator --
+
+RESET enable_create_stats_using_extremes
+
+-- sqlfmt-corpus-separator --
+
+RESET enable_create_stats_using_extremes_bool_enum
+
+-- sqlfmt-corpus-separator --
+
+RESET enable_durable_locking_for_serializable
+
+-- sqlfmt-corpus-separator --
+
+RESET enable_implicit_fk_locking_for_serializable;
+RESET enable_shared_locking_for_serializable;
+RESET enable_durable_locking_for_serializable
+
+-- sqlfmt-corpus-separator --
+
+RESET enable_insert_fast_path
+
+-- sqlfmt-corpus-separator --
+
+RESET enable_multiple_modifications_of_table
+
+-- sqlfmt-corpus-separator --
+
+RESET enable_zigzag_join
+
+-- sqlfmt-corpus-separator --
+
+RESET enforce_home_region
+
+-- sqlfmt-corpus-separator --
+
+RESET experimental_distsql_planning;
+
+-- sqlfmt-corpus-separator --
+
+RESET experimental_distsql_planning;
+INSERT INTO kv VALUES (4, NULL), (5, 3);
+SET experimental_distsql_planning = always
+
+-- sqlfmt-corpus-separator --
+
+RESET experimental_enable_unique_without_index_constraints
+
+-- sqlfmt-corpus-separator --
+
+RESET experimental_hash_group_join_enabled
+
+-- sqlfmt-corpus-separator --
+
+RESET extra_float_digits
+
+-- sqlfmt-corpus-separator --
+
+RESET force_savepoint_restart
+
+-- sqlfmt-corpus-separator --
+
+RESET foreign_key_cascades_limit
+
+-- sqlfmt-corpus-separator --
+
+RESET kv_transaction_buffered_writes_enabled
+
+-- sqlfmt-corpus-separator --
+
+RESET kv_transaction_buffered_writes_enabled;
+
+-- sqlfmt-corpus-separator --
+
+RESET locality_optimized_partitioned_index_scan
+
+-- sqlfmt-corpus-separator --
+
+RESET lock_timeout;
+RESET enable_implicit_fk_locking_for_serializable;
+RESET enable_shared_locking_for_serializable;
+RESET enable_durable_locking_for_serializable
+
+-- sqlfmt-corpus-separator --
+
+RESET null_ordered_last
+
+-- sqlfmt-corpus-separator --
+
+RESET opt_split_scan_limit
+
+-- sqlfmt-corpus-separator --
+
+RESET optimizer_span_limit
+
+-- sqlfmt-corpus-separator --
+
+RESET optimizer_use_lock_op_for_serializable
+
+-- sqlfmt-corpus-separator --
+
+RESET parallelize_multi_key_lookup_joins_avg_lookup_ratio;
+
+-- sqlfmt-corpus-separator --
+
+RESET pg_dump_compatibility
+
+-- sqlfmt-corpus-separator --
+
+RESET plan_cache_mode
+
+-- sqlfmt-corpus-separator --
+
+RESET plpgsql_use_strict_into;
+
+-- sqlfmt-corpus-separator --
+
+RESET prepared_statements_cache_size
+
+-- sqlfmt-corpus-separator --
+
+RESET propagate_input_ordering
+
+-- sqlfmt-corpus-separator --
+
+RESET recursion_depth_limit;
+
+-- sqlfmt-corpus-separator --
+
+RESET role
+
+-- sqlfmt-corpus-separator --
+
+RESET row_security;
+
+-- sqlfmt-corpus-separator --
+
+RESET search_path
+
+-- sqlfmt-corpus-separator --
+
+RESET search_path;
+
+-- sqlfmt-corpus-separator --
+
+RESET serial_normalization;
+RESET default_int_size;
+
+-- sqlfmt-corpus-separator --
+
+RESET statement_timeout
+
+-- sqlfmt-corpus-separator --
+
+RESET statement_timeout;
+
+-- sqlfmt-corpus-separator --
+
+RESET tcp_keepalives_count
+
+-- sqlfmt-corpus-separator --
+
+RESET tcp_keepalives_idle
+
+-- sqlfmt-corpus-separator --
+
+RESET tcp_keepalives_interval
+
+-- sqlfmt-corpus-separator --
+
+RESET tcp_user_timeout
+
+-- sqlfmt-corpus-separator --
+
+RESET testing_optimizer_disable_rule_probability
+
+-- sqlfmt-corpus-separator --
+
+RESET testing_optimizer_disable_rule_probability;
+
+-- sqlfmt-corpus-separator --
+
+RESET testing_optimizer_random_seed;
+RESET testing_optimizer_disable_rule_probability;
+
+-- sqlfmt-corpus-separator --
+
+RESET testing_optimizer_random_seed;
+RESET testing_optimizer_disable_rule_probability;
+RESET vectorize;
+RESET distsql_workmem;
+
+-- sqlfmt-corpus-separator --
+
+RESET timezone; SHOW TIMEZONE
+
+-- sqlfmt-corpus-separator --
+
+RESET transaction_rows_read_err
+
+-- sqlfmt-corpus-separator --
+
+RESET unsafe_allow_triggers_modifying_cascades;
+
+-- sqlfmt-corpus-separator --
+
+RESET use_declarative_schema_changer;
+
+-- sqlfmt-corpus-separator --
+
+RESET use_improved_routine_dependency_tracking;
+RESET use_improved_routine_deps_triggers_and_computed_cols;
+
+-- sqlfmt-corpus-separator --
+
+RESET use_pre_25_2_variadic_builtins
+
+-- sqlfmt-corpus-separator --
+
+RESET use_swap_mutations
+
+-- sqlfmt-corpus-separator --
+
+RESET variable_inequality_lookup_join_enabled
+
+-- sqlfmt-corpus-separator --
+
+RESET vectorize
+
+-- sqlfmt-corpus-separator --
+
+RESET vectorize;
+
+-- sqlfmt-corpus-separator --
+
+RESET vectorize;
+CREATE TABLE t38626 (id int PRIMARY KEY, name STRING, CONSTRAINT abc CHECK (name > 'he'));
+INSERT INTO t38626 VALUES (1, 'hello');
+
+-- sqlfmt-corpus-separator --
+
+RESET vectorize;
+CREATE TABLE t_42816 (a int); INSERT INTO t_42816 SELECT * FROM generate_series(0, 1025);
+SET vectorize = experimental_always
+
+-- sqlfmt-corpus-separator --
+
+RESET vectorize;
+RESET distsql_workmem;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ADMIN FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON ALL TABLES IN SCHEMA s, s2 FROM testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON DATABASE a FROM readwrite,"test-user"
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON DATABASE db2 FROM newgroup
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON DATABASE test FROM public;
+REVOKE ALL ON DATABASE test FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON DATABASE test FROM testuser;
+REVOKE ALL ON SCHEMA d.s FROM testuser;
+REVOKE ALL ON TYPE d.typ FROM testuser;
+REVOKE ALL ON TABLE d.s.t FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON DATABASE test FROM testuser;
+REVOKE ALL ON TABLE d.t FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON TABLE secret_data FROM owner;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON TABLE t FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON TABLE t FROM testuser;
+ALTER TABLE t OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON TABLE t2 FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON base_t FROM invoker_user;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON db2.foo FROM newgroup
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON maintain_analyze_t FROM testuser;
+DROP TABLE maintain_analyze_t
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON maintain_mv FROM testuser;
+REVOKE ALL ON maintain_t FROM testuser;
+DROP MATERIALIZED VIEW maintain_mv;
+DROP TABLE maintain_t
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON othertable FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON publicdb.publictable FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON s FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON t FROM bar
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON t FROM readwrite,"test-user"
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON t FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON t FROM testuser;
+ALTER TABLE t OWNER TO testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON testdb2.xy FROM testuser2;
+REVOKE ALL ON testdb2.ab FROM testuser2;
+DROP USER testuser2;
+DROP DATABASE testdb1 CASCADE;
+DROP DATABASE testdb2 CASCADE;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON v FROM readwrite,"test-user"
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL ON v FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL PRIVILEGES ON DATABASE a FROM "test-user"
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL PRIVILEGES ON DATABASE d FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL PRIVILEGES ON TABLE t FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL PRIVILEGES ON TABLE t FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL PRIVILEGES ON TABLE t1 FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE ALL on base_t FROM invoker_user
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON DATABASE a FROM "test-user"
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON DATABASE alter_mr_db FROM testuser;
+GRANT root TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON DATABASE auth FROM testuser;
+REVOKE CREATE ON TABLE auth.t FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON DATABASE dbt FROM u,v
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON DATABASE system FROM admin
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON DATABASE system FROM root
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON DATABASE test FROM testuser, testuser2;
+DROP ROLE testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA privs FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA privs, otherdb.privs, otherdb2.privs FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA public FROM bob, alice;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA public FROM mv_alice, mv_bob;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA public FROM mv_forcedowner;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA public FROM mv_tblowner;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA public FROM rls_view_owner;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA sc FROM u,v
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON SCHEMA temp_priv_db.public FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON TABLE alter_db.t FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON TABLE db.t FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON TABLE db.t FROM testuser;
+ALTER TABLE db.t OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON pg_catalog.pg_tables FROM root
+
+-- sqlfmt-corpus-separator --
+
+REVOKE CREATE ON repartition_privs.rbr FROM testuser;
+GRANT root TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE DELETE ON TABLE t FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE INSERT ON TABLE t FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE INSERT ON t FROM bar
+
+-- sqlfmt-corpus-separator --
+
+REVOKE INSERT,DELETE ON t FROM "test-user",readwrite
+
+-- sqlfmt-corpus-separator --
+
+REVOKE INSERT,DELETE ON v FROM "test-user",readwrite
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON ALL TABLES IN SCHEMA s, s2 FROM testuser, testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON TABLE crdb_internal.tables FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON TABLE decode_key_priv_test FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON TABLE t FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON TABLE tbl_owned_by_parent FROM other
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON TABLE tbl_owned_by_parent FROM parent
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON TABLE tbl_owned_by_root FROM other
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON TABLE top_secret_data FROM owner;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON base_t FROM view_owner;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON crdb_internal.feature_usage FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON crdb_internal.tables FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON foo FROM user3;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON othertable FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON t FROM "test-user"
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON t FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON t1 FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON t_nv1 FROM nvo1
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON t_nv1 FROM nvo1;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON t_vop FROM view_owner
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON t_vop FROM view_owner2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON testowner_table FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON v FROM "test-user"
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON v1 FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT ON xy FROM bob;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE SELECT, INSERT, DELETE, UPDATE ON t FROM test_user;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE UPDATE ON TABLE a FROM u,v
+
+-- sqlfmt-corpus-separator --
+
+REVOKE UPDATE ON othertable FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE USAGE ON SCHEMA acl_test_schema FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE USAGE ON SCHEMA s FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE USAGE ON TYPE _myenum FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE USAGE ON TYPE _myenum FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE USAGE ON TYPE acl_test_type FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE USAGE ON TYPE myenum FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE USAGE ON TYPE test FROM public;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM buck;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM grantor;
+REVOKE transitiveadmin FROM child2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM newgroup
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM public
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM root
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM testuser;
+GRANT ALL ON DATABASE d to testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE admin FROM user1
+
+-- sqlfmt-corpus-separator --
+
+REVOKE child_role FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE child_role FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE db_owner_role FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE jobcontroller FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE jobviewer FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE my_role FROM testuser;
+REVOKE testuser FROM testuser2
+
+-- sqlfmt-corpus-separator --
+
+REVOKE newgroup FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE parent1 FROM child1;
+RESET ROLE
+
+-- sqlfmt-corpus-separator --
+
+REVOKE parent2 FROM child2;
+RESET ROLE
+
+-- sqlfmt-corpus-separator --
+
+REVOKE parent_role FROM child_role
+
+-- sqlfmt-corpus-separator --
+
+REVOKE public FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE roleA, roleB FROM TestUser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE role_foo FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE rolea, roleb FROM testuser, root
+
+-- sqlfmt-corpus-separator --
+
+REVOKE roleb FROM root
+
+-- sqlfmt-corpus-separator --
+
+REVOKE root FROM testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE root FROM testuser;
+
+-- sqlfmt-corpus-separator --
+
+REVOKE root FROM testuser;
+ALTER DATABASE alter_mr_db OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE root FROM testuser;
+ALTER TABLE repartition_privs.rbr OWNER TO testuser
+
+-- sqlfmt-corpus-separator --
+
+REVOKE testuser FROM public
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK AND CHAIN
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK TRANSACTION
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK WORK AND CHAIN
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK;
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK;
+BEGIN
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK;
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DECLARE foo CURSOR FOR SELECT 1;
+CLOSE foo
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK;
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+DECLARE foo CURSOR FOR SELECT 1;
+FETCH foo
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK;
+BEGIN;
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM a ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK;
+BEGIN;
+DECLARE foo CURSOR FOR SELECT * FROM doesntexist
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK; BEGIN
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK; DROP TABLE table_with_not_null_enum_no_vals; DROP TYPE enum_with_no_vals;
+
+-- sqlfmt-corpus-separator --
+
 SELECT
     c_id,
     EXISTS(SELECT * FROM o WHERE o.c_id=c.c_id)
@@ -2057,6 +41993,14 @@ SELECT * FROM kv3
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM kv;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM kv; COMMIT; BEGIN; UPDATE kv SET v = 'd' WHERE k in ('a')
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM kv; UPDATE kv SET v = 'c' WHERE k in ('a'); COMMIT
 
 -- sqlfmt-corpus-separator --
 
@@ -4236,6 +44180,10 @@ SELECT * from kv4
 
 -- sqlfmt-corpus-separator --
 
+SELECT * from kv; ROLLBACK
+
+-- sqlfmt-corpus-separator --
+
 SELECT * from mv2
 
 -- sqlfmt-corpus-separator --
@@ -4413,6 +44361,10 @@ SELECT 123, '123', 123.0, TRUE, FALSE, NULL
 -- sqlfmt-corpus-separator --
 
 SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1; DECLARE foo CURSOR FOR SELECT * FROM a
 
 -- sqlfmt-corpus-separator --
 
@@ -9064,6 +49016,5946 @@ SELECT ~2;
 
 -- sqlfmt-corpus-separator --
 
+SET "TIMEZONE" = 'UTC'
+
+-- sqlfmt-corpus-separator --
+
+SET "timezone" = 'UTC'
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = "b"
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = ''
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = ''; SELECT table_name FROM information_schema.tables WHERE table_catalog = 'other_db' AND table_schema = 'public'
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = 'constraint_db'
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = 'test'
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = a
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = bar
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = constraint_column
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = constraint_db
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = d1
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = d2
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = d3
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = d45707
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = db2;
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = db_50712
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = eventlogtest
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = other_db
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = other_db; SELECT table_name FROM information_schema.tables WHERE table_catalog = 'other_db' AND table_schema = 'public'
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = otherdb
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = relkinds
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = rowtest
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = sequence_test
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = system
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = t1
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = t2
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = test
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = test2
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = test;
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = test; SELECT table_name FROM information_schema.tables WHERE table_schema = 'other_db'
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = test_identity
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = thirddb
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = u
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE = view_test
+
+-- sqlfmt-corpus-separator --
+
+SET DATABASE=a
+
+-- sqlfmt-corpus-separator --
+
+SET DATESTYLE = ISO;
+  SET INTERVALSTYLE = POSTGRES;
+  SET extra_float_digits TO 3;
+  SET synchronize_seqscans TO off;
+  SET statement_timeout = 0;
+  SET lock_timeout = 0;
+  SET idle_in_transaction_session_timeout = 0;
+  SET row_security = off;
+
+-- sqlfmt-corpus-separator --
+
+SET DEFAULT_TRANSACTION_ISOLATION TO 'REPEATABLE READ'
+
+-- sqlfmt-corpus-separator --
+
+SET DEFAULT_TRANSACTION_PRIORITY TO 'HIGH'
+
+-- sqlfmt-corpus-separator --
+
+SET DEFAULT_TRANSACTION_PRIORITY TO 'LOW'
+
+-- sqlfmt-corpus-separator --
+
+SET DEFAULT_TRANSACTION_PRIORITY TO 'NORMAL'
+
+-- sqlfmt-corpus-separator --
+
+SET DEFAULT_TRANSACTION_USE_FOLLOWER_READS TO FALSE
+
+-- sqlfmt-corpus-separator --
+
+SET DEFAULT_TRANSACTION_USE_FOLLOWER_READS TO TRUE
+
+-- sqlfmt-corpus-separator --
+
+SET DISTSQL = OFF
+
+-- sqlfmt-corpus-separator --
+
+SET DISTSQL = ON
+
+-- sqlfmt-corpus-separator --
+
+SET LC_COLLATE = 'C.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_CTYPE = 'C.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_MESSAGES = 'C.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_MESSAGES = 'en_US.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_MONETARY = 'C.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_MONETARY = 'en_US.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_NUMERIC = 'C.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_NUMERIC = 'en_US.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_TIME = 'C.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LC_TIME = 'en_US.UTF-8'
+
+-- sqlfmt-corpus-separator --
+
+SET LOCAL IntervalStyle = 'postgres'
+
+-- sqlfmt-corpus-separator --
+
+SET LOCAL TIME ZONE 'America/New_York';
+SET IntervalStyle = 'postgres'
+
+-- sqlfmt-corpus-separator --
+
+SET LOCAL autocommit_before_ddl = false;
+
+-- sqlfmt-corpus-separator --
+
+SET LOCAL autocommit_before_ddl=off;
+
+-- sqlfmt-corpus-separator --
+
+SET LOCAL default_transaction_quality_of_service=background
+
+-- sqlfmt-corpus-separator --
+
+SET LOCAL tracing = 'off'
+
+-- sqlfmt-corpus-separator --
+
+SET ROLE = 'NoNe'
+
+-- sqlfmt-corpus-separator --
+
+SET ROLE = 'testuser'
+
+-- sqlfmt-corpus-separator --
+
+SET ROLE = root
+
+-- sqlfmt-corpus-separator --
+
+SET SCHEMA public
+
+-- sqlfmt-corpus-separator --
+
+SET SCHEMA test_schema
+
+-- sqlfmt-corpus-separator --
+
+SET SEARCH_PATH = foo
+
+-- sqlfmt-corpus-separator --
+
+SET SEARCH_PATH = public, pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL REPEATABLE READ
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION CHARACTERISTICS AS TRANSACTION READ WRITE
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION row_security = 'off';
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION sql_safe_updates=false;
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION tracing=1
+
+-- sqlfmt-corpus-separator --
+
+SET SESSION tracing=false
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '     +10'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '     -10'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE ''
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '+10'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '+10.5'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '+10.555'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '+1:00'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '-00:10:15'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '-0500'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '-10'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '-10.5'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '-10.555'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '-168'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '0500'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '10'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE '168'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'Africa/Nairobi'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'America/Chicago'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'America/New_York'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'Asia/Tokyo'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'DEFAULT'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'EST'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'EST';
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'Europe/Amsterdam'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'Europe/Amsterdam'; SHOW TIME ZONE
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'Europe/Berlin'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'Europe/Rome'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'GMT+1'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'GMT+3'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'GMT-3'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'PST8PDT'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'UTC'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'UTC+3'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'UTC-3'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'foobar'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 'zulu'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE -10
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE -2
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE -3
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE -4
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE -5
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE -7
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE -7.5
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 0
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 10
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE 48
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE DEFAULT
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE INTERVAL '+04:00' HOUR TO MINUTE
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE INTERVAL '-04:00' MINUTE TO SECOND
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE INTERVAL '-7h'
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE LOCAL
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE UTC
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE default
+
+-- sqlfmt-corpus-separator --
+
+SET TIME ZONE local
+
+-- sqlfmt-corpus-separator --
+
+SET TIMEZONE TO INTERVAL '+05:00' HOUR TO MINUTE
+
+-- sqlfmt-corpus-separator --
+
+SET TIMEZONE TO INTERVAL '-05:00' MINUTE TO SECOND
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = "off"
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = "off";
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = "on"
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = "on", cluster;
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = "on", kv, results;
+SELECT * FROM t1 WHERE a=2;
+SET TRACING = off
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = ON;
+SELECT * FROM NumToStr WHERE y >= 3999 LIMIT 2;
+SET TRACING = OFF;
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = ON; SELECT 1; SET TRACING = OFF
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = off
+
+-- sqlfmt-corpus-separator --
+
+SET TRACING = on
+
+-- sqlfmt-corpus-separator --
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+
+-- sqlfmt-corpus-separator --
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+-- sqlfmt-corpus-separator --
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+
+-- sqlfmt-corpus-separator --
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+-- sqlfmt-corpus-separator --
+
+SET TRANSACTION READ ONLY
+
+-- sqlfmt-corpus-separator --
+
+SET TRANSACTION READ ONLY, READ WRITE
+
+-- sqlfmt-corpus-separator --
+
+SET TRANSACTION READ WRITE
+
+-- sqlfmt-corpus-separator --
+
+SET allow_ordinal_column_references=true
+
+-- sqlfmt-corpus-separator --
+
+SET allow_prepare_as_opt_plan = ON
+
+-- sqlfmt-corpus-separator --
+
+SET allow_view_with_security_invoker_clause = on;
+
+-- sqlfmt-corpus-separator --
+
+SET alter_primary_region_super_region_override = 'on'
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = "test_txn_statistics"
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = ''
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = '';
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = 'foo'; SHOW application_name
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = 'hello'
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = 'implicit_txn_test'
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = 'test_max_retry'
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = 'valuetest'
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = ap35145
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = hello
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = hello;
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = helloworld
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = multi_stmts_test;
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = test; SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = throttle_test
+
+-- sqlfmt-corpus-separator --
+
+SET application_name = world
+
+-- sqlfmt-corpus-separator --
+
+SET application_name TO '🥭db'
+
+-- sqlfmt-corpus-separator --
+
+SET authentication_method = 'password'
+
+-- sqlfmt-corpus-separator --
+
+SET autocommit_before_ddl = false
+
+-- sqlfmt-corpus-separator --
+
+SET autocommit_before_ddl = false;
+
+-- sqlfmt-corpus-separator --
+
+SET autocommit_before_ddl = true
+
+-- sqlfmt-corpus-separator --
+
+SET autocommit_before_ddl = true;
+
+-- sqlfmt-corpus-separator --
+
+SET autocommit_before_ddl=off;
+
+-- sqlfmt-corpus-separator --
+
+SET autocommit_before_ddl=on;
+
+-- sqlfmt-corpus-separator --
+
+SET avoid_buffering = true;
+
+-- sqlfmt-corpus-separator --
+
+SET backslash_quote = '123';
+
+-- sqlfmt-corpus-separator --
+
+SET backslash_quote = 'off';
+
+-- sqlfmt-corpus-separator --
+
+SET backslash_quote = 'on';
+
+-- sqlfmt-corpus-separator --
+
+SET backslash_quote = 'safe_encoding';
+
+-- sqlfmt-corpus-separator --
+
+SET buffered_writes_implicit_txns_enabled=true
+
+-- sqlfmt-corpus-separator --
+
+SET bytea_output = 'escape'
+
+-- sqlfmt-corpus-separator --
+
+SET bytea_output = bogus
+
+-- sqlfmt-corpus-separator --
+
+SET bytea_output = escape
+
+-- sqlfmt-corpus-separator --
+
+SET bytea_output = hex
+
+-- sqlfmt-corpus-separator --
+
+SET check_function_bodies = false
+
+-- sqlfmt-corpus-separator --
+
+SET check_function_bodies = true
+
+-- sqlfmt-corpus-separator --
+
+SET client_encoding = 'UT! '' @#!$%%F------!@!!!8 ''   '
+
+-- sqlfmt-corpus-separator --
+
+SET client_encoding = 'UTF8'
+
+-- sqlfmt-corpus-separator --
+
+SET client_encoding = 'other'
+
+-- sqlfmt-corpus-separator --
+
+SET client_encoding = 'unicode'
+
+-- sqlfmt-corpus-separator --
+
+SET client_min_messages = 'WARNING';
+
+-- sqlfmt-corpus-separator --
+
+SET client_min_messages = 'debug1'
+
+-- sqlfmt-corpus-separator --
+
+SET client_min_messages = 'debug1';
+
+-- sqlfmt-corpus-separator --
+
+SET close_cursors_at_commit = false;
+
+-- sqlfmt-corpus-separator --
+
+SET copy_num_retries_per_batch = 5;
+
+-- sqlfmt-corpus-separator --
+
+SET create_table_with_schema_locked = 'false'
+
+-- sqlfmt-corpus-separator --
+
+SET create_table_with_schema_locked = 'off';
+
+-- sqlfmt-corpus-separator --
+
+SET create_table_with_schema_locked = 'true'
+
+-- sqlfmt-corpus-separator --
+
+SET create_table_with_schema_locked = false;
+
+-- sqlfmt-corpus-separator --
+
+SET create_table_with_schema_locked=false
+
+-- sqlfmt-corpus-separator --
+
+SET database = ''
+
+-- sqlfmt-corpus-separator --
+
+SET database = ''; SELECT * FROM pg_type
+
+-- sqlfmt-corpus-separator --
+
+SET database = 'test'
+
+-- sqlfmt-corpus-separator --
+
+SET database = constraint_db
+
+-- sqlfmt-corpus-separator --
+
+SET database = foo
+
+-- sqlfmt-corpus-separator --
+
+SET database = foo; CREATE TABLE bar (k INT PRIMARY KEY)
+
+-- sqlfmt-corpus-separator --
+
+SET database = multi_region_test_db
+
+-- sqlfmt-corpus-separator --
+
+SET database = newdb;
+
+-- sqlfmt-corpus-separator --
+
+SET database = public
+
+-- sqlfmt-corpus-separator --
+
+SET database = test
+
+-- sqlfmt-corpus-separator --
+
+SET database = test; SET search_path = pg_catalog,public; SELECT typname FROM pg_type WHERE typname = 'date'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'DMY,   ISo'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'ISO'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'ISO, MDY'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'german'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'mdy, iso'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'other'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'postgres'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'sql'
+
+-- sqlfmt-corpus-separator --
+
+SET datestyle = 'ymd'
+
+-- sqlfmt-corpus-separator --
+
+SET deadlock_timeout = '1ms'
+
+-- sqlfmt-corpus-separator --
+
+SET deadlock_timeout = 0
+
+-- sqlfmt-corpus-separator --
+
+SET declare_cursor_statement_timeout_enabled = false;
+BEGIN;
+SET statement_timeout = '1s';
+DECLARE a CURSOR FOR SELECT * FROM ( VALUES (1), (2) ) t(id);
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=2
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=4
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=4;
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=4; SET serial_normalization='rowid';
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=4; SET serial_normalization='sql_sequence';
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=4; SET serial_normalization='virtual_sequence';
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=8
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=8;
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=8; SET serial_normalization='rowid';
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=8; SET serial_normalization='sql_sequence';
+
+-- sqlfmt-corpus-separator --
+
+SET default_int_size=8; SET serial_normalization='virtual_sequence';
+
+-- sqlfmt-corpus-separator --
+
+SET default_table_access_method = 'heap'
+
+-- sqlfmt-corpus-separator --
+
+SET default_table_access_method = 'not-heap'
+
+-- sqlfmt-corpus-separator --
+
+SET default_tablespace = ''
+
+-- sqlfmt-corpus-separator --
+
+SET default_tablespace = 'bleepis'
+
+-- sqlfmt-corpus-separator --
+
+SET default_text_search_config = 'blah'
+
+-- sqlfmt-corpus-separator --
+
+SET default_text_search_config = 'spanish'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = '$old_default_transaction_isolation'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'READ COMMITTED'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'SERIALIZABLE'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'read committed'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'read committed';
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'read uncommitted'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'repeatable read'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'repeatable read';
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'serializable'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'serializable';
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_isolation = 'snapshot'
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_quality_of_service=background
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_quality_of_service=critical
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_quality_of_service=ttl_low
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_read_only = false
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_read_only = on
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_read_only = true
+
+-- sqlfmt-corpus-separator --
+
+SET default_transaction_use_follower_reads = on
+
+-- sqlfmt-corpus-separator --
+
+SET default_with_oids = 'false'
+
+-- sqlfmt-corpus-separator --
+
+SET default_with_oids = 'true'
+
+-- sqlfmt-corpus-separator --
+
+SET descriptor_validation = off
+
+-- sqlfmt-corpus-separator --
+
+SET descriptor_validation = on
+
+-- sqlfmt-corpus-separator --
+
+SET direct_columnar_scans_enabled = false
+
+-- sqlfmt-corpus-separator --
+
+SET direct_columnar_scans_enabled = true
+
+-- sqlfmt-corpus-separator --
+
+SET disable_changefeed_replication TO true
+
+-- sqlfmt-corpus-separator --
+
+SET disable_optimizer_rules = PruneWindowOutputCols;
+
+-- sqlfmt-corpus-separator --
+
+SET disable_plan_gists = 'false'
+
+-- sqlfmt-corpus-separator --
+
+SET disable_plan_gists = 'true'
+
+-- sqlfmt-corpus-separator --
+
+SET disallow_full_table_scans = false;
+
+-- sqlfmt-corpus-separator --
+
+SET disallow_full_table_scans = false;
+RESET large_full_scan_rows;
+
+-- sqlfmt-corpus-separator --
+
+SET disallow_full_table_scans = true;
+
+-- sqlfmt-corpus-separator --
+
+SET distsql = always
+
+-- sqlfmt-corpus-separator --
+
+SET distsql = bogus
+
+-- sqlfmt-corpus-separator --
+
+SET distsql = off
+
+-- sqlfmt-corpus-separator --
+
+SET distsql = on
+
+-- sqlfmt-corpus-separator --
+
+SET distsql TO DEFAULT
+
+-- sqlfmt-corpus-separator --
+
+SET distsql TO ON
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = '100KiB';
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = '2B'
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = '2B';
+SET vectorize = off;
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = '64MiB'
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = '64MiB';
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = '8MiB';
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = -1
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = 1
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem = 1048576
+
+-- sqlfmt-corpus-separator --
+
+SET distsql_workmem='200KB'
+
+-- sqlfmt-corpus-separator --
+
+SET enable_auto_rehoming = bogus
+
+-- sqlfmt-corpus-separator --
+
+SET enable_auto_rehoming = on
+
+-- sqlfmt-corpus-separator --
+
+SET enable_auto_rehoming = true;
+
+-- sqlfmt-corpus-separator --
+
+SET enable_create_stats_using_extremes = off
+
+-- sqlfmt-corpus-separator --
+
+SET enable_create_stats_using_extremes = true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_create_stats_using_extremes_bool_enum = on
+
+-- sqlfmt-corpus-separator --
+
+SET enable_durable_locking_for_serializable = on
+
+-- sqlfmt-corpus-separator --
+
+SET enable_durable_locking_for_serializable = true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_durable_locking_for_serializable = true;
+
+-- sqlfmt-corpus-separator --
+
+SET enable_experimental_alter_column_type_general = true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_experimental_alter_column_type_general = true;
+
+-- sqlfmt-corpus-separator --
+
+SET enable_experimental_alter_column_type_general=true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_experimental_alter_column_type_general=true;
+
+-- sqlfmt-corpus-separator --
+
+SET enable_implicit_fk_locking_for_serializable = on;
+SET enable_shared_locking_for_serializable = on;
+SET enable_durable_locking_for_serializable = on
+
+-- sqlfmt-corpus-separator --
+
+SET enable_insert_fast_path = off
+
+-- sqlfmt-corpus-separator --
+
+SET enable_insert_fast_path = true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_multiple_modifications_of_table = true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_multiregion_placement_policy = false
+
+-- sqlfmt-corpus-separator --
+
+SET enable_multiregion_placement_policy = true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_multiregion_placement_policy = true;
+
+-- sqlfmt-corpus-separator --
+
+SET enable_shared_locking_for_serializable = false
+
+-- sqlfmt-corpus-separator --
+
+SET enable_shared_locking_for_serializable = true
+
+-- sqlfmt-corpus-separator --
+
+SET enable_shared_locking_for_serializable = true;
+
+-- sqlfmt-corpus-separator --
+
+SET enable_zigzag_join = 'on';
+SET enable_zigzag_join = 'off';
+SET enable_zigzag_join = 'true';
+SET enable_zigzag_join = 'false';
+SET enable_zigzag_join = 'yes';
+SET enable_zigzag_join = 'no';
+SET enable_zigzag_join = on;
+SET enable_zigzag_join = off;
+SET enable_zigzag_join = true;
+SET enable_zigzag_join = false;
+SET enable_zigzag_join = yes;
+SET enable_zigzag_join = no
+
+-- sqlfmt-corpus-separator --
+
+SET enable_zigzag_join = false
+
+-- sqlfmt-corpus-separator --
+
+SET enable_zigzag_join = nonsense
+
+-- sqlfmt-corpus-separator --
+
+SET enable_zigzag_join = true
+
+-- sqlfmt-corpus-separator --
+
+SET enforce_home_region = true
+
+-- sqlfmt-corpus-separator --
+
+SET enforce_home_region = true;
+
+-- sqlfmt-corpus-separator --
+
+SET enforce_home_region_follower_reads_enabled = true
+
+-- sqlfmt-corpus-separator --
+
+SET escape_string_warning = 'ON'
+
+-- sqlfmt-corpus-separator --
+
+SET escape_string_warning = 'off'
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_computed_column_rewrites = "
+  (ts::STRING) -> (to_char(ts AT TIME ZONE 'utc')),
+  (mod(fnv32(b::STRING), 4)) -> (mod(fnv32(b), 4)),
+  (str::TIMESTAMP) -> (parse_timestamp(str))
+"
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_computed_column_rewrites = "(ts :: STRING) -> ((ts AT TIME ZONE 'utc')::STRING)";
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_computed_column_rewrites = "(ts :: STRING) -> (to_char(ts AT TIME ZONE 'utc'))";
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_computed_column_rewrites = "bad"
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_distsql_planning = always
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_distsql_planning = always;
+SET experimental_distsql_planning = on;
+SET experimental_distsql_planning = off
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_auto_rehoming = bogus
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_auto_rehoming = off
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_implicit_column_partitioning = true
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_implicit_column_partitioning = true;
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables = 'on'
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables = 'on';
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables = 'on';
+CREATE TEMP TABLE test(x INT)
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables = on
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables = true
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables = true;
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables TO on
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables=on
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables=on;
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_temp_tables=true
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_unique_without_index_constraints = false
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_unique_without_index_constraints = true
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_enable_unique_without_index_constraints = true;
+
+-- sqlfmt-corpus-separator --
+
+SET experimental_hash_group_join_enabled = true
+
+-- sqlfmt-corpus-separator --
+
+SET extra_float_digits = -15
+
+-- sqlfmt-corpus-separator --
+
+SET extra_float_digits = -6
+
+-- sqlfmt-corpus-separator --
+
+SET extra_float_digits = -8
+
+-- sqlfmt-corpus-separator --
+
+SET extra_float_digits = 0
+
+-- sqlfmt-corpus-separator --
+
+SET extra_float_digits = 123
+
+-- sqlfmt-corpus-separator --
+
+SET extra_float_digits = 3
+
+-- sqlfmt-corpus-separator --
+
+SET foo = bar
+
+-- sqlfmt-corpus-separator --
+
+SET force_savepoint_restart = true
+
+-- sqlfmt-corpus-separator --
+
+SET foreign_key_cascades_limit = 10
+
+-- sqlfmt-corpus-separator --
+
+SET idle_in_session_timeout = 0;
+SET idle_in_transaction_session_timeout = 123456
+
+-- sqlfmt-corpus-separator --
+
+SET idle_in_session_timeout = 10000
+
+-- sqlfmt-corpus-separator --
+
+SET idle_in_transaction_session_timeout = 0
+
+-- sqlfmt-corpus-separator --
+
+SET idle_session_timeout = 100000
+
+-- sqlfmt-corpus-separator --
+
+SET index_recommendations_enabled = 'false'
+
+-- sqlfmt-corpus-separator --
+
+SET index_recommendations_enabled = 'true'
+
+-- sqlfmt-corpus-separator --
+
+SET index_recommendations_enabled = false;
+RESET vectorize
+
+-- sqlfmt-corpus-separator --
+
+SET index_recommendations_enabled = true;
+SET vectorize=on
+
+-- sqlfmt-corpus-separator --
+
+SET inject_retry_errors_enabled=false
+
+-- sqlfmt-corpus-separator --
+
+SET inject_retry_errors_enabled=true
+
+-- sqlfmt-corpus-separator --
+
+SET intervalstyle = 'iso_8601'
+
+-- sqlfmt-corpus-separator --
+
+SET intervalstyle = 'other'
+
+-- sqlfmt-corpus-separator --
+
+SET intervalstyle = 'postgres'
+
+-- sqlfmt-corpus-separator --
+
+SET intervalstyle = 'sql_standard'
+
+-- sqlfmt-corpus-separator --
+
+SET intervalstyle = DEFAULT
+
+-- sqlfmt-corpus-separator --
+
+SET intervalstyle = iso_8601;
+
+-- sqlfmt-corpus-separator --
+
+SET join_reader_ordering_strategy_batch_size = '-1B'
+
+-- sqlfmt-corpus-separator --
+
+SET join_reader_ordering_strategy_batch_size = '1B'
+
+-- sqlfmt-corpus-separator --
+
+SET kv_transaction_buffered_writes_enabled = false;
+
+-- sqlfmt-corpus-separator --
+
+SET kv_transaction_buffered_writes_enabled = true;
+
+-- sqlfmt-corpus-separator --
+
+SET kv_transaction_buffered_writes_enabled=false
+
+-- sqlfmt-corpus-separator --
+
+SET kv_transaction_buffered_writes_enabled=false;
+
+-- sqlfmt-corpus-separator --
+
+SET kv_transaction_buffered_writes_enabled=true
+
+-- sqlfmt-corpus-separator --
+
+SET large_full_scan_rows = 0;
+
+-- sqlfmt-corpus-separator --
+
+SET large_full_scan_rows = 2
+
+-- sqlfmt-corpus-separator --
+
+SET large_full_scan_rows = 3
+
+-- sqlfmt-corpus-separator --
+
+SET large_full_scan_rows = 4
+
+-- sqlfmt-corpus-separator --
+
+SET locality_optimized_partitioned_index_scan = false
+
+-- sqlfmt-corpus-separator --
+
+SET locality_optimized_partitioned_index_scan = true
+
+-- sqlfmt-corpus-separator --
+
+SET lock_timeout = '10s';
+SET enable_implicit_fk_locking_for_serializable = on;
+SET enable_shared_locking_for_serializable = on;
+SET enable_durable_locking_for_serializable = on;
+INSERT INTO child_150282 VALUES (4, 1);
+
+-- sqlfmt-corpus-separator --
+
+SET lock_timeout = '1ms'
+
+-- sqlfmt-corpus-separator --
+
+SET lock_timeout = '1ms';
+SET enable_implicit_fk_locking_for_serializable = on;
+SET enable_shared_locking_for_serializable = on;
+SET enable_durable_locking_for_serializable = on
+
+-- sqlfmt-corpus-separator --
+
+SET lock_timeout = 0
+
+-- sqlfmt-corpus-separator --
+
+SET log_timezone = 'Australia/South'
+
+-- sqlfmt-corpus-separator --
+
+SET max_connections = 2;
+
+-- sqlfmt-corpus-separator --
+
+SET max_index_keys = 32
+
+-- sqlfmt-corpus-separator --
+
+SET max_retries_for_read_committed = -1
+
+-- sqlfmt-corpus-separator --
+
+SET max_retries_for_read_committed = 2147483648
+
+-- sqlfmt-corpus-separator --
+
+SET max_retries_for_read_committed = 5
+
+-- sqlfmt-corpus-separator --
+
+SET node_id = 123
+
+-- sqlfmt-corpus-separator --
+
+SET null_ordered_last = true
+
+-- sqlfmt-corpus-separator --
+
+SET on_update_rehome_row_enabled = true
+
+-- sqlfmt-corpus-separator --
+
+SET opt_split_scan_limit = -1
+
+-- sqlfmt-corpus-separator --
+
+SET opt_split_scan_limit = 100000
+
+-- sqlfmt-corpus-separator --
+
+SET opt_split_scan_limit = 2147483648
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer = bogus
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer = local
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer = off
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer = on
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_prefer_bounded_cardinality = false
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_span_limit = 10
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_span_limit = 8
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_use_lock_op_for_serializable = on
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_use_lock_op_for_serializable = true
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_use_trigram_similarity_optimization = false;
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_use_trigram_similarity_optimization = true;
+
+-- sqlfmt-corpus-separator --
+
+SET optimizer_use_virtual_computed_column_stats = false
+
+-- sqlfmt-corpus-separator --
+
+SET override_multi_region_zone_config = false
+
+-- sqlfmt-corpus-separator --
+
+SET override_multi_region_zone_config = false;
+
+-- sqlfmt-corpus-separator --
+
+SET override_multi_region_zone_config = true
+
+-- sqlfmt-corpus-separator --
+
+SET override_multi_region_zone_config = true;
+
+-- sqlfmt-corpus-separator --
+
+SET parallelize_multi_key_lookup_joins_avg_lookup_ratio = 0;
+
+-- sqlfmt-corpus-separator --
+
+SET parallelize_multi_key_lookup_joins_enabled = false
+
+-- sqlfmt-corpus-separator --
+
+SET parallelize_multi_key_lookup_joins_enabled = true
+
+-- sqlfmt-corpus-separator --
+
+SET pg_dump_compatibility = 'cockroachdb'
+
+-- sqlfmt-corpus-separator --
+
+SET pg_dump_compatibility = 'invalid'
+
+-- sqlfmt-corpus-separator --
+
+SET pg_dump_compatibility = 'off'
+
+-- sqlfmt-corpus-separator --
+
+SET pg_dump_compatibility = 'postgres'
+
+-- sqlfmt-corpus-separator --
+
+SET pg_dump_compatibility = postgres
+
+-- sqlfmt-corpus-separator --
+
+SET plan_cache_mode = auto
+
+-- sqlfmt-corpus-separator --
+
+SET plan_cache_mode = force_custom_plan
+
+-- sqlfmt-corpus-separator --
+
+SET plan_cache_mode = force_custom_plan;
+
+-- sqlfmt-corpus-separator --
+
+SET plan_cache_mode = force_generic_plan
+
+-- sqlfmt-corpus-separator --
+
+SET plpgsql_use_strict_into = true;
+
+-- sqlfmt-corpus-separator --
+
+SET prepared_statements_cache_size = '1 KiB'
+
+-- sqlfmt-corpus-separator --
+
+SET prepared_statements_cache_size = '20 KiB'
+
+-- sqlfmt-corpus-separator --
+
+SET propagate_input_ordering=true;
+
+-- sqlfmt-corpus-separator --
+
+SET recursion_depth_limit = 10;
+
+-- sqlfmt-corpus-separator --
+
+SET save_tables_prefix = ''
+
+-- sqlfmt-corpus-separator --
+
+SET save_tables_prefix = 'save_table_test'
+
+-- sqlfmt-corpus-separator --
+
+SET save_tables_prefix = 'st'
+
+-- sqlfmt-corpus-separator --
+
+SET save_tables_prefix = 'st_test'
+
+-- sqlfmt-corpus-separator --
+
+SET save_tables_prefix = 'tt'
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = "  ", abc
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = '$user', 'public'
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = '$user, public'
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = ''
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = 'Abc', 'public'
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = 'a\bc', "d\ef", 'g-hi', "j-kl"
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = 'blah'
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = Abc, 'public'
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = bar, public; SHOW search_path
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = foo
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = invalid
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = nonexistent
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = nonexistent, public
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = other_schema, public
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public,      a,     "   b  ",   c
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public, other_schema
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public, pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public, pg_catalog;
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public, public, a, b, c
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public,pg_catalog; SELECT x FROM pg_type
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public,public
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public,sc1
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = public;
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = s,public;
+
+-- sqlfmt-corpus-separator --
+
+SET search_path = sc;
+
+-- sqlfmt-corpus-separator --
+
+SET search_path TO myschema,public
+
+-- sqlfmt-corpus-separator --
+
+SET search_path TO public
+
+-- sqlfmt-corpus-separator --
+
+SET search_path TO public,pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SET search_path=pg_catalog,public
+
+-- sqlfmt-corpus-separator --
+
+SET search_path=public, roach_dev, roach_prod;
+
+-- sqlfmt-corpus-separator --
+
+SET search_path=public, roach_prod;
+
+-- sqlfmt-corpus-separator --
+
+SET search_path=public,pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SET search_path=test,pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = 'sql_sequence'
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = 'sql_sequence';
+SET default_int_size=8;
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = rowid
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = sql_sequence
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = sql_sequence;
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = sql_sequence_cached
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = sql_sequence_cached;
+alter table t1_serial_columns add column i_cache serial;
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = sql_sequence_cached_node;
+alter table t1_serial_columns add column i_node_cache serial;
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = unordered_rowid;
+alter table t1_serial_columns add column i_unordered_rowid serial;
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = virtual_sequence
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization = virtual_sequence;
+alter table t1_serial_columns add column i_virtual serial;
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization='rowid'
+
+-- sqlfmt-corpus-separator --
+
+SET serial_normalization='sql_sequence'
+
+-- sqlfmt-corpus-separator --
+
+SET server_encoding = 'UTF8'
+
+-- sqlfmt-corpus-separator --
+
+SET server_encoding = 'other'
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates = FALSE
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates = FALSE;
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates = TRUE;
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates = false
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates = false;
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates = false;
+DROP DATABASE "mr-create-table-as";
+SET sql_safe_updates = true
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates = true
+
+-- sqlfmt-corpus-separator --
+
+SET sql_safe_updates=false;
+
+-- sqlfmt-corpus-separator --
+
+SET ssl = 'off'
+
+-- sqlfmt-corpus-separator --
+
+SET ssl_renegotiation_limit = 123
+
+-- sqlfmt-corpus-separator --
+
+SET standard_conforming_strings = 'off'
+
+-- sqlfmt-corpus-separator --
+
+SET standard_conforming_strings = 'on'
+
+-- sqlfmt-corpus-separator --
+
+SET standard_conforming_strings='on'
+
+-- sqlfmt-corpus-separator --
+
+SET standard_conforming_strings='true'
+
+-- sqlfmt-corpus-separator --
+
+SET standard_conforming_strings=true
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = '0ms'
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = '10000'
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = '10ms'
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = '10s';
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = '1us'
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = '2s';
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = '30s';
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = 0
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = 0;
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = 1
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout = 10
+
+-- sqlfmt-corpus-separator --
+
+SET statement_timeout='0.1s';
+
+-- sqlfmt-corpus-separator --
+
+SET streamer_enabled = true
+
+-- sqlfmt-corpus-separator --
+
+SET strict_ddl_atomicity = true
+
+-- sqlfmt-corpus-separator --
+
+SET stub_catalog_tables=false
+
+-- sqlfmt-corpus-separator --
+
+SET stub_catalog_tables=true
+
+-- sqlfmt-corpus-separator --
+
+SET synchronous_commit = off; SET enable_seqscan = false
+
+-- sqlfmt-corpus-separator --
+
+SET synchronous_commit = on; SET enable_seqscan = true
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_count = -1
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_count = 0
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_count = 5
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_idle = '-5s'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_idle = '1m30s'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_idle = '2500ms'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_idle = '75ms'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_idle = -1
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_idle = 0
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_idle = 30
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_interval = '45s'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_interval = '500ms'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_interval = -1
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_keepalives_interval = 10
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_user_timeout = '-5s'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_user_timeout = '100us'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_user_timeout = '1m'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_user_timeout = '30s'
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_user_timeout = -1
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_user_timeout = 0
+
+-- sqlfmt-corpus-separator --
+
+SET tcp_user_timeout = 15000
+
+-- sqlfmt-corpus-separator --
+
+SET testing_optimizer_disable_rule_probability = 0
+
+-- sqlfmt-corpus-separator --
+
+SET testing_optimizer_disable_rule_probability = 0.5
+
+-- sqlfmt-corpus-separator --
+
+SET testing_optimizer_disable_rule_probability = 1
+
+-- sqlfmt-corpus-separator --
+
+SET testing_optimizer_disable_rule_probability = 1.0
+
+-- sqlfmt-corpus-separator --
+
+SET testing_optimizer_disable_rule_probability = 1.0;
+
+-- sqlfmt-corpus-separator --
+
+SET testing_optimizer_disable_rule_probability = 1;
+
+-- sqlfmt-corpus-separator --
+
+SET time zone 'Europe/Amsterdam'; SHOW TIME ZONE
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = 'Europe/Amsterdam'; SHOW TIMEZONE
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = 'Europe/Amsterdam'; SHOW timezone
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = 'Europe/Berlin'
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = 'UTC'
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = 'utc'; SHOW timezone
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = kv
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; INSERT INTO user_settings2 (id2, user_id, value)
+VALUES (9, '5ebfedee-0dcf-41e6-a315-5fa0b51b9992', 'foo'); SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; SELECT * FROM child WHERE EXISTS (SELECT * FROM parent WHERE p_id = c_p_id) AND c_id = 10; SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; SELECT * FROM child WHERE EXISTS (SELECT * FROM parent WHERE p_id = c_p_id) AND c_id = 20; SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; SELECT * FROM child WHERE NOT EXISTS (SELECT * FROM parent WHERE p_id = c_p_id) AND c_id = 10; SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; SELECT * FROM child WHERE NOT EXISTS (SELECT * FROM parent WHERE p_id = c_p_id) AND c_id = 20; SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; SELECT * FROM regional_by_row_table WHERE pk = 10; SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; SELECT * FROM regional_by_row_table WHERE pk = 1; SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing = on,kv,results; SELECT * FROM t108206_c WHERE EXISTS (SELECT * FROM t108206_p WHERE p_id = c_p_id) AND c_id = 20; SET tracing = off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing=off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing=off;
+
+-- sqlfmt-corpus-separator --
+
+SET tracing=on
+
+-- sqlfmt-corpus-separator --
+
+SET tracing=on, kv; SELECT * FROM noncover WHERE b = 2; SET tracing=off
+
+-- sqlfmt-corpus-separator --
+
+SET tracing=on,kv,results;
+SELECT * FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_isolation = 'READ COMMITTED'
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_isolation = 'SERIALIZABLE'
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_isolation = 'this is made up'
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_read_only = false
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_read_only = true
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_rows_read_err = 1
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_rows_read_err = 150
+
+-- sqlfmt-corpus-separator --
+
+SET transaction_rows_read_err = 50
+
+-- sqlfmt-corpus-separator --
+
+SET unsafe_allow_triggers_modifying_cascades = true;
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'off'
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'off';
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'off';
+SET create_table_with_schema_locked = 'off';
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'on'
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'on';
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'unsafe'
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'unsafe_always'
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = 'unsafe_always';
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = off;
+
+-- sqlfmt-corpus-separator --
+
+SET use_declarative_schema_changer = unsafe_always;
+
+-- sqlfmt-corpus-separator --
+
+SET use_improved_routine_dependency_tracking = false;
+SET use_improved_routine_deps_triggers_and_computed_cols = false;
+
+-- sqlfmt-corpus-separator --
+
+SET use_pre_25_2_variadic_builtins = true
+
+-- sqlfmt-corpus-separator --
+
+SET use_swap_mutations = on
+
+-- sqlfmt-corpus-separator --
+
+SET variable_inequality_lookup_join_enabled=false
+
+-- sqlfmt-corpus-separator --
+
+SET vector_search_beam_size=0
+
+-- sqlfmt-corpus-separator --
+
+SET vector_search_beam_size=2049
+
+-- sqlfmt-corpus-separator --
+
+SET vector_search_beam_size=8
+
+-- sqlfmt-corpus-separator --
+
+SET vector_search_rerank_multiplier=-1
+
+-- sqlfmt-corpus-separator --
+
+SET vector_search_rerank_multiplier=100
+
+-- sqlfmt-corpus-separator --
+
+SET vector_search_rerank_multiplier=101
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = "on"
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = DEFAULT
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = bogus
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = experimental_always
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = experimental_always;
+INSERT INTO t40732 DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = off
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = off;
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = on
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize = on;
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize=experimental_always
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize=experimental_always;
+INSERT INTO t64793 DEFAULT VALUES;
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize=off
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize=off;
+
+-- sqlfmt-corpus-separator --
+
+SET vectorize=on
+
+-- sqlfmt-corpus-separator --
+
+SET xmloption = 'content'
+
+-- sqlfmt-corpus-separator --
+
+SET xmloption = 'document'
+
+-- sqlfmt-corpus-separator --
+
+SHOW "TIMEZONE"
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM "A"
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM "B"
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM B
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM a
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM add_default
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM alltypes
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM check_table
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM customers
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM d
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM e
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM f
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM fake5
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM geo_table
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM information_schema.attributes
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM information_schema.column_privileges
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM information_schema.parameters
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM information_schema.routines
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM information_schema.tables
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM information_schema.user_defined_types
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM materialized_view_with_null
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM pg_catalog.pg_namespace
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM pg_catalog.pg_stat_activity
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM privs
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.descriptor
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.eventlog
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.jobs
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.lease
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.namespace
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.rangelog
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.role_members
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.settings
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.ui
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.users
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM system.zones
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t2
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t21
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t22
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t3
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t6
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t_bit_string;
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t_bytes;
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t_decimal;
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t_int;
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM t_many;
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM test.users
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM tt
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM tz
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM users
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM v
+
+-- sqlfmt-corpus-separator --
+
+SHOW COLUMNS FROM view_with_null
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ";--dontask"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ";--notbetter"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE "A"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE "B"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE "a.b"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE "g.h"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE "serial_MixedCase"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE B
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE a
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE abcd
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE aliases
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE alt_syntax
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE alter_policy_table;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE alter_policy_table_locked;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE alter_test
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE alternative_schema.same_table_name
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE arr_t6
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE assign_at_create
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE atyp
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE b
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE bar
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE bar;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE bbteams
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE bits
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE c
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE collation_name_case
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE column_used_on_unsharded
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE column_used_on_unsharded_create_table
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE composite_pk;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE create_index_concurrently_tbl
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE created_as_global
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE db.rbr
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE db.rbr_altered
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE delivery
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE employee;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE enum_table_show
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE extra_parens
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE f1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE flying_roaches
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo10
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo11
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo12
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo13
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo5
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo6
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo8
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE foo9
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE gen_always_as_id_seqopt
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE gen_always_as_id_seqopt_cache
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE gen_by_default_as_id_seqopt
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE gen_by_default_as_id_seqopt_cache
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE generated_always_t
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE generated_by_default_t
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE global_table
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i4
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i4_rowid
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i4_sql_sequence
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i4_virtual_sequence
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i8
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i8_rowid
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i8_sql_sequence
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE i8_virtual_sequence
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE indexes
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE information_schema.tables
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE inverted
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE late4
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_all
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_constraints
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_defaults
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_generated
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_hash
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_indexes
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_mixed
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_more_specifiers
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_no_pk_rowid_hidden
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE like_none
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE multi_pol_tab1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE multiple_indexes
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE new_other_db.t
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE new_test_schema.foo
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE non_mr_table
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok10
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok11
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok12
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok2
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok3
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok4
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok5
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok6
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok7
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok8
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE ok9
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE operator_class
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE p
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE pg_catalog.pg_namespace
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE pkref_b
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE prefix_cols
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE quoted_coll
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE r
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE refers
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE refpairs
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row_as
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row_as_to_regional_by_row
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row_fk
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row_like
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row_table
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row_to_regional_by_row_as
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_row_unique_in_column
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_table_in_ca_central_1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_table_in_primary_region
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_table_in_us_east
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regional_by_table_no_region
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE regression_67196_like
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE rename_col
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE rename_column
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE rlsInsert
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE roaches
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE same_table_name
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE sanity1;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE serial
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE serials
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE sharded_primary
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE sharded_secondary
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE show_test
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE simple
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE smallbig
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE specific_family
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE storage_params
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE stored1;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t10
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t168748
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t168748_composite
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t1_add
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t2
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t2_fk
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t3
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t4
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t40417
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t6
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t7
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t72012
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t8
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_150484
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_96727_1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_96727_2
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_96730
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_droppedcol;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_rename_computed;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_sl
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_unbounded_string
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_unbounded_varbit
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_with_default
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_with_hidden
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE t_with_on_update
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE tab1;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE table_with_virtual_cols
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE target
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE tb
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE tbl
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE tbl_with_collate
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE team
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE test.named_constraints
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE test.null_default
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE test.users
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE test_show_default
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE test_show_fk
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE trunc;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE unlogged_tbl
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE vec
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE vector
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE virt1;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE virt2;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE virt3;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE visible_table
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE weird_names
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE with_no_column_refs
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE TABLE x
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW ";--alsoconcerning"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW "XV"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW "YV"
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW YV
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW alter_test_view;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW default_view;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW dt
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW dt2
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW li
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW sd_view;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW si_view;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW si_view_default;
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW t1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW t2
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW test2.v1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v1
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v10
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v11
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v12
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v13
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v14
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v15
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v2
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v3
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v4
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v5
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v6
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v7
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v8
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW v9
+
+-- sqlfmt-corpus-separator --
+
+SHOW CREATE VIEW xv
+
+-- sqlfmt-corpus-separator --
+
+SHOW DATABASE
+
+-- sqlfmt-corpus-separator --
+
+SHOW DATABASES
+
+-- sqlfmt-corpus-separator --
+
+SHOW DEFAULT PRIVILEGES
+
+-- sqlfmt-corpus-separator --
+
+SHOW DEFAULT_TRANSACTION_ISOLATION
+
+-- sqlfmt-corpus-separator --
+
+SHOW DEFAULT_TRANSACTION_PRIORITY
+
+-- sqlfmt-corpus-separator --
+
+SHOW DEFAULT_TRANSACTION_USE_FOLLOWER_READS
+
+-- sqlfmt-corpus-separator --
+
+SHOW ENUMS
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM "A"
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM "B"
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM B
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM a
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM c
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM information_schema.tables
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM o
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM pg_catalog.pg_namespace
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM privs
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM refpairs
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM refpairs_c_between
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM refpairs_wrong_order
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM rename_add_alter_pk_tbl;
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM t
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM tIndex
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM tIndx
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM t_rbr
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM test.users
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM unindexed
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM users
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES FROM users_dupe
+
+-- sqlfmt-corpus-separator --
+
+SHOW INDEXES from t2
+
+-- sqlfmt-corpus-separator --
+
+SHOW INTERVALSTYLE
+
+-- sqlfmt-corpus-separator --
+
+SHOW JOBS
+
+-- sqlfmt-corpus-separator --
+
+SHOW LC_COLLATE
+
+-- sqlfmt-corpus-separator --
+
+SHOW LC_CTYPE
+
+-- sqlfmt-corpus-separator --
+
+SHOW LC_MESSAGES
+
+-- sqlfmt-corpus-separator --
+
+SHOW LC_MONETARY
+
+-- sqlfmt-corpus-separator --
+
+SHOW LC_NUMERIC
+
+-- sqlfmt-corpus-separator --
+
+SHOW LC_TIME
+
+-- sqlfmt-corpus-separator --
+
+SHOW LOCALITY
+
+-- sqlfmt-corpus-separator --
+
+SHOW QUERIES
+
+-- sqlfmt-corpus-separator --
+
+SHOW RANGES
+
+-- sqlfmt-corpus-separator --
+
+SHOW REGIONS
+
+-- sqlfmt-corpus-separator --
+
+SHOW ROLES
+
+-- sqlfmt-corpus-separator --
+
+SHOW SCHEMAS
+
+-- sqlfmt-corpus-separator --
+
+SHOW SCHEMAS FROM a
+
+-- sqlfmt-corpus-separator --
+
+SHOW SCHEMAS FROM d1
+
+-- sqlfmt-corpus-separator --
+
+SHOW SCHEMAS FROM d2
+
+-- sqlfmt-corpus-separator --
+
+SHOW SCHEMAS FROM regression_105906
+
+-- sqlfmt-corpus-separator --
+
+SHOW SEARCH_PATH
+
+-- sqlfmt-corpus-separator --
+
+SHOW SEQUENCES
+
+-- sqlfmt-corpus-separator --
+
+SHOW SESSIONS
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM "D"
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM "Do you like this for a database name?".sc
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM "E"
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM "This is a fun name, no?"."A delightful name for a schema!"
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM d
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM d1
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM d2
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM e
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM foo
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM information_schema
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM privatedb
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM public
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM public.public
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM publicdb
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM s
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM test
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM test.information_schema
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM test.pg_catalog
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM test2
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES FROM u
+
+-- sqlfmt-corpus-separator --
+
+SHOW TABLES from foo
+
+-- sqlfmt-corpus-separator --
+
+SHOW TENANTS
+
+-- sqlfmt-corpus-separator --
+
+SHOW TIME ZONE
+
+-- sqlfmt-corpus-separator --
+
+SHOW TIMEZONE
+
+-- sqlfmt-corpus-separator --
+
+SHOW TRANSACTION ISOLATION LEVEL
+
+-- sqlfmt-corpus-separator --
+
+SHOW TRANSACTION ISOLATION LEVEL;
+
+-- sqlfmt-corpus-separator --
+
+SHOW TYPES
+
+-- sqlfmt-corpus-separator --
+
+SHOW USERS
+
+-- sqlfmt-corpus-separator --
+
+SHOW application_name
+
+-- sqlfmt-corpus-separator --
+
+SHOW authentication_method
+
+-- sqlfmt-corpus-separator --
+
+SHOW bytea_output
+
+-- sqlfmt-corpus-separator --
+
+SHOW check_function_bodies
+
+-- sqlfmt-corpus-separator --
+
+SHOW database
+
+-- sqlfmt-corpus-separator --
+
+SHOW datestyle
+
+-- sqlfmt-corpus-separator --
+
+SHOW deadlock_timeout
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_int_size
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_table_access_method
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_text_search_config
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_transaction_isolation
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_transaction_quality_of_service
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_transaction_read_only
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_transaction_use_follower_reads
+
+-- sqlfmt-corpus-separator --
+
+SHOW default_with_oids
+
+-- sqlfmt-corpus-separator --
+
+SHOW disable_changefeed_replication
+
+-- sqlfmt-corpus-separator --
+
+SHOW distsql
+
+-- sqlfmt-corpus-separator --
+
+SHOW distsql_workmem
+
+-- sqlfmt-corpus-separator --
+
+SHOW enable_auto_rehoming
+
+-- sqlfmt-corpus-separator --
+
+SHOW enable_seqscan
+
+-- sqlfmt-corpus-separator --
+
+SHOW experimental_enable_auto_rehoming
+
+-- sqlfmt-corpus-separator --
+
+SHOW foo
+
+-- sqlfmt-corpus-separator --
+
+SHOW idle_in_session_timeout
+
+-- sqlfmt-corpus-separator --
+
+SHOW idle_in_transaction_session_timeout
+
+-- sqlfmt-corpus-separator --
+
+SHOW idle_session_timeout
+
+-- sqlfmt-corpus-separator --
+
+SHOW intervalstyle
+
+-- sqlfmt-corpus-separator --
+
+SHOW is_superuser
+
+-- sqlfmt-corpus-separator --
+
+SHOW lock_timeout
+
+-- sqlfmt-corpus-separator --
+
+SHOW log_timezone
+
+-- sqlfmt-corpus-separator --
+
+SHOW max_connections;
+
+-- sqlfmt-corpus-separator --
+
+SHOW max_prepared_transactions
+
+-- sqlfmt-corpus-separator --
+
+SHOW max_retries_for_read_committed
+
+-- sqlfmt-corpus-separator --
+
+SHOW opt_split_scan_limit
+
+-- sqlfmt-corpus-separator --
+
+SHOW pg_dump_compatibility
+
+-- sqlfmt-corpus-separator --
+
+SHOW search_path
+
+-- sqlfmt-corpus-separator --
+
+SHOW search_path;
+
+-- sqlfmt-corpus-separator --
+
+SHOW server_version
+
+-- sqlfmt-corpus-separator --
+
+SHOW server_version_num
+
+-- sqlfmt-corpus-separator --
+
+SHOW session_user
+
+-- sqlfmt-corpus-separator --
+
+SHOW ssl
+
+-- sqlfmt-corpus-separator --
+
+SHOW statement_timeout
+
+-- sqlfmt-corpus-separator --
+
+SHOW synchronous_commit
+
+-- sqlfmt-corpus-separator --
+
+SHOW tcp_keepalives_count
+
+-- sqlfmt-corpus-separator --
+
+SHOW tcp_keepalives_idle
+
+-- sqlfmt-corpus-separator --
+
+SHOW tcp_keepalives_interval
+
+-- sqlfmt-corpus-separator --
+
+SHOW tcp_user_timeout
+
+-- sqlfmt-corpus-separator --
+
+SHOW timezone
+
+-- sqlfmt-corpus-separator --
+
+SHOW tracing
+
+-- sqlfmt-corpus-separator --
+
+SHOW transaction_isolation
+
+-- sqlfmt-corpus-separator --
+
+SHOW transaction_priority
+
+-- sqlfmt-corpus-separator --
+
+SHOW transaction_read_only
+
+-- sqlfmt-corpus-separator --
+
+SHOW transaction_read_only;
+
+-- sqlfmt-corpus-separator --
+
+SHOW transaction_status
+
+-- sqlfmt-corpus-separator --
+
+SHOW vector_search_beam_size;
+
+-- sqlfmt-corpus-separator --
+
+SHOW vector_search_rerank_multiplier;
+
+-- sqlfmt-corpus-separator --
+
+SHOW vectorize
+
+-- sqlfmt-corpus-separator --
+
+SHOW xmloption
+
+-- sqlfmt-corpus-separator --
+
+UPDATE "A" SET x = 42
+
+-- sqlfmt-corpus-separator --
+
+UPDATE "B" SET x = 42
+
+-- sqlfmt-corpus-separator --
+
+UPDATE B SET x = 42
+
+-- sqlfmt-corpus-separator --
+
+UPDATE DATA SET d = 2 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE DATA SET d = 3 WHERE a = 1 OR a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE DATA SET d = 4 WHERE a = 1 OR a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE ONLY kv2 SET v = 'h' WHERE k IN ('a')
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET a = 2 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET b = ARRAY[]
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET b = NULL::INT || b || NULL::INT
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET b = b + 1 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET b = b || 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET b = b || 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET b = b || 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET b = b || 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 'updated' WHERE id = 'original';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1 WHERE id = 1006;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1000 WHERE id = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1000 WHERE id = 30;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1000 WHERE id = 40;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1000 WHERE id = 4;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 100000 WHERE id = 30;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 100000 WHERE id = 50;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1006 WHERE id = 6;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1008 WHERE id = 8;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 1010 WHERE id = 10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 99 WHERE id = 10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 99 WHERE id = 20;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = 999 WHERE id = 99;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = id + 10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = id*1000 WHERE id > 10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = id*1000;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id = id*10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET id1=33, id2=44 WHERE id1=3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET x = 2 WHERE x = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET x = 3 WHERE x = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET x = 42
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET x = NULL WHERE x = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET x = NULL, y = NULL WHERE x = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET y = NULL WHERE y = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE a SET y = y*10 WHERE y > 0;
+UPDATE a SET x = x*10 WHERE x > 0;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abc SET a = 2, c = 6
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abc SET a = 4, b = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abc SET b = 0 WHERE a = 4 AND b = -0;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abc SET b = 10, b = 11
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abc SET b = b + 1 WHERE a = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abc SET b = b + 1, c = c + 1 WHERE a != 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abc SET c = NULL WHERE a = 4 AND b = -0
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abcd SET b = 9, d = 10, c = NULL where c = 7
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abcd SET b = NULL, c = NULL, d = NULL WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abcd SET d = 5 WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abcde SET d = 68 WHERE a = 45 AND b = 46
+
+-- sqlfmt-corpus-separator --
+
+UPDATE abcde SET e = e + 10 WHERE a = 5 AND b = 6
+
+-- sqlfmt-corpus-separator --
+
+UPDATE accounts SET balance = balance + 50 WHERE id = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET c = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET c = 123
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET c = NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET i = '1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET i = '1'::STRING
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET i2 = 999999999
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET qc = 'a'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET qc = 1234
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET t = (SELECT (10, 11))
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast SET t = 3.2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_comp SET d = 3.45, d2 = 4.56 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_comp SET i = 1 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_comp SET t = 'foo' WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_on_update SET d = NULL, d2 = NULL  WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_on_update SET i = 11 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_p SET p = 1.2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_p SET p = 2.0
+
+-- sqlfmt-corpus-separator --
+
+UPDATE assn_cast_p SET p = 3.0
+
+-- sqlfmt-corpus-separator --
+
+UPDATE b SET a = 2 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE b SET b = 0 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE backfill_test SET enc = '[3.0, 2.0, 1.0]' WHERE id = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE backfill_test SET prefix_enc = '[3.0, 2.0, 1.0]' WHERE id = 7
+
+-- sqlfmt-corpus-separator --
+
+UPDATE bbteams SET team = 'Jays' where team = 'jays';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE bbteams SET team = 'Nationals' where team = 'nationals';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE bbteams SET team = 'blue jays' where team = 'jays';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE bbteams SET wins = 82  WHERE team = 'royals';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE bbteams SET wins = 87, league = 'AL' WHERE team = 'expos';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE bbteams SET wins = 91 WHERE team = 'expos';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE bcd SET c = c + 1 WHERE b = 7
+
+-- sqlfmt-corpus-separator --
+
+UPDATE c SET a = 2 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE c SET i = i + 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE check_table SET b = 1 WHERE b IS NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET k = 2 WHERE k = 1 OR k = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET k = 4 WHERE k IS NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET k = 4 WHERE k IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET k = NULL WHERE k = 4 OR k = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET k = NULL WHERE k = 4 OR k = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET p = 3 WHERE p = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET v = 100 WHERE True;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET x = 3, y = 30 WHERE x = 5 OR x = 6;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET x = 3, y = 30 WHERE x IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET x = 4 WHERE x IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET x = NULL WHERE x = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET x = NULL WHERE x = 4 OR x = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET x = y // 10 WHERE x IS NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET y = 40 WHERE x = 4;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET y = NULL WHERE True
+
+-- sqlfmt-corpus-separator --
+
+UPDATE child SET y = x * 10 WHERE y IS NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE city SET name = 'Vancouver', state_or_province = 'BC' WHERE name = 'Salem'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE computed SET a = 10, b = 20 WHERE a = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE computed SET a = 30, b = 40 WHERE a = 203;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE computed SET a = 50, b = 60 WHERE a = 230;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE computed SET a = 70, b = 80 WHERE a = 7;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE cookies SET j = 2 WHERE c = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE d SET foo = '"updated"' WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE d SET i = i + 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE d SET s = 'foo'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE d SET x = x + 1 WHERE x + sqrt(x) >= 2 + .1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE data SET d = 10 WHERE (a = 1 OR a = 2 OR a = 3) AND b > 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE data SET d = 12 WHERE d = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE derived SET x = 'abcd'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE derived SET x = 'xxx'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE derived SET y = 'abcd'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE dst SET x = 'xyz'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE employees SET name = 'Alice 2.0' WHERE name = 'Alice'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE employees SET name = 'Robert' WHERE name = 'Bob'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE enable_disable_t SET b = 1001 WHERE a = 10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE enable_disable_t SET b = 1101 WHERE a = 11;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE enable_disable_t SET b = 1201 WHERE a = 12;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE enable_disable_t SET b = 1301 WHERE a = 13;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE enum_table SET b = 'baz' WHERE a = 1;
+UPDATE enum_table SET b = 'foo' WHERE a = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE error_check SET s = 'foo' WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE fam SET c = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE fam SET d = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE fam_parent SET b = b+1 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE foo SET value = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE foo SET x = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE foo SET x = 3 WHERE x = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE generated_as_id_t SET b=(1+1) WHERE a > 6;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE generated_as_id_t SET b=DEFAULT WHERE a > 6;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE generated_as_id_t SET c=(1+1) WHERE a > 6;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE generated_as_id_t SET c=DEFAULT WHERE a > 6;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE information_schema.collation_character_set_applicability SET a = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE information_schema.collations SET a = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE information_schema.session_variables SET a = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE information_schema.tables SET a = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE inv SET j = '{"x": "y", "num": 10}' WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE inv SET k = 10 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE inv SET s = 'bar' WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE inv SET s = 'baz' WHERE k = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE jars SET j = j + 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE k SET b = 0 WHERE b = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET m = 9 WHERE k IN (1, 3)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = '3.2'::STRING
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = 'b' WHERE k in ('a')
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = 'c' WHERE k in ('a')
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = 'foo'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = (SELECT (10, 11))
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = 3.2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = 9 WHERE k IN (1, 3)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv SET v = k + v
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv2 SET v = 'b' WHERE k IN ('a')
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv2 SET v = 'g' WHERE k IN ('a')
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv2 SET v = 'i' WHERE k IN ('a')
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv3 SET v = NULL WHERE k = 'a'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kv3 SET v = NULL WHERE nonexistent = 'a'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE kview SET v = 99 WHERE k IN (1, 3)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE loop_a SET cascade_delete = 'loop_b-pk3' WHERE id = 'loop_a-pk1';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE loop_a SET id = 'updated' WHERE id = 'original';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE loop_b SET id = 'updated2' WHERE id = 'updated';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE match_full SET a = NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE match_full SET a = NULL, b = NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE match_simple SET a = NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE mc SET f2 = 10 WHERE f1 = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE mc SET f2 = 11 WHERE f1 = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE messages_rbr SET account_id = -account_id WHERE account_id NOT IN (SELECT account_id FROM messages_rbt)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE messages_rbt SET account_id = -account_id WHERE account_id NOT IN (SELECT account_id FROM messages_rbr)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE messages_rbt SET account_id = -account_id WHERE message_id NOT IN (SELECT message_id FROM messages_rbr)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE mno SET o = 4 WHERE m = 3 AND n IS NOT DISTINCT FROM 3 AND o IS NOT DISTINCT FROM 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE mno SET o = 4 WHERE m = 3 AND n IS NOT DISTINCT FROM 4 AND o IS NOT DISTINCT FROM 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE mnop SET o = n::decimal, p = (n * 10)::bigint
+
+-- sqlfmt-corpus-separator --
+
+UPDATE mutation SET m=2 WHERE n=1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE n SET b = NULL WHERE a > 0
+
+-- sqlfmt-corpus-separator --
+
+UPDATE nullable SET b = 10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE orders SET id = 2, product = 'VP-W9QH-W44L' WHERE id = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE orders SET id = 3 WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE orders SET id = 3, product = '790' WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE orders SET product = '780' WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE orders SET product = '790' WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE othertable SET b=10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE p SET p = 10 WHERE p = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE pairs SET dest = 'too' WHERE id = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET j = j + 1 WHERE j = f2(0, 2);
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET k = k * 10 WHERE k = 2 OR k = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET k = k + 10 WHERE k < 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET p = 3 WHERE p = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET p = 3 WHERE p = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET p = 3 WHERE p = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET p = p
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET p = p + 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent SET p = p - 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent_151663 SET q = q + 1 WHERE p = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE parent_cascade SET k = k + 2 WHERE k = 1 OR k = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE pg_catalog.pg_tables SET a = 'abc'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE pks SET k1 = 2 WHERE k1 = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE pks SET k2 = 5 where k1 = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE products SET sku = '750', vendor = 'roomba' WHERE sku = '780'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE products SET sku = '770' WHERE sku = '750'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE products SET sku = '770' WHERE sku = '780'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE products SET sku = '780', upc = 'blah' WHERE sku = '750'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE products SET upc = '885155001450' WHERE sku = '780'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE products SET upc = 'blah' WHERE sku = '780'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE products SET vendor = '' WHERE sku = '780'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE prune SET d = d + 1 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE purchase
+SET amount = ((amount).value, (amount).currency, 10000)
+WHERE (amount).currency = 'BHD'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE regression_44774
+SET a = '13:14:15.123456'::interval + '1 sec'::interval
+WHERE 1 = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE regression_44774
+SET a = '13:14:15.123456'::time + '1 sec'::interval
+WHERE 1 = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE regression_44774
+SET a = '13:14:15.123456'::timetz + '1 sec'::interval
+WHERE 1 = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE regression_44774
+SET a = '1970-03-04 13:14:15.123456'::timestamp + '1 sec'::interval, b = '1970-03-04 13:14:15.123456'::timestamptz + '1 sec'::interval
+WHERE 1 = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE rename_add_alter_pk_tbl SET a = 10 WHERE b_old = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE river SET region = 'us-east-1', outlet = 'Salish Sea' WHERE name = 'Skykomish'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE sc SET b=b+10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self SET id = 4 WHERE id = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self SET other_id = 4 WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self SET x = 5 WHERE y = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self SET x = 5, y = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self SET y = 5 WHERE y = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self_ab SET a = 3 WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self_ab_parent SET p = 3 WHERE p = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self_abcd SET a = 5 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self_x2 SET x = 'pk1-updated' WHERE x = 'pk1';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self_x2 SET x = 'pk2-updated' WHERE x = 'pk2';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE self_x2 SET x = 'pk3-updated' WHERE x = 'pk3';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE supermarket SET aisle = 2 WHERE person = 'abbie'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE system.job_info
+  SET value = crdb_internal.json_to_pb(
+    'cockroach.sql.jobs.jobspb.Payload',
+      json_set(
+        crdb_internal.pb_to_json('cockroach.sql.jobs.jobspb.Payload', value),
+        ARRAY['schemaChange', 'resumeSpanList', '0'],
+        '{"resumeSpans": $spans}'::jsonb
+      )
+    )
+WHERE info_key = 'legacy_payload' AND crdb_internal.pb_to_json('cockroach.sql.jobs.jobspb.Payload', value)->>'description' LIKE 'CREATE INDEX pauseidx%';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE system.privileges SET privileges = '{FAKE_PRIVILEGE}'
+WHERE username = 'testuser' AND path = '/global/'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE system.scheduled_jobs SET schedule_name = 'row-level-ttl-1234' WHERE schedule_name = 'row-level-ttl: $label_suffix';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE system.tenants SET active = false WHERE id = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = (a :: STRING || a :: STRING) COLLATE da
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = (a :: STRING || a :: STRING) COLLATE de
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = -1 WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = 0 WHERE k = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = 0 WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = 12 WHERE a < 12
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = 2 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = 4 WHERE a < 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a = a - 10 WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET a=a+1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET b = 1 WHERE pk = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET b = 9
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET b = DEFAULT WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET b = DEFAULT, c = DEFAULT, d = DEFAULT
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET c = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET c = 4 WHERE pk = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET crdb_internal_mvcc_timestamp = 1.0 WHERE x = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET d = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET e = 'foo' WHERE a = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET i = 10 WHERE i = 1;
+UPDATE t SET s = 'bar' WHERE i = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET j = '{"x": "y", "num": 10}' WHERE i = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET k = 1, a = 10 WHERE true;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET pk = 1 WHERE c = 6;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = '_updated' WHERE k >= 'b' AND k < 'x'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = 0
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = 2 WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = 4 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = 4 WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = 4 WHERE k = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v = 4 WHERE v = 9
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET v=1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET x = 1 WHERE y = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET x = 2 WHERE y = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET x = 2 WHERE z = 7
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET y = 3 WHERE z = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET z = (crdb_internal_mvcc_timestamp + 1.0)::INT WHERE x = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET z = 3 WHERE x = 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t SET z = 5 WHERE x = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t1 SET a = 2 WHERE a = 123
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t1 SET s = 'updated' WHERE s = 'test'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t10 SET a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t10 SET a = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t137341b SET u2 = 'u2-a' WHERE u2 = 'u2-b'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t14601a SET b = NOT b WHERE a > 'a' AND a < 'c'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t2 SET s = 'updated_safe' WHERE s = 'test'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t29494 SET x = y
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t29494 SET y = 123
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t3 SET b = 1 WHERE a = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t3 SET b = 3 WHERE a = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t32477 SET x = count(x)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t32477 SET x = generate_series(1,2)
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t32477 SET x = rank() OVER ()
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t32786 as node
+SET parent_path=concat((SELECT parent.parent_path
+  FROM t32786 parent
+  WHERE parent.id=node.parent_id),
+  node.id::varchar, '/')
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t35364 SET x=0.5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t4 SET a = 0 WHERE c = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t4 SET a = 2 WHERE c = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t5 SET v = 2 WHERE pk = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t52318 SET b = b + 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t57085_p3 SET p = 4 WHERE p = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t7 SET v = 2 WHERE pk = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t7 SET v = 2 WHERE pk = 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t7 SET v = 3 WHERE pk = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t7 SET v = 3 WHERE pk = 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t81698 SET i = 2 where i = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t9 SET a = 2 WHERE a = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t9 SET a = 7 WHERE a = 4
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t9 SET b = 4 WHERE a = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t9 SET b = 6 WHERE a = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_atom SET val = val - 100
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_bit_string SET C1=B'1010' WHERE pk = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_bit_string SET C2=B'1010' WHERE pk = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_bit_string SET c4 = 'worl' WHERE pk = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_bit_string SET c5 = 'worldh' WHERE pk = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_bytes SET c2 = 'w';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_bytes SET c3='\x3b5692c80f7349ec91868f1478f3064a' WHERE c1 IS NOT NULL;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_check SET b=b+1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_check SET b=b-1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_computed SET path = 'a.b.c.d.e' WHERE id = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_decimal SET c1 = 10012.34 WHERE c1 = 100012.34;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_divzero_virtual SET c = 0 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_idx SET a=a+1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_idx SET b=b+1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_idx SET c=6 WHERE a=2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_idx SET c=c+1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_int SET c1 = 32767 WHERE pk = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_int SET c1 = c1 - 1 WHERE pk = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_overflow_virtual SET b = 4611686018427387904 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_udf_virtual SET b = 5 WHERE a = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_upd SET val = -1 WHERE id = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_upd SET val = 20 WHERE id = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_upd_nn SET val = NULL WHERE id = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE t_with_on_update SET a=a+1 WHERE a > 0;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tb SET b = B'010' WHERE b = B'111'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tb SET b = B'10000' WHERE b = B'010'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tc SET b = 32768 WHERE b = 32767
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tc SET b = 80 WHERE b = 50
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tc1 SET b = 2147483648 WHERE b = 2147483647
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tc1 SET b = 80 WHERE b = 50
+
+-- sqlfmt-corpus-separator --
+
+UPDATE td SET d = DECIMAL '1.41' WHERE d = DECIMAL '3.1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE td SET d = DECIMAL '1.414' WHERE d = DECIMAL '3.14'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE td SET d = DECIMAL '101.414' WHERE d = DECIMAL '3.14'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test SET t = 'b' WHERE t = 'abcde'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test SET t = 'cdefg' WHERE t = 'ab'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_alter SET k = 'should_not_change' WHERE p = 'pk3'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_alter SET p = 'pk2' WHERE p = 'pk1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_alter SET p = 'pk3' WHERE p = 'pk2'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_alter SET p = 'pk4' WHERE p = 'pk3'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_fk_base SET j = 'arbitrary' WHERE p = 'pk1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_simple SET p = 'pk2' WHERE p = 'pk1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_table_enum SET p = 'pk2' WHERE p = 'pk1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_table_seq SET p = 'pk2' WHERE p = 'pk1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_table_seq SET p = 'pk3' WHERE p = 'pk2'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE test_with_default SET p = 'pk2' WHERE p = 'pk1'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tn SET x = NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tn SET y = 'abcd'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tn2 SET x = NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tn2 SET y = 'abcd'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE trigger_rls_table SET value = -100 WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE trigger_rls_table SET value = 150 WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE trigger_rls_table SET value = 175 WHERE id = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE trigger_rls_table SET value = 250 WHERE id = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE trigger_rls_table SET value = 600 WHERE id = 5;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE tu SET b = NULL, c = NULL, d = NULL
+
+-- sqlfmt-corpus-separator --
+
+UPDATE u SET a = 2 WHERE b = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE u SET a = 2, b = -2 WHERE b = -1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE u SET a = 2, b = 1 WHERE b = -1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE u SET a = 3, b = 3  WHERE b = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq SET k = 10, v = 10, w = 10, x = NULL WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq SET k = 11, v = 11 WHERE k = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq SET uniq_col = 5 WHERE uniq_col = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq SET uniq_col = 7 WHERE uniq_col = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq SET w = 1, x = 2 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq SET w = 1, x = 2 WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq SET w = 100, x = 200
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_computed_pk SET d = 1.00 WHERE i = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_computed_pk SET i = 1 WHERE i = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_computed_pk SET s = 'a' WHERE i = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_enum SET r = DEFAULT, s = 'foo', j = 1 WHERE r = 'eu-west'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_fk_child SET b = 2, c = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_fk_child SET b = NULL WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_fk_child SET d = NULL WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_fk_parent SET c = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_fk_parent SET d = 3 WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_no_index SET b=b+11 WHERE a < 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_no_index_multi SET c=2 WHERE a=3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_overlaps_pk SET a = 1, b = 2, c = 3, d = 4 WHERE a = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_overlaps_pk SET a = 1, b = 2, c = 3, d = 4 WHERE a = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET a = 1 WHERE a = 1 AND b = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET a = 1 WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET a = 1 WHERE b = -7
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET a = 10 WHERE a = 9 AND b = 9
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET a = 10 WHERE a IS NULL AND b = 5
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET a = NULL, b = 10 WHERE a = 1 AND b = -1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET b = 10 WHERE a = 1 AND b = -1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET b = 10-a
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial SET b = 30-a
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial_pred SET b=10-a
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_partial_pred SET b=20-a
+
+-- sqlfmt-corpus-separator --
+
+UPDATE uniq_simple SET b=b+11 WHERE a < 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE university SET mascot = 'wolves' WHERE name = 'CMU'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE university SET mascot = 'wolves' WHERE name = 'Evergreen State'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE university SET name = 'CMU' WHERE name = 'Carnegie Mellon University';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE university SET name = 'CMU' WHERE name = 'Central Michigan University'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE university SET name = 'Carnegie Mellon University' WHERE name = 'CMU';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE unsorted_colids SET b = 2, c = 3 WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE upd_assn_cast SET id = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE update_test SET c1 = c1 + 80
+
+-- sqlfmt-corpus-separator --
+
+UPDATE update_test SET j = '["b", "a"]' WHERE i = 4;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE update_test SET j = '["b", "c", "e"]' WHERE i = 3;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE update_test SET j = '{"a":"b", "a":"b"}' WHERE i = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE update_test SET j = '{"a":"b", "c":"d"}' WHERE i = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE update_test SET j = ('"shortValue"') WHERE i = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE user_settings SET crdb_region = 'ca-central-1' WHERE id = 'f1867e8b-3414-425c-b3f8-d7e237f848e6';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE users SET crdb_region = 'ca-central-1' WHERE id = '5ebfedee-0dcf-41e6-a315-5fa0b51b9882';
+
+-- sqlfmt-corpus-separator --
+
+UPDATE users SET id = id * 100 WHERE id = 20
+
+-- sqlfmt-corpus-separator --
+
+UPDATE users SET region = '00000000-0000-0000-0000-000000000002' WHERE user_id = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE v SET a = DEFAULT
+
+-- sqlfmt-corpus-separator --
+
+UPDATE v SET x = 1 WHERE y = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE vec SET k = 10 WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE vec SET s = 'bar' WHERE k = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE vec SET s = 'baz' WHERE k = 10
+
+-- sqlfmt-corpus-separator --
+
+UPDATE vec SET v = '[6,6]' WHERE k = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE virt SET a = 4 WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE virt SET b = 0 WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE virt SET b = 3 WHERE a = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE volcano SET origin = 'Fought over Loowit and was transformed by Saghalie.' WHERE name = 'Mount St. Helens'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE voyage SET crew = 'argonauts', quest = 'golden fleece' WHERE hero = 'perseus'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE voyage SET hero = 'hercules' WHERE hero = 'odysseus'
+
+-- sqlfmt-corpus-separator --
+
+UPDATE with_no_column_refs SET c = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE x SET a = ARRAY[], b = ARRAY[]
+
+-- sqlfmt-corpus-separator --
+
+UPDATE x SET b = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE x SET b = c
+
+-- sqlfmt-corpus-separator --
+
+UPDATE x SET c = 2, a = 3, b = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE x SET data = data || '{"name": "carl"}' WHERE k = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy SET x = 3 WHERE x = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy SET x = 5 WHERE x = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy SET y = 3 WHERE x = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy SET y = xy.y * 10 WHERE x = 5;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy SET y = y + 10;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy set x=3 WHERE x = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy set z=5 WHERE x = 1;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xy set z=5 WHERE x = 2;
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET y = 1 WHERE x = 2 AND y = 2 AND z = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET y = 1 WHERE x = 2 AND y = 2 AND z = 3
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET z = (SELECT (10, 11)) WHERE x = 7
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET z = (SELECT 10) WHERE x = 7
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET z = 11 WHERE x = 1 AND y = 1 AND z = 1
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET z = 12 WHERE x = 2 AND y = 2 AND z = 2
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET z = 21 WHERE x = 1 AND y = 1 AND z = 11
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET z = 31 WHERE x = 1 AND y = 1 AND z = 11
+
+-- sqlfmt-corpus-separator --
+
+UPDATE xyz SET z = 31 WHERE x = 1 AND y = 1 AND z = 21
+
+-- sqlfmt-corpus-separator --
+
 WITH
     t AS (SELECT true),
     t AS (SELECT false)
@@ -9106,6 +54998,503 @@ WITH t(b, c) AS (SELECT a FROM x) SELECT b, t.b FROM t
 -- sqlfmt-corpus-separator --
 
 WITH t(x) AS (WITH t(x) AS (SELECT 1) SELECT x * 10 FROM t) SELECT x + 2 FROM t
+
+-- sqlfmt-corpus-separator --
+
+alter table roach add column serial_id SERIAL;
+
+-- sqlfmt-corpus-separator --
+
+alter table roach add column serial_id2 SERIAL
+
+-- sqlfmt-corpus-separator --
+
+begin;
+
+-- sqlfmt-corpus-separator --
+
+begin;
+insert into foo values (1)
+
+-- sqlfmt-corpus-separator --
+
+begin;
+insert into foo values (1), (3);
+
+-- sqlfmt-corpus-separator --
+
+begin;
+insert into foo values (2), (4);
+
+-- sqlfmt-corpus-separator --
+
+begin;
+rollback
+
+-- sqlfmt-corpus-separator --
+
+begin;
+select 1/0;
+
+-- sqlfmt-corpus-separator --
+
+commit
+
+-- sqlfmt-corpus-separator --
+
+commit;
+
+-- sqlfmt-corpus-separator --
+
+create ROLE bar_role;
+
+-- sqlfmt-corpus-separator --
+
+create ROLE foo_role;
+
+-- sqlfmt-corpus-separator --
+
+create database alter_survive_db
+
+-- sqlfmt-corpus-separator --
+
+create database bar;
+
+-- sqlfmt-corpus-separator --
+
+create database foo;
+
+-- sqlfmt-corpus-separator --
+
+create database test2
+
+-- sqlfmt-corpus-separator --
+
+create index i1 on other(k ASC);
+
+-- sqlfmt-corpus-separator --
+
+create index i1 on t1(k ASC);
+
+-- sqlfmt-corpus-separator --
+
+create index i2 on other(k DESC);
+
+-- sqlfmt-corpus-separator --
+
+create index i2 on t1(k DESC);
+
+-- sqlfmt-corpus-separator --
+
+create schema "schema-hyphen"
+
+-- sqlfmt-corpus-separator --
+
+create schema empty.sc
+
+-- sqlfmt-corpus-separator --
+
+create schema sc1;
+create schema sc2;
+create table sc1.parent (p int primary key);
+create table sc2.child(p int primary key, r int REFERENCES sc1.parent (p));
+
+-- sqlfmt-corpus-separator --
+
+create table "schema-hyphen"."Serial_3" ("capITALS" SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+create table alter_survive_db.t();
+
+-- sqlfmt-corpus-separator --
+
+create table bar (id integer)
+
+-- sqlfmt-corpus-separator --
+
+create table current_time_tzset_test (id integer, a time, b time)
+
+-- sqlfmt-corpus-separator --
+
+create table current_timestamp_test (a timestamp, b timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+create table foo (i int primary key)
+
+-- sqlfmt-corpus-separator --
+
+create table foo (i int primary key);
+
+-- sqlfmt-corpus-separator --
+
+create table interval_parsing ( pk INT PRIMARY KEY, i TEXT )
+
+-- sqlfmt-corpus-separator --
+
+create table intervals ( pk INT PRIMARY KEY, i INTERVAL )
+
+-- sqlfmt-corpus-separator --
+
+create table listings_balance (c1 int);
+
+-- sqlfmt-corpus-separator --
+
+create table other(n int primary key, j int, k int);
+
+-- sqlfmt-corpus-separator --
+
+create table r1 (c1 int);
+
+-- sqlfmt-corpus-separator --
+
+create table regression_71444 (col bytes[]);
+insert into regression_71444 VALUES ('{"a"}'), ('{"b", "c"}')
+
+-- sqlfmt-corpus-separator --
+
+create table roach (id int);
+insert into roach DEFAULT VALUES;
+insert into roach DEFAULT VALUES;
+SET serial_normalization = rowid
+
+-- sqlfmt-corpus-separator --
+
+create table roach_village ( roach_id int primary key, name text, age smallint, legs smallint );
+
+-- sqlfmt-corpus-separator --
+
+create table serial_2 ("capITALS" SERIAL)
+
+-- sqlfmt-corpus-separator --
+
+create table src (c int primary key, d int references dst(a))
+
+-- sqlfmt-corpus-separator --
+
+create table t1(id integer not null, id2 integer not null, name varchar(32));
+
+-- sqlfmt-corpus-separator --
+
+create table t1(n int primary key, j int, k int);
+
+-- sqlfmt-corpus-separator --
+
+create table t104546 (a int primary key);
+create table t104546_fk_src (a int primary key, b int);
+
+-- sqlfmt-corpus-separator --
+
+create table t1_serial_columns(n int);
+
+-- sqlfmt-corpus-separator --
+
+create table t61414_a (
+  k INT PRIMARY KEY
+)
+
+-- sqlfmt-corpus-separator --
+
+create table t81448 (a int primary key);
+insert into t81448 values (1), (2), (3)
+
+-- sqlfmt-corpus-separator --
+
+create table t_124546(a int);
+
+-- sqlfmt-corpus-separator --
+
+create table t_drop_cascade_with_key(n int primary key, k int);
+
+-- sqlfmt-corpus-separator --
+
+create table t_droppedcol (dropme int);
+
+-- sqlfmt-corpus-separator --
+
+create table t_many (c1 smallint);
+
+-- sqlfmt-corpus-separator --
+
+create table t_no_locality (i int)
+
+-- sqlfmt-corpus-separator --
+
+create table test (id int8 not null default app_to_db_id(nextval('seq1'::REGCLASS)));
+
+-- sqlfmt-corpus-separator --
+
+create table test.t1 (c decimal default if(false, 1, 'blah'::decimal));
+
+-- sqlfmt-corpus-separator --
+
+create table xt (x1 int, x2 int)
+
+-- sqlfmt-corpus-separator --
+
+create table y (
+  a INT REFERENCES x (k)
+)
+
+-- sqlfmt-corpus-separator --
+
+create table yt (y1 int, y2 int)
+
+-- sqlfmt-corpus-separator --
+
+create temporary table tmp_table (id int primary key);
+
+-- sqlfmt-corpus-separator --
+
+delete from cnt;
+
+-- sqlfmt-corpus-separator --
+
+delete from system.eventlog;
+
+-- sqlfmt-corpus-separator --
+
+drop database db2 cascade;
+
+-- sqlfmt-corpus-separator --
+
+drop table alter_survive_db.t;
+
+-- sqlfmt-corpus-separator --
+
+drop table flying_roaches
+
+-- sqlfmt-corpus-separator --
+
+drop table foo
+
+-- sqlfmt-corpus-separator --
+
+drop table foo;
+create table foo (i int primary key)
+
+-- sqlfmt-corpus-separator --
+
+drop table if exists tbl;
+drop type if exists t
+
+-- sqlfmt-corpus-separator --
+
+drop table listings_balance cascade;
+
+-- sqlfmt-corpus-separator --
+
+drop table t81448, t81448_b
+
+-- sqlfmt-corpus-separator --
+
+drop table t_multi_alter;
+
+-- sqlfmt-corpus-separator --
+
+drop table t_seq_owner;
+
+-- sqlfmt-corpus-separator --
+
+drop type my_enum;
+
+-- sqlfmt-corpus-separator --
+
+drop type roach_type
+
+-- sqlfmt-corpus-separator --
+
+grant all on r1 to r1_user;
+
+-- sqlfmt-corpus-separator --
+
+grant testuser to root
+
+-- sqlfmt-corpus-separator --
+
+insert into current_time_tzset_test (id, a) values (1, current_time), (2, localtime)
+
+-- sqlfmt-corpus-separator --
+
+insert into current_timestamp_test values (current_timestamp, current_timestamp)
+
+-- sqlfmt-corpus-separator --
+
+insert into foo values (1)
+
+-- sqlfmt-corpus-separator --
+
+insert into foo values (4);
+
+-- sqlfmt-corpus-separator --
+
+insert into foo values (5)
+
+-- sqlfmt-corpus-separator --
+
+insert into foo values(16);
+
+-- sqlfmt-corpus-separator --
+
+insert into metric_values (metric_id, time, nullable, value) values
+ (1,'2020-01-01 00:00:00+00:00',NULL,0),
+ (1,'2020-01-01 00:00:01+00:00',1,1),
+ (2,'2020-01-01 00:00:00+00:00',NULL,2),
+ (2,'2020-01-01 00:00:01+00:00',2,3),
+ (2,'2020-01-01 00:01:01+00:00',-11,4),
+ (2,'2020-01-01 00:01:02+00:00',-10,5),
+ (3,'2020-01-01 00:01:00+00:00',NULL,6),
+ (3,'2020-01-01 00:01:01+00:00',3,7)
+
+-- sqlfmt-corpus-separator --
+
+insert into metric_values_desc select * from metric_values
+
+-- sqlfmt-corpus-separator --
+
+insert into metrics (id,nullable,name) values (1,NULL,'cpu'), (2,1,'cpu'), (3,NULL,'mem'), (4,2,'disk')
+
+-- sqlfmt-corpus-separator --
+
+insert into r1 values (0),(1),(2),(3),(4),(5),(22);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('earth', 'eu', '', 4);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('earth', 'us', 'cali', 2);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('earth', 'us', 'cali', 3);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('earth', 'us', 'seatle', 1);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('jupiter', '', '', 6);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('jupiter', 'titan', '', 7);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('jupiter', 'titan', 'red spot', 8);
+
+-- sqlfmt-corpus-separator --
+
+insert into solar_system values ('mars', '', '', 5);
+
+-- sqlfmt-corpus-separator --
+
+insert into t1 values (123);
+
+-- sqlfmt-corpus-separator --
+
+insert into t1 values (123); insert into t2 values (123)
+
+-- sqlfmt-corpus-separator --
+
+insert into t103616 values ('empty 1', ST_GeogFromText('POLYGON EMPTY'), ST_GeomFromText('POLYGON EMPTY'));
+
+-- sqlfmt-corpus-separator --
+
+insert into t103616 values ('empty 2', ST_GeogFromText('GEOMETRYCOLLECTION EMPTY'), ST_GeomFromText('GEOMETRYCOLLECTION EMPTY'));
+
+-- sqlfmt-corpus-separator --
+
+insert into t103616 values ('null', null, null);
+
+-- sqlfmt-corpus-separator --
+
+insert into t103616 values ('point (0 0)', 'POINT(0 0)'::GEOGRAPHY, 'POINT(0 0)'::GEOMETRY);
+
+-- sqlfmt-corpus-separator --
+
+insert into t103616 values ('point (10 10)', 'POINT(10 10)'::GEOGRAPHY, 'POINT(10 10)'::GEOMETRY);
+
+-- sqlfmt-corpus-separator --
+
+insert into t2 values (123)
+
+-- sqlfmt-corpus-separator --
+
+insert into t2 values (123); UPDATE t1 SET a = 2 WHERE a = 123
+
+-- sqlfmt-corpus-separator --
+
+insert into t87605 values (1.234567890123456e+13), (1.234567890123456e+6)
+
+-- sqlfmt-corpus-separator --
+
+insert into t_many values (0),(100),(-32);
+
+-- sqlfmt-corpus-separator --
+
+insert into tmp_table values (1), (2), (3);
+
+-- sqlfmt-corpus-separator --
+
+insert into xt values (1,11)
+
+-- sqlfmt-corpus-separator --
+
+insert into xt values (2,22)
+
+-- sqlfmt-corpus-separator --
+
+insert into xt values (3,null)
+
+-- sqlfmt-corpus-separator --
+
+insert into xt values (4,44)
+
+-- sqlfmt-corpus-separator --
+
+insert into xt values (5,null)
+
+-- sqlfmt-corpus-separator --
+
+insert into yt values (1,111)
+
+-- sqlfmt-corpus-separator --
+
+insert into yt values (2,222)
+
+-- sqlfmt-corpus-separator --
+
+insert into yt values (3,333)
+
+-- sqlfmt-corpus-separator --
+
+insert into yt values (4,null)
+
+-- sqlfmt-corpus-separator --
+
+reset datestyle
+
+-- sqlfmt-corpus-separator --
+
+reset require_explicit_primary_keys;
+
+-- sqlfmt-corpus-separator --
+
+rollback
+
+-- sqlfmt-corpus-separator --
+
+rollback;
+
+-- sqlfmt-corpus-separator --
+
+rollback;
+drop table foo
 
 -- sqlfmt-corpus-separator --
 
@@ -9230,6 +55619,10 @@ select * from td3
 -- sqlfmt-corpus-separator --
 
 select 1, 2; select 1, 2, 3; select 'ok'
+
+-- sqlfmt-corpus-separator --
+
+select 1; BEGIN; select 1; select 1; COMMIT
 
 -- sqlfmt-corpus-separator --
 
@@ -9483,3 +55876,202 @@ select x, y FROM td2
 -- sqlfmt-corpus-separator --
 
 select x/1 from t39417
+
+-- sqlfmt-corpus-separator --
+
+set allow_role_memberships_to_change_during_transaction=true
+
+-- sqlfmt-corpus-separator --
+
+set autocommit_before_ddl=false;
+
+-- sqlfmt-corpus-separator --
+
+set autocommit_before_ddl=off;
+
+-- sqlfmt-corpus-separator --
+
+set autocommit_before_ddl=on
+
+-- sqlfmt-corpus-separator --
+
+set bytea_output = escape
+
+-- sqlfmt-corpus-separator --
+
+set bytea_output = hex
+
+-- sqlfmt-corpus-separator --
+
+set datestyle = 'dmy'
+
+-- sqlfmt-corpus-separator --
+
+set datestyle = 'mdy'
+
+-- sqlfmt-corpus-separator --
+
+set datestyle = 'ymd'
+
+-- sqlfmt-corpus-separator --
+
+set default_int_size = 4;
+
+-- sqlfmt-corpus-separator --
+
+set default_int_size = 8;
+
+-- sqlfmt-corpus-separator --
+
+set default_int_size=4
+
+-- sqlfmt-corpus-separator --
+
+set default_int_size=8
+
+-- sqlfmt-corpus-separator --
+
+set default_transaction_isolation = '$iso';
+
+-- sqlfmt-corpus-separator --
+
+set default_transaction_read_only = off;
+
+-- sqlfmt-corpus-separator --
+
+set default_transaction_read_only = on;
+
+-- sqlfmt-corpus-separator --
+
+set distsql = on
+
+-- sqlfmt-corpus-separator --
+
+set experimental_enable_hash_sharded_indexes = on
+
+-- sqlfmt-corpus-separator --
+
+set experimental_enable_unique_without_index_constraints = true;
+
+-- sqlfmt-corpus-separator --
+
+set require_explicit_primary_keys=true
+
+-- sqlfmt-corpus-separator --
+
+set sql_safe_updates = true;
+set autocommit_before_ddl = true;
+CREATE TABLE roaches(id INT PRIMARY KEY, value STRING);
+CREATE INDEX roaches_value_idx ON roaches(value);
+
+-- sqlfmt-corpus-separator --
+
+set sql_safe_updates=false
+
+-- sqlfmt-corpus-separator --
+
+set sql_safe_updates=false;
+
+-- sqlfmt-corpus-separator --
+
+set time zone 0
+
+-- sqlfmt-corpus-separator --
+
+set time zone UTC
+
+-- sqlfmt-corpus-separator --
+
+set timezone = 'Europe/Bucharest';
+
+-- sqlfmt-corpus-separator --
+
+set use_declarative_schema_changer = 'off';
+
+-- sqlfmt-corpus-separator --
+
+set use_declarative_schema_changer = 'unsafe_always';
+
+-- sqlfmt-corpus-separator --
+
+set use_declarative_schema_changer = on
+
+-- sqlfmt-corpus-separator --
+
+show columns from roach;
+
+-- sqlfmt-corpus-separator --
+
+show create table decomputed_column
+
+-- sqlfmt-corpus-separator --
+
+show create table t
+
+-- sqlfmt-corpus-separator --
+
+show create table t17
+
+-- sqlfmt-corpus-separator --
+
+show create table t24
+
+-- sqlfmt-corpus-separator --
+
+show create table t3
+
+-- sqlfmt-corpus-separator --
+
+show create table t_128420
+
+-- sqlfmt-corpus-separator --
+
+show create table t_147993
+
+-- sqlfmt-corpus-separator --
+
+show create table t_99281
+
+-- sqlfmt-corpus-separator --
+
+show create table t_99764
+
+-- sqlfmt-corpus-separator --
+
+show create table t_bytes
+
+-- sqlfmt-corpus-separator --
+
+show create table t_decimal
+
+-- sqlfmt-corpus-separator --
+
+show create table t_multi_alter
+
+-- sqlfmt-corpus-separator --
+
+update current_time_tzset_test set b = current_time where id = 1
+
+-- sqlfmt-corpus-separator --
+
+update current_time_tzset_test set b = localtime where id = 2
+
+-- sqlfmt-corpus-separator --
+
+update r1 set c1 = c1 + 1 where c1 between 1 and 3;
+
+-- sqlfmt-corpus-separator --
+
+update r1 set c1 = c1 + 1;
+
+-- sqlfmt-corpus-separator --
+
+update r1 set c1 = c1 + 2 where c1 between 1 and 10;
+
+-- sqlfmt-corpus-separator --
+
+update r1 set c1 = c1 ;
+
+-- sqlfmt-corpus-separator --
+
+update users set id = id * 10

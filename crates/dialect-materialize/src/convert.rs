@@ -8,7 +8,7 @@ use sqlfmt_ir::{Clause, Node};
 pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
     match stmt {
         Statement::Select(s) => select_stmt_to_node(s),
-        _ => Node::Unformatted {
+        _ => Node::Text {
             value: format!("{stmt}"),
         },
     }
