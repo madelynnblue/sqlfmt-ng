@@ -32,7 +32,7 @@ pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
         Statement::GrantPrivileges(gp) => grant_privileges_to_node(gp),
         Statement::RevokePrivileges(rp) => revoke_privileges_to_node(rp),
         Statement::Comment(c) => comment_to_node(c),
-        _ => Node::Text {
+        _ => Node::Unformatted {
             value: format!("{stmt}"),
         },
     }
@@ -63,7 +63,7 @@ fn select_stmt_to_node(s: &SelectStatement<Raw>) -> Node {
 fn query_to_node(query: &Query<Raw>) -> Node {
     // WITH MUTUALLY RECURSIVE is complex; fall back to text.
     if matches!(query.ctes, CteBlock::MutuallyRecursive(_)) {
-        return Node::Text {
+        return Node::Unformatted {
             value: format!("{query}"),
         };
     }
@@ -87,7 +87,7 @@ fn query_to_node(query: &Query<Raw>) -> Node {
                     items.insert(0, cte_clause);
                     Node::Clauses { items }
                 }
-                _ => Node::Text {
+                _ => Node::Unformatted {
                     value: format!("{query}"),
                 }
             }
@@ -149,7 +149,7 @@ fn set_expr_to_node(set_expr: &SetExpr<Raw>) -> Node {
         }
         SetExpr::Values(v) => values_to_node(v),
         // SHOW, TABLE: fall back to Display text.
-        _ => Node::Text {
+        _ => Node::Unformatted {
             value: format!("{set_expr}"),
         },
     }
@@ -1052,7 +1052,7 @@ fn function_to_node(f: &Function<Raw>) -> Node {
         "\"extract\"" | "\"position\""
     ) && f.args.len() == Some(2)
     {
-        return Node::Text { value: format!("{f}") };
+        return Node::Unformatted { value: format!("{f}") };
     }
 
     // ORDER BY within function args is complex and requires fallback to
@@ -1063,7 +1063,7 @@ fn function_to_node(f: &Function<Raw>) -> Node {
         FunctionArgs::Star => false,
     };
     if has_complex {
-        return Node::Text { value: format!("{f}") };
+        return Node::Unformatted { value: format!("{f}") };
     }
 
     let mut items = match &f.args {
@@ -1083,7 +1083,7 @@ fn function_to_node(f: &Function<Raw>) -> Node {
         }
         FunctionArgs::Args { args, order_by: _ } => {
             if args.is_empty() {
-                return Node::Text { value: format!("{f}") };
+                return Node::Unformatted { value: format!("{f}") };
             }
             let arg_nodes: Vec<Node> = args.iter().map(expr_to_node).collect();
             let mut body = Node::List {
@@ -1871,7 +1871,7 @@ fn subscript_position_to_node(pos: &SubscriptPosition<Raw>) -> Node {
             ],
         },
         (Some(start), None, false) => expr_to_node(start),
-        _ => Node::Text {
+        _ => Node::Unformatted {
             value: format!("{pos}"),
         },
     }
