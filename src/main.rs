@@ -4,13 +4,6 @@ use sqlfmt_render::{CaseMode, RenderOpts};
 use std::io::{self, Read};
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
-enum DialectArg {
-    Json,
-    Materialize,
-    Postgres,
-}
-
-#[derive(Debug, Clone, Copy, ValueEnum)]
 enum CaseArg {
     Upper,
     Lower,
@@ -20,9 +13,12 @@ enum CaseArg {
 #[derive(Parser, Debug)]
 #[command(name = "sqlfmt", about = "SQL formatter")]
 struct Args {
-    /// SQL dialect
+    /// SQL dialect: json, materialize, postgres, or sqlparser:<name>
+    /// (sqlparser dialects: generic, postgresql, mysql, sqlite, bigquery,
+    ///  clickhouse, databricks, duckdb, hive, mssql, oracle, redshift,
+    ///  snowflake, ansi)
     #[arg(long, default_value = "materialize")]
-    dialect: DialectArg,
+    dialect: String,
 
     /// Target line width
     #[arg(long, default_value_t = 60)]
@@ -71,12 +67,26 @@ fn main() {
         error_on_unformatted: false,
     };
 
-    let result = match args.dialect {
-        DialectArg::Json => format_sql(&dialect_json::JsonDialect, &sql, &opts),
-        DialectArg::Materialize => {
-            format_sql(&dialect_materialize::MaterializeDialect, &sql, &opts)
+    let result = match args.dialect.as_str() {
+        "json" => format_sql(&dialect_json::JsonDialect, &sql, &opts),
+        "materialize" => format_sql(&dialect_materialize::MaterializeDialect, &sql, &opts),
+        "postgres" => format_sql(&dialect_postgres::PostgresDialect, &sql, &opts),
+        other => {
+            if let Some(name) = other.strip_prefix("sqlparser:") {
+                let d = match dialect_sqlparser::SqlparserDialect::from_name(name) {
+                    Some(d) => d,
+                    None => {
+                        eprintln!("error: unknown sqlparser dialect: {name}");
+                        std::process::exit(1);
+                    }
+                };
+                format_sql(&d, &sql, &opts)
+            } else {
+                eprintln!("error: unknown dialect: {other}");
+                eprintln!("  supported: json, materialize, postgres, sqlparser:<name>");
+                std::process::exit(1);
+            }
         }
-        DialectArg::Postgres => format_sql(&dialect_postgres::PostgresDialect, &sql, &opts),
     };
 
     match result {

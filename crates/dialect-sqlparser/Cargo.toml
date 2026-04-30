@@ -1,0 +1,13 @@
+[package]
+name = "dialect-sqlparser"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sqlfmt-core = { path = "../sqlfmt-core" }
+sqlfmt-ir = { path = "../sqlfmt-ir" }
+sqlparser = "0.61"
+
+[dev-dependencies]
+sqlfmt-render = { path = "../sqlfmt-render" }

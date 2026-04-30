@@ -4,6 +4,7 @@ members = [
     "crates/dialect-cockroachdb",
     "crates/dialect-googlesql",
     "crates/dialect-json",
+    "crates/dialect-sqlparser",
     "crates/dialect-materialize",
     "crates/dialect-postgres-convert",
     "crates/dialect-postgres",
@@ -32,6 +33,7 @@ clap = { version = "4", features = ["derive"] }
 dialect-json = { path = "crates/dialect-json" }
 dialect-materialize = { path = "crates/dialect-materialize" }
 dialect-postgres = { path = "crates/dialect-postgres" }
+dialect-sqlparser = { path = "crates/dialect-sqlparser" }
 sqlfmt-core = { path = "crates/sqlfmt-core" }
 sqlfmt-render = { path = "crates/sqlfmt-render" }
 
