@@ -3,9 +3,11 @@ use mz_sql_parser::ast::{
     CreateIndexStatement, CreateTableStatement, CreateViewStatement, Cte, CteBlock,
     DeleteStatement, Distinct, DropObjectsStatement, ResetVariableStatement,
     Expr, Function,
-    FunctionArgs, Ident, IfExistsBehavior, InsertSource, InsertStatement, Join,
+    FunctionArgs, GrantPrivilegesStatement, GrantRoleStatement, Ident, IfExistsBehavior,
+    InsertSource, InsertStatement, Join,
     JoinConstraint, JoinOperator, MapEntry, ObjectType, OrderByExpr, Query, Raw, Select, SelectItem,
     SelectStatement, SetExpr, SetOperator, SetVariableStatement, Statement,
+    RevokePrivilegesStatement, RevokeRoleStatement,
     SubscriptPosition, TableAlias,
     TableFactor, TableWithJoins, UpdateStatement, Value, Values,
     WindowSpec,
@@ -25,6 +27,10 @@ pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
         Statement::DropObjects(drop) => drop_objects_to_node(drop),
         Statement::SetVariable(sv) => set_variable_to_node(sv),
         Statement::ResetVariable(rv) => reset_variable_to_node(rv),
+        Statement::GrantRole(gr) => grant_role_to_node(gr),
+        Statement::RevokeRole(rr) => revoke_role_to_node(rr),
+        Statement::GrantPrivileges(gp) => grant_privileges_to_node(gp),
+        Statement::RevokePrivileges(rp) => revoke_privileges_to_node(rp),
         _ => Node::Text {
             value: format!("{stmt}"),
         },
@@ -1867,5 +1873,163 @@ fn subscript_position_to_node(pos: &SubscriptPosition<Raw>) -> Node {
         _ => Node::Text {
             value: format!("{pos}"),
         },
+    }
+}
+
+fn grant_role_to_node(gr: &GrantRoleStatement<Raw>) -> Node {
+    let GrantRoleStatement {
+        role_names,
+        member_names,
+    } = gr;
+    let roles: Vec<Node> = role_names
+        .iter()
+        .map(|r| Node::Identifier {
+            value: format!("{r}"),
+            quote: None,
+        })
+        .collect();
+    let members: Vec<Node> = member_names
+        .iter()
+        .map(|m| Node::Identifier {
+            value: format!("{m}"),
+            quote: None,
+        })
+        .collect();
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "GRANT".into(),
+            },
+            Node::Text { value: " ".into() },
+            Node::List {
+                items: roles,
+                separator: None,
+            },
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "TO".into() },
+            Node::Text { value: " ".into() },
+            Node::List {
+                items: members,
+                separator: None,
+            },
+        ],
+    }
+}
+
+fn revoke_role_to_node(rr: &RevokeRoleStatement<Raw>) -> Node {
+    let RevokeRoleStatement {
+        role_names,
+        member_names,
+    } = rr;
+    let roles: Vec<Node> = role_names
+        .iter()
+        .map(|r| Node::Identifier {
+            value: format!("{r}"),
+            quote: None,
+        })
+        .collect();
+    let members: Vec<Node> = member_names
+        .iter()
+        .map(|m| Node::Identifier {
+            value: format!("{m}"),
+            quote: None,
+        })
+        .collect();
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "REVOKE".into(),
+            },
+            Node::Text { value: " ".into() },
+            Node::List {
+                items: roles,
+                separator: None,
+            },
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "FROM".into() },
+            Node::Text { value: " ".into() },
+            Node::List {
+                items: members,
+                separator: None,
+            },
+        ],
+    }
+}
+
+fn grant_privileges_to_node(gp: &GrantPrivilegesStatement<Raw>) -> Node {
+    let GrantPrivilegesStatement {
+        privileges,
+        target,
+        roles,
+    } = gp;
+    let role_nodes: Vec<Node> = roles
+        .iter()
+        .map(|r| Node::Identifier {
+            value: format!("{r}"),
+            quote: None,
+        })
+        .collect();
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "GRANT".into(),
+            },
+            Node::Text { value: " ".into() },
+            Node::Text {
+                value: format!("{privileges}"),
+            },
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "ON".into() },
+            Node::Text { value: " ".into() },
+            Node::Text {
+                value: format!("{target}"),
+            },
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "TO".into() },
+            Node::Text { value: " ".into() },
+            Node::List {
+                items: role_nodes,
+                separator: None,
+            },
+        ],
+    }
+}
+
+fn revoke_privileges_to_node(rp: &RevokePrivilegesStatement<Raw>) -> Node {
+    let RevokePrivilegesStatement {
+        privileges,
+        target,
+        roles,
+    } = rp;
+    let role_nodes: Vec<Node> = roles
+        .iter()
+        .map(|r| Node::Identifier {
+            value: format!("{r}"),
+            quote: None,
+        })
+        .collect();
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "REVOKE".into(),
+            },
+            Node::Text { value: " ".into() },
+            Node::Text {
+                value: format!("{privileges}"),
+            },
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "ON".into() },
+            Node::Text { value: " ".into() },
+            Node::Text {
+                value: format!("{target}"),
+            },
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "FROM".into() },
+            Node::Text { value: " ".into() },
+            Node::List {
+                items: role_nodes,
+                separator: None,
+            },
+        ],
     }
 }

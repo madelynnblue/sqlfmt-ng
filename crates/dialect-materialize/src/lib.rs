@@ -709,4 +709,28 @@ mod tests {
         let result = fmt("SELECT array_agg(y ORDER BY y) OVER () FROM t");
         assert!(result.contains("ORDER BY y"), "got: {result}");
     }
+
+    #[test]
+    fn test_grant_role() {
+        let result = fmt("GRANT group1, group2 TO joe");
+        assert!(result.contains("GRANT") && result.contains("TO"), "got: {result}");
+    }
+
+    #[test]
+    fn test_revoke_role() {
+        let result = fmt("REVOKE group1 FROM joe");
+        assert!(result.contains("REVOKE") && result.contains("FROM"), "got: {result}");
+    }
+
+    #[test]
+    fn test_grant_privileges() {
+        let result = fmt("GRANT CREATE ON CLUSTER c TO joe");
+        assert!(result.contains("GRANT") && result.contains("ON") && result.contains("TO"), "got: {result}");
+    }
+
+    #[test]
+    fn test_revoke_privileges() {
+        let result = fmt("REVOKE SELECT ON TABLE t FROM r5");
+        assert!(result.contains("REVOKE") && result.contains("ON") && result.contains("FROM"), "got: {result}");
+    }
 }
