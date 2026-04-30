@@ -1,17 +1,20 @@
 use mz_sql_parser::ast::{
-    display::AstDisplay, Assignment, AsOf, CommentStatement, CreateMaterializedViewStatement,
-    CreateIndexStatement, CreateTableStatement, CreateViewStatement, Cte, CteBlock,
+    display::AstDisplay, AlterClusterStatement, Assignment, AsOf,
+    CommentStatement, CommitStatement, CreateClusterReplicaStatement, CreateClusterStatement,
+    CreateIndexStatement, CreateMaterializedViewStatement, CreateTableStatement,
+    CreateViewStatement, Cte, CteBlock,
     DeleteStatement, Distinct, DropObjectsStatement,
-    ExplainAnalyzeClusterStatement, ExplainAnalyzeComputationProperties,
+    ExecuteStatement, ExplainAnalyzeClusterStatement, ExplainAnalyzeComputationProperties,
     ExplainAnalyzeComputationProperty, ExplainAnalyzeObjectStatement, ExplainAnalyzeProperty,
     ExplainPlanStatement, ExplainPushdownStatement, ExplainSinkSchemaFor,
     ExplainSinkSchemaStatement, ExplainTimestampStatement, Explainee,
     Expr, Function,
     FunctionArgs, GrantPrivilegesStatement, GrantRoleStatement, Ident, IfExistsBehavior,
     InsertSource, InsertStatement, Join,
-    JoinConstraint, JoinOperator, MapEntry, ObjectType, OrderByExpr, Query, Raw,
-    ResetVariableStatement, Select, SelectItem,
-    SelectStatement, SetExpr, SetOperator, SetVariableStatement, Statement,
+    JoinConstraint, JoinOperator, MapEntry, ObjectType, OrderByExpr, PrepareStatement, Query,
+    Raw, ResetVariableStatement, RollbackStatement, Select, SelectItem,
+    SelectStatement, SetExpr, SetOperator, SetVariableStatement,
+    StartTransactionStatement, Statement,
     RevokePrivilegesStatement, RevokeRoleStatement,
     SubscriptPosition, TableAlias,
     TableFactor, TableWithJoins, UpdateStatement, Value, Values,
@@ -43,6 +46,17 @@ pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
         Statement::ExplainSinkSchema(ess) => explain_sink_schema_to_node(ess),
         Statement::ExplainAnalyzeObject(eao) => explain_analyze_object_to_node(eao),
         Statement::ExplainAnalyzeCluster(eac) => explain_analyze_cluster_to_node(eac),
+        Statement::CreateCluster(cc) => create_cluster_to_node(cc),
+        Statement::CreateClusterReplica(ccr) => create_cluster_replica_to_node(ccr),
+        Statement::AlterCluster(ac) => alter_cluster_to_node(ac),
+        Statement::AlterDefaultPrivileges(adp) => Node::Unformatted {
+            value: format!("{adp}"),
+        },
+        Statement::Prepare(p) => prepare_to_node(p),
+        Statement::Execute(e) => execute_to_node(e),
+        Statement::StartTransaction(st) => start_transaction_to_node(st),
+        Statement::Commit(c) => commit_to_node(c),
+        Statement::Rollback(r) => rollback_to_node(r),
         _ => Node::Unformatted {
             value: format!("{stmt}"),
         },
@@ -159,9 +173,19 @@ fn set_expr_to_node(set_expr: &SetExpr<Raw>) -> Node {
             }
         }
         SetExpr::Values(v) => values_to_node(v),
-        // SHOW, TABLE: fall back to Display text.
-        _ => Node::Unformatted {
-            value: format!("{set_expr}"),
+        SetExpr::Show(show) => Node::Unformatted {
+            value: format!("{show}"),
+        },
+        SetExpr::Table(name) => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "TABLE".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{name}"),
+                },
+            ],
         },
     }
 }
@@ -2446,6 +2470,234 @@ fn explainee_to_node(explainee: &Explainee<Raw>) -> Node {
             } else {
                 body
             }
+        }
+    }
+}
+
+fn create_cluster_to_node(cc: &CreateClusterStatement<Raw>) -> Node {
+    let CreateClusterStatement {
+        name,
+        options,
+        features,
+    } = cc;
+    let mut items = vec![
+        Node::Keyword {
+            value: "CREATE CLUSTER".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_to_node(name),
+    ];
+    if !options.is_empty() {
+        let opts_str = options
+            .iter()
+            .map(|o| o.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        items.push(Node::Text {
+            value: format!(" ({opts_str})"),
+        });
+    }
+    if !features.is_empty() {
+        let feat_str = features
+            .iter()
+            .map(|f| f.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        items.push(Node::Text {
+            value: format!(" FEATURES ({feat_str})"),
+        });
+    }
+    Node::Concat { items }
+}
+
+fn create_cluster_replica_to_node(ccr: &CreateClusterReplicaStatement<Raw>) -> Node {
+    let CreateClusterReplicaStatement {
+        of_cluster,
+        definition,
+    } = ccr;
+    let opts_str = definition
+        .options
+        .iter()
+        .map(|o| o.to_ast_string_simple())
+        .collect::<Vec<_>>()
+        .join(", ");
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "CREATE CLUSTER REPLICA".into(),
+            },
+            Node::Text { value: " ".into() },
+            ident_to_node(of_cluster),
+            Node::Text { value: ".".into() },
+            ident_to_node(&definition.name),
+            Node::Text {
+                value: format!(" ({opts_str})"),
+            },
+        ],
+    }
+}
+
+fn alter_cluster_to_node(ac: &AlterClusterStatement<Raw>) -> Node {
+    let AlterClusterStatement {
+        if_exists,
+        name,
+        action,
+    } = ac;
+    let mut items = vec![
+        Node::Keyword {
+            value: "ALTER CLUSTER".into(),
+        },
+    ];
+    if *if_exists {
+        items.push(Node::Text {
+            value: " IF EXISTS".into(),
+        });
+    }
+    items.push(Node::Text { value: " ".into() });
+    items.push(ident_to_node(name));
+    items.push(Node::Text { value: " ".into() });
+
+    match action {
+        mz_sql_parser::ast::AlterClusterAction::SetOptions {
+            options,
+            with_options,
+        } => {
+            let opts_str = options
+                .iter()
+                .map(|o| o.to_ast_string_simple())
+                .collect::<Vec<_>>()
+                .join(", ");
+            items.push(Node::Text {
+                value: format!("SET ({opts_str})"),
+            });
+            if !with_options.is_empty() {
+                let with_str = with_options
+                    .iter()
+                    .map(|o| o.to_ast_string_simple())
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                items.push(Node::Text {
+                    value: format!(" WITH ({with_str})"),
+                });
+            }
+        }
+        mz_sql_parser::ast::AlterClusterAction::ResetOptions(options) => {
+            let opts_str = options
+                .iter()
+                .map(|o| o.to_ast_string_simple())
+                .collect::<Vec<_>>()
+                .join(", ");
+            items.push(Node::Text {
+                value: format!("RESET ({opts_str})"),
+            });
+        }
+    }
+
+    Node::Concat { items }
+}
+
+fn prepare_to_node(p: &PrepareStatement<Raw>) -> Node {
+    let PrepareStatement { name, stmt, sql: _ } = p;
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "PREPARE".into(),
+            },
+            Node::Text { value: " ".into() },
+            ident_to_node(name),
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "AS".into() },
+            Node::Text { value: " ".into() },
+            statement_to_node(stmt),
+        ],
+    }
+}
+
+fn execute_to_node(e: &ExecuteStatement<Raw>) -> Node {
+    let ExecuteStatement { name, params } = e;
+    let mut items = vec![
+        Node::Keyword {
+            value: "EXECUTE".into(),
+        },
+        Node::Text { value: " ".into() },
+        ident_to_node(name),
+    ];
+    if !params.is_empty() {
+        let param_nodes: Vec<Node> = params.iter().map(expr_to_node).collect();
+        items.push(Node::Wrap {
+            keyword: None,
+            open: " (".into(),
+            content: Box::new(Node::List {
+                items: param_nodes,
+                separator: None,
+            }),
+            close: ")".into(),
+        });
+    }
+    Node::Concat { items }
+}
+
+fn start_transaction_to_node(st: &StartTransactionStatement) -> Node {
+    let StartTransactionStatement { modes } = st;
+    if modes.is_empty() {
+        Node::Keyword {
+            value: "START TRANSACTION".into(),
+        }
+    } else {
+        let modes_str = modes
+            .iter()
+            .map(|m| m.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "START TRANSACTION".into(),
+                },
+                Node::Text {
+                    value: format!(" {modes_str}"),
+                },
+            ],
+        }
+    }
+}
+
+fn commit_to_node(c: &CommitStatement) -> Node {
+    let CommitStatement { chain } = c;
+    if *chain {
+        Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "COMMIT".into(),
+                },
+                Node::Text {
+                    value: " AND CHAIN".into(),
+                },
+            ],
+        }
+    } else {
+        Node::Keyword {
+            value: "COMMIT".into(),
+        }
+    }
+}
+
+fn rollback_to_node(r: &RollbackStatement) -> Node {
+    let RollbackStatement { chain } = r;
+    if *chain {
+        Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "ROLLBACK".into(),
+                },
+                Node::Text {
+                    value: " AND CHAIN".into(),
+                },
+            ],
+        }
+    } else {
+        Node::Keyword {
+            value: "ROLLBACK".into(),
         }
     }
 }

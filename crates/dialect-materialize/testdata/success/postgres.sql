@@ -322,6 +322,34 @@ SELECT * FROM inhg
 
 -- sqlfmt-corpus-separator --
 
+ABORT
+
+-- sqlfmt-corpus-separator --
+
+BEGIN
+
+-- sqlfmt-corpus-separator --
+
+BEGIN ISOLATION LEVEL SERIALIZABLE
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+-- sqlfmt-corpus-separator --
+
+BEGIN TRANSACTION READ ONLY
+
+-- sqlfmt-corpus-separator --
+
 COMMENT ON COLUMN comment_test.id IS 'Column ''id'' on comment_test'
 
 -- sqlfmt-corpus-separator --
@@ -499,6 +527,18 @@ COMMENT ON VIEW toyemp IS 'is a view'
 -- sqlfmt-corpus-separator --
 
 COMMENT ON VIEW toyemp IS NULL
+
+-- sqlfmt-corpus-separator --
+
+COMMIT
+
+-- sqlfmt-corpus-separator --
+
+COMMIT AND CHAIN
+
+-- sqlfmt-corpus-separator --
+
+COMMIT TRANSACTION
 
 -- sqlfmt-corpus-separator --
 
@@ -12705,6 +12745,174 @@ DROP index stats_test_idx1
 -- sqlfmt-corpus-separator --
 
 DROP table idxpart, idxpart_two
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE cprep
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE cyclestmt
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE foo
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE foo ('<bar/>')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE foo ('bad')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE foo ('good')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{constr_parent, constr_child}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{constr_parent2, constr_child2}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{constr_parent3, constr_child3}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_inhparent, notnull_inhchild, notnull_inhgrand}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_part1_upg, notnull_part1_1_upg, notnull_part1_2_upg, notnull_part1_3_upg}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_tbl1, notnull_chld0}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_tbl1, notnull_tbl1_1, notnull_tbl1_2, notnull_tbl1_3}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_tbl1_child, notnull_tbl1}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_tbl1_child2}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_tbl1_copy}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_nnconstraint_info('{notnull_tbl1}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_partition_info('{sales_list}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_partition_info('{sales_range}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE get_partition_info('{t}')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE graph_rls_query
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE ins(10, ARRAY[4,5])
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE ins(2, ARRAY[1,2,3])
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE loopstmt
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p1
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p1(2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p2
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p2(2)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE p_ddl
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pp
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE prepstmt
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE prepstmt2(123)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE pstmt('1', make_some_array(1,2))
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q1
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q2('postgres')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q3('AAAAxx', 5::smallint, 10.5::float, false, 4::bigint)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q3('bool')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q3('bytea', 5::smallint, 10.5::float, false, 4::bigint, true)
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE q3(5::smallint, 10.5::float, false, 4::bigint, 'bytea')
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE query
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE test
+
+-- sqlfmt-corpus-separator --
+
+EXECUTE vprep
 
 -- sqlfmt-corpus-separator --
 
@@ -28901,6 +29109,96 @@ INSERT into trans_barbaz VALUES (1)
 
 -- sqlfmt-corpus-separator --
 
+PREPARE cprep AS
+  SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_cursors
+
+-- sqlfmt-corpus-separator --
+
+PREPARE ctas_ine_query AS SELECT 1 / 0
+
+-- sqlfmt-corpus-separator --
+
+PREPARE data_sel AS SELECT generate_series(1,3)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE foo AS
+  SELECT id, keywords, title, body, created
+  FROM articles
+  GROUP BY id
+
+-- sqlfmt-corpus-separator --
+
+PREPARE foo AS SELECT 1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p1 AS SELECT $0_1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p1 AS SELECT $1a
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p1 AS SELECT $2147483648
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p1 AS SELECT * FROM my_property_normal WHERE f_leak(passwd)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE p2 AS SELECT * FROM my_property_secure WHERE f_leak(passwd)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE plancache_test AS SELECT * FROM z1 WHERE f_leak(b)
+
+-- sqlfmt-corpus-separator --
+
+PREPARE prepstmt AS SELECT * FROM pcachetest
+
+-- sqlfmt-corpus-separator --
+
+PREPARE q1 AS SELECT 1 AS a
+
+-- sqlfmt-corpus-separator --
+
+PREPARE q1 AS SELECT 2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE q2 AS SELECT 2 AS b
+
+-- sqlfmt-corpus-separator --
+
+PREPARE q6 AS
+    SELECT * FROM tenk1 WHERE unique1 = $1 AND stringu1 = $2
+
+-- sqlfmt-corpus-separator --
+
+PREPARE q8 AS
+    UPDATE tenk1 SET stringu1 = $2 WHERE unique1 = $1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE role_inval AS SELECT * FROM t1
+
+-- sqlfmt-corpus-separator --
+
+PREPARE select1 AS SELECT 1 as a
+
+-- sqlfmt-corpus-separator --
+
+PREPARE test AS UPDATE writetest SET a = 0
+
+-- sqlfmt-corpus-separator --
+
+PREPARE vprep AS SELECT * FROM pcacheview
+
+-- sqlfmt-corpus-separator --
+
 RESET DateStyle
 
 -- sqlfmt-corpus-separator --
@@ -29366,6 +29664,14 @@ REVOKE regress_priv_user9 FROM regress_priv_user8
 -- sqlfmt-corpus-separator --
 
 REVOKE regress_test_indirect FROM regress_test_role
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK
+
+-- sqlfmt-corpus-separator --
+
+ROLLBACK AND CHAIN
 
 -- sqlfmt-corpus-separator --
 
@@ -35062,6 +35368,10 @@ SELECT * FROM (SELECT * FROM rls_tbl UNION ALL
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM (SELECT 1 AS x) ss
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (TABLE int2_tbl) AS s (a, b)
 
 -- sqlfmt-corpus-separator --
 
@@ -71754,6 +72064,78 @@ SET xmloption TO DOCUMENT
 
 -- sqlfmt-corpus-separator --
 
+START TRANSACTION READ ONLY
+
+-- sqlfmt-corpus-separator --
+
+START TRANSACTION READ WRITE
+
+-- sqlfmt-corpus-separator --
+
+TABLE bit_defaults
+
+-- sqlfmt-corpus-separator --
+
+TABLE city
+
+-- sqlfmt-corpus-separator --
+
+TABLE ddl_test
+
+-- sqlfmt-corpus-separator --
+
+TABLE gtestc
+
+-- sqlfmt-corpus-separator --
+
+TABLE information_schema.applicable_roles ORDER BY role_name COLLATE "C"
+
+-- sqlfmt-corpus-separator --
+
+TABLE information_schema.enabled_roles
+
+-- sqlfmt-corpus-separator --
+
+TABLE information_schema.enabled_roles ORDER BY role_name COLLATE "C"
+
+-- sqlfmt-corpus-separator --
+
+TABLE itest8
+
+-- sqlfmt-corpus-separator --
+
+TABLE mytab
+
+-- sqlfmt-corpus-separator --
+
+TABLE pa_target
+
+-- sqlfmt-corpus-separator --
+
+TABLE r1
+
+-- sqlfmt-corpus-separator --
+
+TABLE r2
+
+-- sqlfmt-corpus-separator --
+
+TABLE rls_test_src
+
+-- sqlfmt-corpus-separator --
+
+TABLE sometable
+
+-- sqlfmt-corpus-separator --
+
+TABLE t1
+
+-- sqlfmt-corpus-separator --
+
+TABLE timetz_local_view
+
+-- sqlfmt-corpus-separator --
+
 UPDATE  temporal_mltrng
 SET     id = '[1,2)',
         valid_at = '{}'
@@ -73560,6 +73942,14 @@ VALUES (1,2), (3,4+4), (7,77.7)
 
 -- sqlfmt-corpus-separator --
 
+VALUES (1,2), (3,4+4), (7,77.7)
+UNION ALL
+SELECT 2+2, 57
+UNION ALL
+TABLE int8_tbl
+
+-- sqlfmt-corpus-separator --
+
 VALUES(1, generate_series(1,2))
 
 -- sqlfmt-corpus-separator --
@@ -73829,6 +74219,30 @@ SELECT * FROM x
 
 -- sqlfmt-corpus-separator --
 
+abort
+
+-- sqlfmt-corpus-separator --
+
+begin
+
+-- sqlfmt-corpus-separator --
+
+begin transaction isolation level read committed
+
+-- sqlfmt-corpus-separator --
+
+begin transaction isolation level repeatable read
+
+-- sqlfmt-corpus-separator --
+
+begin transaction isolation level serializable
+
+-- sqlfmt-corpus-separator --
+
+begin work
+
+-- sqlfmt-corpus-separator --
+
 comment on column atacc1."........pg.dropped.1........" is 'testing'
 
 -- sqlfmt-corpus-separator --
@@ -73850,6 +74264,10 @@ comment on index at_partitioned_id_name_key is 'parent index'
 -- sqlfmt-corpus-separator --
 
 comment on table event_trigger_fire1 is 'here is a comment'
+
+-- sqlfmt-corpus-separator --
+
+commit
 
 -- sqlfmt-corpus-separator --
 
@@ -79430,6 +79848,118 @@ drop view wcowrtest_v, wcowrtest_v2
 
 -- sqlfmt-corpus-separator --
 
+execute ab_q6(100)
+
+-- sqlfmt-corpus-separator --
+
+execute foo(false)
+
+-- sqlfmt-corpus-separator --
+
+execute foo(true)
+
+-- sqlfmt-corpus-separator --
+
+execute foom
+
+-- sqlfmt-corpus-separator --
+
+execute foom2 (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+execute mt_q1(15)
+
+-- sqlfmt-corpus-separator --
+
+execute mt_q1(25)
+
+-- sqlfmt-corpus-separator --
+
+execute mt_q1(35)
+
+-- sqlfmt-corpus-separator --
+
+execute p1
+
+-- sqlfmt-corpus-separator --
+
+execute p2
+
+-- sqlfmt-corpus-separator --
+
+execute pstmt_def_insert(1)
+
+-- sqlfmt-corpus-separator --
+
+execute pstmt_def_insert(2)
+
+-- sqlfmt-corpus-separator --
+
+execute pstmt_def_insert(null)
+
+-- sqlfmt-corpus-separator --
+
+execute q
+
+-- sqlfmt-corpus-separator --
+
+execute q (1, 1)
+
+-- sqlfmt-corpus-separator --
+
+execute r
+
+-- sqlfmt-corpus-separator --
+
+execute s
+
+-- sqlfmt-corpus-separator --
+
+execute s1(0)
+
+-- sqlfmt-corpus-separator --
+
+execute s1(10)
+
+-- sqlfmt-corpus-separator --
+
+execute s1(NULL)
+
+-- sqlfmt-corpus-separator --
+
+execute t
+
+-- sqlfmt-corpus-separator --
+
+execute tenk1_count(1)
+
+-- sqlfmt-corpus-separator --
+
+execute test_mode_pp(1)
+
+-- sqlfmt-corpus-separator --
+
+execute u
+
+-- sqlfmt-corpus-separator --
+
+execute update_part_abc_view (1, 'd')
+
+-- sqlfmt-corpus-separator --
+
+execute update_part_abc_view (2, 'a')
+
+-- sqlfmt-corpus-separator --
+
+execute update_part_abc_view (3, 'a')
+
+-- sqlfmt-corpus-separator --
+
+execute v
+
+-- sqlfmt-corpus-separator --
+
 grant all on schema public to regress_alice, regress_bob
 
 -- sqlfmt-corpus-separator --
@@ -84439,6 +84969,82 @@ insert into zt2 values(53)
 
 -- sqlfmt-corpus-separator --
 
+prepare ab_q6 as
+select * from (
+	select tableoid::regclass,a,b from ab
+union all
+	select tableoid::regclass,x,y from xy_1
+union all
+	select tableoid::regclass,a,b from ab
+) ab where a = $1 and b = (select -10)
+
+-- sqlfmt-corpus-separator --
+
+prepare int8_query as select * from int8_tbl i8
+
+-- sqlfmt-corpus-separator --
+
+prepare p1 as select f1 from abc
+
+-- sqlfmt-corpus-separator --
+
+prepare p2 as select nextval('seq')
+
+-- sqlfmt-corpus-separator --
+
+prepare prep_stmt as select length(stringu1) from tenk1 group by length(stringu1)
+
+-- sqlfmt-corpus-separator --
+
+prepare ps1 as
+  select * from mc3p where a = $1 and abs(b) < (select 3)
+
+-- sqlfmt-corpus-separator --
+
+prepare ps2 as
+  select * from mc3p where a <= $1 and abs(b) < (select 3)
+
+-- sqlfmt-corpus-separator --
+
+prepare q as select array_to_string(array_agg(repeat('x',2*n)),E'\n') as "ab
+
+c", array_to_string(array_agg(repeat('y',20-2*n)),E'\n') as "a
+bc" from generate_series(1,10) as n(n) group by n>1 order by n>1
+
+-- sqlfmt-corpus-separator --
+
+prepare q as select current_user, * from rls_f()
+
+-- sqlfmt-corpus-separator --
+
+prepare q as select repeat('x',2*n) as "0123456789abcdef", repeat('y',20-2*n) as "0123456789" from generate_series(1,10) as n
+
+-- sqlfmt-corpus-separator --
+
+prepare r as select current_user, * from rls_f()
+
+-- sqlfmt-corpus-separator --
+
+prepare s as select current_user, * from rls_f()
+
+-- sqlfmt-corpus-separator --
+
+prepare s1 as select $1::pos_int = 10 as "is_ten"
+
+-- sqlfmt-corpus-separator --
+
+prepare t as select current_user, * from rls_f()
+
+-- sqlfmt-corpus-separator --
+
+prepare u as select current_user, * from rls_f()
+
+-- sqlfmt-corpus-separator --
+
+prepare v as select current_user, * from rls_f()
+
+-- sqlfmt-corpus-separator --
+
 reset bytea_output
 
 -- sqlfmt-corpus-separator --
@@ -84660,6 +85266,10 @@ revoke usage on type textrange1 from public
 -- sqlfmt-corpus-separator --
 
 revoke usage on type textrange1 from regress_multirange_owner
+
+-- sqlfmt-corpus-separator --
+
+rollback
 
 -- sqlfmt-corpus-separator --
 
@@ -104914,6 +105524,38 @@ set work_mem to default
 -- sqlfmt-corpus-separator --
 
 set work_mem='64kB'
+
+-- sqlfmt-corpus-separator --
+
+table ab
+
+-- sqlfmt-corpus-separator --
+
+table dcomptable
+
+-- sqlfmt-corpus-separator --
+
+table has_fast_default
+
+-- sqlfmt-corpus-separator --
+
+table my_table
+
+-- sqlfmt-corpus-separator --
+
+table part_abc_log
+
+-- sqlfmt-corpus-separator --
+
+table part_abc_view
+
+-- sqlfmt-corpus-separator --
+
+table partitioned
+
+-- sqlfmt-corpus-separator --
+
+table some_tab
 
 -- sqlfmt-corpus-separator --
 
