@@ -10,8 +10,19 @@ impl Dialect for JsonDialect {
         Ok(value_to_node(&value))
     }
 
-    fn ast_equal(&self, _original: &str, _rendered: &str) -> Result<(), SqlfmtError> {
-        todo!()
+    fn ast_equal(&self, original: &str, rendered: &str) -> Result<(), SqlfmtError> {
+        let orig: serde_json::Value = serde_json::from_str(original)
+            .map_err(|e| SqlfmtError::Parse(e.to_string()))?;
+        let rend: serde_json::Value = serde_json::from_str(rendered)
+            .map_err(|e| SqlfmtError::Parse(e.to_string()))?;
+        if orig == rend {
+            Ok(())
+        } else {
+            Err(SqlfmtError::Roundtrip {
+                input: original.to_string(),
+                output: rendered.to_string(),
+            })
+        }
     }
 }
 
