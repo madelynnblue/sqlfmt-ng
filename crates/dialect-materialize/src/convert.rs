@@ -2038,7 +2038,10 @@ fn revoke_privileges_to_node(rp: &RevokePrivilegesStatement<Raw>) -> Node {
 fn comment_to_node(c: &CommentStatement<Raw>) -> Node {
     let CommentStatement { object, comment } = c;
     let comment_text = match comment {
-        Some(s) => format!("'{s}'"),
+        Some(s) => {
+            let escaped = s.replace('\'', "''");
+            format!("'{escaped}'")
+        }
         None => "NULL".into(),
     };
     Node::Concat {
