@@ -627,6 +627,10 @@ CREATE INDEX b_idx ON a(b);
 
 -- sqlfmt-corpus-separator --
 
+CREATE INDEX cc_udf_idx ON cc_udf_t (cc_udf_const());
+
+-- sqlfmt-corpus-separator --
+
 CREATE INDEX child_name_collision_auto_index_fk_id ON child_name_collision (other_col)
 
 -- sqlfmt-corpus-separator --
@@ -652,6 +656,10 @@ CREATE INDEX err ON other ((t.a + 10))
 -- sqlfmt-corpus-separator --
 
 CREATE INDEX err ON t ((a + 10), (a + 10))
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX err ON t ((a + random()::INT))
 
 -- sqlfmt-corpus-separator --
 
@@ -1116,6 +1124,18 @@ CREATE INDEX t_cast_idx ON t (a, (NULL::TEXT), b)
 
 -- sqlfmt-corpus-separator --
 
+CREATE INDEX t_idx ON test_tbl_t((2 + test_tbl_f()));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_idx3 ON test_tbl_t((b + test_tbl_f()));
+
+-- sqlfmt-corpus-separator --
+
+CREATE INDEX t_idx4 ON test_tbl_t(test_tbl_f(), b, (test_tbl_f() + 1));
+
+-- sqlfmt-corpus-separator --
+
 CREATE INDEX t_index_name_conflicts_with_primary_key_pkey ON t_index_name_conflicts_with_primary_key (a);
 
 -- sqlfmt-corpus-separator --
@@ -1209,6 +1229,10 @@ CREATE MATERIALIZED VIEW mv AS SELECT k, v FROM kv
 -- sqlfmt-corpus-separator --
 
 CREATE MATERIALIZED VIEW mv AS SELECT name FROM t1
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv AS SELECT x, y, f_scalar() FROM f_setof();
 
 -- sqlfmt-corpus-separator --
 
@@ -4489,6 +4513,11 @@ CREATE TABLE inv_c (k INT PRIMARY KEY, j JSON, s STRING)
 
 -- sqlfmt-corpus-separator --
 
+CREATE TABLE invalid_table(id UUID PRIMARY KEY, s STRING);
+INSERT INTO invalid_table SELECT gen_random_uuid(), '{';
+
+-- sqlfmt-corpus-separator --
+
 CREATE TABLE invalid_void_table(col void)
 
 -- sqlfmt-corpus-separator --
@@ -6505,6 +6534,87 @@ CREATE TABLE svals(x INT)
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t (
+    i2    INT2,
+    i4    INT4,
+    i8    INT8,
+    f4    FLOAT4,
+    f8    FLOAT8,
+    s     STRING,
+    c     CHAR,
+    b     BYTES,
+    dc    DECIMAL,
+    ival  INTERVAL,
+    oid   OID,
+    tstz  TIMESTAMPTZ,
+    ts    TIMESTAMP,
+    da    DATE,
+    inet  INET,
+    vb    VARBIT(2)
+);
+INSERT
+  INTO t
+SELECT i::INT2,
+       i::INT4,
+       i::INT8,
+       i::FLOAT4,
+       i::FLOAT8,
+       i::STRING,
+       i::CHAR,
+       i::STRING::BYTES,
+       i::DECIMAL,
+       i::INTERVAL,
+       i::OID,
+       i::TIMESTAMPTZ,
+       i::TIMESTAMP,
+       i::DATE,
+       ('127.0.0.' || i::STRING)::INET,
+       i::VARBIT(2)
+  FROM (
+         SELECT i FROM generate_series(1, 2) as t(i)
+         UNION ALL SELECT NULL
+       );
+SELECT *
+  FROM (
+        SELECT a.i2,
+               b.i4,
+               c.i8,
+               d.f4,
+               e.f8,
+               f.s,
+               g.c,
+               h.b,
+               i.dc,
+               j.ival,
+               k.oid,
+               l.tstz,
+               m.ts,
+               n.da,
+               o.inet,
+               p.vb,
+               random() AS r
+          FROM t AS a,
+               t AS b,
+               t AS c,
+               t AS d,
+               t AS e,
+               t AS f,
+               t AS g,
+               t AS h,
+               t AS i,
+               t AS j,
+               t AS k,
+               t AS l,
+               t AS m,
+               t AS n,
+               t AS o,
+               t AS p
+       )
+ WHERE r < .01
+ LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t (
     x INT PRIMARY KEY,
     y INT,
     z INT,
@@ -8325,6 +8435,11 @@ CREATE TABLE t46714_0(c0 INT4); CREATE TABLE t46714_1(c0 INT4); INSERT INTO t467
 -- sqlfmt-corpus-separator --
 
 CREATE TABLE t46799 (x INT DEFAULT 1, y INT DEFAULT 1);
+
+-- sqlfmt-corpus-separator --
+
+CREATE TABLE t46981_0(c0 INT);
+CREATE VIEW v46981_0(c0) AS SELECT count_rows() FROM t46981_0
 
 -- sqlfmt-corpus-separator --
 
@@ -11523,6 +11638,10 @@ CREATE VIEW pg_temp.temp_view AS SELECT 1;
 
 -- sqlfmt-corpus-separator --
 
+CREATE VIEW priv_v AS SELECT * FROM priv_f();
+
+-- sqlfmt-corpus-separator --
+
 CREATE VIEW privsview AS SELECT a,b,c FROM privs
 
 -- sqlfmt-corpus-separator --
@@ -11901,6 +12020,10 @@ CREATE VIEW v AS SELECT x, y FROM t WHERE e > 5
 
 -- sqlfmt-corpus-separator --
 
+CREATE VIEW v AS SELECT x, y, f_scalar() FROM f_setof();
+
+-- sqlfmt-corpus-separator --
+
 CREATE VIEW v as SELECT c1,c2 from t
 
 -- sqlfmt-corpus-separator --
@@ -11965,6 +12088,10 @@ CREATE VIEW v11 AS (SELECT 'a'::view_typ_new < 'a'::view_typ_new AS k)
 -- sqlfmt-corpus-separator --
 
 CREATE VIEW v12 AS (SELECT k FROM (SELECT 'a'::view_typ AS k))
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v128535 AS SELECT json_to_tsvector()
 
 -- sqlfmt-corpus-separator --
 
@@ -20137,6 +20264,22 @@ VALUES
 -- sqlfmt-corpus-separator --
 
 INSERT
+INTO
+  hash_sharded_rbr_computed (region_id, my_uuid, my_uuid2, another_id, row_ts)
+VALUES
+  ('ap1234', gen_random_uuid(), gen_random_uuid(), 1, TIMESTAMP '2016-01-25 10:10:10.555555')
+
+-- sqlfmt-corpus-separator --
+
+INSERT
+INTO
+  hash_sharded_rbr_computed (region_id, my_uuid, my_uuid2, another_id, row_ts)
+VALUES
+  ('east1234', gen_random_uuid(), gen_random_uuid(), 1, TIMESTAMP '2016-01-25 10:10:10.555555')
+
+-- sqlfmt-corpus-separator --
+
+INSERT
 INTO reference_constraint_different_order_child
 VALUES (99, 1, 2, 3, 'child_val')
 
@@ -20902,6 +21045,14 @@ INSERT INTO a VALUES (ARRAY[]), (ARRAY[TRUE]), (ARRAY[FALSE]), (ARRAY[TRUE, TRUE
 -- sqlfmt-corpus-separator --
 
 INSERT INTO a VALUES (ARRAY[current_date])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[now()])
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO a VALUES (ARRAY[uuid_v4()::uuid])
 
 -- sqlfmt-corpus-separator --
 
@@ -23387,6 +23538,30 @@ INSERT INTO ef VALUES (NULL, 1), (1, 1)
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO employees (
+  crdb_region,
+  emp_no,
+  birth_date,
+  first_name,
+  last_name,
+  gender,
+  hire_date,
+  email,
+  zip_code
+)
+  SELECT
+    CASE trunc(random() * 10) % 3 WHEN 0 THEN 'ap-southeast-2' WHEN 1 THEN 'ca-central-1' ELSE 'us-east-1' END,
+    generate_series(0, 100),
+    (now() - trunc(random() * 365)::int * '1 day'::interval - 20 * '1 year'::interval - trunc(random() * 60)::int * '1 year'::interval)::date,
+    f_random_text(10),
+    f_random_text(10),
+    f_random_gender(),
+    (now() - trunc(random() * 365)::int * '1 day'::interval - trunc(random() * 10)::int * '1 year'::interval)::date,
+    f_random_text(10) || '@cockroachlabs.com',
+    f_random_zip_code();
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO employees (id, name, department) VALUES (2, 'Bob', 'Engineering')
 
 -- sqlfmt-corpus-separator --
@@ -24831,6 +25006,51 @@ INSERT INTO k VALUES (1, 1), (1, 2)
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO kab VALUES (1, gen_random_uuid(), gen_random_uuid())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kab VALUES (2, gen_random_uuid(), gen_random_uuid())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kab VALUES (3, gen_random_uuid(), gen_random_uuid()),
+                       (4, gen_random_uuid(), gen_random_uuid()),
+                       (5, gen_random_uuid(), gen_random_uuid()),
+                       (6, gen_random_uuid(), gen_random_uuid())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabc VALUES (1, uuid_generate_v4(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabc VALUES (2, uuid_generate_v4(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabc VALUES (3, uuid_generate_v4(), uuid_generate_v4()),
+                       (4, uuid_generate_v4(), uuid_generate_v4()),
+                       (5, uuid_generate_v4(), uuid_generate_v4()),
+                       (6, uuid_generate_v4(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabcd VALUES (1, gen_random_uuid(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabcd VALUES (2, gen_random_uuid(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kabcd VALUES (3, gen_random_uuid(), uuid_generate_v4()),
+                         (4, gen_random_uuid(), uuid_generate_v4()),
+                         (5, gen_random_uuid(), uuid_generate_v4()),
+                         (6, gen_random_uuid(), uuid_generate_v4())
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO kv (crdb_region, k, v) VALUES ('us-east-1', 1, 1);
 INSERT INTO kv (crdb_region, k, v) VALUES ('ca-central-1', 2, 2)
 
@@ -24888,7 +25108,41 @@ INSERT INTO kv (k,v) VALUES ('a', 'b'); INSERT INTO kv (k,v) VALUES ('e', 'f')
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO kv (k,v) VALUES ('a', transaction_timestamp())
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO kv (k,v) VALUES ('g', 'h'); INSERT INTO kv (k,v) VALUES ('a', 'b')
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (1, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (2, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (3, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (4, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (5, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (6, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
 
 -- sqlfmt-corpus-separator --
 
@@ -25287,6 +25541,10 @@ INSERT INTO ltable VALUES
   (4, NULL, 'POINT(3.0 3.0)'),
   (5, 'POINT(1.5 1.5)', NULL),
   (6, NULL, NULL)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO m VALUES (cluster_logical_timestamp())
 
 -- sqlfmt-corpus-separator --
 
@@ -25710,6 +25968,14 @@ INSERT INTO only_null VALUES (NULL), (NULL), (NULL);
 -- sqlfmt-corpus-separator --
 
 INSERT INTO opt_test VALUES (1, NULL), (2, 10), (3, NULL), (4, 5)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO orders ("customer_id", "total", "balance", "dispatch_ts", "delivery_ts") VALUES
+  ('bdeb232e-12e9-4a33-9dd5-7bb9b694291a', 100, 100, NULL, NULL),
+  ('0dc59725-d20b-4370-a05d-11db025a0064', 200, 0, NULL, NULL),
+  ('d53d4021-9390-4b3a-9e5a-4bf1ff3e5a4c', 300, 0, now(), NULL),
+  ('d53d4021-9390-4b3a-9e5a-4bf1ff3e5a4c', 400, 0, now(), now())
 
 -- sqlfmt-corpus-separator --
 
@@ -26250,6 +26516,12 @@ RETURNING crdb_region, pk
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES
+(gateway_region()::crdb_internal_region, 23, 23, 24, 25)
+RETURNING crdb_region, pk
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO regional_by_row_table (crdb_region, pk, pk2, a, b) VALUES ('us-east-1', 2, 3, 2, 3)
 
 -- sqlfmt-corpus-separator --
@@ -26469,6 +26741,10 @@ INSERT INTO return VALUES (default) RETURNING a, b AS c, 4 AS d
 -- sqlfmt-corpus-separator --
 
 INSERT INTO return VALUES (default) RETURNING return.a
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO return VALUES (default) RETURNING rowid != unique_rowid()
 
 -- sqlfmt-corpus-separator --
 
@@ -27165,6 +27441,24 @@ INSERT INTO system.comments VALUES (32, 1, 0, 'abc');
 -- sqlfmt-corpus-separator --
 
 INSERT INTO system.comments VALUES (4294967122, 't_99316'::regclass::OID, 0, 'bar');
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO system.jobs (id, owner, status, job_type)
+VALUES (999, 'testuser', 'succeeded', 'INSPECT');
+INSERT INTO system.job_info (job_id, info_key, value)
+VALUES (
+  999,
+  'legacy_payload',
+  crdb_internal.json_to_pb(
+    'cockroach.sql.jobs.jobspb.Payload',
+    json_build_object(
+      'inspectDetails', json_build_object(
+        'checks', json_build_array()
+      )
+    )
+  )
+);
 
 -- sqlfmt-corpus-separator --
 
@@ -28307,6 +28601,10 @@ INSERT INTO t1 SELECT a FROM generate_series(1, 1024) AS a(a)
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO t1 SELECT gen_random_uuid(), 'test' FROM generate_series(1, 10)
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO t1 VALUES
   (ARRAY[1, 2]),
   (ARRAY[NULL]),
@@ -28813,6 +29111,10 @@ INSERT INTO t2 (x, y, z) VALUES (1, 1, 1), (2, 2, 2), (3, 3, 3);
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO t2 SELECT gen_random_uuid(), 'test' FROM generate_series(1, 10)
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO t2 SELECT i, to_english(i) FROM generate_series(1, 5) AS g(i)
 
 -- sqlfmt-corpus-separator --
@@ -29132,6 +29434,10 @@ INSERT INTO t4 VALUES (NULL, 2, 22, NULL)
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO t42992 VALUES (now(), NULL, 2)
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO t44132 (c0) VALUES (true)
 
 -- sqlfmt-corpus-separator --
@@ -29213,6 +29519,10 @@ INSERT INTO t54989 VALUES ('a', '{b}', 'c', 'd')
 -- sqlfmt-corpus-separator --
 
 INSERT INTO t55672_a (a) VALUES (1)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t55672_a (a, t) VALUES (2, now())
 
 -- sqlfmt-corpus-separator --
 
@@ -31455,6 +31765,14 @@ INSERT INTO u VALUES (b'cafef00ddeadbeefs')
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO u VALUES (uuid_v4())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO u VALUES (uuid_v4()::uuid)
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO u_a VALUES (1, 'a', 10), (2, 'b', 20), (3, 'c', 30), (4, 'd', 40)
 
 -- sqlfmt-corpus-separator --
@@ -31731,6 +32049,14 @@ INSERT INTO uniq_simple VALUES (1, 10), (2, 20)
 -- sqlfmt-corpus-separator --
 
 INSERT INTO uniq_simple VALUES (3, 8)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_uuid (id1, id2) SELECT gen_random_uuid(), '8597b0eb-7b89-4857-858a-fabf86f6a3ac'
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO uniq_uuid (id1, id2) SELECT gen_random_uuid(), u FROM other
 
 -- sqlfmt-corpus-separator --
 
@@ -33003,6 +33329,13 @@ RESET distsql_workmem;
 
 -- sqlfmt-corpus-separator --
 
+RESET timezone;
+-- Check of, tzh, tzm with various zone offsets.
+SET timezone = '00:00';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
 RESET transaction_rows_read_err
 
 -- sqlfmt-corpus-separator --
@@ -33560,6 +33893,16 @@ WHERE
 SELECT
 	*
 FROM
+	(VALUES (f_102718())) AS t1 (a),
+	(VALUES ('foo'), ('bar')) AS t2 (b)
+ORDER BY
+	t1.a DESC NULLS FIRST;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+	*
+FROM
 	reference_constraint_different_order_child
 	NATURAL JOIN reference_constraint_different_order_parent
 
@@ -33855,6 +34198,24 @@ ORDER BY (SELECT count(*) FROM o WHERE o.c_id=c.c_id) DESC;
 -- sqlfmt-corpus-separator --
 
 SELECT
+    *
+FROM
+    (SELECT bill FROM c),
+    LATERAL (SELECT row_number() OVER (PARTITION BY bill) AS rownum FROM o WHERE ship = bill)
+ORDER BY bill, rownum
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+    *
+FROM
+    (SELECT c_id AS c_c_id, bill FROM c),
+    LATERAL (SELECT row_number() OVER () AS rownum FROM o WHERE c_id = c_c_id)
+ORDER BY c_c_id, bill, rownum
+
+-- sqlfmt-corpus-separator --
+
+SELECT
     CASE
     WHEN 1 = 1 THEN 'one'
     END,
@@ -33904,6 +34265,21 @@ SELECT
     IFNULL(NULL, 2),
     COALESCE(1, 2),
     COALESCE(NULL, 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+    ST_AsText(ST_Rotate(a.geom, pi(), 'POINT (6 3)'::geometry)) as t
+FROM geom_operators_test a
+ORDER BY t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+    ST_AsText(a.geom) d,
+    ST_AsText(ST_Rotate(a.geom, pi(),4,7))
+FROM geom_operators_test a
+ORDER BY d;
 
 -- sqlfmt-corpus-separator --
 
@@ -34383,6 +34759,13 @@ FROM
     pg_catalog.pg_class
 WHERE
     relname = 'u';
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+    row_number() OVER (PARTITION BY s)
+FROM
+    (SELECT sum(a) AS s FROM (SELECT a FROM x UNION ALL SELECT a FROM x) GROUP BY a)
 
 -- sqlfmt-corpus-separator --
 
@@ -34871,6 +35254,20 @@ ORDER BY variable
 -- sqlfmt-corpus-separator --
 
 SELECT
+  *
+FROM
+(
+  VALUES
+    (
+     (('aloha'::TEXT,
+     (44)::INT8), NULL)
+    ),
+    (COALESCE(f117101(), NULL))
+);
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   ARRAY[NULL]::STRING[],
   ARRAY[NULL]::INT[],
   ARRAY[NULL]::FLOAT[],
@@ -35329,6 +35726,15 @@ ORDER BY d ASC
 SELECT
   ST_AsText(a.geom) d,
   ST_AsText(ST_Reverse(a.geom))
+FROM geom_operators_test a
+ORDER BY d ASC
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  ST_AsText(a.geom) d,
+  ST_AsText(ST_Rotate(a.geom, pi())),
+  regexp_replace(ST_AsText(ST_Rotate(a.geom, pi()/4)), 'POINT \(0.000000000000001 7.071067811865476\)', 'POINT (0 7.071067811865476)', 'g')
 FROM geom_operators_test a
 ORDER BY d ASC
 
@@ -36778,6 +37184,28 @@ ORDER BY id
 
 SELECT
   id,
+  row_number() OVER (ORDER BY id NULLS LAST) AS row_num_using_nulls_last,
+  row_number() OVER (ORDER BY COALESCE(id, 999)) AS row_num_using_coalesce
+FROM
+  nulls_last_test
+ORDER BY
+  id NULLS LAST
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  id,
+  row_number() OVER (ORDER BY id) AS row_num_using_nulls_last,
+  row_number() OVER (ORDER BY COALESCE(id, 999)) AS row_num_using_coalesce
+FROM
+  nulls_last_test
+ORDER BY
+  id
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  id,
   st_srid(geog),
   st_srid(geom)
 FROM geo_st_srid
@@ -37536,6 +37964,10 @@ SELECT  AddGeometryColumn ('t_147993','geom7',4326,'POINT',2),
 -- sqlfmt-corpus-separator --
 
 SELECT  option, value FROM system.role_options WHERE username = 'repluser'
+
+-- sqlfmt-corpus-separator --
+
+SELECT "LOWERCASE_HINT_ERROR_IMPLICIT_SCHEMA_FN"();
 
 -- sqlfmt-corpus-separator --
 
@@ -40285,6 +40717,18 @@ SELECT '\400'::bytea
 
 -- sqlfmt-corpus-separator --
 
+SELECT 'a' AS a, crdb_internal.unary_table() AS b, 'c' AS c LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'a' AS a, pg_get_keywords() AS b, 'c' AS c LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT 'a' AS a, pg_get_keywords(), 'c' AS c LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT 'a' COLLATE bad_locale
 
 -- sqlfmt-corpus-separator --
@@ -42099,6 +42543,10 @@ SELECT ('{"a": 1}'::jsonb)['a':'b']
 
 -- sqlfmt-corpus-separator --
 
+SELECT ('{"a": 1}'::jsonb)[now()]
+
+-- sqlfmt-corpus-separator --
+
 SELECT (('a')).*
 
 -- sqlfmt-corpus-separator --
@@ -42360,6 +42808,10 @@ SELECT (1.4238790346995263e-40::DECIMAL / 6.011482313728436e+41::DECIMAL)
 -- sqlfmt-corpus-separator --
 
 SELECT (1/3.0)::float4::text, (-1/3.0)::float8::text
+
+-- sqlfmt-corpus-separator --
+
+SELECT (1/j) * max(i) * (row_number() OVER (ORDER BY max(i))) FROM (SELECT 1 AS i, 2 AS j) GROUP BY j
 
 -- sqlfmt-corpus-separator --
 
@@ -42756,9 +43208,18 @@ SELECT (information_schema._pg_expandarray(ARRAY['c', 'b', 'a'])).x
 
 -- sqlfmt-corpus-separator --
 
+SELECT (now(), 2) = (now() :: timestamp, 2) AS r
+  FROM tb
+
+-- sqlfmt-corpus-separator --
+
 SELECT (oid::int-oid::int)::oid, oid::regclass, (oid::regclass::int-oid::regclass::int), oid::regclass::int::regclass, oid::regclass::text
 FROM pg_class
 WHERE relname = 'pg_constraint'
+
+-- sqlfmt-corpus-separator --
+
+SELECT (pg_get_keywords()).word FROM t
 
 -- sqlfmt-corpus-separator --
 
@@ -43330,6 +43791,10 @@ ON uq.filter_id2 = ab.filter_id
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM  f_called_by_b2();
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM  itemColors
 
 -- sqlfmt-corpus-separator --
@@ -43526,6 +43991,10 @@ SELECT * FROM (SELECT message FROM messages_rbr LIMIT 1) UNION ALL SELECT messag
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (SELECT n.nspname, c.relname, a.attname, a.atttypid, a.attnotnull OR ((t.typtype = 'd') AND t.typnotnull) AS attnotnull, a.atttypmod, a.attlen, row_number() OVER (PARTITION BY a.attrelid ORDER BY a.attnum) AS attnum, pg_get_expr(def.adbin, def.adrelid) AS adsrc, dsc.description, t.typbasetype, t.typtype FROM pg_catalog.pg_namespace AS n JOIN pg_catalog.pg_class AS c ON (c.relnamespace = n.oid) JOIN pg_catalog.pg_attribute AS a ON (a.attrelid = c.oid) JOIN pg_catalog.pg_type AS t ON (a.atttypid = t.oid) LEFT JOIN pg_catalog.pg_attrdef AS def ON ((a.attrelid = def.adrelid) AND (a.attnum = def.adnum)) LEFT JOIN pg_catalog.pg_description AS dsc ON ((c.oid = dsc.objoid) AND (a.attnum = dsc.objsubid)) LEFT JOIN pg_catalog.pg_class AS dc ON ((dc.oid = dsc.classoid) AND (dc.relname = 'pg_class')) LEFT JOIN pg_catalog.pg_namespace AS dn ON ((dc.relnamespace = dn.oid) AND (dn.nspname = 'pg_catalog')) WHERE (((c.relkind IN ('r', 'v', 'f', 'm')) AND (a.attnum > 0)) AND (NOT a.attisdropped)) AND (n.nspname LIKE 'public')) AS c;
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (SELECT name, n as s1_n FROM t1) as s1 NATURAL FULL JOIN (SELECT * FROM (SELECT name, n as s2_n FROM t2) as s2 NATURAL FULL JOIN (SELECT name, n as s3_n FROM t3) as s3 ) ss2
 
 -- sqlfmt-corpus-separator --
@@ -43551,6 +44020,10 @@ SELECT * FROM (SELECT name, n as s2_n, 2 as s2_2 FROM t2) as s2 NATURAL INNER JO
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM (SELECT name, n as s2_n, 2 as s2_2 FROM t2) as s2 NATURAL LEFT JOIN (SELECT name, n as s3_n, 3 as s3_2 FROM t3) s3
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (SELECT now())
 
 -- sqlfmt-corpus-separator --
 
@@ -43647,6 +44120,26 @@ SELECT * FROM (VALUES (1), (2)) AS v(i) WHERE i = test.my_add(1,2)
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM (VALUES (1), (2)) v(i) JOIN (VALUES (2), (3)) w(j) ON i = p()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1), (2), (3)) LIMIT p()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1), (2), (3)) ORDER BY p()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1), (2), (3)) v(i) GROUP BY i HAVING i > p()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (1), (2), (3)) v(i) WHERE i = p()
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM (VALUES (1, '222'), (2, '444')) t1(a,b) JOIN (VALUES (1, 100.0), (3, 32.0)) t2(a,b) ON t1.a = t2.a
 
 -- sqlfmt-corpus-separator --
@@ -43692,6 +44185,10 @@ SELECT * FROM (VALUES (1, 2, 3), (4, 5, 6)) AS foo (foo1, foo2)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM (VALUES (1, 2, 3), (4, 5, 6)) AS foo (foo1, foo2, foo3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM (VALUES (f_col())) as foo;
 
 -- sqlfmt-corpus-separator --
 
@@ -43780,6 +44277,10 @@ SELECT * FROM ROWS FROM (generate_series(1,4), generate_series(4,5))
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM ROWS FROM (information_schema._pg_expandarray(array[4,5,6]), generate_series(10,15));
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ROWS FROM(generate_series(length((pg_get_keywords()).word),10));
 
 -- sqlfmt-corpus-separator --
 
@@ -44046,6 +44547,10 @@ SELECT * FROM ab WHERE a IN (1, 3, 4)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM ab WHERE a IN (1, 3, 4, NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ab WHERE b = one() + 1
 
 -- sqlfmt-corpus-separator --
 
@@ -44385,6 +44890,10 @@ SELECT * FROM add_default
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM all_a()
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM all_a_lt(3)
 
 -- sqlfmt-corpus-separator --
@@ -44394,6 +44903,14 @@ SELECT * FROM all_a_strict(3)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM all_a_strict(NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM all_ab()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM all_ab_tuple()
 
 -- sqlfmt-corpus-separator --
 
@@ -45315,6 +45832,10 @@ SELECT * FROM crdb_internal.tables;
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM crdb_internal.tenant_span_stats() LIMIT 0
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM crdb_internal.tenant_span_stats(1, 1000)
 
 -- sqlfmt-corpus-separator --
@@ -45323,7 +45844,15 @@ SELECT * FROM crdb_internal.tenant_span_stats(1000)
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM crdb_internal.trace_id()
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM crdb_internal.transaction_contention_events
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM crdb_internal.validate_multi_region_zone_configs()
 
 -- sqlfmt-corpus-separator --
 
@@ -45332,6 +45861,10 @@ SELECT * FROM crdb_internal.zones WHERE false
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM ctas1 ORDER BY ID;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM current_schema() WITH ORDINALITY AS a(b)
 
 -- sqlfmt-corpus-separator --
 
@@ -45559,6 +46092,30 @@ SELECT * FROM del_cascade_test ORDER BY delete_cascade;
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM display_child() ORDER BY k, child_region
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM display_child() ORDER BY k, v, child_region
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM display_child() ORDER BY k1, k2, v, child_region
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM display_child() ORDER BY v
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM display_child() ORDER BY x, y, child_region
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM display_child() ORDER BY x, y, z, child_region
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM documents ORDER BY ID;
 
 -- sqlfmt-corpus-separator --
@@ -45663,6 +46220,10 @@ SELECT * FROM empty AS a(x) LEFT OUTER JOIN onecolumn AS b(y) ON a.x = b.y
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM empty()
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM enum_array
 
 -- sqlfmt-corpus-separator --
@@ -45707,6 +46268,22 @@ SELECT * FROM f
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM f() AS g(bar, baz);
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f() AS g(foo, bar);
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f(), f();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f();
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM f(1);
 
 -- sqlfmt-corpus-separator --
@@ -45723,11 +46300,23 @@ SELECT * FROM f(3);
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM f128403();
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM f_3_in_2_out(2, 2, 2);
 
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM f_default_names(0);
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_enum()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_imp();
 
 -- sqlfmt-corpus-separator --
 
@@ -45747,11 +46336,51 @@ SELECT * FROM f_names(2);
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM f_one();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_out_asc();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_out_desc();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_out_int();
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM f_same_name(2);
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM f_setof_imp()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_table1();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_tup();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_udt()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM f_udt();
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM fake7
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM fetch_one_then_two()
 
 -- sqlfmt-corpus-separator --
 
@@ -45916,6 +46545,10 @@ SELECT * FROM generate_series(1, 3, 0)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM generate_series(1, NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM generate_series(1, p())
 
 -- sqlfmt-corpus-separator --
 
@@ -46096,6 +46729,10 @@ SELECT * FROM indexed_arr WHERE a = ARRAY[100]
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM indexed_arr WHERE a @> ARRAY[100]
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM information_schema._pg_expandarray()
 
 -- sqlfmt-corpus-separator --
 
@@ -46651,6 +47288,10 @@ SELECT * FROM messages_rbt rbt, LATERAL
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM mixed_type_a AS a JOIN mixed_type_b AS b ON a.a = b.a AND a.b < (now() - b.b)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM mno ORDER BY m
 
 -- sqlfmt-corpus-separator --
@@ -46808,6 +47449,10 @@ SELECT * FROM obits ORDER BY x
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM obitsa
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM one()
 
 -- sqlfmt-corpus-separator --
 
@@ -47079,6 +47724,10 @@ SELECT * FROM pg_catalog.pg_attribute;
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM pg_catalog.pg_class c WHERE nonexistent_function()
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM pg_catalog.pg_cursors
 
 -- sqlfmt-corpus-separator --
@@ -47145,6 +47794,10 @@ SELECT * FROM pg_extension.geometry_columns WHERE f_table_name = 'pg_extension_t
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM pg_extension.spatial_ref_sys WHERE srid IN (3857, 4326) ORDER BY srid ASC
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM pg_get_keywords() WHERE word IN ('alter', 'and', 'between', 'cross') ORDER BY word
 
 -- sqlfmt-corpus-separator --
 
@@ -47221,6 +47874,14 @@ SELECT * FROM pks
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM policy_table;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM priv_f()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM priv_f_definer() ORDER BY id
 
 -- sqlfmt-corpus-separator --
 
@@ -47755,11 +48416,19 @@ SELECT * FROM t WHERE y < z
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM t WHERE y = 10 AND divbyzero() = 1;
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM t WHERE y = 20 AND 'a' ~ '(';
 
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t WHERE y = 20 AND ARRAY[1,2,3][10] = 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t WHERE y = 20 AND divbyzero() = 1;
 
 -- sqlfmt-corpus-separator --
 
@@ -48007,6 +48676,10 @@ SELECT * FROM t44624 ORDER BY CASE WHEN c1 IS NULL THEN c0 WHEN true THEN c0 END
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM t44726 WHERE 0 > (CASE WHEN nullif(NULL, ilike_escape('', current_user(), '')) THEN 0 ELSE t44726.c0 END)
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM t44746_0 FULL JOIN t44746_1 ON (SUBSTRING('', ')') = '') = (c1 > 0)
 
 -- sqlfmt-corpus-separator --
@@ -48135,6 +48808,10 @@ SELECT * FROM t95158 WHERE c !~ SOME (ARRAY['x']::STRING[])
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t95360
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t95615, LATERAL ROWS FROM (f95615(), f95615()) WITH ORDINALITY
 
 -- sqlfmt-corpus-separator --
 
@@ -48931,6 +49608,10 @@ SELECT * FROM v3Dep;
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM v44203 WHERE current_user() != ''
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM v46981_0 WHERE '' !~ '+'
 
 -- sqlfmt-corpus-separator --
@@ -49195,6 +49876,10 @@ SELECT * FROM xyz WHERE x = (SELECT min(x) FROM xyz)
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM xyz WHERE x IN (SELECT crdb_internal.force_error('', 'subqueryfail'))
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM xyzw LIMIT (random() * 0.0)::int OFFSET (random() * 0.0)::int
 
 -- sqlfmt-corpus-separator --
 
@@ -49541,6 +50226,70 @@ SELECT *, avg(w) OVER (PARTITION BY z ORDER BY y) FROM wxyz ORDER BY y LIMIT 2
 -- sqlfmt-corpus-separator --
 
 SELECT *, bar FROM nullable;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, dense_rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY w LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, dense_rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY w, y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, dense_rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, dense_rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY y, w LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, dense_rank() OVER (PARTITION BY w, z ORDER BY y) FROM wxyz ORDER BY w, z, y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, dense_rank() OVER (PARTITION BY w, z ORDER BY y) FROM wxyz ORDER BY z, w, y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, dense_rank() OVER (PARTITION BY z ORDER BY y) FROM wxyz ORDER BY y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, one() FROM ab WHERE a = one()
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, one() FROM ab WHERE b = one()
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY w LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY w, y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, rank() OVER (PARTITION BY w ORDER BY y) FROM wxyz ORDER BY y, w LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, rank() OVER (PARTITION BY w, z ORDER BY y) FROM wxyz ORDER BY w, z, y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, rank() OVER (PARTITION BY w, z ORDER BY y) FROM wxyz ORDER BY z, w, y LIMIT 2
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, rank() OVER (PARTITION BY z ORDER BY y) FROM wxyz ORDER BY y LIMIT 2
 
 -- sqlfmt-corpus-separator --
 
@@ -49953,6 +50702,10 @@ SELECT 1 IN (SELECT 1)
 -- sqlfmt-corpus-separator --
 
 SELECT 1 IN (SELECT x FROM xyz ORDER BY x DESC)
+
+-- sqlfmt-corpus-separator --
+
+SELECT 1 IN (all_a())
 
 -- sqlfmt-corpus-separator --
 
@@ -50722,6 +51475,10 @@ SELECT ARRAY[k] FROM k
 
 -- sqlfmt-corpus-separator --
 
+SELECT ARRAY[rbr(),rbr()]
+
+-- sqlfmt-corpus-separator --
+
 SELECT ARRAY[v] FROM kv_enum
 
 -- sqlfmt-corpus-separator --
@@ -51364,6 +52121,10 @@ SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz
 
 -- sqlfmt-corpus-separator --
 
+SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY row_number() OVER(ORDER BY (pk1, pk2)) DESC
+
+-- sqlfmt-corpus-separator --
+
 SELECT DISTINCT ON(x) x AS y FROM xyz
 
 -- sqlfmt-corpus-separator --
@@ -51500,6 +52261,10 @@ SELECT DISTINCT(a), b FROM a ORDER BY 1, 2 LIMIT 10
 
 -- sqlfmt-corpus-separator --
 
+SELECT DISTINCT(database_id) FROM crdb_internal.tenant_span_stats()
+
+-- sqlfmt-corpus-separator --
+
 SELECT EXISTS(SELECT * FROM kv WHERE k > 2)
 
 -- sqlfmt-corpus-separator --
@@ -51513,6 +52278,10 @@ SELECT EXISTS(SELECT 1 FROM kv AS x WHERE x.k = 1)
 -- sqlfmt-corpus-separator --
 
 SELECT EXISTS(SELECT 1 FROM kv WHERE k = 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(YEAR FROM x) FROM extract_test
 
 -- sqlfmt-corpus-separator --
 
@@ -51902,6 +52671,58 @@ ORDER BY
 
 -- sqlfmt-corpus-separator --
 
+SELECT PostGIS_Extensions_Upgrade()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Full_Version()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_GEOS_Version()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_LibXML_Version()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Lib_Build_Date()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Lib_Version()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Liblwgeom_Version()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_PROJ_Version()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Scripts_Build_Date()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Scripts_Installed()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Scripts_Released()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Version()
+
+-- sqlfmt-corpus-separator --
+
+SELECT PostGIS_Wagyu_Version()
+
+-- sqlfmt-corpus-separator --
+
 SELECT ROW (1,2,3)[1]
 
 -- sqlfmt-corpus-separator --
@@ -51931,6 +52752,11 @@ SELECT ST_AsEWKT(
     ST_GeomFromText('MULTILINESTRING((26 125,26 200,126 200,126 125,26 125),
 	   (51 150,101 150,76 175,51 150))'),
 	ST_GeomFromText('LINESTRING(151 100,126 156.25,126 125,90 161, 76 175)')))
+
+-- sqlfmt-corpus-separator --
+
+SELECT ST_AsEWKT(ST_Affine(the_geom, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, pi()/2, pi()), 3)
+	FROM (SELECT ST_GeomFromEWKT('LINESTRING(1 2 3, 4 5 6, 7 8 9)') AS the_geom) AS _;
 
 -- sqlfmt-corpus-separator --
 
@@ -52058,6 +52884,18 @@ SELECT ST_AsEWKT(ST_MemUnion(g::geometry)) FROM ( VALUES (NULL), ('POINT(1 0)'),
 -- sqlfmt-corpus-separator --
 
 SELECT ST_AsEWKT(ST_Polygon( ST_GeomFromText('LINESTRING(75 29,77 29,77 29, 75 29)'), 4326))
+
+-- sqlfmt-corpus-separator --
+
+SELECT ST_AsEWKT(ST_RotateX(ST_GeomFromEWKT('LINESTRING(1 2 3, 1 1 1)'), pi()/2));
+
+-- sqlfmt-corpus-separator --
+
+SELECT ST_AsEWKT(ST_RotateY(ST_GeomFromEWKT('LINESTRING(1 2 3, 1 1 1)'), pi()/2));
+
+-- sqlfmt-corpus-separator --
+
+SELECT ST_AsEWKT(ST_RotateZ(ST_GeomFromEWKT('LINESTRING(1 2 3, 1 1 1)'), pi()/2));
 
 -- sqlfmt-corpus-separator --
 
@@ -53116,6 +53954,10 @@ SELECT a FROM exec_test ORDER BY vec1 <-> '[1]' LIMIT 1;
 
 -- sqlfmt-corpus-separator --
 
+SELECT a FROM f_udt()
+
+-- sqlfmt-corpus-separator --
+
 SELECT a FROM foo
 
 -- sqlfmt-corpus-separator --
@@ -53265,6 +54107,10 @@ SELECT a FROM regression_44774 ORDER BY a
 -- sqlfmt-corpus-separator --
 
 SELECT a FROM sc WHERE v>20 AND v<40
+
+-- sqlfmt-corpus-separator --
+
+SELECT a FROM sub_all WHERE sub_max_odd() = (SELECT max(a) FROM sub_odd)
 
 -- sqlfmt-corpus-separator --
 
@@ -53538,6 +54384,22 @@ SELECT a, b - lag(b, 1) OVER (ORDER BY a) FROM t ORDER BY a;
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, b <= now(), c = -1.0, d <= now() FROM t WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b <= now(), c >= 0.0, d <= now() FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b <= now(), c >= 0.0, d <= now() FROM t WHERE a = 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b <= now(), c >= 0.0, d <= now() FROM t WHERE a = 2
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, b AS b1, b AS b2 FROM abc EXCEPT SELECT a, b, c FROM abc ORDER by a, b1
 
 -- sqlfmt-corpus-separator --
@@ -53791,11 +54653,27 @@ SELECT a, b, c FROM x
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, b, c, cume_dist() OVER (PARTITION BY a ORDER BY c) FROM t
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, b, c, d FROM x
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, b, c, dense_rank() OVER (PARTITION BY a ORDER BY c) FROM t
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, b, c, ntile(2) OVER (PARTITION BY a ORDER BY c) FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, c, percent_rank() OVER (PARTITION BY a ORDER BY c) FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, c, rank() OVER (PARTITION BY a ORDER BY c) FROM t
 
 -- sqlfmt-corpus-separator --
 
@@ -53815,11 +54693,27 @@ SELECT a, b, count(*), count(col2) FROM ab LEFT JOIN tab ON b=col2 GROUP BY a
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, b, cume_dist() OVER () FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, cume_dist() OVER (ORDER BY a) FROM t
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, b, d FROM noncover WHERE b=2 ORDER BY b
 
 -- sqlfmt-corpus-separator --
 
 SELECT a, b, def FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, dense_rank() OVER () FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, dense_rank() OVER (ORDER BY a) FROM t
 
 -- sqlfmt-corpus-separator --
 
@@ -53886,6 +54780,34 @@ SELECT a, b, ntile(2) OVER (ORDER BY a, b) FROM t
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, b, percent_rank() OVER () FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, percent_rank() OVER (ORDER BY a) FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, rank() OVER () FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, rank() OVER (ORDER BY a) FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, row_number() OVER (ORDER BY a, b) FROM t ORDER BY a, b
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, row_number() OVER (PARTITION BY a ORDER BY b) FROM t ORDER BY a, b
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, b, row_number() OVER (PARTITION BY a, b) FROM t ORDER BY a, b
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, b, rowid FROM ab UNION VALUES (1, 2, 3);
 
 -- sqlfmt-corpus-separator --
@@ -53904,6 +54826,10 @@ JOIN t134697 ON a = x AND c = 'abc';
 -- sqlfmt-corpus-separator --
 
 SELECT a, col1, b+col2, count(*) FROM ab JOIN tab ON b=col2 GROUP BY a, col1
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, count(*) AS cnt FROM smalldata GROUP BY a HAVING crdb_internal.reset_sql_stats() ORDER BY a
 
 -- sqlfmt-corpus-separator --
 
@@ -53989,7 +54915,15 @@ SELECT a, sub_is_odd(a) FROM sub_all WHERE sub_is_odd(a) OR sub_is_odd(a) IS NUL
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, sub_max_odd() FROM sub_all WHERE a = sub_max_odd()
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, sub_prev_odd(a) FROM sub_all
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, sub_two() FROM sub_all
 
 -- sqlfmt-corpus-separator --
 
@@ -54043,6 +54977,10 @@ SELECT a,b FROM abc WHERE CASE WHEN a != 0 THEN b/a > 1.5 ELSE false END
 
 -- sqlfmt-corpus-separator --
 
+SELECT a,b FROM add_default WHERE current_timestamp > c AND current_timestamp() - c < interval '20s'
+
+-- sqlfmt-corpus-separator --
+
 SELECT a,b FROM add_default WHERE d > c AND d - c < interval '20s'
 
 -- sqlfmt-corpus-separator --
@@ -54092,6 +55030,10 @@ SELECT a-b, a-c, b-c, b-d, c-d FROM intdecfloat
 -- sqlfmt-corpus-separator --
 
 SELECT a.* FROM crdb_internal.partitions AS a JOIN crdb_internal.partitions AS b ON a.table_id = b.table_id
+
+-- sqlfmt-corpus-separator --
+
+SELECT a.*, b.*, c.* FROM generate_series(1,1) a, unnest(ARRAY[1]) b, pg_get_keywords() c LIMIT 0
 
 -- sqlfmt-corpus-separator --
 
@@ -54431,6 +55373,14 @@ SELECT abs(NULL)
 
 -- sqlfmt-corpus-separator --
 
+SELECT abs(p())
+
+-- sqlfmt-corpus-separator --
+
+SELECT abs(sin(pi())) < 1e-12
+
+-- sqlfmt-corpus-separator --
+
 SELECT abs(y) FROM builtin_test
 
 -- sqlfmt-corpus-separator --
@@ -54513,7 +55463,15 @@ SELECT adnum FROM pg_attrdef WHERE adrelid = 't46799'::REGCLASS
 
 -- sqlfmt-corpus-separator --
 
+SELECT age('1957-06-13') - age(now(), '1957-06-13') = interval '0s'
+
+-- sqlfmt-corpus-separator --
+
 SELECT age('2001-04-10 22:06:45', '1957-06-13')
+
+-- sqlfmt-corpus-separator --
+
+SELECT all_a_lt(all_a())
 
 -- sqlfmt-corpus-separator --
 
@@ -54594,6 +55552,10 @@ SELECT array_agg(a) FROM (SELECT a FROM data WHERE b = 1 AND c = 1.0 AND d = 1.0
 
 -- sqlfmt-corpus-separator --
 
+SELECT array_agg(a) FROM all_a_desc() g(a)
+
+-- sqlfmt-corpus-separator --
+
 SELECT array_agg(a) OVER () FROM l LIMIT 1
 
 -- sqlfmt-corpus-separator --
@@ -54607,6 +55569,14 @@ SELECT array_agg(ab) FROM (SELECT a*b AS ab FROM data WHERE c = 1.0 AND d = 1.0 
 -- sqlfmt-corpus-separator --
 
 SELECT array_agg(array[a, b, c]) FROM __test_array_agg;
+
+-- sqlfmt-corpus-separator --
+
+SELECT array_agg(f) FROM f_agg() AS f;
+
+-- sqlfmt-corpus-separator --
+
+SELECT array_agg(f) FROM f_out_for_agg() AS f;
 
 -- sqlfmt-corpus-separator --
 
@@ -55376,6 +56346,10 @@ SELECT avg(k), avg(v), sum(k), sum(v) FROM kv
 
 -- sqlfmt-corpus-separator --
 
+SELECT avg(k), max(v), min(w), 2 + row_number() OVER () FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT avg(k::decimal), avg(v::decimal), sum(k::decimal), sum(v::decimal) FROM kv
 
 -- sqlfmt-corpus-separator --
@@ -55405,6 +56379,10 @@ SELECT b + interval '1m', interval '1m' + b, c + interval '1m', interval '1m' + 
 -- sqlfmt-corpus-separator --
 
 SELECT b > a, e < b FROM intdecfloat
+
+-- sqlfmt-corpus-separator --
+
+SELECT b > now() - interval '1 day'  FROM mixed_type_a
 
 -- sqlfmt-corpus-separator --
 
@@ -55477,6 +56455,10 @@ SELECT b FROM c1 ORDER BY a
 -- sqlfmt-corpus-separator --
 
 SELECT b FROM c2 ORDER BY a
+
+-- sqlfmt-corpus-separator --
+
+SELECT b FROM f_udt()
 
 -- sqlfmt-corpus-separator --
 
@@ -55561,6 +56543,10 @@ SELECT b, d FROM t1 WHERE a = 10
 -- sqlfmt-corpus-separator --
 
 SELECT b, d, e, f, g, sum(a) FROM t45481 GROUP BY b, d, e, f, g ORDER BY b, d, e, f, g
+
+-- sqlfmt-corpus-separator --
+
+SELECT b, empty() FROM ab
 
 -- sqlfmt-corpus-separator --
 
@@ -56042,6 +57028,14 @@ SELECT c, e FROM abcde WHERE a = 5 AND b = 6
 
 -- sqlfmt-corpus-separator --
 
+SELECT c, lastval() FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT c, lastval() from t
+
+-- sqlfmt-corpus-separator --
+
 SELECT c, length(c) FROM chars WHERE c = 'bar   '
 
 -- sqlfmt-corpus-separator --
@@ -56497,6 +57491,10 @@ SELECT cast('test'::TEXT AS CITEXT);
 
 -- sqlfmt-corpus-separator --
 
+SELECT cast_to_enum()
+
+-- sqlfmt-corpus-separator --
+
 SELECT castsource, casttarget FROM pg_cast WHERE castfunc IS NULL
 ORDER BY oid
 
@@ -56543,6 +57541,18 @@ ORDER BY objid, refobjid, refobjsubid
 
 SELECT classoid, description FROM pg_description
 WHERE description = 'test comment'
+
+-- sqlfmt-corpus-separator --
+
+SELECT clock_timestamp() - statement_timestamp() < interval '10s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT cluster_logical_timestamp();
+
+-- sqlfmt-corpus-separator --
+
+SELECT cluster_logical_timestamp(); INSERT INTO test_retry VALUES (1);
 
 -- sqlfmt-corpus-separator --
 
@@ -56977,6 +57987,10 @@ SELECT concat('foo'::concat_enum, ' ', 64.532, ' ', 'baz'::concat_enum, ' ', 42,
 
 -- sqlfmt-corpus-separator --
 
+SELECT concat() || 'empty'
+
+-- sqlfmt-corpus-separator --
+
 SELECT concat_agg(_bytes), concat_agg(_string) FROM bytes_string
 
 -- sqlfmt-corpus-separator --
@@ -57002,6 +58016,10 @@ SELECT concat_ws(',', 'abcde', 2, NULL, 22)
 -- sqlfmt-corpus-separator --
 
 SELECT concat_ws(',', 'abcde', NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT concat_ws()
 
 -- sqlfmt-corpus-separator --
 
@@ -57263,6 +58281,10 @@ SELECT count(*) = 1 FROM crdb_internal.check_consistency(true, '\xff', '')
 -- sqlfmt-corpus-separator --
 
 SELECT count(*) = 1 FROM crdb_internal.check_consistency(true, '\xff', '\xffff')
+
+-- sqlfmt-corpus-separator --
+
+SELECT count(*) = 1 FROM crdb_internal.trace_id()
 
 -- sqlfmt-corpus-separator --
 
@@ -57626,6 +58648,13 @@ SELECT count(*) FROM sharded_secondary
 -- sqlfmt-corpus-separator --
 
 SELECT count(*) FROM side_effects
+
+-- sqlfmt-corpus-separator --
+
+SELECT count(*) FROM system.comments WHERE type = 5 AND object_id = (
+  SELECT table_id FROM crdb_internal.tables
+  WHERE name = 't_constraints' AND schema_name = 'public' AND database_name = current_database()
+);
 
 -- sqlfmt-corpus-separator --
 
@@ -58128,6 +59157,10 @@ SELECT count_ancestors('x')
 
 -- sqlfmt-corpus-separator --
 
+SELECT count_rows() FROM generate_series(1,100)
+
+-- sqlfmt-corpus-separator --
+
 SELECT counter FROM cnt;
 
 -- sqlfmt-corpus-separator --
@@ -58192,6 +59225,30 @@ SELECT crc32ieee('abc'), crc32c('abc')
 
 -- sqlfmt-corpus-separator --
 
+SELECT crdb_internal.active_version()->'internal'
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.approximate_timestamp(crdb_internal_mvcc_timestamp) < now() FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.await_statement_hints_cache()
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.check_consistency(true, '\x00', crdb_internal.tenant_span()[2])
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.check_consistency(true, crdb_internal.tenant_span()[1], '\xffff00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.check_consistency(true, crdb_internal.tenant_span()[2], crdb_internal.tenant_span()[2])
+
+-- sqlfmt-corpus-separator --
+
 SELECT crdb_internal.check_password_hash_format('md5aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
 
 -- sqlfmt-corpus-separator --
@@ -58213,6 +59270,18 @@ SELECT crdb_internal.check_password_hash_format(('CRDB-BCRYPT$'||'3a$'||'10$'||'
 -- sqlfmt-corpus-separator --
 
 SELECT crdb_internal.check_password_hash_format(('SCRAM-SHA-256$'||'4096:B5VaTCvCLDzZxSYL829oVA==$'||'3Ako3mNxNtdsaSOJl0Av3i6vyV2OiSP9Ly7famdFSbw=:d7BfSmrtjwbF74mSoOhQiDSpoIvlakXKdpBNb3Meunc=')::bytes)
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.clear_query_plan_cache();
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.clear_statement_hints_cache()
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.clear_table_stats_cache();
 
 -- sqlfmt-corpus-separator --
 
@@ -58375,6 +59444,18 @@ SELECT crdb_internal.decode_key('\x00'::BYTES)
 -- sqlfmt-corpus-separator --
 
 SELECT crdb_internal.destroy_tenant(97873)
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.fingerprint(ARRAY['\\x8989', NULL]::BYTES[], now(), false);
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.fingerprint(ARRAY[NULL, NULL]::BYTES[], now(), false);
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.fips_ready()
 
 -- sqlfmt-corpus-separator --
 
@@ -58856,6 +59937,10 @@ SELECT crdb_internal.merge_aggregated_stmt_metadata(ARRAY[])
 
 -- sqlfmt-corpus-separator --
 
+SELECT crdb_internal.node_id()
+
+-- sqlfmt-corpus-separator --
+
 SELECT crdb_internal.notice('debug1', 'do not see this'), crdb_internal.notice('warning', 'but you see this'), crdb_internal.notice('debug2', 'and never this')
 
 -- sqlfmt-corpus-separator --
@@ -59112,6 +60197,18 @@ SELECT crdb_internal.probe_ranges(INTERVAL '1000ms', 'write')
 
 -- sqlfmt-corpus-separator --
 
+SELECT crdb_internal.range_stats(k)
+  FROM (
+          SELECT *
+            FROM (
+                     SELECT start_key AS k, random() AS r FROM crdb_internal.ranges_no_leases
+                     UNION ALL SELECT NULL, random() FROM ROWS FROM (generate_series(1, 100))
+                 )
+        ORDER BY r DESC
+       );
+
+-- sqlfmt-corpus-separator --
+
 SELECT crdb_internal.redact('')
 
 -- sqlfmt-corpus-separator --
@@ -59248,6 +60345,14 @@ SELECT crdb_internal.release_series('2000000.0')
 
 -- sqlfmt-corpus-separator --
 
+SELECT crdb_internal.release_series(crdb_internal.node_executable_version())
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.release_series(crdb_internal.node_executable_version()) = '$origver'
+
+-- sqlfmt-corpus-separator --
+
 SELECT crdb_internal.repair_ttl_table_scheduled_job('crdb_internal_functions_tbl'::regclass::oid)
 
 -- sqlfmt-corpus-separator --
@@ -59261,6 +60366,10 @@ SELECT crdb_internal.revalidate_unique_constraint('repartition_privs.rbr', 'rbr_
 -- sqlfmt-corpus-separator --
 
 SELECT crdb_internal.revalidate_unique_constraint('revalidate_privs.rbr', 'rbr_pkey')
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.revalidate_unique_constraints_in_all_tables()
 
 -- sqlfmt-corpus-separator --
 
@@ -59324,6 +60433,10 @@ SELECT crdb_internal.tenant_span('foo-bar')
 
 -- sqlfmt-corpus-separator --
 
+SELECT crdb_internal.tenant_span()
+
+-- sqlfmt-corpus-separator --
+
 SELECT crdb_internal.tenant_span(2)
 
 -- sqlfmt-corpus-separator --
@@ -59377,6 +60490,26 @@ SELECT crdb_internal.unsafe_upsert_namespace_entry(104,105,'dangling2',12345,tru
 -- sqlfmt-corpus-separator --
 
 SELECT crdb_internal.update_tenant_resource_limits('apptenant', 1000, 100, 0)
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.update_tenant_resource_limits(13, 1000, 100, 0, now(), 0)
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.update_tenant_resource_limits(5, 1000, 100, 0, now(), 0)
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.validate_multi_region_zone_configs()
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.validate_ttl_scheduled_jobs()
+
+-- sqlfmt-corpus-separator --
+
+SELECT crdb_internal.void_func()
 
 -- sqlfmt-corpus-separator --
 
@@ -59551,7 +60684,19 @@ FROM (VALUES
 
 -- sqlfmt-corpus-separator --
 
+SELECT current_date - current_date() = 0
+
+-- sqlfmt-corpus-separator --
+
 SELECT current_schema
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_schema()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_schemas()
 
 -- sqlfmt-corpus-separator --
 
@@ -59608,6 +60753,18 @@ SELECT current_setting('vacuum_cost_delay', false)
 -- sqlfmt-corpus-separator --
 
 SELECT current_setting(NULL, false)
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_user()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_user(), current_user, session_user(), session_user
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_user, current_user(), session_user, session_user(), user
 
 -- sqlfmt-corpus-separator --
 
@@ -60186,6 +61343,14 @@ SELECT default_to_database_primary_region('ajstorm-db-1')
 
 -- sqlfmt-corpus-separator --
 
+SELECT default_to_database_primary_region(gateway_region())
+
+-- sqlfmt-corpus-separator --
+
+SELECT defaults()
+
+-- sqlfmt-corpus-separator --
+
 SELECT definition FROM pg_catalog.pg_matviews WHERE matviewname = 'mv1'
 
 -- sqlfmt-corpus-separator --
@@ -60195,6 +61360,10 @@ SELECT definition FROM pg_catalog.pg_views WHERE viewname = 'v1'
 -- sqlfmt-corpus-separator --
 
 SELECT degrees(-0.5), degrees(0.5)
+
+-- sqlfmt-corpus-separator --
+
+SELECT del()
 
 -- sqlfmt-corpus-separator --
 
@@ -60513,6 +61682,10 @@ ORDER BY e.company_id;
 
 -- sqlfmt-corpus-separator --
 
+SELECT empty_result()
+
+-- sqlfmt-corpus-separator --
+
 SELECT encode('\xa7', 'hex')
 
 -- sqlfmt-corpus-separator --
@@ -60710,6 +61883,106 @@ SELECT exp(1e2000::decimal)
 
 -- sqlfmt-corpus-separator --
 
+SELECT extract('DAY' from time '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract('EPOCH' from time '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract('day' from time '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract('microsecond' from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(day from time '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(epoch from time '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(epoch from timetz '12:00:00+04')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour FROM '2001-01-01 13:00:00'::timestamp)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour FROM '2001-01-01 13:00:00+01'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour from '2016-02-10 19:46:33.306157519-04'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour from timetz '12:01:02.345678-07')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hours from '2016-02-10 19:46:33.306157519-04'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(microsecond from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(microsecond from timetz '12:01:02.345678-05')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(millisecond from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(millisecond from timetz '12:01:02.345678+00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(minute from interval '10:55:01.456')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(minute from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(minute from timetz '12:01:02.345678+03')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(nansecond from '2001-04-10 12:04:59.34565423'::timestamp)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(nansecond from '2001-04-10 12:04:59.34565423'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(second from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(second from timetz '12:01:02.345678-06')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(timezone FROM '2001-01-01 13:00:00+01:15'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
 SELECT f('0');
 
 -- sqlfmt-corpus-separator --
@@ -60759,6 +62032,25 @@ SELECT f('{1, 2}', '{3, 4}');
 -- sqlfmt-corpus-separator --
 
 SELECT f((100, 200));
+
+-- sqlfmt-corpus-separator --
+
+SELECT f()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f(), f(True), f('foo'::TEXT);
+
+-- sqlfmt-corpus-separator --
+
+SELECT f();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f();
+SELECT f(1);
+SELECT f(1, ARRAY[100]);
+SELECT f(True, ARRAY[False]);
 
 -- sqlfmt-corpus-separator --
 
@@ -61189,6 +62481,10 @@ SELECT f1 + time with time zone '00:01' AS "Illegal" FROM TIMETZ_TBL ORDER BY id
 
 -- sqlfmt-corpus-separator --
 
+SELECT f1();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f1(1), f2(1), f2(1, 1);
 
 -- sqlfmt-corpus-separator --
@@ -61221,7 +62517,43 @@ SELECT f100915(20-(SELECT y FROM (VALUES (10), (20)) y(y) WHERE x=y)) FROM (VALU
 
 -- sqlfmt-corpus-separator --
 
+SELECT f100923() FROM (VALUES (10), (20)) v(i)
+
+-- sqlfmt-corpus-separator --
+
+SELECT f104927()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f108297()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f114826();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f131354();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f138273_2();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f143887(100, 200);
+
+-- sqlfmt-corpus-separator --
+
+SELECT f144321();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f145098();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f146414()
 
 -- sqlfmt-corpus-separator --
 
@@ -61242,6 +62574,10 @@ SELECT f1::string AS "Three" FROM TIMETZ_TBL WHERE f1 < '05:06:07-07' ORDER BY i
 -- sqlfmt-corpus-separator --
 
 SELECT f1::string AS "Time TZ" FROM TIMETZ_TBL ORDER BY id
+
+-- sqlfmt-corpus-separator --
+
+SELECT f2();
 
 -- sqlfmt-corpus-separator --
 
@@ -61277,7 +62613,15 @@ SELECT f5(count(a)) FROM t3;
 
 -- sqlfmt-corpus-separator --
 
+SELECT f93083()
+
+-- sqlfmt-corpus-separator --
+
 SELECT f95240(a) FROM t95240
+
+-- sqlfmt-corpus-separator --
+
+SELECT f96326();
 
 -- sqlfmt-corpus-separator --
 
@@ -61313,6 +62657,22 @@ SELECT f_2values(7,8,9,10);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_93314();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_93314_alias();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_93314_comp()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_93314_comp_t()
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_94146(1::INT2)
 
 -- sqlfmt-corpus-separator --
@@ -61325,7 +62685,19 @@ SELECT f_94146(1::INT8)
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_97130();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_97854(1.0)
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_allcolsel()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_allcolsel_alias()
 
 -- sqlfmt-corpus-separator --
 
@@ -61334,6 +62706,10 @@ SELECT f_amb(1, NULL);
 -- sqlfmt-corpus-separator --
 
 SELECT f_amb_setof(1, NULL);
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_arr();
 
 -- sqlfmt-corpus-separator --
 
@@ -61349,11 +62725,27 @@ SELECT f_check1(3.5);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_check_colerr_len()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_check_colerr_null();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_check_colerr_vals(NULL, 'ab')
 
 -- sqlfmt-corpus-separator --
 
 SELECT f_check_colerr_vals(NULL, 'abcd')
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_check_len()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_check_null();
 
 -- sqlfmt-corpus-separator --
 
@@ -61365,6 +62757,22 @@ SELECT f_check_vals(NULL, 'ab');
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_checkb();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_col();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_const();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_cursor()
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_default(21);
 
 -- sqlfmt-corpus-separator --
@@ -61373,7 +62781,19 @@ SELECT f_default_names(0);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_delete();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_drop(5,100,101);
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_empty()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_exprstar()
 
 -- sqlfmt-corpus-separator --
 
@@ -61517,6 +62937,10 @@ SELECT f_inout_int(2);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_insert();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_insert(1,2);
 
 -- sqlfmt-corpus-separator --
@@ -61541,6 +62965,10 @@ SELECT f_kv2(i, j) FROM (VALUES (3, 0), (0, 8)) v(i, j)
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_kv_predicate()
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_move('foo');
 
 -- sqlfmt-corpus-separator --
@@ -61555,6 +62983,14 @@ SELECT f_multi_ins(1, 1, 1, 1, 1, 1), f_multi_ins(1, 1, 1, 1, 1, 1)
 -- sqlfmt-corpus-separator --
 
 SELECT f_multi_ins(2, 2, 2, 3, 3, 3), f_multi_ins(3, 3, 3, 4, 4, 4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_multitable();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_multituple();
 
 -- sqlfmt-corpus-separator --
 
@@ -61606,6 +63042,22 @@ SELECT f_ocdu(2,4,6);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_one();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_out_asc();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_out_desc();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_out_int();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_record(1)
 
 -- sqlfmt-corpus-separator --
@@ -61626,7 +63078,23 @@ SELECT f_returning_star(17,18);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_row();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_rtbl();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_same_name(2);
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_scalar();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_select();
 
 -- sqlfmt-corpus-separator --
 
@@ -61642,6 +63110,26 @@ SELECT f_selfref(1,2);
 
 -- sqlfmt-corpus-separator --
 
+SELECT f_seq_qualified_name()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_seq_qualified_name_quoted()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_setof();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_subquery()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_table();
+
+-- sqlfmt-corpus-separator --
+
 SELECT f_table_name FROM pg_extension.geometry_columns
 
 -- sqlfmt-corpus-separator --
@@ -61651,6 +63139,42 @@ SELECT f_test_exec_dropped(123);
 -- sqlfmt-corpus-separator --
 
 SELECT f_test_exec_dropped(321);
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_tup();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_tuple();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_udt()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_udt_rewrite()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_unindexed_predicate()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_unnamed();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_unqualified_onecol()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_unqualified_twocol()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_update();
 
 -- sqlfmt-corpus-separator --
 
@@ -61675,6 +63199,26 @@ SELECT f_upsert_2vals(1,9,2,8);
 -- sqlfmt-corpus-separator --
 
 SELECT f_using_filter('d');
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_using_multi();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_using_self_join();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_using_udf()
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_using_udf_2();
+
+-- sqlfmt-corpus-separator --
+
+SELECT f_void();
 
 -- sqlfmt-corpus-separator --
 
@@ -61986,6 +63530,10 @@ SELECT foo.a, a, column2, foo.column2 FROM (VALUES (1, 'one'), (2, 'two'), (3, '
 
 -- sqlfmt-corpus-separator --
 
+SELECT foo.bar()
+
+-- sqlfmt-corpus-separator --
+
 SELECT foo1, foo.foo1, b, foo.c FROM abc AS foo (foo1)
 
 -- sqlfmt-corpus-separator --
@@ -62019,6 +63567,10 @@ SELECT format('|%-10s|', 'foo')
 -- sqlfmt-corpus-separator --
 
 SELECT format('|%10s|', 'foo')
+
+-- sqlfmt-corpus-separator --
+
+SELECT format();
 
 -- sqlfmt-corpus-separator --
 
@@ -62074,7 +63626,19 @@ SELECT from_uuid(b'f00d')
 
 -- sqlfmt-corpus-separator --
 
+SELECT g();
+
+-- sqlfmt-corpus-separator --
+
 SELECT g.data->>'name' AS group_name, jsonb_array_elements(g.data->'members') FROM groups g;
+
+-- sqlfmt-corpus-separator --
+
+SELECT gateway_region()
+
+-- sqlfmt-corpus-separator --
+
+SELECT gateway_region();
 
 -- sqlfmt-corpus-separator --
 
@@ -62259,6 +63823,10 @@ SELECT get_byte('abc'::BYTEA, 10)
 
 -- sqlfmt-corpus-separator --
 
+SELECT get_db_survival_goal()
+
+-- sqlfmt-corpus-separator --
+
 SELECT get_depth('')
 
 -- sqlfmt-corpus-separator --
@@ -62271,6 +63839,10 @@ SELECT get_depth(NULL)
 
 -- sqlfmt-corpus-separator --
 
+SELECT get_min_t0();
+
+-- sqlfmt-corpus-separator --
+
 SELECT get_parent('')
 
 -- sqlfmt-corpus-separator --
@@ -62280,6 +63852,32 @@ SELECT get_parent('a.b.c.d')
 -- sqlfmt-corpus-separator --
 
 SELECT get_parent('single')
+
+-- sqlfmt-corpus-separator --
+
+SELECT get_secret_data()
+UNION
+SELECT id FROM secret_data;
+
+-- sqlfmt-corpus-separator --
+
+SELECT get_secret_data();
+
+-- sqlfmt-corpus-separator --
+
+SELECT get_t();
+
+-- sqlfmt-corpus-separator --
+
+SELECT get_t_nested();
+
+-- sqlfmt-corpus-separator --
+
+SELECT get_top_secret_data();
+
+-- sqlfmt-corpus-separator --
+
+SELECT getdatabaseencoding()
 
 -- sqlfmt-corpus-separator --
 
@@ -63776,6 +65374,12 @@ SELECT i, encode(set_bit('\x0000'::bytea, i, 1), 'hex') FROM generate_series(0, 
 
 -- sqlfmt-corpus-separator --
 
+SELECT i, fetch_one_then_two()
+FROM (VALUES (1), (2), (3)) AS v(i)
+WHERE i = fetch_one_then_two()
+
+-- sqlfmt-corpus-separator --
+
 SELECT i, get_bit('\x11'::BYTEA, i) FROM generate_series(0, 7) i ORDER BY i;
 
 -- sqlfmt-corpus-separator --
@@ -63826,6 +65430,10 @@ SELECT i, j, k FROM tb ORDER BY i, j, k
 -- sqlfmt-corpus-separator --
 
 SELECT i, pg_get_indexdef(0, 1, true) FROM pg_indexes
+
+-- sqlfmt-corpus-separator --
+
+SELECT i, random() FROM ROWS FROM (generate_series(1, 5)) AS i ORDER by i
 
 -- sqlfmt-corpus-separator --
 
@@ -64193,11 +65801,51 @@ SELECT identity2(2);
 
 -- sqlfmt-corpus-separator --
 
+SELECT imp(), (1,2,'a')::imp = imp()
+
+-- sqlfmt-corpus-separator --
+
 SELECT imp_a((1,2,'a')), imp_a((1,2,'a')::imp)
 
 -- sqlfmt-corpus-separator --
 
+SELECT imp_cast(), (1,2,'3') = imp_cast(), pg_typeof(imp_cast())
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_const(), (11,22,'b')::imp = imp_const(), pg_typeof(imp_const())
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_const_cast(), (11,22,'b')::imp = imp_const_cast(), pg_typeof(imp_const_cast())
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_const_tup(), (11,22,'b')::imp = imp_const_tup(), pg_typeof(imp_const_tup())
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_const_unnamed(), (11,22,'b')::imp = imp_const_unnamed(), pg_typeof(imp_const_unnamed())
+
+-- sqlfmt-corpus-separator --
+
 SELECT imp_identity((1,2,'a')), imp_identity((1,2,'a')::imp)
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_ordered(), (100,200,'z')::imp = imp_ordered()
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_star(), (1,2,'a')::imp = imp_star()
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_tup(), (1,2,'a')::imp = imp_tup()
+
+-- sqlfmt-corpus-separator --
+
+SELECT imp_tup_ordered(), (100,200,'z')::imp = imp_tup_ordered()
 
 -- sqlfmt-corpus-separator --
 
@@ -64365,6 +66013,10 @@ SELECT information_schema._pg_expandarray('{}');
 -- sqlfmt-corpus-separator --
 
 SELECT information_schema._pg_expandarray((SELECT current_schemas((SELECT isnan((SELECT round(3.4, (SELECT generate_series(1, 0)))))))));
+
+-- sqlfmt-corpus-separator --
+
+SELECT information_schema._pg_expandarray()
 
 -- sqlfmt-corpus-separator --
 
@@ -64609,6 +66261,10 @@ SELECT initcap('THOMAS')
 
 -- sqlfmt-corpus-separator --
 
+SELECT ins()
+
+-- sqlfmt-corpus-separator --
+
 SELECT ins(4)
 
 -- sqlfmt-corpus-separator --
@@ -64618,6 +66274,10 @@ SELECT ins(5), ins(6) FROM (VALUES (1)) v(i) WHERE i < ins(4)
 -- sqlfmt-corpus-separator --
 
 SELECT ins(i) FROM generate_series(1, 3) g(i)
+
+-- sqlfmt-corpus-separator --
+
+SELECT ins2()
 
 -- sqlfmt-corpus-separator --
 
@@ -65165,6 +66825,10 @@ SELECT json_build_array('\x0001'::BYTEA)
 
 -- sqlfmt-corpus-separator --
 
+SELECT json_build_array()
+
+-- sqlfmt-corpus-separator --
+
 SELECT json_build_array(1, '1'::JSON, 1.2, NULL, ARRAY['x', 'y'])
 
 -- sqlfmt-corpus-separator --
@@ -65225,6 +66889,10 @@ SELECT json_build_object('{1,2,3}'::int[], 3)
 -- sqlfmt-corpus-separator --
 
 SELECT json_build_object((1,2),3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object()
 
 -- sqlfmt-corpus-separator --
 
@@ -65589,6 +67257,10 @@ SELECT jsonb_build_array('+Inf'::FLOAT8, 'NaN'::FLOAT8)::STRING::JSONB
 -- sqlfmt-corpus-separator --
 
 SELECT jsonb_build_array('\x0001'::BYTEA)
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_array()
 
 -- sqlfmt-corpus-separator --
 
@@ -67827,6 +69499,10 @@ SELECT k FROM kv WHERE avg(k) OVER () > 1
 
 -- sqlfmt-corpus-separator --
 
+SELECT k FROM kv where v = transaction_timestamp()
+
+-- sqlfmt-corpus-separator --
+
 SELECT k FROM large ORDER BY k DESC;
 
 -- sqlfmt-corpus-separator --
@@ -67913,6 +69589,10 @@ SELECT k, crdb_internal_origin_id FROM t4 WHERE k = 1
 
 -- sqlfmt-corpus-separator --
 
+SELECT k, cume_dist() OVER () FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT k, d, d_comp, d2, d2_comp FROM assn_cast_comp
 
 -- sqlfmt-corpus-separator --
@@ -67924,6 +69604,10 @@ FROM ex WHERE date_trunc_result IS NOT NULL ORDER BY k
 
 SELECT k, date_trunc(element, input::timestamptz) = date_trunc_result, date_trunc(element, input::timestamptz)::string
 FROM ex WHERE date_trunc_result IS NOT NULL ORDER BY k
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, dense_rank() OVER () FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
@@ -68273,11 +69957,31 @@ SELECT k, ntile(NULL::INT) OVER () FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
+SELECT k, percent_rank() OVER () FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT k, pg_get_indexdef('expr_idx'::regclass::oid, k, true) FROM generate_series(0,4) k ORDER BY k
 
 -- sqlfmt-corpus-separator --
 
 SELECT k, pow(max(d) OVER (PARTITION BY v), k::DECIMAL) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, rank() FILTER (WHERE k=1) OVER () FROM kv
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, rank() OVER () FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, row_number() OVER (ORDER BY k) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, row_number() OVER (PARTITION BY k) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
@@ -68381,6 +70085,14 @@ SELECT k, v FROM v127043_3_idx WHERE k = 1 LIMIT 1;
 
 -- sqlfmt-corpus-separator --
 
+SELECT k, v, cume_dist() OVER (PARTITION BY v) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, dense_rank() OVER (PARTITION BY v) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT k, v, k + v FROM kv
 
 -- sqlfmt-corpus-separator --
@@ -68407,6 +70119,26 @@ FROM (SELECT * FROM kv WHERE w != 3) ORDER BY v, k
 -- sqlfmt-corpus-separator --
 
 SELECT k, v, ntile(v) OVER (ORDER BY v, k) FROM kv ORDER BY v, k
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, percent_rank() OVER (PARTITION BY v) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, rank() OVER (PARTITION BY v) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, row_number() OVER (PARTITION BY v ORDER BY k) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, w, cume_dist() OVER (PARTITION BY v ORDER BY w) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, w, dense_rank() OVER (PARTITION BY v ORDER BY w) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
@@ -68443,6 +70175,26 @@ SELECT k, v, w, ntile(6) OVER (PARTITION BY v, k ORDER BY w) FROM kv ORDER BY v,
 -- sqlfmt-corpus-separator --
 
 SELECT k, v, w, ntile(v) OVER (PARTITION BY w ORDER BY v, k) FROM kv ORDER BY w, v, k
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, w, percent_rank() OVER (PARTITION BY v ORDER BY w) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, w, rank() OVER (PARTITION BY v ORDER BY w) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, w, row_number() OVER (PARTITION BY v ORDER BY w, k) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, w, v - w + 2 + row_number() OVER (PARTITION BY v ORDER BY w, k) FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k, v, w, v - w + 2 + row_number() OVER (PARTITION BY v, k ORDER BY w) FROM kv ORDER BY 1
 
 -- sqlfmt-corpus-separator --
 
@@ -68649,6 +70401,14 @@ SELECT last_value from public.serial_cached_seq;
 
 -- sqlfmt-corpus-separator --
 
+SELECT lastval()
+
+-- sqlfmt-corpus-separator --
+
+SELECT lastval();
+
+-- sqlfmt-corpus-separator --
+
 SELECT lca(''::LTREE, 'A.B.C'::LTREE)
 
 -- sqlfmt-corpus-separator --
@@ -68779,6 +70539,10 @@ SELECT length(c1), length(c3) FROM l_113013 l INNER JOIN r_113013 r ON l.r_id = 
 
 -- sqlfmt-corpus-separator --
 
+SELECT length(crdb_internal.cluster_name()) > 0
+
+-- sqlfmt-corpus-separator --
+
 SELECT length(descriptor) * (id - 1) FROM system.descriptor WHERE id = 1
 
 -- sqlfmt-corpus-separator --
@@ -68788,6 +70552,14 @@ SELECT length(e'a\\\\b'::STRING::BYTEA)
 -- sqlfmt-corpus-separator --
 
 SELECT length(gen_random_bytes(10))
+
+-- sqlfmt-corpus-separator --
+
+SELECT length(gen_random_ulid()::BYTES), gen_random_ulid() = gen_random_ulid()
+
+-- sqlfmt-corpus-separator --
+
+SELECT length(gen_random_uuid()::BYTES), gen_random_uuid() = gen_random_uuid()
 
 -- sqlfmt-corpus-separator --
 
@@ -69154,6 +70926,14 @@ SELECT max(data) FROM index_tab WHERE region = 'US_WEST' OR region = 'US_EAST'
 
 -- sqlfmt-corpus-separator --
 
+SELECT max(i) * (1/j) * (row_number() OVER (ORDER BY max(i))) FROM (SELECT 1 AS i, 2 AS j) GROUP BY j
+
+-- sqlfmt-corpus-separator --
+
+SELECT max(i) * (row_number() OVER (ORDER BY max(i))) FROM (SELECT 1 AS i, 2 AS j) GROUP BY j
+
+-- sqlfmt-corpus-separator --
+
 SELECT max(k), min(v) FROM kv HAVING k
 
 -- sqlfmt-corpus-separator --
@@ -69255,6 +71035,10 @@ SELECT max(z), min(x) FROM xyz HAVING (max(z), min(x)) = (SELECT max(z), min(x) 
 -- sqlfmt-corpus-separator --
 
 SELECT max(z), min(x) FROM xyz WHERE (z,x) = (SELECT max(z), min(x) FROM xyz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT max_in_values()
 
 -- sqlfmt-corpus-separator --
 
@@ -69533,6 +71317,23 @@ SELECT mod(9223372036854775807, 4)
 
 -- sqlfmt-corpus-separator --
 
+SELECT my_non_sec_definer_reader_function()
+
+-- sqlfmt-corpus-separator --
+
+SELECT my_non_sec_definer_reader_function();
+-----
+
+-- sqlfmt-corpus-separator --
+
+SELECT my_sec_definer_reader_function();
+
+-- sqlfmt-corpus-separator --
+
+SELECT my_sum();
+
+-- sqlfmt-corpus-separator --
+
 SELECT my_sum(1);
 
 -- sqlfmt-corpus-separator --
@@ -69759,6 +71560,10 @@ SELECT name, statement, is_holdable, is_binary, is_scrollable FROM pg_catalog.pg
 -- sqlfmt-corpus-separator --
 
 SELECT name, statement, is_scrollable, is_holdable, is_binary FROM pg_catalog.pg_cursors
+
+-- sqlfmt-corpus-separator --
+
+SELECT name, statement, is_scrollable, is_holdable, is_binary, now() - creation_time < '1 second'::interval FROM pg_catalog.pg_cursors
 
 -- sqlfmt-corpus-separator --
 
@@ -70174,6 +71979,66 @@ SELECT nonexistent.* IS NOT TRUE
 
 -- sqlfmt-corpus-separator --
 
+SELECT now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() + '1m'::interval > now(), now() + '1m'::interval >= now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - current_date()::timestamptz < interval '24h10s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - current_timestamp = interval '0s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - current_timestamp() = interval '0s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - statement_timestamp() < interval '10s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - timestamp '2015-06-13' > interval '100h'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - transaction_timestamp() = interval '0s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() < now() + '1m'::interval, now() <= now() + '1m'::interval
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() = now()::timestamp, now()::timestamp = now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() > '2024-06-21 19:04:25.625514+00'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() OVER () FROM kv ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT now()::timestamp - now(), now() - now()::timestamp
+
+-- sqlfmt-corpus-separator --
+
+SELECT now()::timestamp < now(), now() < now()::timestamp
+
+-- sqlfmt-corpus-separator --
+
+SELECT now()::timestamp <= now(), now() <= now()::timestamp
+
+-- sqlfmt-corpus-separator --
+
 SELECT nspacl FROM pg_namespace WHERE nspname = 'acl_test_schema'
 
 -- sqlfmt-corpus-separator --
@@ -70191,6 +72056,14 @@ SELECT nspacl FROM pg_namespace WHERE nspname = 'testowner_schema'
 -- sqlfmt-corpus-separator --
 
 SELECT nspname, nspowner, nspacl FROM pg_catalog.pg_namespace
+
+-- sqlfmt-corpus-separator --
+
+SELECT nth_value(1, i) OVER (ORDER BY p()) FROM (VALUES (1), (2)) v(i)
+
+-- sqlfmt-corpus-separator --
+
+SELECT nth_value(1, p()) OVER () FROM (VALUES (1), (2))
 
 -- sqlfmt-corpus-separator --
 
@@ -70467,6 +72340,10 @@ SELECT oidvectortypes(proargtypes) FROM pg_proc WHERE oid=263
 -- sqlfmt-corpus-separator --
 
 SELECT oidvectortypes(proargtypes) FROM pg_proc WHERE proname='custom_fn'
+
+-- sqlfmt-corpus-separator --
+
+SELECT one()
 
 -- sqlfmt-corpus-separator --
 
@@ -70843,6 +72720,10 @@ SELECT overlaps(NULL, NULL, NULL, NULL);
 
 -- sqlfmt-corpus-separator --
 
+SELECT p()
+
+-- sqlfmt-corpus-separator --
+
 SELECT p(1)
 
 -- sqlfmt-corpus-separator --
@@ -71089,7 +72970,21 @@ SELECT pg_catalog.current_setting('woo', false)
 
 -- sqlfmt-corpus-separator --
 
+SELECT pg_catalog.defaults()
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_catalog.inet_client_addr(), pg_catalog.inet_client_port(), pg_catalog.inet_server_addr(), pg_catalog.inet_server_port()
+FROM pg_class
+WHERE relname = 'pg_constraint'
+
+-- sqlfmt-corpus-separator --
+
 SELECT pg_catalog.length('hello')
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_catalog.pg_client_encoding()
 
 -- sqlfmt-corpus-separator --
 
@@ -71588,6 +73483,10 @@ WHERE pg_class.relname = 'indexes_include_idx'
 
 -- sqlfmt-corpus-separator --
 
+SELECT pg_is_in_recovery()
+
+-- sqlfmt-corpus-separator --
+
 SELECT pg_is_other_temp_schema((SELECT oid FROM pg_namespace WHERE nspname = 'pg_catalog'))
 
 -- sqlfmt-corpus-separator --
@@ -71596,7 +73495,19 @@ SELECT pg_is_other_temp_schema((SELECT oid FROM pg_type LIMIT 1))
 
 -- sqlfmt-corpus-separator --
 
+SELECT pg_is_xlog_replay_paused()
+
+-- sqlfmt-corpus-separator --
+
 SELECT pg_lsn('ab');
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_my_temp_schema()
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_my_temp_schema()::TEXT LIKE 'pg_temp_%'
 
 -- sqlfmt-corpus-separator --
 
@@ -71661,6 +73572,10 @@ SELECT pg_table_is_visible(1010101010)
 -- sqlfmt-corpus-separator --
 
 SELECT pg_table_is_visible(NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_trigger_depth();
 
 -- sqlfmt-corpus-separator --
 
@@ -71864,6 +73779,10 @@ SELECT phraseto_tsquery('No hardcoded configuration')
 
 -- sqlfmt-corpus-separator --
 
+SELECT pi()
+
+-- sqlfmt-corpus-separator --
+
 SELECT pk FROM regional_by_row_table_virt GROUP BY (a+10);
 
 -- sqlfmt-corpus-separator --
@@ -71928,6 +73847,22 @@ SELECT polname FROM pg_policy WHERE polname = 'check_access';
 
 -- sqlfmt-corpus-separator --
 
+SELECT position('\x616263'::bytea in 'abc'::bytea)
+
+-- sqlfmt-corpus-separator --
+
+SELECT position('a' in 'high')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position('ig' in 'high')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position(B'100' in B'100101')
+
+-- sqlfmt-corpus-separator --
+
 SELECT pow(-2::int, 3::int), pow(2::int, 3::int)
 
 -- sqlfmt-corpus-separator --
@@ -71961,6 +73896,10 @@ SELECT pow(2::int, -3::int)
 -- sqlfmt-corpus-separator --
 
 SELECT pow(4.727998800941528e-14::DECIMAL, 0.06081860494226844::DECIMAL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT pow(CAST (pi() AS DECIMAL), DECIMAL '2.0')
 
 -- sqlfmt-corpus-separator --
 
@@ -72117,6 +74056,10 @@ WHERE proname='least'
 
 -- sqlfmt-corpus-separator --
 
+SELECT public."LOWERCASE_HINT_ERROR_EXPLICIT_SCHEMA_FN"();
+
+-- sqlfmt-corpus-separator --
+
 SELECT public.ST_AsText('POINT(10.5 20.25)'::geometry)
 
 -- sqlfmt-corpus-separator --
@@ -72126,6 +74069,10 @@ SELECT public.abs(-1)
 -- sqlfmt-corpus-separator --
 
 SELECT public.log(10)
+
+-- sqlfmt-corpus-separator --
+
+SELECT public.now()
 
 -- sqlfmt-corpus-separator --
 
@@ -72171,6 +74118,10 @@ SELECT quote_literal(raw_config_yaml) FROM crdb_internal.zones WHERE zone_id = 0
 
 -- sqlfmt-corpus-separator --
 
+SELECT qux();
+
+-- sqlfmt-corpus-separator --
+
 SELECT r FROM t
 
 -- sqlfmt-corpus-separator --
@@ -72195,6 +74146,22 @@ SELECT radians(-45.0), radians(45.0)
 
 -- sqlfmt-corpus-separator --
 
+SELECT rand_v(), rand_v() FROM generate_series(1, 3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT random() * 0.0
+
+-- sqlfmt-corpus-separator --
+
+SELECT random() from t51841
+
+-- sqlfmt-corpus-separator --
+
+SELECT random_normal() IS NOT NULL, random_normal(0, 1) IS NOT NULL
+
+-- sqlfmt-corpus-separator --
+
 SELECT random_normal(0, -1)
 
 -- sqlfmt-corpus-separator --
@@ -72203,11 +74170,19 @@ SELECT random_normal(5, 0)
 
 -- sqlfmt-corpus-separator --
 
+SELECT rank() FROM kv
+
+-- sqlfmt-corpus-separator --
+
 SELECT rank(22) FROM kv
 
 -- sqlfmt-corpus-separator --
 
 SELECT raw_config_sql FROM crdb_internal.zones WHERE zone_id = 0
+
+-- sqlfmt-corpus-separator --
+
+SELECT rbr()
 
 -- sqlfmt-corpus-separator --
 
@@ -73283,7 +75258,31 @@ SELECT sc.fn(1);
 
 -- sqlfmt-corpus-separator --
 
+SELECT sc1.f_seq()
+
+-- sqlfmt-corpus-separator --
+
+SELECT sc1.f_type()
+
+-- sqlfmt-corpus-separator --
+
 SELECT sc1.fn(1);
+
+-- sqlfmt-corpus-separator --
+
+SELECT sc1_new.f_seq()
+
+-- sqlfmt-corpus-separator --
+
+SELECT sc1_new.f_type()
+
+-- sqlfmt-corpus-separator --
+
+SELECT sc2.f_seq()
+
+-- sqlfmt-corpus-separator --
+
+SELECT sc2.f_type()
 
 -- sqlfmt-corpus-separator --
 
@@ -73314,6 +75313,10 @@ ORDER BY indexname
 -- sqlfmt-corpus-separator --
 
 SELECT schemaname, tablename, tableowner FROM pg_catalog.pg_tables WHERE tablename = 'a'
+
+-- sqlfmt-corpus-separator --
+
+SELECT sel()
 
 -- sqlfmt-corpus-separator --
 
@@ -73733,6 +75736,10 @@ SELECT small.c, large.d FROM small LEFT JOIN large ON small.c = large.b AND larg
 
 -- sqlfmt-corpus-separator --
 
+SELECT somefunc();
+
+-- sqlfmt-corpus-separator --
+
 SELECT soundex('Anne'), soundex('Andrew'), difference('Anne', 'Andrew');
 
 -- sqlfmt-corpus-separator --
@@ -73829,6 +75836,10 @@ SELECT sqrt(9.789765531128956e-34::DECIMAL)
 -- sqlfmt-corpus-separator --
 
 SELECT st_asencodedpolyline(geomfromewkb(('01070000A0E61000000300000001060000A0E6100000040000000103000080010000000B0000006F9AF3F7D81863C057397A0B3ACD42C006ED79D13D2DF24130E1CBF62A4A45C01B6DC0D279F452C022F8C672D2C1F9C140DB9D23050141C0B53FBA6E396656C0C0A1842E2B53EC413A8DC94C568D61401BEF0352091651C05C681DE175D2FD41A048C859DF7C5440C00E327AC97FF63F68BBA8144D0EF8416E6042F340DD6040805791CE56602740DC6C3922676401C29C6D4009B1334E40625E855D7A7E5140D4241F7D86D2D5C14B1E4BCA077A58C07806BF9D4D084D4074E74BE4DCAA00C2C11D020045A051C0D81F8E3DD0AE3740B8315FF7F63AF4C1BAD97494BA9860C07411EFAF0A6C3D4038E26DE7A194F4C16F9AF3F7D81863C057397A0B3ACD42C006ED79D13D2DF2410103000080010000000B000000610D90AE22A55FC0B8265672F7562940CE3E91EB7A320042CC96C05617B649C085229B1A09E153C0D84FA7998764EB4190FEB5A7C71B2DC03EBBCB6B588F4DC02891E1ED4A7DE6417C0F7BBC14C75840E08D4D210E2F21C04180E453EDEDFFC112E57185B2435240F0D20FC2D7C11640F8BF2E3AB98DD2C1D0A9A94D6EA14140FCABD1E5BF074B400010C2F75AA16F4166BC301BE6FB55C002F9F182DE3D53400038B551BC0495C199463681FA6E5CC0184D3E0AE179554030323F0F2525F4415791FBE04FEA61C0361E8733C77A5240C84AEBEAD466EEC1D5012A75E04F63C0A8BF403F623D4240182CFEFA9071E0C1610D90AE22A55FC0B8265672F7562940CE3E91EB7A3200420103000080010000000C000000004CADA6B302E0BF3EE5FA281ACE3BC0E051ABD6580901429B65A22CCBDC53C003DEBC27260E4AC07E45691D3E7AF541408E6FAB9A1008C016E33E2631FD40C0EEF80F0FF3E8F341A8C5EAA8B0C836409E85B8193CE952C0F4448FFF9B31F24190F9A9FCD2AC604004F99C51ED4356C0903A1F652902D4C1C01B737BD389554080315427550738C05C51AE075475F64124F6F92382235C40148AB5FED33D38C048960D3AC6D7E8412C2E310EABA5514058EA10C427562EC0A82D4D1A69D7FE41621FC77070C26540FE84B78FE5BE51400962385E53FAFEC1483899F770B14DC020BD4BBBAB604D401C08306EA143E84140337962764325C0002F089A1DF3F83FAC9B66F32C2BE841004CADA6B302E0BF3EE5FA281ACE3BC0E051ABD65809014201030000800100000006000000D03FF366A2C95C40E59BFCECDD7553C0D028B038BB63D041A40AEF5CB0195840006FB928107F084020CA0A39A4AED34100F09D4126336140E8AC65DAC4954C4024406D4040D1EE41F04B3F3DA6C75740106594C0ADCE4440A498B6372039FD4155D08A1E777452C084CC004170E949409C87DF53EB9AFDC1D03FF366A2C95C40E59BFCECDD7553C0D028B038BB63D04101020000A0E61000000200000074F55D784E5F50408F7DE14351CD41C0FCCCE7B1B166F541583C392FCD7554409022EAF3EFCC39C03CDE1C0E29A7EB4101040000A0E6100000060000000101000080E8801DFC8A2130C04401B4AE182F50C0BC13340EB7E2E1C1010100008010DC3F808D824D406C9927CDAE5144409A464D93BBD7F94101010000806F0682A50FE253C030E1964D47F74BC00E752ECB60B0F441010100008014F5242FC2C444C01257DB8E51FA51404449E2FB7D2AFFC1010100008069945BA1FD2E50C0501CA74B7A661C40CB83CB9A4894F1C10101000080C0BBBC345A4B51C0E08F6EBB2F250E400681A78F4FFCF741'::GEOGRAPHY)::BYTEA)::GEOMETRY);
+
+-- sqlfmt-corpus-separator --
+
+SELECT st_asewkt(st_rotate('LINESTRING (1 5, 5 1)'::geometry,pi()/4,'POINT EMPTY'::geometry))
 
 -- sqlfmt-corpus-separator --
 
@@ -74060,6 +76071,13 @@ SELECT status, job_type FROM crdb_internal.jobs WHERE status='pending'
 
 -- sqlfmt-corpus-separator --
 
+SELECT status, regexp_replace(detail, '[0-9-]+', '', 'g')
+FROM crdb_internal.check_consistency(true, crdb_internal.tenant_span()[1], crdb_internal.tenant_span()[2])
+ORDER BY range_id
+LIMIT 1
+
+-- sqlfmt-corpus-separator --
+
 SELECT stddev(1::int), stddev_samp(1::float), stddev(1::decimal)
 
 -- sqlfmt-corpus-separator --
@@ -74244,6 +76262,18 @@ SELECT strpos(b'\x61\145aabc', b'abc'), strpos(b'', b''), strpos(b'ttt\x61\x61c'
 
 -- sqlfmt-corpus-separator --
 
+SELECT strpos(version(), 'CockroachDB')
+
+-- sqlfmt-corpus-separator --
+
+SELECT sub_first(), a FROM sub_all
+
+-- sqlfmt-corpus-separator --
+
+SELECT sub_max_odd_with_order_by()
+
+-- sqlfmt-corpus-separator --
+
 SELECT subltree('Top.Child1.Child2'::LTREE, -1, 2);
 
 -- sqlfmt-corpus-separator --
@@ -74390,6 +76420,14 @@ FROM (SELECT gen_salt('xdes', rounds) AS salt FROM (VALUES (0), (1), (16777215))
 
 SELECT substr(salt, 1, 7), char_length(salt)
 FROM (SELECT gen_salt('bf', rounds) AS salt FROM (VALUES (0), (4), (31)) AS t (rounds))
+
+-- sqlfmt-corpus-separator --
+
+SELECT substr(uuid_generate_v1()::TEXT, 24) = substr(uuid_generate_v1()::TEXT, 24)
+
+-- sqlfmt-corpus-separator --
+
+SELECT substr(uuid_generate_v1mc()::TEXT, 24) = substr(uuid_generate_v1mc()::TEXT, 24)
 
 -- sqlfmt-corpus-separator --
 
@@ -75010,6 +77048,10 @@ FROM (VALUES ('03:00')) v(t)
 -- sqlfmt-corpus-separator --
 
 SELECT t::implicit_col, (t::implicit_col).d, (t::implicit_col).e, (t::implicit_col).* FROM a AS t
+
+-- sqlfmt-corpus-separator --
+
+SELECT t_update()
 
 -- sqlfmt-corpus-separator --
 
@@ -76110,6 +78152,14 @@ SELECT to_char(d1::timestamp, 'FMY,YYY FMYYYY FMYYY FMYY FMY FMCC FMQ FMMM FMWW 
 
 -- sqlfmt-corpus-separator --
 
+SELECT to_char_with_style(now()::date, 'postgres')
+
+-- sqlfmt-corpus-separator --
+
+SELECT to_char_with_style(now()::timestamp, 'postgres')
+
+-- sqlfmt-corpus-separator --
+
 SELECT to_date('0,562107', 'Y,YYYDDD')::text
 
 -- sqlfmt-corpus-separator --
@@ -76319,6 +78369,10 @@ SELECT to_hex(xor_agg(a)), xor_agg(c) FROM xor_bytes
 -- sqlfmt-corpus-separator --
 
 SELECT to_ip('')
+
+-- sqlfmt-corpus-separator --
+
+SELECT to_ip()
 
 -- sqlfmt-corpus-separator --
 
@@ -77985,6 +80039,10 @@ SELECT unaccent(str) FROM ( VALUES
 
 -- sqlfmt-corpus-separator --
 
+SELECT unique_rowid() < unique_rowid()
+
+-- sqlfmt-corpus-separator --
+
 SELECT unnest FROM unnest(array[1,2], array[3,4,5])
 
 -- sqlfmt-corpus-separator --
@@ -78101,6 +80159,10 @@ SELECT unnest(NULL, NULL, NULL);
 
 -- sqlfmt-corpus-separator --
 
+SELECT up()
+
+-- sqlfmt-corpus-separator --
+
 SELECT update_child(x, x * 10) FROM child WHERE y IS NULL;
 
 -- sqlfmt-corpus-separator --
@@ -78118,6 +80180,18 @@ SELECT upper(s), count(DISTINCT k), count(DISTINCT v), count(DISTINCT (v)) FROM 
 -- sqlfmt-corpus-separator --
 
 SELECT upper(s), count(DISTINCT s), count(DISTINCT upper(s)) FROM kv GROUP BY upper(s) HAVING count(DISTINCT s) > 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT upper_hello(), nested_udf_for_from(), lower_hello(), concat_hello()
+
+-- sqlfmt-corpus-separator --
+
+SELECT ups()
+
+-- sqlfmt-corpus-separator --
+
+SELECT ups2()
 
 -- sqlfmt-corpus-separator --
 
@@ -78254,10 +80328,50 @@ SELECT username, substr("hashedPassword", 1, 7), 'CRDB-BCRYPT'||"hashedPassword"
 
 -- sqlfmt-corpus-separator --
 
+SELECT uuid_generate_v1() = uuid_generate_v1()
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_generate_v1mc() = uuid_generate_v1mc()
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_generate_v3(uuid_ns_x500(), 'cat')
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_generate_v5(uuid_ns_oid(), 'dog')
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_nil()
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_ns_dns()
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_ns_oid()
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_ns_url()
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_ns_x500()
+
+-- sqlfmt-corpus-separator --
+
 SELECT uuid_to_ulid('0178951c-b665-30a7-19a2-a18999834858'),
        ulid_to_uuid('01F2AHSDK562KHK8N1H6CR6J2R'),
        ulid_to_uuid(uuid_to_ulid('0178951c-b665-30a7-19a2-a18999834858')),
        uuid_to_ulid(ulid_to_uuid('01F2AHSDK562KHK8N1H6CR6J2R'))
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_v4() != uuid_v4(), length(uuid_v4())
 
 -- sqlfmt-corpus-separator --
 
@@ -78556,6 +80670,10 @@ SELECT width_bucket(8.0, 2.0, 3.0, 5)
 
 -- sqlfmt-corpus-separator --
 
+SELECT width_bucket(now(), array['yesterday', 'today', 'tomorrow']::timestamptz[])
+
+-- sqlfmt-corpus-separator --
+
 SELECT width_bucket(true, '{}');
 
 -- sqlfmt-corpus-separator --
@@ -78564,7 +80682,23 @@ SELECT width_bucket(true, '{}'::BOOL[]);
 
 -- sqlfmt-corpus-separator --
 
+SELECT with_max_staleness('10s') = statement_timestamp() - '10s'::interval
+
+-- sqlfmt-corpus-separator --
+
 SELECT with_max_staleness(-'1s')
+
+-- sqlfmt-corpus-separator --
+
+SELECT with_min_timestamp(statement_timestamp() + '5s'::interval) = statement_timestamp()
+
+-- sqlfmt-corpus-separator --
+
+SELECT with_min_timestamp(statement_timestamp() - '5s'::interval) = statement_timestamp() - '5s'::interval
+
+-- sqlfmt-corpus-separator --
+
+SELECT with_min_timestamp(statement_timestamp()) = statement_timestamp()
 
 -- sqlfmt-corpus-separator --
 
@@ -81393,11 +83527,96 @@ SET testing_optimizer_disable_rule_probability = 1;
 
 -- sqlfmt-corpus-separator --
 
+SET timezone = '+02:00';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '+02:00';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-00:30';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-00:30';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-04:15';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-04:15';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-04:30';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-04:30';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-13:00';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '-13:00';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
 SET timezone = '00:00';
 SELECT ARRAY[
   '2018-11-02 12:34:56.78901234'::timestamptz,
   '2018-11-02 12:34:56.78901234-07'::timestamptz
 ]
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '00:00';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '00:30';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '00:30';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '04:15';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '04:15';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '04:30';
+SELECT to_char(now(), 'OF') as of_t, to_char(now(), 'TZH:TZM') as "TZH:TZM";
+
+-- sqlfmt-corpus-separator --
+
+SET timezone = '04:30';
+SELECT to_char(now(), 'of') as of_t, to_char(now(), 'tzh:tzm') as "tzh:tzm";
 
 -- sqlfmt-corpus-separator --
 
@@ -82850,6 +85069,10 @@ UPDATE t32477 SET x = generate_series(1,2)
 
 -- sqlfmt-corpus-separator --
 
+UPDATE t32477 SET x = rank() OVER ()
+
+-- sqlfmt-corpus-separator --
+
 UPDATE t32786 as node
 SET parent_path=concat((SELECT parent.parent_path
   FROM t32786 parent
@@ -83719,6 +85942,40 @@ ORDER BY
 -- sqlfmt-corpus-separator --
 
 WITH
+  a AS (SELECT crdb_internal.create_session_revival_token() AS token),
+  b AS (
+    SELECT
+      crdb_internal.pb_to_json(
+        'cockroach.sql.sessiondatapb.SessionRevivalToken',
+        a.token
+      ) AS json_token
+    FROM a
+  ),
+  c AS (
+    SELECT
+      (json_populate_record(
+        NULL::token_payload,
+        crdb_internal.pb_to_json(
+          'cockroach.sql.sessiondatapb.SessionRevivalToken.Payload',
+          decode(b.json_token->>'payload', 'base64'),
+          true
+        )
+      )).*
+    FROM b
+  )
+SELECT
+  algorithm,
+  "user",
+  "expiresAt" > now(),
+  "expiresAt" < (now() + INTERVAL '11 minutes'),
+  "expiresAt" > "issuedAt",
+  crdb_internal.validate_session_revival_token(a.token)
+FROM
+  c, a
+
+-- sqlfmt-corpus-separator --
+
+WITH
   with2
     AS (
       SELECT
@@ -83782,6 +86039,13 @@ LEFT JOIN LATERAL (
 
 -- sqlfmt-corpus-separator --
 
+WITH a AS (
+  SELECT extract(YEAR FROM "lastUpdated") AS year
+  FROM system.settings WHERE name = 'version'
+) SELECT year > 2020 AND year < 2100 FROM a
+
+-- sqlfmt-corpus-separator --
+
 WITH a AS (SELECT a FROM ab ORDER BY b) SELECT * FROM a
 
 -- sqlfmt-corpus-separator --
@@ -83809,6 +86073,20 @@ WITH a(a) AS ( VALUES
 
 -- sqlfmt-corpus-separator --
 
+WITH bar AS (SELECT 2) SELECT f(), * FROM bar;
+
+-- sqlfmt-corpus-separator --
+
+WITH cte (a, b) AS (SELECT random(), random())
+SELECT count(*) FROM cte WHERE a = b
+
+-- sqlfmt-corpus-separator --
+
+WITH cte (x, a, b) AS (SELECT x, random(), random() FROM (VALUES (1), (2), (3)) AS v(x))
+SELECT count(*) FROM cte WHERE a = b
+
+-- sqlfmt-corpus-separator --
+
 WITH cte AS (
   SELECT job_type, description
   FROM crdb_internal.jobs
@@ -83824,7 +86102,19 @@ WITH cte AS (SELECT x*10+y FROM xy ORDER BY x+y LIMIT 3) SELECT * FROM cte
 
 -- sqlfmt-corpus-separator --
 
+WITH cte(col) AS (SELECT random()) SELECT col, random() FROM cte
+
+-- sqlfmt-corpus-separator --
+
 WITH cte(s) AS (SELECT NULL::TSQUERY) SELECT a FROM a, cte WHERE a @@ s;
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (SELECT 2) SELECT f(), * FROM foo;
+
+-- sqlfmt-corpus-separator --
+
+WITH foo AS (SELECT insert_t1()) SELECT insert_t1();
 
 -- sqlfmt-corpus-separator --
 
@@ -83879,6 +86169,27 @@ SELECT idx->>'name', idx->>'id' FROM indexes
 
 -- sqlfmt-corpus-separator --
 
+WITH payloads AS (
+  SELECT *
+  FROM crdb_internal.payloads_for_trace(crdb_internal.trace_id())
+) SELECT count(*) > 0
+  FROM payloads
+  WHERE payload_type = 'roachpb.ContentionEvent'
+  AND crdb_internal.pretty_key(decode(payload_jsonb->>'key', 'base64'), 1) LIKE '/1/"k"/%'
+
+-- sqlfmt-corpus-separator --
+
+WITH payloads AS (
+  SELECT *
+  FROM crdb_internal.payloads_for_trace(crdb_internal.trace_id())
+) SELECT count(*) > 0
+  FROM payloads
+  WHERE payload_type = 'roachpb.ContentionEvent'
+  AND crdb_internal.pretty_key(decode(payload_jsonb->>'key', 'base64'), 1) LIKE '/1/"k"/%'
+  AND (payload_jsonb->'txnMeta'->>'coordinatorNodeId')::INTEGER = 4
+
+-- sqlfmt-corpus-separator --
+
 WITH q (x, y) AS (
   SELECT * FROM (VALUES ('a', 'a'), ('b', 'b'), ('c', 'c'))
   UNION ALL
@@ -83919,6 +86230,20 @@ WITH settings AS (
 )
 SELECT *
 FROM settings;
+
+-- sqlfmt-corpus-separator --
+
+WITH spans AS (
+  SELECT span_id
+  FROM crdb_internal.node_inflight_trace_spans
+  WHERE trace_id = crdb_internal.trace_id()
+), payloads AS (
+  SELECT *
+  FROM spans, LATERAL crdb_internal.payloads_for_span(spans.span_id)
+) SELECT count(*) > 0
+  FROM payloads
+  WHERE payload_type = 'roachpb.ContentionEvent'
+  AND crdb_internal.pretty_key(decode(payload_jsonb->>'key', 'base64'), 1) LIKE '/1/"k"/%'
 
 -- sqlfmt-corpus-separator --
 
@@ -84807,6 +87132,22 @@ select
 
 -- sqlfmt-corpus-separator --
 
+select
+  extract('hour' from '11:12+03:01'::timetz)::string || ':' ||
+  extract('minute' from '11:12+03:01'::timetz)::string || 'Z' ||
+  extract('timezone_hour' from '11:12+03:01'::timetz)::string || ':' ||
+  extract('timezone_minute' from '11:12+03:01'::timetz)::string
+
+-- sqlfmt-corpus-separator --
+
+select
+  extract('hour' from '11:12-03:01'::timetz)::string || ':' ||
+  extract('minute' from '11:12-03:01'::timetz)::string || 'Z' ||
+  extract('timezone_hour' from '11:12-03:01'::timetz)::string || ':' ||
+  extract('timezone_minute' from '11:12-03:01'::timetz)::string
+
+-- sqlfmt-corpus-separator --
+
 select "eventType" from system.eventlog WHERE "eventType" <> 'finish_schema_change' order by timestamp desc limit 1;
 
 -- sqlfmt-corpus-separator --
@@ -85048,6 +87389,14 @@ select * from (xt left join yt on (x1 = y1)) left join xt xx(xx1,xx2) on (x1 = x
 -- sqlfmt-corpus-separator --
 
 select * from (xt left join yt on (x1 = y1)) left join xt xx(xx1,xx2) on (x1 = xx1) where (y2 is not null)
+
+-- sqlfmt-corpus-separator --
+
+select * from access_large_c2_as_forcer();
+
+-- sqlfmt-corpus-separator --
+
+select * from access_large_c2_as_session_user();
 
 -- sqlfmt-corpus-separator --
 
@@ -85299,6 +87648,14 @@ order by attnum;
 
 -- sqlfmt-corpus-separator --
 
+select b, all_a() from ab
+
+-- sqlfmt-corpus-separator --
+
+select b, all_a(), some_a() from ab
+
+-- sqlfmt-corpus-separator --
+
 select c1 from rlsInsert ORDER BY c1;
 
 -- sqlfmt-corpus-separator --
@@ -85351,6 +87708,14 @@ select covar_pop(y, x), covar_samp(y, x), regr_sxx(y, x), regr_syy(y, x) from co
 
 -- sqlfmt-corpus-separator --
 
+select crdb_internal.cluster_id() != '00000000-0000-0000-0000-000000000000' FROM foo
+
+-- sqlfmt-corpus-separator --
+
+select crdb_internal.create_session_revival_token()
+
+-- sqlfmt-corpus-separator --
+
 select crdb_internal.force_log_fatal('foo')
 
 -- sqlfmt-corpus-separator --
@@ -85360,6 +87725,10 @@ select crdb_internal.force_panic('foo')
 -- sqlfmt-corpus-separator --
 
 select crdb_internal.force_retry(interval '0s')
+
+-- sqlfmt-corpus-separator --
+
+select crdb_internal.get_vmodule()
 
 -- sqlfmt-corpus-separator --
 
@@ -85431,11 +87800,19 @@ select crdb_internal.sql_liveness_is_alive(x'deadbeef');
 
 -- sqlfmt-corpus-separator --
 
+select crdb_internal.validate_multi_region_zone_configs();
+
+-- sqlfmt-corpus-separator --
+
 select create_statement from crdb_internal.create_statements where descriptor_name='flying_roaches'
 
 -- sqlfmt-corpus-separator --
 
 select create_statement from crdb_internal.create_statements where descriptor_name='roaches'
+
+-- sqlfmt-corpus-separator --
+
+select current_time() + current_timestamp()::date = current_timestamp()
 
 -- sqlfmt-corpus-separator --
 
@@ -85483,7 +87860,39 @@ select exp('nan'::numeric), exp('inf'::numeric), exp('-inf'::numeric)
 
 -- sqlfmt-corpus-separator --
 
+select extract(day from '2019-01-15'::date) as final
+
+-- sqlfmt-corpus-separator --
+
+select f128403();
+
+-- sqlfmt-corpus-separator --
+
+select f_delete();
+
+-- sqlfmt-corpus-separator --
+
+select f_insert();
+
+-- sqlfmt-corpus-separator --
+
 select f_returning(15,16);
+
+-- sqlfmt-corpus-separator --
+
+select f_select();
+
+-- sqlfmt-corpus-separator --
+
+select f_table1();
+
+-- sqlfmt-corpus-separator --
+
+select f_table2();
+
+-- sqlfmt-corpus-separator --
+
+select f_update();
 
 -- sqlfmt-corpus-separator --
 
@@ -86226,6 +88635,14 @@ set sql_safe_updates=false
 -- sqlfmt-corpus-separator --
 
 set sql_safe_updates=false;
+
+-- sqlfmt-corpus-separator --
+
+set time zone 'Europe/Berlin'; select extract(epoch from TIMESTAMP WITH TIME ZONE '2010-11-06 23:59:00-05:00')
+
+-- sqlfmt-corpus-separator --
+
+set time zone 'UTC'; select extract(epoch from TIMESTAMP WITH TIME ZONE '2010-11-06 23:59:00-05:00')
 
 -- sqlfmt-corpus-separator --
 

@@ -1063,12 +1063,11 @@ fn function_to_node(f: &Function<Raw>) -> Node {
         "\"extract\"" | "\"position\""
     ) && f.args.len() == Some(2)
     {
-        return Node::Unformatted { value: format!("{f}") };
+        return special_function_to_node(f);
     }
 
     // ORDER BY within function args is complex and requires fallback to
-    // the parser's own Display. We also can't handle the combination of
-    // both ORDER BY in args and OVER in the same call.
+    // the parser's own Display.
     let has_complex = match &f.args {
         FunctionArgs::Args { order_by, .. } => !order_by.is_empty(),
         FunctionArgs::Star => false,
@@ -1093,25 +1092,27 @@ fn function_to_node(f: &Function<Raw>) -> Node {
             items
         }
         FunctionArgs::Args { args, order_by: _ } => {
-            if args.is_empty() {
-                return Node::Unformatted { value: format!("{f}") };
-            }
-            let arg_nodes: Vec<Node> = args.iter().map(expr_to_node).collect();
-            let mut body = Node::List {
-                items: arg_nodes,
-                separator: None,
-            };
-            if f.distinct {
-                body = Node::Concat {
-                    items: vec![
-                        Node::Keyword {
-                            value: "DISTINCT".into(),
-                        },
-                        Node::Text { value: " ".into() },
-                        body,
-                    ],
+            let body = if args.is_empty() {
+                Node::Text { value: "".into() }
+            } else {
+                let arg_nodes: Vec<Node> = args.iter().map(expr_to_node).collect();
+                let mut body = Node::List {
+                    items: arg_nodes,
+                    separator: None,
                 };
-            }
+                if f.distinct {
+                    body = Node::Concat {
+                        items: vec![
+                            Node::Keyword {
+                                value: "DISTINCT".into(),
+                            },
+                            Node::Text { value: " ".into() },
+                            body,
+                        ],
+                    };
+                }
+                body
+            };
             let items = vec![
                 Node::Text {
                     value: format!("{}", f.name),
@@ -1134,6 +1135,41 @@ fn function_to_node(f: &Function<Raw>) -> Node {
     }
 
     Node::Concat { items }
+}
+
+fn special_function_to_node(f: &Function<Raw>) -> Node {
+    // extract and position use keyword argument syntax:
+    //   extract(YEAR FROM ts)  or  position(a IN b)
+    let is_extract = f.name.to_ast_string_stable().as_str() == "\"extract\"";
+    let kw = if is_extract { "FROM" } else { "IN" };
+    let name = format!("{}", f.name);
+
+    let args = match &f.args {
+        FunctionArgs::Args { args, .. } => args,
+        _ => unreachable!(),
+    };
+
+    let body = Node::Concat {
+        items: vec![
+            expr_to_node(&args[0]),
+            Node::Text {
+                value: format!(" {kw} "),
+            },
+            expr_to_node(&args[1]),
+        ],
+    };
+
+    Node::Concat {
+        items: vec![
+            Node::Text { value: name },
+            Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(body),
+                close: ")".into(),
+            },
+        ],
+    }
 }
 
 fn append_function_filter(f: &Function<Raw>, items: &mut Vec<Node>) {

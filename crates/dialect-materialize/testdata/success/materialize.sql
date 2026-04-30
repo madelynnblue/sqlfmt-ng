@@ -802,6 +802,378 @@ WHERE
 
 -- sqlfmt-corpus-separator --
 
+-- Query 07
+CREATE VIEW Q07 AS
+SELECT
+    supp_nation,
+    cust_nation,
+    l_year,
+    sum(volume) AS revenue
+FROM
+    (
+        SELECT
+            n1.n_name AS supp_nation,
+            n2.n_name AS cust_nation,
+            extract(year FROM l_shipdate) AS l_year,
+            l_extendedprice * (1 - l_discount) AS volume
+        FROM
+            supplier,
+            lineitem,
+            orders,
+            customer,
+            nation n1,
+            nation n2
+        WHERE
+            s_suppkey = l_suppkey
+            AND o_orderkey = l_orderkey
+            AND c_custkey = o_custkey
+            AND s_nationkey = n1.n_nationkey
+            AND c_nationkey = n2.n_nationkey
+            AND (
+                (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY')
+                or (n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')
+            )
+            AND l_shipdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
+    ) AS shipping
+GROUP BY
+    supp_nation,
+    cust_nation,
+    l_year
+ORDER BY
+    supp_nation,
+    cust_nation,
+    l_year;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 07
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+CREATE MATERIALIZED VIEW Q07 AS
+SELECT
+    supp_nation,
+    cust_nation,
+    l_year,
+    sum(volume) AS revenue
+FROM
+    (
+        SELECT
+            n1.n_name AS supp_nation,
+            n2.n_name AS cust_nation,
+            extract(year FROM l_shipdate) AS l_year,
+            l_extendedprice * (1 - l_discount) AS volume
+        FROM
+            supplier,
+            lineitem,
+            orders,
+            customer,
+            nation n1,
+            nation n2
+        WHERE
+            s_suppkey = l_suppkey
+            AND o_orderkey = l_orderkey
+            AND c_custkey = o_custkey
+            AND s_nationkey = n1.n_nationkey
+            AND c_nationkey = n2.n_nationkey
+            AND (
+                (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY')
+                or (n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')
+            )
+            AND l_shipdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
+    ) AS shipping
+GROUP BY
+    supp_nation,
+    cust_nation,
+    l_year
+ORDER BY
+    supp_nation,
+    cust_nation,
+    l_year;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 07
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT
+    supp_nation,
+    cust_nation,
+    l_year,
+    sum(volume) AS revenue
+FROM
+    (
+        SELECT
+            n1.n_name AS supp_nation,
+            n2.n_name AS cust_nation,
+            extract(year FROM l_shipdate) AS l_year,
+            l_extendedprice * (1 - l_discount) AS volume
+        FROM
+            supplier,
+            lineitem,
+            orders,
+            customer,
+            nation n1,
+            nation n2
+        WHERE
+            s_suppkey = l_suppkey
+            AND o_orderkey = l_orderkey
+            AND c_custkey = o_custkey
+            AND s_nationkey = n1.n_nationkey
+            AND c_nationkey = n2.n_nationkey
+            AND (
+                (n1.n_name = 'FRANCE' AND n2.n_name = 'GERMANY')
+                or (n1.n_name = 'GERMANY' AND n2.n_name = 'FRANCE')
+            )
+            AND l_shipdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
+    ) AS shipping
+GROUP BY
+    supp_nation,
+    cust_nation,
+    l_year
+ORDER BY
+    supp_nation,
+    cust_nation,
+    l_year;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 08
+CREATE VIEW Q08 AS
+SELECT
+    o_year,
+    sum(case
+        when nation = 'BRAZIL' then volume
+        else 0
+    end) / sum(volume) AS mkt_share
+FROM
+    (
+        SELECT
+            extract(year FROM o_orderdate) AS o_year,
+            l_extendedprice * (1 - l_discount) AS volume,
+            n2.n_name AS nation
+        FROM
+            part,
+            supplier,
+            lineitem,
+            orders,
+            customer,
+            nation n1,
+            nation n2,
+            region
+        WHERE
+            p_partkey = l_partkey
+            AND s_suppkey = l_suppkey
+            AND l_orderkey = o_orderkey
+            AND o_custkey = c_custkey
+            AND c_nationkey = n1.n_nationkey
+            AND n1.n_regionkey = r_regionkey
+            AND r_name = 'AMERICA'
+            AND s_nationkey = n2.n_nationkey
+            AND o_orderdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
+            AND p_type = 'ECONOMY ANODIZED STEEL'
+    ) AS all_nations
+GROUP BY
+    o_year
+ORDER BY
+    o_year;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 08
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+CREATE MATERIALIZED VIEW Q08 AS
+SELECT
+    o_year,
+    sum(case
+        when nation = 'BRAZIL' then volume
+        else 0
+    end) / sum(volume) AS mkt_share
+FROM
+    (
+        SELECT
+            extract(year FROM o_orderdate) AS o_year,
+            l_extendedprice * (1 - l_discount) AS volume,
+            n2.n_name AS nation
+        FROM
+            part,
+            supplier,
+            lineitem,
+            orders,
+            customer,
+            nation n1,
+            nation n2,
+            region
+        WHERE
+            p_partkey = l_partkey
+            AND s_suppkey = l_suppkey
+            AND l_orderkey = o_orderkey
+            AND o_custkey = c_custkey
+            AND c_nationkey = n1.n_nationkey
+            AND n1.n_regionkey = r_regionkey
+            AND r_name = 'AMERICA'
+            AND s_nationkey = n2.n_nationkey
+            AND o_orderdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
+            AND p_type = 'ECONOMY ANODIZED STEEL'
+    ) AS all_nations
+GROUP BY
+    o_year
+ORDER BY
+    o_year;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 08
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT
+    o_year,
+    sum(case
+        when nation = 'BRAZIL' then volume
+        else 0
+    end) / sum(volume) AS mkt_share
+FROM
+    (
+        SELECT
+            extract(year FROM o_orderdate) AS o_year,
+            l_extendedprice * (1 - l_discount) AS volume,
+            n2.n_name AS nation
+        FROM
+            part,
+            supplier,
+            lineitem,
+            orders,
+            customer,
+            nation n1,
+            nation n2,
+            region
+        WHERE
+            p_partkey = l_partkey
+            AND s_suppkey = l_suppkey
+            AND l_orderkey = o_orderkey
+            AND o_custkey = c_custkey
+            AND c_nationkey = n1.n_nationkey
+            AND n1.n_regionkey = r_regionkey
+            AND r_name = 'AMERICA'
+            AND s_nationkey = n2.n_nationkey
+            AND o_orderdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'
+            AND p_type = 'ECONOMY ANODIZED STEEL'
+    ) AS all_nations
+GROUP BY
+    o_year
+ORDER BY
+    o_year;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 09
+CREATE VIEW Q09 AS
+SELECT
+    nation,
+    o_year,
+    sum(amount) AS sum_profit
+FROM
+    (
+        SELECT
+            n_name AS nation,
+            extract(year FROM o_orderdate) AS o_year,
+            l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount
+        FROM
+            part,
+            supplier,
+            lineitem,
+            partsupp,
+            orders,
+            nation
+        WHERE
+            s_suppkey = l_suppkey
+            AND ps_suppkey = l_suppkey
+            AND ps_partkey = l_partkey
+            AND p_partkey = l_partkey
+            AND o_orderkey = l_orderkey
+            AND s_nationkey = n_nationkey
+            AND p_name like '%green%'
+    ) AS profit
+GROUP BY
+    nation,
+    o_year
+ORDER BY
+    nation,
+    o_year DESC;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 09
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+CREATE MATERIALIZED VIEW Q09 AS
+SELECT
+    nation,
+    o_year,
+    sum(amount) AS sum_profit
+FROM
+    (
+        SELECT
+            n_name AS nation,
+            extract(year FROM o_orderdate) AS o_year,
+            l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount
+        FROM
+            part,
+            supplier,
+            lineitem,
+            partsupp,
+            orders,
+            nation
+        WHERE
+            s_suppkey = l_suppkey
+            AND ps_suppkey = l_suppkey
+            AND ps_partkey = l_partkey
+            AND p_partkey = l_partkey
+            AND o_orderkey = l_orderkey
+            AND s_nationkey = n_nationkey
+            AND p_name like '%green%'
+    ) AS profit
+GROUP BY
+    nation,
+    o_year
+ORDER BY
+    nation,
+    o_year DESC;
+
+-- sqlfmt-corpus-separator --
+
+-- Query 09
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT
+    nation,
+    o_year,
+    sum(amount) AS sum_profit
+FROM
+    (
+        SELECT
+            n_name AS nation,
+            extract(year FROM o_orderdate) AS o_year,
+            l_extendedprice * (1 - l_discount) - ps_supplycost * l_quantity AS amount
+        FROM
+            part,
+            supplier,
+            lineitem,
+            partsupp,
+            orders,
+            nation
+        WHERE
+            s_suppkey = l_suppkey
+            AND ps_suppkey = l_suppkey
+            AND ps_partkey = l_partkey
+            AND p_partkey = l_partkey
+            AND o_orderkey = l_orderkey
+            AND s_nationkey = n_nationkey
+            AND p_name like '%green%'
+    ) AS profit
+GROUP BY
+    nation,
+    o_year
+ORDER BY
+    nation,
+    o_year DESC;
+
+-- sqlfmt-corpus-separator --
+
 -- Query 10
 CREATE VIEW Q10 AS
 SELECT
@@ -3730,6 +4102,14 @@ CREATE MATERIALIZED VIEW err AS
 SELECT *
 FROM foo
 ORDER BY b, a
+OFFSET mz_now()::string::bigint;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW err AS
+SELECT *
+FROM foo
+ORDER BY b, a
 OFFSET null;
 
 -- sqlfmt-corpus-separator --
@@ -3747,6 +4127,15 @@ CREATE MATERIALIZED VIEW erroring AS SELECT 10.0 / (value - 1) FROM numbers;
 -- sqlfmt-corpus-separator --
 
 CREATE MATERIALIZED VIEW foo AS (VALUES (1/0));
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW foobar26 AS
+  SELECT tableA.id
+    FROM tableA
+   WHERE ((1000 * cast(extract(epoch FROM tableA.happened_at) AS numeric)) <= mz_now()
+     AND mz_now() <= (1000 * cast(extract(epoch FROM tableA.happened_at) AS numeric) + offs ))
+     AND id = 10;
 
 -- sqlfmt-corpus-separator --
 
@@ -3986,8 +4375,23 @@ OFFSET 1;
 
 CREATE MATERIALIZED VIEW mv1 AS
 SELECT *
+FROM t2
+WHERE ts + INTERVAL '30' minutes >= mz_now();
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv1 AS
+SELECT *
 FROM t6
 WHERE y=5;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv1 AS
+SELECT count(*)
+FROM events
+WHERE mz_now() >= insert_ms
+  AND mz_now() < delete_ms;
 
 -- sqlfmt-corpus-separator --
 
@@ -4042,6 +4446,20 @@ AS SELECT count(*) FROM t2;
 
 -- sqlfmt-corpus-separator --
 
+CREATE MATERIALIZED VIEW mv10 AS
+SELECT * from items
+WHERE mz_now() <= date_trunc(
+    'month',
+    ship_time
+    - (
+        CASE WHEN EXTRACT(MONTH FROM ship_time) < 6 THEN EXTRACT(MONTH FROM ship_time) + 6 ELSE 0 END
+        + CASE WHEN EXTRACT(MONTH FROM ship_time) >= 6 THEN EXTRACT(MONTH FROM ship_time) - 6 ELSE 0 END
+    )
+    * INTERVAL '1 months'
+);
+
+-- sqlfmt-corpus-separator --
+
 CREATE MATERIALIZED VIEW mv11
 IN CLUSTER c_schedule_3
 WITH (REFRESH AT CREATION)
@@ -4049,10 +4467,22 @@ AS SELECT count(*) FROM t2;
 
 -- sqlfmt-corpus-separator --
 
+CREATE MATERIALIZED VIEW mv11 AS
+SELECT * from items
+WHERE CASE WHEN id = 10 THEN EXTRACT(MONTH FROM ship_time) ELSE 0 END < mz_now();
+
+-- sqlfmt-corpus-separator --
+
 CREATE MATERIALIZED VIEW mv12
 IN CLUSTER c_schedule_4
 WITH (REFRESH EVERY '1 millisecond')
 AS SELECT count(*) FROM t2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv12 AS
+SELECT * from items
+WHERE CASE WHEN EXTRACT(MONTH FROM ship_time) >= 6 THEN 12 ELSE 0 END < mz_now();
 
 -- sqlfmt-corpus-separator --
 
@@ -4094,6 +4524,23 @@ WHERE y=5;
 
 CREATE MATERIALIZED VIEW mv2 AS
 SELECT * FROM v_maintained;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv2 AS
+SELECT *, row_number() OVER (ORDER BY t) AS rn
+FROM mv1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv2 AS
+SELECT content, insert_ms
+FROM events
+-- The event should appear in only one interval of duration `10000`.
+-- The interval begins here ...
+WHERE mz_now() >= 10000 * (insert_ms / 10000)
+-- ... and ends here.
+  AND mz_now() < 10000 * (1 + insert_ms / 10000);
 
 -- sqlfmt-corpus-separator --
 
@@ -4140,8 +4587,83 @@ AS SELECT * FROM t2;
 
 -- sqlfmt-corpus-separator --
 
+CREATE MATERIALIZED VIEW mv3 AS
+SELECT *
+FROM t2
+WHERE
+  ts + INTERVAL '30' minutes >= mz_now()
+  AND x != 7;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv3 AS
+SELECT content, insert_ms
+FROM events
+-- The event should appear in `6` intervals each of width `10000`.
+-- The interval begins here ...
+WHERE mz_now() >= 10000 * (insert_ms / 10000)
+-- ... and ends here.
+  AND mz_now() < 6 * (10000 + insert_ms / 10000);
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv4 AS
+(
+    SELECT *
+    FROM t2
+    WHERE x = 7
+)
+UNION ALL
+(
+  SELECT *
+  FROM t2
+  WHERE
+    ts + INTERVAL '30' minutes >= mz_now()
+    AND x != 7
+);
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv4 AS
+SELECT content, insert_ms
+FROM events
+-- The event should appear inside the interval that begins at
+-- `insert_ms` and ends at  `insert_ms + 30000`.
+-- The interval begins here ..
+WHERE mz_now() >= insert_ms
+-- ... and ends here.
+  AND mz_now() < insert_ms + 30000;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv5 AS
+SELECT *
+FROM t2
+WHERE ts + INTERVAL '30' minutes >= mz_now()
+UNION ALL
+SELECT *
+FROM t2
+WHERE ts + INTERVAL '60' minutes >= mz_now();
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv5 AS
+SELECT content, insert_ms, delete_ms
+FROM events
+WHERE mz_now() >= insert_ms + 60000
+  AND mz_now() < delete_ms + 60000;
+
+-- sqlfmt-corpus-separator --
+
 CREATE MATERIALIZED VIEW mv5 WITH (REFRESH AT mz_now()::text::int8 + 1000000) AS
 SELECT x+y+z from t2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv6 AS
+SELECT content, insert_ms, delete_ms
+FROM events
+WHERE COALESCE(delete_ms, insert_ms) < mz_now();
 
 -- sqlfmt-corpus-separator --
 
@@ -4150,8 +4672,30 @@ SELECT x-y+z from t2;
 
 -- sqlfmt-corpus-separator --
 
+CREATE MATERIALIZED VIEW mv7 AS
+SELECT content, insert_ms, delete_ms
+FROM events
+WHERE mz_now() < delete_ms + 10000
+  AND mz_now() < delete_ms + 20000
+  AND mz_now() < delete_ms + 30000
+  AND mz_now() < delete_ms + 40000
+  AND mz_now() < delete_ms + 50000
+  AND mz_now() < delete_ms + 60000
+  AND mz_now() < delete_ms + 70000
+  AND mz_now() < delete_ms + 80000
+  AND mz_now() < delete_ms + 90000;
+
+-- sqlfmt-corpus-separator --
+
 CREATE MATERIALIZED VIEW mv7 WITH (REFRESH AT mz_now()::text::int8 + 3000) AS
 SELECT * from mv6;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv8 AS
+SELECT content, inserted_at
+FROM events_timestamped
+WHERE mz_now() < try_parse_monotonic_iso8601_timestamp(content);
 
 -- sqlfmt-corpus-separator --
 
@@ -4164,6 +4708,15 @@ CREATE MATERIALIZED VIEW mv9
 IN CLUSTER c_schedule_1
 WITH (REFRESH = EVERY '8 sec')
 AS SELECT sum(x*y*z) + count(*) FROM t2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv9 AS
+with cte as (
+  select x, t, case when x=0 then t - INTERVAL '1' day else t - INTERVAL '2' day end as case_statement from t
+)
+select x, t from cte
+where case_statement < mz_now();
 
 -- sqlfmt-corpus-separator --
 
@@ -4344,6 +4897,120 @@ CREATE MATERIALIZED VIEW mv_desugar2 WITH (REFRESH EVERY '1 day' ALIGNED TO (mz_
 -- sqlfmt-corpus-separator --
 
 CREATE MATERIALIZED VIEW mv_duplicate_assertions WITH (ASSERT NOT NULL y, ASSERT NOT NULL y) AS SELECT * FROM t2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_dynamic_pricing AS
+WITH recent_prices AS (
+	SELECT grp.product_id, AVG(price) AS avg_price
+	FROM (SELECT DISTINCT product_id FROM sales) grp,
+	LATERAL (
+		SELECT product_id, price
+		FROM sales
+		WHERE sales.product_id = grp.product_id
+		ORDER BY sale_date DESC LIMIT 10
+	) sub
+	GROUP BY grp.product_id
+),
+promotion_effect AS (
+	SELECT
+		p.product_id,
+		MIN(pr.promotion_discount) AS promotion_discount
+	FROM promotions pr
+	JOIN products p ON pr.product_id = p.product_id
+	WHERE pr.active = TRUE
+	GROUP BY p.product_id
+),
+popularity_score AS (
+	SELECT
+		s.product_id,
+		RANK() OVER (PARTITION BY p.category_id ORDER BY COUNT(s.sale_id) DESC) AS popularity_rank,
+		COUNT(s.sale_id) AS sale_count
+	FROM sales s
+	JOIN products p ON s.product_id = p.product_id
+	GROUP BY s.product_id, p.category_id
+),
+inventory_status AS (
+	SELECT
+		i.product_id,
+		SUM(i.stock) AS total_stock,
+		RANK() OVER (ORDER BY SUM(i.stock) DESC) AS stock_rank
+	FROM inventory i
+	GROUP BY i.product_id
+),
+high_demand_products AS (
+	SELECT
+		p.product_id,
+		AVG(s.sale_price) AS avg_sale_price,
+		COUNT(s.sale_id) AS total_sales
+	FROM products p
+	JOIN sales s ON p.product_id = s.product_id
+	GROUP BY p.product_id
+	HAVING COUNT(s.sale_id) > (SELECT AVG(total_sales) FROM (SELECT COUNT(*) AS total_sales FROM sales GROUP BY product_id) subquery)
+),
+dynamic_pricing AS (
+	SELECT
+		p.product_id,
+		p.base_price,
+		CASE
+			WHEN pop.popularity_rank <= 3 THEN 1.2
+			WHEN pop.popularity_rank BETWEEN 4 AND 10 THEN 1.1
+			ELSE 0.9
+		END AS popularity_adjustment,
+		rp.avg_price,
+		COALESCE(1.0 - (pe.promotion_discount / 100), 1) AS promotion_discount,
+		CASE
+			WHEN inv.stock_rank <= 3 THEN 1.1
+			WHEN inv.stock_rank BETWEEN 4 AND 10 THEN 1.05
+			ELSE 1
+		END AS stock_adjustment,
+		CASE
+			WHEN p.base_price > rp.avg_price THEN 1 + (p.base_price - rp.avg_price) / rp.avg_price
+			ELSE 1 - (rp.avg_price - p.base_price) / rp.avg_price
+		END AS demand_multiplier,
+		hd.avg_sale_price,
+		CASE
+			WHEN p.product_name ilike '%cheap%' THEN 0.8
+			ELSE 1.0
+		END AS additional_discount
+	FROM products p
+	LEFT JOIN recent_prices rp ON p.product_id = rp.product_id
+	LEFT JOIN promotion_effect pe ON p.product_id = pe.product_id
+	JOIN popularity_score pop ON p.product_id = pop.product_id
+	LEFT JOIN inventory_status inv ON p.product_id = inv.product_id
+	LEFT JOIN high_demand_products hd ON p.product_id = hd.product_id
+)
+SELECT
+	dp.product_id,
+	dp.base_price * dp.popularity_adjustment * dp.promotion_discount * dp.stock_adjustment * dp.demand_multiplier * dp.additional_discount AS adjusted_price,
+	p.last_update_time
+FROM dynamic_pricing dp
+JOIN products p ON dp.product_id = p.product_id;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_err AS
+SELECT *
+FROM t2
+WHERE
+  ts + INTERVAL '30' minutes >= mz_now()
+  OR ts IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_err AS
+SELECT *
+FROM t2
+WHERE
+  x = 7
+  OR ts + INTERVAL '30' minutes >= mz_now();
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW mv_err AS
+SELECT *
+FROM t2
+WHERE ts >= mz_now() - INTERVAL '30' minutes;
 
 -- sqlfmt-corpus-separator --
 
@@ -4685,6 +5352,29 @@ CREATE MATERIALIZED VIEW v2 AS SELECT 1
 -- sqlfmt-corpus-separator --
 
 CREATE MATERIALIZED VIEW v2 AS SELECT f1 as counter FROM v1 WHERE f1 % 7 = 0;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW valid AS
+SELECT *
+FROM intervals
+WHERE mz_now() BETWEEN a AND b;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW valid_events AS
+SELECT content, count(*)
+FROM events
+WHERE mz_now() >= insert_ts
+  AND mz_now()  < delete_ts
+GROUP BY content;
+
+-- sqlfmt-corpus-separator --
+
+CREATE MATERIALIZED VIEW valid_max AS
+SELECT *
+FROM intervals_max
+WHERE mz_now() BETWEEN a AND b
 
 -- sqlfmt-corpus-separator --
 
@@ -9225,6 +9915,95 @@ GROUP BY
 
 -- sqlfmt-corpus-separator --
 
+CREATE VIEW dynamic_pricing AS
+WITH recent_prices AS (
+	SELECT grp.product_id, AVG(price) AS avg_price
+	FROM (SELECT DISTINCT product_id FROM sales) grp,
+	LATERAL (
+		SELECT product_id, price
+		FROM sales
+		WHERE sales.product_id = grp.product_id
+		ORDER BY sale_date DESC LIMIT 10
+	) sub
+	GROUP BY grp.product_id
+),
+promotion_effect AS (
+	SELECT
+		p.product_id,
+		MIN(pr.promotion_discount) AS promotion_discount
+	FROM promotions pr
+	JOIN products p ON pr.product_id = p.product_id
+	WHERE pr.active = TRUE
+	GROUP BY p.product_id
+),
+popularity_score AS (
+	SELECT
+		s.product_id,
+		RANK() OVER (PARTITION BY p.category_id ORDER BY COUNT(s.sale_id) DESC) AS popularity_rank,
+		COUNT(s.sale_id) AS sale_count
+	FROM sales s
+	JOIN products p ON s.product_id = p.product_id
+	GROUP BY s.product_id, p.category_id
+),
+inventory_status AS (
+	SELECT
+		i.product_id,
+		SUM(i.stock) AS total_stock,
+		RANK() OVER (ORDER BY SUM(i.stock) DESC) AS stock_rank
+	FROM inventory i
+	GROUP BY i.product_id
+),
+high_demand_products AS (
+	SELECT
+		p.product_id,
+		AVG(s.sale_price) AS avg_sale_price,
+		COUNT(s.sale_id) AS total_sales
+	FROM products p
+	JOIN sales s ON p.product_id = s.product_id
+	GROUP BY p.product_id
+	HAVING COUNT(s.sale_id) > (SELECT AVG(total_sales) FROM (SELECT COUNT(*) AS total_sales FROM sales GROUP BY product_id) subquery)
+),
+dynamic_pricing AS (
+	SELECT
+		p.product_id,
+		p.base_price,
+		CASE
+			WHEN pop.popularity_rank <= 3 THEN 1.2
+			WHEN pop.popularity_rank BETWEEN 4 AND 10 THEN 1.1
+			ELSE 0.9
+		END AS popularity_adjustment,
+		rp.avg_price,
+		COALESCE(1.0 - (pe.promotion_discount / 100), 1) AS promotion_discount,
+		CASE
+			WHEN inv.stock_rank <= 3 THEN 1.1
+			WHEN inv.stock_rank BETWEEN 4 AND 10 THEN 1.05
+			ELSE 1
+		END AS stock_adjustment,
+		CASE
+			WHEN p.base_price > rp.avg_price THEN 1 + (p.base_price - rp.avg_price) / rp.avg_price
+			ELSE 1 - (rp.avg_price - p.base_price) / rp.avg_price
+		END AS demand_multiplier,
+		hd.avg_sale_price,
+		CASE
+			WHEN p.product_name ilike '%cheap%' THEN 0.8
+			ELSE 1.0
+		END AS additional_discount
+	FROM products p
+	LEFT JOIN recent_prices rp ON p.product_id = rp.product_id
+	LEFT JOIN promotion_effect pe ON p.product_id = pe.product_id
+	JOIN popularity_score pop ON p.product_id = pop.product_id
+	LEFT JOIN inventory_status inv ON p.product_id = inv.product_id
+	LEFT JOIN high_demand_products hd ON p.product_id = hd.product_id
+)
+SELECT
+	dp.product_id,
+	dp.base_price * dp.popularity_adjustment * dp.promotion_discount * dp.stock_adjustment * dp.demand_multiplier * dp.additional_discount AS adjusted_price,
+	p.last_update_time
+FROM dynamic_pricing dp
+JOIN products p ON dp.product_id = p.product_id;
+
+-- sqlfmt-corpus-separator --
+
 CREATE VIEW emp_view AS SELECT counter AS salary, 'full_time'::text AS type FROM employees_from_src
 
 -- sqlfmt-corpus-separator --
@@ -9246,6 +10025,14 @@ SELECT *
 FROM foo
 ORDER BY b, a
 OFFSET a;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW err AS
+SELECT *
+FROM foo
+ORDER BY b, a
+OFFSET mz_now()::string::bigint;
 
 -- sqlfmt-corpus-separator --
 
@@ -9403,6 +10190,10 @@ CREATE VIEW kview as SELECT k,v from kv
 
 -- sqlfmt-corpus-separator --
 
+CREATE VIEW logical_timestamp_view(ts) AS SELECT mz_now()
+
+-- sqlfmt-corpus-separator --
+
 CREATE VIEW m3 AS SELECT * FROM t3
 
 -- sqlfmt-corpus-separator --
@@ -9416,7 +10207,15 @@ SELECT MAX(data) FROM data
 
 -- sqlfmt-corpus-separator --
 
+CREATE VIEW mlt AS SELECT 1 WHERE mz_logical_timestamp() = 0;
+
+-- sqlfmt-corpus-separator --
+
 CREATE VIEW mv AS SELECT 1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW now_view AS SELECT now() AS ts
 
 -- sqlfmt-corpus-separator --
 
@@ -9759,6 +10558,10 @@ CREATE VIEW v AS SELECT mz_connections.* FROM mz_connections;
 
 -- sqlfmt-corpus-separator --
 
+CREATE VIEW v AS SELECT mz_now()
+
+-- sqlfmt-corpus-separator --
+
 CREATE VIEW v AS SELECT nullif(to_jsonb(true), to_jsonb(x)) as y FROM r;
 
 -- sqlfmt-corpus-separator --
@@ -9792,6 +10595,12 @@ SELECT *
 FROM foo
 ORDER BY b, a
 OFFSET 1;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v1 AS
+SELECT t, d1, d2, EXTRACT(MILLISECOND FROM t) * 91 % 1223 AS d3, d4, d5, d6
+FROM t10;
 
 -- sqlfmt-corpus-separator --
 
@@ -9903,7 +10712,24 @@ CREATE VIEW v7 (x, y) AS SELECT a, b FROM v1 ORDER BY a DESC LIMIT 2
 
 -- sqlfmt-corpus-separator --
 
+CREATE VIEW v_maintained AS
+SELECT *
+FROM t2
+WHERE
+  ts + INTERVAL '30' minutes >= mz_now();
+
+-- sqlfmt-corpus-separator --
+
 CREATE VIEW v_on_t2 AS SELECT * FROM t2;
+
+-- sqlfmt-corpus-separator --
+
+CREATE VIEW v_one_off AS
+SELECT *
+FROM t2
+WHERE
+  ts + INTERVAL '30' minutes >= mz_now()
+  OR ts IS NULL;
 
 -- sqlfmt-corpus-separator --
 
@@ -9977,6 +10803,10 @@ DELETE FROM baz WHERE val1=12345
 -- sqlfmt-corpus-separator --
 
 DELETE FROM bools WHERE b
+
+-- sqlfmt-corpus-separator --
+
+DELETE FROM dec WHERE d = mz_now()
 
 -- sqlfmt-corpus-separator --
 
@@ -11777,12 +12607,31 @@ SELECT a FROM (SELECT DISTINCT a FROM x UNION ALL SELECT a FROM y) WHERE a = 3
 -- sqlfmt-corpus-separator --
 
 EXPLAIN DECORRELATED PLAN WITH(arity) FOR
+SELECT row_number() OVER (PARTITION BY x ORDER BY x), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN DECORRELATED PLAN WITH(arity) FOR
 WITH t AS (SELECT * FROM y WHERE a < 3)
   SELECT * FROM t NATURAL JOIN t a;
 
 -- sqlfmt-corpus-separator --
 
 EXPLAIN DECORRELATED PLAN WITH(arity) FOR SELECT * FROM t1 WHERE (f1 is null)::int - 1 = 0 and ((f1 is null) or ((f1 is null)::int - 1 = 0))
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN DECORRELATED PLAN WITH(arity) FOR SELECT * FROM t2, LATERAL(SELECT t1.*, ROW_NUMBER() OVER() FROM t1 WHERE t1.f2 = t2.f2) AS foo;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN DECORRELATED PLAN WITH(arity) FOR SELECT * FROM t2, LATERAL(SELECT t1.*, ROW_NUMBER() OVER(PARTITION BY f1) FROM t1 WHERE t1.f2 = t2.f2) AS foo;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN DECORRELATED PLAN WITH(arity) FOR SELECT f1 FROM t1
+WHERE f1 IN (SELECT ROW_NUMBER() OVER () FROM t2);
 
 -- sqlfmt-corpus-separator --
 
@@ -12526,6 +13375,139 @@ EXPLAIN OPTIMIZED PLAN FOR SUBSCRIBE valid UP TO 18446744073709551615
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN OPTIMIZED PLAN FOR select
+  mz_internal.mz_session_id() as c0,
+  pg_catalog.jsonb_build_array() as c1,
+  ((((0::uint4) & (0::uint4)) # (cast(coalesce(2::uint4,
+          case when false then null::uint4 else null::uint4 end
+            ) as uint4))) * (mz_catalog.seahash(
+        CAST(case when ((0::uint8) <= (null::uint8))
+            and (true) then pg_catalog.digest(
+            CAST(1::text as text),
+            CAST(2::text as text)) else pg_catalog.digest(
+            CAST(1::text as text),
+            CAST(2::text as text)) end
+           as bytea)))) # (mz_catalog.seahash(
+      CAST(cast(coalesce(pg_catalog.sha512(
+          CAST(pg_catalog.sha384(
+            CAST(cast('\xDEADBEEF' as bytea) as bytea)) as bytea)),
+        cast(nullif(pg_catalog.hmac(
+            CAST(cast('\xDEADBEEF' as bytea) as bytea),
+            CAST(cast('\xDEADBEEF' as bytea) as bytea),
+            CAST(1::text as text)),
+          cast('\xFFFFFF' as bytea)) as bytea)) as bytea) as bytea))) as c2,
+  pg_catalog.makeaclitem(
+    CAST(mz_internal.aclitem_grantee(
+      CAST(cast(null as aclitem) as aclitem)) as oid),
+    CAST(mz_internal.aclitem_grantor(
+      CAST(case when 87 is not NULL then pg_catalog.makeaclitem(
+          CAST(mz_internal.aclitem_grantor(
+            CAST(cast(null as aclitem) as aclitem)) as oid),
+          CAST(null::oid as oid),
+          CAST(case when false then null::text else null::text end
+             as text),
+          CAST(true as bool)) else pg_catalog.makeaclitem(
+          CAST(mz_internal.aclitem_grantor(
+            CAST(cast(null as aclitem) as aclitem)) as oid),
+          CAST(null::oid as oid),
+          CAST(case when false then null::text else null::text end
+             as text),
+          CAST(true as bool)) end
+         as aclitem)) as oid),
+    CAST(case when ((case when (true)
+              or (false) then 1::text else 1::text end
+            ) || (pg_catalog.chr(
+            CAST(68 as int4)))) <= (pg_catalog.session_user()) then cast(nullif((pg_catalog.obj_description(
+            CAST(null::oid as oid),
+            CAST(1::text as text))) || (case when (TIME '00:00:00') >= (TIME '01:23:45') then null::text else null::text end
+            ),
+        pg_catalog.current_schema()) as text) else cast(nullif((pg_catalog.obj_description(
+            CAST(null::oid as oid),
+            CAST(1::text as text))) || (case when (TIME '00:00:00') >= (TIME '01:23:45') then null::text else null::text end
+            ),
+        pg_catalog.current_schema()) as text) end
+       as text),
+    CAST(case when (cast(coalesce((null::uint4) | (2::uint4),
+          cast(nullif(0::uint4,
+            null::uint4) as uint4)) as uint4)) >= (null::uint4) then pg_catalog.pg_has_role(
+        CAST(cast(0 as oid) as oid),
+        CAST(cast(coalesce(case when ('{}'::jsonb) = ('[]'::jsonb) then 1::oid else 1::oid end
+            ,
+          1::oid) as oid) as oid),
+        CAST(pg_catalog.current_database() as text)) else pg_catalog.pg_has_role(
+        CAST(cast(0 as oid) as oid),
+        CAST(cast(coalesce(case when ('{}'::jsonb) = ('[]'::jsonb) then 1::oid else 1::oid end
+            ,
+          1::oid) as oid) as oid),
+        CAST(pg_catalog.current_database() as text)) end
+       as bool)) as c3,
+  pg_catalog.pg_is_in_recovery() as c4,
+  mz_catalog.mz_now() as c5,
+  pg_catalog.timezone(
+    CAST(mz_catalog.mz_version() as text),
+    CAST(pg_catalog.current_timestamp() as timestamptz)) as c6,
+  pg_catalog.reverse(
+    CAST((mz_catalog.mz_version()) || (1::text) as text)) as c7
+from
+  (select
+        case when false then mz_internal.mz_role_oid_memberships() else mz_internal.mz_role_oid_memberships() end
+           as c0,
+        mz_internal.mz_role_oid_memberships() as c1,
+        pg_catalog.current_database() as c2,
+        mz_internal.mz_name_rank(
+          CAST(pg_catalog.version() as text),
+          CAST(array['a', 'b', null, '']::text[] as _text),
+          CAST(case when (cast(0 as bpchar)) > (cast(0 as bpchar)) then 1::text else 1::text end
+             as text),
+          CAST(1::text as text)) as c3,
+        mz_catalog.mz_uptime() as c4,
+        mz_internal.mz_role_oid_memberships() as c5,
+        case when false then 58 else 58 end
+           as c6,
+        (case when ((2::int8) <> (-9223372036854775808::int8))
+              or ((-32768::int2) = (-32768::int2)) then 0::uint8 else 0::uint8 end
+            ) / (0::uint8) as c7,
+        mz_internal.mz_role_oid_memberships() as c8,
+        (cast(coalesce('inf'::float4,
+            'nan'::float4) as float4)) - (case when ((67) = (19))
+              or (52 is NULL) then 'inf'::float4 else 'inf'::float4 end
+            ) as c9,
+        mz_catalog.mz_uptime() as c10
+      from
+        (select
+              18 as c0,
+              50 as c1
+            from
+              (select
+                    73 as c0,
+                    58 as c1,
+                    24 as c2,
+                    32 as c3,
+                    12 as c4
+                  from
+                    "mz_internal"."mz_session_history" as ref_11
+                  where true) as subq_8
+            where false) as subq_9
+      where (array[null, null]) > (pg_catalog.regexp_split_to_array(
+          CAST(('{"1":2,"3":4}'::jsonb) ->> (9223372036854775807::int8) as text),
+          CAST(cast(0 as text) as text),
+          CAST(pg_catalog.session_user() as text)))) as subq_10
+where (mz_internal.aclitem_grantee(
+    CAST(cast(null as aclitem) as aclitem))) <= (mz_internal.aclitem_grantor(
+    CAST(pg_catalog.makeaclitem(
+      CAST(case when (cast(coalesce(cast('\xDEADBEEF' as bytea),
+            cast('\xDEADBEEF' as bytea)) as bytea)) >= (cast('\xDEADBEEF' as bytea)) then case when ((cast('\xFFFFFF' as bytea)) >= (cast('\xFFFFFF' as bytea)))
+            or ((61) >= (6)) then 1::oid else 1::oid end
+           else case when ((cast('\xFFFFFF' as bytea)) >= (cast('\xFFFFFF' as bytea)))
+            or ((61) >= (6)) then 1::oid else 1::oid end
+           end
+         as oid),
+      CAST(cast(0 as oid) as oid),
+      CAST(pg_catalog.session_user() as text),
+      CAST(mz_internal.is_rbac_enabled() as bool)) as aclitem)));
+
+-- sqlfmt-corpus-separator --
+
 EXPLAIN OPTIMIZED PLAN FOR select array[u] from (select (u).a, (u).b as l from (select array[h] as l from (values (1, 2), (3, 4)) h(a, b)) h, unnest(h.l) u) u;
 
 -- sqlfmt-corpus-separator --
@@ -12855,6 +13837,46 @@ FROM v_using_constant_folding;
 
 EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR
 SELECT
+ f1 || f4,
+ UPPER(f1), LOWER(f1),
+ SUBSTRING(f1, 1),
+ REPLACE(f1, f2, f3),
+ POSITION(f2 IN f1),
+ SPLIT_PART(f1, f2, 1),
+ TRANSLATE(f1, 'C', 'Z'),
+ BTRIM(f1ls), LTRIM(f1ls),
+ BTRIM(f1rs), RTRIM(f1rs),
+ LPAD(f1, 1),
+ LPAD(f1, 10),
+ LPAD(f1, 10, f2),
+  REGEXP_MATCH(f1, f2),
+ REGEXP_MATCH(f1, f3, 'i') AS case_insensitive
+FROM t_using_dataflow_rendering;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR
+SELECT
+ f1 || f4,
+ UPPER(f1), LOWER(f1),
+ SUBSTRING(f1, 1),
+ REPLACE(f1, f2, f3),
+ POSITION(f2 IN f1),
+ SPLIT_PART(f1, f2, 1),
+ TRANSLATE(f1, 'C', 'Z'),
+ BTRIM(f1ls), LTRIM(f1ls),
+ BTRIM(f1rs), RTRIM(f1rs),
+ LPAD(f1, 1),
+ LPAD(f1, 10),
+ LPAD(f1, 10, f2),
+  REGEXP_MATCH(f1, f2),
+ REGEXP_MATCH(f1, f3, 'i') AS case_insensitive
+FROM v_using_constant_folding;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR
+SELECT
  real1, real1 + 1, real1 - 1,
  real1 + 0, double1 + 0, numeric1 + 0,
  real1 + real1, double1 + double1, numeric1 + numeric1,
@@ -13161,6 +14183,95 @@ FROM (SELECT DISTINCT ON(x) * FROM const_values);
 -- sqlfmt-corpus-separator --
 
 EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR
+WITH recent_prices AS (
+	SELECT grp.product_id, AVG(price) AS avg_price
+	FROM (SELECT DISTINCT product_id FROM sales) grp,
+	LATERAL (
+		SELECT product_id, price
+		FROM sales
+		WHERE sales.product_id = grp.product_id
+		ORDER BY sale_date DESC LIMIT 10
+	) sub
+	GROUP BY grp.product_id
+),
+promotion_effect AS (
+	SELECT
+		p.product_id,
+		MIN(pr.promotion_discount) AS promotion_discount
+	FROM promotions pr
+	JOIN products p ON pr.product_id = p.product_id
+	WHERE pr.active = TRUE
+	GROUP BY p.product_id
+),
+popularity_score AS (
+	SELECT
+		s.product_id,
+		RANK() OVER (PARTITION BY p.category_id ORDER BY COUNT(s.sale_id) DESC) AS popularity_rank,
+		COUNT(s.sale_id) AS sale_count
+	FROM sales s
+	JOIN products p ON s.product_id = p.product_id
+	GROUP BY s.product_id, p.category_id
+),
+inventory_status AS (
+	SELECT
+		i.product_id,
+		SUM(i.stock) AS total_stock,
+		RANK() OVER (ORDER BY SUM(i.stock) DESC) AS stock_rank
+	FROM inventory i
+	GROUP BY i.product_id
+),
+high_demand_products AS (
+	SELECT
+		p.product_id,
+		AVG(s.sale_price) AS avg_sale_price,
+		COUNT(s.sale_id) AS total_sales
+	FROM products p
+	JOIN sales s ON p.product_id = s.product_id
+	GROUP BY p.product_id
+	HAVING COUNT(s.sale_id) > (SELECT AVG(total_sales) FROM (SELECT COUNT(*) AS total_sales FROM sales GROUP BY product_id) subquery)
+),
+dynamic_pricing AS (
+	SELECT
+		p.product_id,
+		p.base_price,
+		CASE
+			WHEN pop.popularity_rank <= 3 THEN 1.2
+			WHEN pop.popularity_rank BETWEEN 4 AND 10 THEN 1.1
+			ELSE 0.9
+		END AS popularity_adjustment,
+		rp.avg_price,
+		COALESCE(1.0 - (pe.promotion_discount / 100), 1) AS promotion_discount,
+		CASE
+			WHEN inv.stock_rank <= 3 THEN 1.1
+			WHEN inv.stock_rank BETWEEN 4 AND 10 THEN 1.05
+			ELSE 1
+		END AS stock_adjustment,
+		CASE
+			WHEN p.base_price > rp.avg_price THEN 1 + (p.base_price - rp.avg_price) / rp.avg_price
+			ELSE 1 - (rp.avg_price - p.base_price) / rp.avg_price
+		END AS demand_multiplier,
+		hd.avg_sale_price,
+		CASE
+			WHEN p.product_name ilike '%cheap%' THEN 0.8
+			ELSE 1.0
+		END AS additional_discount
+	FROM products p
+	LEFT JOIN recent_prices rp ON p.product_id = rp.product_id
+	LEFT JOIN promotion_effect pe ON p.product_id = pe.product_id
+	JOIN popularity_score pop ON p.product_id = pop.product_id
+	LEFT JOIN inventory_status inv ON p.product_id = inv.product_id
+	LEFT JOIN high_demand_products hd ON p.product_id = hd.product_id
+)
+SELECT
+	dp.product_id,
+	dp.base_price * dp.popularity_adjustment * dp.promotion_discount * dp.stock_adjustment * dp.demand_multiplier * dp.additional_discount AS adjusted_price,
+	p.last_update_time
+FROM dynamic_pricing dp
+JOIN products p ON dp.product_id = p.product_id;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR
 select
   subq_0."c2" as c0,
   ((select "attlen" from pg_catalog.pg_attribute limit 1 offset 4)
@@ -13260,6 +14371,12 @@ select sum(x) + 5 as s from t1;
 EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR BROKEN
 CREATE MATERIALIZED VIEW mv AS
 SELECT mz_unsafe.mz_panic('forced optimizer panic');
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR BROKEN
+CREATE MATERIALIZED VIEW mv AS
+SELECT pg_catalog.now();
 
 -- sqlfmt-corpus-separator --
 
@@ -13401,6 +14518,18 @@ EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT *
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT * FROM t WHERE a < mz_now();
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT * FROM t1, t2 WHERE t1.x || mz_internal.mz_session_id()  = t2.x || mz_internal.mz_session_id();
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT * FROM t1, t2 WHERE t1.x || mz_now()  = t2.x || mz_now();
+
+-- sqlfmt-corpus-separator --
+
 EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT * FROM t_data
 WHERE f1 ILIKE '%bCd%';
 
@@ -13447,6 +14576,10 @@ EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT *
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT * from numbers WHERE value > mz_now()::text::int8 / 100000000000000 LIMIT 10;
+
+-- sqlfmt-corpus-separator --
+
 EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT * from numbers limit 10;
 
 -- sqlfmt-corpus-separator --
@@ -13456,6 +14589,17 @@ EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT *
 -- sqlfmt-corpus-separator --
 
 EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT EXISTS( SELECT 1 FROM inventory WHERE product_id = 1 );
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT MAX(extract(epoch from h.occurred_at) * 1000) as last_occurred, h.error, COUNT(h.occurred_at)
+FROM mz_internal.mz_source_status_history h
+WHERE source_id = 'u6'
+AND error IS NOT NULL
+AND h.occurred_at BETWEEN 0 AND 100
+GROUP BY h.error
+ORDER BY last_occurred DESC
+LIMIT 10;
 
 -- sqlfmt-corpus-separator --
 
@@ -13484,6 +14628,10 @@ EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT a
 -- sqlfmt-corpus-separator --
 
 EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT a, array_agg(b), string_agg(c, ',') FROM t GROUP BY a;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH (humanized expressions) AS VERBOSE TEXT FOR SELECT a, dense_rank() OVER (ORDER BY a), array_agg(b) FROM t GROUP BY a;
 
 -- sqlfmt-corpus-separator --
 
@@ -14528,11 +15676,846 @@ union all
 
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
 SELECT
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days,
+    (SELECT max(timestamp_col)
+       FROM events
+      WHERE (payload->>'type' = 'foo1'
+         AND category_id = origins.category_id
+         AND origin_id = origins.id
+         AND mz_now() BETWEEN (1000 * CAST(extract(epoch from timestamp_col) AS numeric)) AND (1000 * CAST(extract(epoch from timestamp_col + interval '90' days) AS numeric))
+      )
+    ) AS quz__foo1_types__max_time__90days
+FROM
+    origins;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT
     100.00 * sum(CASE WHEN i_data LIKE 'PR%' THEN ol_amount ELSE 0 END) / (1 + sum(ol_amount)) AS promo_revenue
 FROM orderline, item
 WHERE ol_i_id = i_id
 AND ol_delivery_d >= TIMESTAMP '2007-01-02 00:00:00.000000'
 AND ol_delivery_d < TIMESTAMP '2020-01-02 00:00:00.000000'
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT
+    EXTRACT(year FROM o_entry_d) AS l_year,
+    sum(CASE WHEN n2.n_name = 'GERMANY' THEN ol_amount ELSE 0 END) / CASE WHEN sum(ol_amount) = 0 THEN 1 ELSE sum(ol_amount) END AS mkt_share
+FROM item, supplier, stock, orderline, "order", customer, nation n1, nation n2, region
+WHERE i_id = s_i_id
+AND ol_i_id = s_i_id
+AND ol_supply_w_id = s_w_id
+AND s_su_suppkey = su_suppkey
+AND ol_w_id = o_w_id
+AND ol_d_id = o_d_id
+AND ol_o_id = o_id
+AND c_id = o_c_id
+AND c_w_id = o_w_id
+AND c_d_id = o_d_id
+AND n1.n_nationkey = c_n_nationkey
+AND n1.n_regionkey = r_regionkey
+AND ol_i_id < 1000
+AND r_name = 'EUROPE'
+AND su_nationkey = n2.n_nationkey
+AND o_entry_d BETWEEN TIMESTAMP '2007-01-02 00:00:00.000000' AND TIMESTAMP '2012-01-02 00:00:00.000000'
+AND i_data like '%b'
+AND i_id = ol_i_id
+GROUP BY EXTRACT(year FROM o_entry_d)
+ORDER BY l_year
 
 -- sqlfmt-corpus-separator --
 
@@ -14613,6 +16596,25 @@ ORDER BY revenue DESC
 
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
 SELECT
+    n_name, EXTRACT(year FROM o_entry_d) AS l_year,
+    sum(ol_amount) AS sum_profit
+FROM item, stock, supplier, orderline, "order", nation
+WHERE ol_i_id = s_i_id
+AND ol_supply_w_id = s_w_id
+AND s_su_suppkey = su_suppkey
+AND ol_w_id = o_w_id
+AND ol_d_id = o_d_id
+AND ol_o_id = o_id
+AND ol_i_id = i_id
+AND su_nationkey = n_nationkey
+AND i_data like '%BB'
+GROUP BY n_name, EXTRACT(year FROM o_entry_d)
+ORDER BY n_name, l_year DESC
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT
     o_ol_cnt,
     sum(CASE WHEN o_carrier_id = 1 OR o_carrier_id = 2 THEN 1 ELSE 0 END) AS high_line_count,
     sum(CASE WHEN o_carrier_id <> 1 AND o_carrier_id <> 2 THEN 1 ELSE 0 END) AS low_line_count
@@ -14667,6 +16669,35 @@ AND su_nationkey = n_nationkey
 AND n_name = 'GERMANY'
 GROUP BY su_name
 ORDER BY numwait DESC, su_name
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+SELECT
+    su_nationkey AS supp_nation,
+    substr(c_state, 1, 1) AS cust_nation,
+    EXTRACT(year FROM o_entry_d) AS l_year,
+    sum(ol_amount) AS revenue
+FROM supplier, stock, orderline, "order", customer, nation n1, nation n2
+WHERE ol_supply_w_id = s_w_id
+AND ol_i_id = s_i_id
+AND s_su_suppkey = su_suppkey
+AND ol_w_id = o_w_id
+AND ol_d_id = o_d_id
+AND ol_o_id = o_id
+AND c_id = o_c_id
+AND c_w_id = o_w_id
+AND c_d_id = o_d_id
+AND su_nationkey = n1.n_nationkey
+AND c_n_nationkey = n2.n_nationkey
+AND (
+    (n1.n_name = 'GERMANY' AND n2.n_name = 'CAMBODIA')
+    OR
+    (n1.n_name = 'CAMBODIA' AND n2.n_name = 'GERMANY')
+)
+AND ol_delivery_d BETWEEN TIMESTAMP '2007-01-02 00:00:00.000000' AND TIMESTAMP '2012-01-02 00:00:00.000000'
+GROUP BY su_nationkey, substr(c_state, 1, 1), EXTRACT(year FROM o_entry_d)
+ORDER BY su_nationkey, cust_nation, l_year
 
 -- sqlfmt-corpus-separator --
 
@@ -15298,6 +17329,39 @@ FROM options;
 -- sqlfmt-corpus-separator --
 
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+WITH parsed AS (
+  SELECT regexp_split_to_table(input, '\n') AS line FROM aoc_1204
+),
+numbers AS (
+  SELECT split_part(line,':',1) AS card_id,
+         replace(split_part(line,':',2),'|','') AS nrs
+  FROM parsed
+),
+arr AS (
+  SELECT card_id,
+         nrs,
+         regexp_split_to_array(ltrim(rtrim(nrs)),'\s') AS nrs_arr
+  FROM numbers
+),
+winning AS (
+  SELECT card_id,
+         unnest(array_remove(nrs_arr,'')) nr,
+         ROW_NUMBER() OVER (PARTITION BY card_id) AS row_num
+  FROM arr
+  GROUP BY card_id, nr HAVING COUNT(*)>1
+  ORDER BY card_id
+),
+winning_points AS (
+  SELECT ROUND(EXP(SUM(LN(CASE WHEN row_num = 1 THEN row_num ELSE 2 END)))) AS points
+  FROM winning
+  GROUP BY card_id
+)
+SELECT SUM(points)
+FROM winning_points;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
 WITH poster_w_liker AS (
         SELECT DISTINCT
             message1.CreatorPersonId AS person1id,
@@ -15642,6 +17706,65 @@ SELECT a1.* FROM t3 AS a1 LEFT JOIN t3_with_key AS a2 ON (a1.f1 = a2.key);
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
 WITH t3_with_key AS (select f1 as key, sum(f2) as nokey from t3 group by f1)
 SELECT a1.* FROM t3_with_key AS a1 LEFT JOIN t3_with_key AS a2 ON (a1.key = a2.key)
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR
+select
+  case when (((false)
+          and (true))
+        and ((numrange(0,0)) -|- (case when (cast(null as mz_aclitem)) = (cast(null as mz_aclitem)) then numrange(0,0) else numrange(0,0) end
+            )))
+      and (((10::uint8) & (case when (TIMESTAMPTZ '2023-01-01 01:23:45+06') >= ((TIMESTAMPTZ '95143-12-31 23:59:59+06' + INTERVAL '167 MILLENNIUM')) then 2::uint8 else 2::uint8 end
+            )) < (pg_catalog.mod(
+          CAST(null::uint8 as uint8),
+          CAST(null::uint8 as uint8)))) then mz_catalog.kafka_murmur2(
+      CAST(cast('\xDEADBEEF' as bytea) as bytea)) else mz_catalog.kafka_murmur2(
+      CAST(cast('\xDEADBEEF' as bytea) as bytea)) end
+     as c0,
+  (mz_unsafe.mz_avg_promotion(
+      CAST(0::uint4 as uint4))) / (null::numeric) as c1,
+  mz_catalog.try_parse_monotonic_iso8601_timestamp(
+    CAST(pg_catalog.obj_description(
+      CAST(mz_internal.aclitem_grantee(
+        CAST(cast(null as aclitem) as aclitem)) as oid),
+      CAST((('[]'::jsonb) -> (pg_catalog.session_user())) ->> (pg_catalog.pg_get_viewdef(
+          CAST(case when ('{}'::map[text=>text]) ?| (array['a', 'b', null, '']::text[]) then null::oid else null::oid end
+             as oid),
+          CAST(true as bool))) as text)) as text)) as c2,
+  '2024-12-18 12:54:29.994+00'::timestamptz as c3
+from
+  (select distinct
+        mz_catalog.map_agg(
+          CAST(cast(coalesce(null::text,
+            null::text) as text) as text),
+          null) as c0,
+        mz_catalog.mz_environment_id() as c1,
+        (mz_catalog.mz_environment_id()) || ((null::uint4) + (4294967295::uint4)) as c2,
+        pg_catalog.tstzrange(
+          CAST((INTERVAL '2147483647 MONTHS') + (TIMESTAMPTZ '2023-01-01 01:23:45+06') as timestamptz),
+          CAST(TIMESTAMPTZ '2023-01-01 01:23:45+06' as timestamptz)) as c3,
+        pg_catalog.version() as c4
+      from
+        (select
+              36 as c0,
+              33 as c1
+            from
+              (select
+                    4 as c0
+                  from
+                    "mz_catalog"."mz_columns" as ref_2
+                  where (false) <> (true)
+                  limit coalesce(13, 72)) as subq_0
+            where (true) = (true)
+            limit coalesce(82, 50)) as subq_1
+      where (pg_catalog.mod(
+          CAST(case when ((TIMESTAMPTZ '0001-01-01 00:00:00+06' - INTERVAL '4713 YEARS')) >= ((TIMESTAMPTZ '95143-12-31 23:59:59+06' + INTERVAL '167 MILLENNIUM')) then null::int2 else null::int2 end
+             as int2),
+          CAST(10::int2 as int2))) > (null::int2)
+      limit coalesce(90, 42)) as subq_2
+where true
+limit coalesce(43, 120);
 
 -- sqlfmt-corpus-separator --
 
@@ -16429,6 +18552,10 @@ WHERE a IN (9, 0)
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT 1::mz_timestamp = mz_now()
+
+-- sqlfmt-corpus-separator --
+
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT DISTINCT * FROM t GROUP BY f1, f2, f0
 
 -- sqlfmt-corpus-separator --
@@ -16833,6 +18960,11 @@ EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) 
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT f1 FROM t1
+WHERE f1 IN (SELECT ROW_NUMBER() OVER () FROM t2);
+
+-- sqlfmt-corpus-separator --
+
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT f1, f2 FROM v1 WHERE f1 = f3 GROUP BY f1, f2;
 
 -- sqlfmt-corpus-separator --
@@ -16993,6 +19125,10 @@ EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) 
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT row_number() over () from (select f1 from m3 limit 1)
+
+-- sqlfmt-corpus-separator --
+
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR SELECT state, COUNT(*) FROM (
     SELECT state, name FROM
         (SELECT DISTINCT state FROM cities) grp,
@@ -17083,6 +19219,38 @@ EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) 
 SELECT *
   FROM message_count_distribution
 ORDER BY personCount DESC, messageCount DESC
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR WITH
+  message_count AS (
+    SELECT 0.0 + count(*) AS cnt
+      FROM Message
+     WHERE creationDate < '2010-06-11T09:21:46.000+00:00'::TIMESTAMP
+)
+, message_prep AS (
+    SELECT extract(year from creationDate) AS messageYear
+         , ParentMessageId IS NOT NULL AS isComment
+         , CASE
+             WHEN length <  40 THEN 0 -- short
+             WHEN length <  80 THEN 1 -- one liner
+             WHEN length < 160 THEN 2 -- tweet
+             ELSE                   3 -- long
+           END AS lengthCategory
+         , length
+      FROM Message
+     WHERE creationDate < '2010-06-11T09:21:46.000+00:00'::TIMESTAMP
+       AND content IS NOT NULL
+)
+SELECT messageYear, isComment, lengthCategory
+     , count(*) AS messageCount
+     , avg(length::bigint) AS averageMessageLength
+     , sum(length::bigint) AS sumMessageLength
+     , count(*) / mc.cnt AS percentageOfMessages
+  FROM message_prep
+     , message_count mc
+ GROUP BY messageYear, isComment, lengthCategory, mc.cnt
+ ORDER BY messageYear DESC, isComment ASC, lengthCategory ASC
 
 -- sqlfmt-corpus-separator --
 
@@ -17425,6 +19593,40 @@ SELECT count(*)
    AND '2012-09-28'::TIMESTAMP <= p1.creationDate AND p1.creationDate <= '2013-01-10'::TIMESTAMP
    AND '2012-09-28'::TIMESTAMP <= p2.creationDate AND p2.creationDate <= '2013-01-10'::TIMESTAMP
    AND '2012-09-28'::TIMESTAMP <= p3.creationDate AND p3.creationDate <= '2013-01-10'::TIMESTAMP
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations) AS VERBOSE TEXT FOR WITH Zombies AS (
+    SELECT Person.id AS zombieid
+      FROM Country
+      JOIN City
+        ON City.PartOfCountryId = Country.id
+      JOIN Person
+        ON Person.LocationCityId = City.id
+      LEFT JOIN Message
+         ON Person.id = Message.CreatorPersonId
+        AND Message.creationDate BETWEEN Person.creationDate AND '2012-11-09'::TIMESTAMP -- the lower bound is an optmization to prune messages
+     WHERE Country.name = 'India'
+       AND Person.creationDate < '2012-11-09'::TIMESTAMP
+     GROUP BY Person.id, Person.creationDate
+        -- average of [0, 1) messages per month is equivalent with having less messages than the month span between person creationDate and parameter '2012-11-09'::TIMESTAMP
+    HAVING count(Message.MessageId) < 12*extract(YEAR FROM '2012-11-09'::TIMESTAMP) + extract(MONTH FROM '2012-11-09'::TIMESTAMP)
+                            - (12*extract(YEAR FROM Person.creationDate) + extract(MONTH FROM Person.creationDate))
+                            + 1
+)
+SELECT Z.zombieid AS "zombie.id"
+     , coalesce(t.zombieLikeCount, 0) AS zombieLikeCount
+     , coalesce(t.totalLikeCount, 0) AS totalLikeCount
+     , CASE WHEN t.totalLikeCount > 0 THEN t.zombieLikeCount::float/t.totalLikeCount ELSE 0 END AS zombieScore
+  FROM Zombies Z LEFT JOIN (
+    SELECT Z.zombieid, count(*) as totalLikeCount, sum(case when exists (SELECT 1 FROM Zombies ZL WHERE ZL.zombieid = p.id) then 1 else 0 end) AS zombieLikeCount
+    FROM Person p, Person_likes_Message plm, Message m, Zombies Z
+    WHERE Z.zombieid = m.CreatorPersonId AND p.creationDate < '2012-11-09'::TIMESTAMP
+        AND p.id = plm.PersonId AND m.MessageId = plm.MessageId
+    GROUP BY Z.zombieid
+  ) t ON (Z.zombieid = t.zombieid)
+ ORDER BY zombieScore DESC, Z.zombieid
+ LIMIT 100
 
 -- sqlfmt-corpus-separator --
 
@@ -17814,6 +20016,13 @@ EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations, 
 -- sqlfmt-corpus-separator --
 
 EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, arity, join implementations, types, no fast path) AS VERBOSE TEXT FOR SELECT LIST[[[f1, f2], [f7, f8, f3, f4]], [[f5, f6], [f7, f8]]] [n][m][n] from m3
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN OPTIMIZED PLAN WITH(humanized expressions, filter pushdown) AS VERBOSE TEXT FOR
+SELECT content, inserted_at
+FROM events_timestamped
+WHERE EXTRACT(YEAR FROM inserted_at) = 2021;
 
 -- sqlfmt-corpus-separator --
 
@@ -18788,6 +20997,12 @@ EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR
 -- sqlfmt-corpus-separator --
 
 EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR
+CREATE MATERIALIZED VIEW mv AS
+SELECT pg_catalog.now();
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR
 INDEX ov_a_idx;
 
 -- sqlfmt-corpus-separator --
@@ -18896,6 +21111,15 @@ EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR
 SELECT
   lead(x,y-2,120) OVER (PARTITION BY x/2, y ORDER BY x)
 FROM t9;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR
+SELECT
+  row_number() OVER (ORDER BY x),
+  x
+FROM t7
+ORDER BY row_number
 
 -- sqlfmt-corpus-separator --
 
@@ -19209,6 +21433,10 @@ EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR SELECT a, array_agg(b), max(c) FROM t 
 -- sqlfmt-corpus-separator --
 
 EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR SELECT a, array_agg(b), string_agg(c, ',') FROM t GROUP BY a;
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN PHYSICAL PLAN AS VERBOSE TEXT FOR SELECT a, dense_rank() OVER (ORDER BY a), array_agg(b) FROM t GROUP BY a;
 
 -- sqlfmt-corpus-separator --
 
@@ -19834,6 +22062,18 @@ FROM t;
 -- sqlfmt-corpus-separator --
 
 EXPLAIN RAW PLAN AS TEXT FOR
+SELECT row_number() OVER (ORDER BY r DESC)
+FROM (
+    SELECT row_number() OVER (PARTITION BY l) as r
+    FROM (
+        SELECT lag(b, 3) OVER (PARTITION BY b%2, a%3 ORDER BY a DESC, -b, 2*b + a NULLS FIRST) as l
+        FROM t
+    )
+);
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN RAW PLAN AS TEXT FOR
 SELECT t1.a, t2.a
 FROM
   t as t1,
@@ -20111,6 +22351,12 @@ SELECT jsonb_object_agg(1::uint8, 2::int);
 -- sqlfmt-corpus-separator --
 
 EXPLAIN RAW PLAN FOR
+SELECT row_number() OVER (PARTITION BY x ORDER BY x), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN RAW PLAN FOR
 SELECT sum(lag(a) OVER ())
 FROM foo;
 
@@ -20208,6 +22454,79 @@ EXPLAIN RAW PLAN FOR SUBSCRIBE t
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN RAW PLAN WITH (TYPES, NO FAST PATH) AS TEXT FOR SELECT
+  (((null::int8) / (mz_catalog.datediff(
+          CAST(pg_catalog.right(
+            CAST(1::text as text),
+            CAST(80 as int4)) as text),
+          CAST(TIMESTAMP(3) '2023-01-01 01:23:45' as timestamp),
+          CAST(pg_catalog.timezone(
+            CAST(INTERVAL '1' MINUTE as interval),
+            CAST(TIMESTAMPTZ '2023-01-01 01:23:45+06' as timestamptz)) as timestamp)))) % (case when (cast(coalesce('{"1":2,"3":4}'::jsonb,
+            '{"1":2,"3":4}'::jsonb) as jsonb)) ? (pg_catalog.reverse(
+            CAST(null::text as text))) then pg_catalog.pg_relation_size(
+          CAST(1::regclass as regclass),
+          CAST(cast(coalesce(cast(0 as text),
+            cast(0 as text)) as text) as text)) else pg_catalog.pg_relation_size(
+          CAST(1::regclass as regclass),
+          CAST(cast(coalesce(cast(0 as text),
+            cast(0 as text)) as text) as text)) end
+        )) / (pg_catalog.pg_relation_size(
+      CAST(cast(0 as regclass) as regclass))) as c0,
+  pg_catalog.floor(
+    CAST((case when false then case when (1::text) >= (1::text) then 1::numeric else 1::numeric end
+           else case when (1::text) >= (1::text) then 1::numeric else 1::numeric end
+           end
+        ) / (case when 17 is not NULL then case when 36 is NULL then (cast(0 as numeric)) % (cast(0 as numeric)) else (cast(0 as numeric)) % (cast(0 as numeric)) end
+           else case when 36 is NULL then (cast(0 as numeric)) % (cast(0 as numeric)) else (cast(0 as numeric)) % (cast(0 as numeric)) end
+           end
+        ) as numeric)) as c1,
+  (pg_catalog.jsonb_build_array()) #> (pg_catalog.parse_ident(
+      CAST(pg_catalog.pg_get_viewdef(
+        CAST(pg_catalog.current_user() as text)) as text))) as c2,
+  (pg_catalog.mod(
+      CAST(32767::int2 as int2),
+      CAST((pg_catalog.mod(
+          CAST(case when 6 is not NULL then null::int2 else null::int2 end
+             as int2),
+          CAST(32767::int2 as int2))) # (-32768::int2) as int2))) % ((~ 32767::int2) / (((pg_catalog.mod(
+            CAST(null::int2 as int2),
+            CAST(-32768::int2 as int2))) # ((-32768::int2) & (32767::int2))) / (case when ('{"1":2,"3":4}'::jsonb) < ('{"1":2,"3":4}'::jsonb) then null::int2 else null::int2 end
+          ))) as c3
+from
+  (select distinct
+        mz_internal.mz_normalize_schema_name(
+          CAST(('{"1":2,"3":4}'::jsonb) ->> (null::int8) as text)) as c0,
+        mz_internal.aclitem_grantee(
+          CAST(pg_catalog.makeaclitem(
+            CAST(cast(0 as oid) as oid),
+            CAST(1::oid as oid),
+            CAST(cast(0 as text) as text),
+            CAST(false as bool)) as aclitem)) as c1,
+        (0::uint2) * (~ 0::uint2) as c2,
+        30 as c3,
+        53 as c4,
+        47 as c5
+      from
+        (select
+              44 as c0,
+              84 as c1
+            from
+              (select
+                    41 as c0
+                  from
+                    "mz_introspection"."mz_compute_frontiers_per_worker" as ref_0
+                  where (10::oid) < (cast(0 as oid))) as subq_0
+            where (null::mz_timestamp) > (cast(0 as mz_timestamp))) as subq_1
+      where (case when (cast(0 as mz_timestamp)) = (1::mz_timestamp) then cast(0 as bpchar) else cast(0 as bpchar) end
+          ) ~ (cast(coalesce(pg_catalog.user(),
+          ('"foo"'::jsonb) ->> (null::int8)) as text))) as subq_2
+where (cast(coalesce(null::name,
+    cast(nullif(cast(0 as name),
+      null::name) as name)) as name)) <> (1::name);
+
+-- sqlfmt-corpus-separator --
+
 EXPLAIN RAW PLAN WITH (raw syntax) AS TEXT FOR
 SELECT a FROM t EXCEPT SELECT b FROM mv
 
@@ -20256,6 +22575,21 @@ WHERE
 
 EXPLAIN WITH (humanized expressions)
 SELECT * FROM mz_internal.mz_source_status_history
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN WITH (humanized expressions)
+SELECT * FROM t WHERE a < mz_now();
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN WITH (humanized expressions)
+SELECT * FROM t1, t2 WHERE t1.x || mz_internal.mz_session_id()  = t2.x || mz_internal.mz_session_id();
+
+-- sqlfmt-corpus-separator --
+
+EXPLAIN WITH (humanized expressions)
+SELECT * FROM t1, t2 WHERE t1.x || mz_now()  = t2.x || mz_now();
 
 -- sqlfmt-corpus-separator --
 
@@ -21582,6 +23916,10 @@ INSERT INTO baz VALUES (3, 0), (5, 2), (null, 6)
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO baz VALUES (now()::text)
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO big_l VALUES (1, 'big_l1'), (3, 'bigl_3'), (5, 'bigl_5')
 
 -- sqlfmt-corpus-separator --
@@ -21876,6 +24214,14 @@ INSERT INTO dec SELECT * FROM v
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO dec VALUES (0) RETURNING mz_now()
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dec VALUES (mz_now())
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO decimal_zero VALUES ('0.0'), (0)
 
 -- sqlfmt-corpus-separator --
@@ -21909,6 +24255,10 @@ INSERT INTO dt VALUES
   -- 6 not present in dt
   -- 7 is not present in either table
   ;
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO dt VALUES (now())
 
 -- sqlfmt-corpus-separator --
 
@@ -22929,6 +25279,40 @@ INSERT INTO kv (k, v) VALUES (99, count(1))
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO kv (k,v) VALUES ('a', transaction_timestamp())
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (1, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (2, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (3, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (4, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (5, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO kv (k,v) VALUES (6, cluster_logical_timestamp()-(select mints from m));
+SELECT * FROM kv
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO kv VALUES
 (1, 2, 3, 'a'),
 (3, 4, 5, 'a'),
@@ -23015,6 +25399,10 @@ INSERT INTO limits VALUES
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO m VALUES (cluster_logical_timestamp())
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO md5_test VALUES
     (''),
     ('a'),
@@ -23047,6 +25435,10 @@ INSERT INTO not_allowed_tests (k, v) VALUES (99, 100) RETURNING sum(v) OVER ();
 -- sqlfmt-corpus-separator --
 
 INSERT INTO not_allowed_tests (k, v) VALUES (99, count(1) OVER ());
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO now_inc VALUES (now())
 
 -- sqlfmt-corpus-separator --
 
@@ -23386,6 +25778,10 @@ INSERT INTO square VALUES (1,1), (2,4), (3,9), (4,16), (5,25), (6,36)
 
 INSERT INTO squares VALUES
     (1, 1), (2, 4), (3, 9), (4, 16);
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO start_time VALUES (now());
 
 -- sqlfmt-corpus-separator --
 
@@ -23831,6 +26227,10 @@ INSERT INTO t VALUES (1, 'one'), (2, 'two')
 
 -- sqlfmt-corpus-separator --
 
+INSERT INTO t VALUES (1, 1) RETURNING mz_version();
+
+-- sqlfmt-corpus-separator --
+
 INSERT INTO t VALUES (1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (3, 1);
 
 -- sqlfmt-corpus-separator --
@@ -23940,6 +26340,18 @@ INSERT INTO t VALUES (7, 8) RETURNING c
 -- sqlfmt-corpus-separator --
 
 INSERT INTO t VALUES (7, 8) RETURNING count(*)
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (7, 8) RETURNING mz_now()
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (7, 8) RETURNING now()
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO t VALUES (7, 8) RETURNING row_number()
 
 -- sqlfmt-corpus-separator --
 
@@ -25177,6 +27589,10 @@ INSERT INTO table9 VALUES (
   '2020-05-26 14:23:36.157383-04',
   '2020-05-26 14:23:36.157383-04'
 )
+
+-- sqlfmt-corpus-separator --
+
+INSERT INTO tableA VALUES (now(), null, 10, 10);
 
 -- sqlfmt-corpus-separator --
 
@@ -26696,6 +29112,31 @@ ORDER BY c_id;
 -- sqlfmt-corpus-separator --
 
 SELECT
+    class_objects.oid as attrelid,
+    mz_columns.name as attname,
+    mz_columns.type_oid AS atttypid,
+    class_objects.type as relation_type,
+    mz_columns.type as typename,
+    position as attnum,
+    mzsc.name as schema_name,
+    class_objects.name as relation_name
+FROM (
+    SELECT id, oid, schema_id, name, type FROM mz_catalog.mz_relations
+    UNION ALL
+        SELECT mz_indexes.id, mz_indexes.oid, mz_relations.schema_id, mz_indexes.name, 'index' AS type
+        FROM mz_catalog.mz_indexes
+        JOIN mz_catalog.mz_relations ON mz_indexes.on_id = mz_relations.id
+) AS class_objects
+JOIN mz_catalog.mz_columns ON class_objects.id = mz_columns.id
+JOIN pg_catalog.pg_type ON pg_type.oid = mz_columns.type_oid
+JOIN mz_catalog.mz_databases d ON (d.id IS NULL OR d.name = pg_catalog.current_database())
+JOIN mz_catalog.mz_schemas mzsc ON class_objects.schema_id = mzsc.id
+WHERE mzsc.name IN ('pg_catalog', 'information_schema')
+  AND mz_columns.type like '%uint%'
+
+-- sqlfmt-corpus-separator --
+
+SELECT
     clusters.name AS cluster,
     objs.name AS on_name,
     idxs.name AS key_name,
@@ -27145,6 +29586,16 @@ FROM (
 ) intervals (interval),
 (VALUES (timestamptz '2020-02-11 15:44:17.71393+00')) ts (ts),
 (VALUES (timestamptz '2001-01-01')) origin (origin);
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  '1702129950259'::mz_timestamp::text,
+  '1990-01-04 11:00'::mz_timestamp::text,
+  greatest('1990-01-04 11:00', mz_now()) > '1990-01-04 11:00'::mz_timestamp,
+     least('1990-01-04 11:00', mz_now()) > '1990-01-04 11:00'::mz_timestamp,
+  greatest(mz_now(), '1990-01-04 11:00') > '3000-01-04 11:00'::mz_timestamp,
+  '1990-01-04 11:00+08'::mz_timestamp < '1990-01-04 11:00+06'::mz_timestamp;
 
 -- sqlfmt-corpus-separator --
 
@@ -27629,6 +30080,18 @@ FROM
   mz_catalog.mz_materialized_views mv ON(n.object_id = mv.id)
 WHERE
   mv.name IN ('mv1', 'mv2_renamed');
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+  name,
+  type,
+  interval,
+  now() - aligned_to < INTERVAL '30 minutes',
+  now() - at < INTERVAL '30 minutes'
+FROM mz_internal.mz_materialized_view_refresh_strategies mvrs, mz_catalog.mz_materialized_views mv
+WHERE mv.id LIKE 'u%' AND mv.id = mvrs.materialized_view_id
+ORDER BY name;
 
 -- sqlfmt-corpus-separator --
 
@@ -28181,6 +30644,19 @@ ORDER BY x;
 -- sqlfmt-corpus-separator --
 
 SELECT
+  x-row_number() OVER (ORDER BY x+y),
+  x,
+  y,
+  sum(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  max(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  min(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING),
+  array_agg(x+x) OVER (PARTITION BY x-row_number() OVER (ORDER BY x+y) ORDER BY x ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+FROM t7
+ORDER BY x-row_number() OVER (ORDER BY x+y), x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
   x-y+x/10,
   x,
   y,
@@ -28407,6 +30883,44 @@ SELECT
  MAX(real1 + real1), MAX(double1 + double1), MAX(numeric1 + numeric1),
  AVG(real1), AVG(double1), AVG(numeric1),
  AVG(real1 + real1), AVG(double1 + double1), AVG(numeric1 + numeric1)
+FROM v_using_constant_folding;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+ f1 || f4,
+ UPPER(f1), LOWER(f1),
+ SUBSTRING(f1, 1),
+ REPLACE(f1, f2, f3),
+ POSITION(f2 IN f1),
+ SPLIT_PART(f1, f2, 1),
+ TRANSLATE(f1, 'C', 'Z'),
+ BTRIM(f1ls), LTRIM(f1ls),
+ BTRIM(f1rs), RTRIM(f1rs),
+ LPAD(f1, 1),
+ LPAD(f1, 10),
+ LPAD(f1, 10, f2),
+ REGEXP_MATCH(f1, f2),
+ REGEXP_MATCH(f1, f3, 'i') AS case_insensitive
+FROM t_using_dataflow_rendering;
+
+-- sqlfmt-corpus-separator --
+
+SELECT
+ f1 || f4,
+ UPPER(f1), LOWER(f1),
+ SUBSTRING(f1, 1),
+ REPLACE(f1, f2, f3),
+ POSITION(f2 IN f1),
+ SPLIT_PART(f1, f2, 1),
+ TRANSLATE(f1, 'C', 'Z'),
+ BTRIM(f1ls), LTRIM(f1ls),
+ BTRIM(f1rs), RTRIM(f1rs),
+ LPAD(f1, 1),
+ LPAD(f1, 10),
+ LPAD(f1, 10, f2),
+ REGEXP_MATCH(f1, f2),
+ REGEXP_MATCH(f1, f3, 'i') AS case_insensitive
 FROM v_using_constant_folding;
 
 -- sqlfmt-corpus-separator --
@@ -55322,11 +57836,20 @@ SELECT (mz_tables).* FROM mz_tables LIMIT 0;
 
 -- sqlfmt-corpus-separator --
 
+SELECT (now(), 2) = (now() :: timestamp, 2) AS r
+  FROM tb
+
+-- sqlfmt-corpus-separator --
+
 SELECT (null::jsonb)->>0;
 
 -- sqlfmt-corpus-separator --
 
 SELECT (null::jsonb)::text;
+
+-- sqlfmt-corpus-separator --
+
+SELECT (pg_get_keywords()).word FROM t
 
 -- sqlfmt-corpus-separator --
 
@@ -55603,6 +58126,30 @@ WHERE (SELECT ship FROM o WHERE o.c_id=c.c_id ORDER BY ship LIMIT 1) IS NOT NULL
 -- sqlfmt-corpus-separator --
 
 SELECT *
+FROM events
+WHERE insert_ts + 30 >= mz_now();
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM events
+WHERE insert_ts >= mz_now() - 30;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t
+ORDER BY row_number();
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t
+QUALIFY row_number();
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
 FROM t1
     FULL OUTER JOIN t2 USING (f1)
     FULL OUTER JOIN t3 USING (f1)
@@ -55662,6 +58209,42 @@ FROM t1
     RIGHT JOIN t2 USING (f1)
     RIGHT JOIN t3 USING (f1)
 ORDER BY f1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t2
+WHERE
+  ts + INTERVAL '30' minutes >= mz_now()
+  OR ts IS NULL;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t2
+WHERE ts + INTERVAL '30' minutes >= mz_now()
+UNION ALL
+SELECT *
+FROM t2
+WHERE ts + INTERVAL '60' minutes >= mz_now();
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t2
+WHERE ts + INTERVAL '30' minutes >= mz_now();
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t2
+WHERE ts >= mz_now() - INTERVAL '30' minutes;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *
+FROM t6
+QUALIFY row_number() OVER (PARTITION BY x%3 ORDER BY y) = 1;
 
 -- sqlfmt-corpus-separator --
 
@@ -56168,6 +58751,14 @@ SELECT * FROM LATERAL ROWS FROM (generate_series(1,1), information_schema._pg_ex
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM ROWS FROM (current_user(), current_user())
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ROWS FROM (current_user(), generate_series(1,2))
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM ROWS FROM (generate_series(1, 1)) WITH ORDINALITY AS t(g1, o);
 
 -- sqlfmt-corpus-separator --
@@ -56237,6 +58828,10 @@ SELECT * FROM ROWS FROM (generate_series(1,0), generate_series(1,0))
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM ROWS FROM (generate_series(1,0), generate_series(1,1))
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM ROWS FROM (generate_series(1,2), current_user())
 
 -- sqlfmt-corpus-separator --
 
@@ -56832,6 +59427,22 @@ SELECT * FROM data AS OF a;
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM data AS OF current_database()
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF current_database()::mz_timestamp
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF mz_now();
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM data AS OF now()
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM data ORDER BY a, b AS OF AT LEAST 1
 
 -- sqlfmt-corpus-separator --
@@ -57233,6 +59844,10 @@ SELECT * FROM id_pool_v1
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM id_pool_v1_new
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM information_schema._pg_expandarray()
 
 -- sqlfmt-corpus-separator --
 
@@ -57798,6 +60413,10 @@ SELECT * FROM mz_views LIMIT 0
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM noexist()
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM noncover WHERE b = 2
 
 -- sqlfmt-corpus-separator --
@@ -58080,11 +60699,20 @@ SELECT * FROM t
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM t
+WHERE row_number() over () > 1;
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM t AS OF 1
 
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t AS OF AT LEAST 1683131452106;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t AS v JOIN t ON row_number() over () > 1;
 
 -- sqlfmt-corpus-separator --
 
@@ -58313,6 +60941,18 @@ SELECT * FROM t1 a1 JOIN t2 a2 USING (f1) AS a1
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM t1, LATERAL(SELECT t2.*, ROW_NUMBER() OVER() FROM t2 WHERE t1.f1 = t2.f1 AND t1.f2 = t2.f2) AS foo;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t1, LATERAL(SELECT t2.*, ROW_NUMBER() OVER() FROM t2 WHERE t1.f1 = t2.f1) AS foo;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t1, LATERAL(SELECT t2.*, ROW_NUMBER() OVER() FROM t2 WHERE t1.f2 = t2.f2) AS foo;
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM t1, t2 WHERE a = b AND age(b, TIMESTAMPTZ '2017-01-01') > INTERVAL '1 day'
 
 -- sqlfmt-corpus-separator --
@@ -58365,6 +61005,18 @@ SELECT * FROM t2 WHERE d = 'Infinity' and v = 'Infinity'
 -- sqlfmt-corpus-separator --
 
 SELECT * FROM t2 WHERE f1 + f2 > 0 and case when f1 + f2 > 0 then 1/f1 > 0 else false end;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t2, LATERAL(SELECT t1.*, ROW_NUMBER() OVER() FROM t1 WHERE t1.f1 = t2.f1 AND t1.f2 = t2.f2) AS foo;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t2, LATERAL(SELECT t1.*, ROW_NUMBER() OVER() FROM t1 WHERE t1.f1 = t2.f1) AS foo;
+
+-- sqlfmt-corpus-separator --
+
+SELECT * FROM t2, LATERAL(SELECT t1.*, ROW_NUMBER() OVER() FROM t1 WHERE t1.f2 = t2.f2) AS foo;
 
 -- sqlfmt-corpus-separator --
 
@@ -58697,6 +61349,10 @@ SELECT * FROM xyz WHERE x IN (SELECT crdb_internal.force_error('', 'subqueryfail
 
 -- sqlfmt-corpus-separator --
 
+SELECT * FROM xyzw LIMIT (random() * 0.0)::int OFFSET (random() * 0.0)::int
+
+-- sqlfmt-corpus-separator --
+
 SELECT * FROM xyzw LIMIT -100
 
 -- sqlfmt-corpus-separator --
@@ -58830,6 +61486,23 @@ SELECT * from t ORDER BY t.timestamp;
 -- sqlfmt-corpus-separator --
 
 SELECT * from t ORDER BY timestamp;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *,
+    (
+        SELECT sum(2 * w) + max(w)
+        FROM (
+            SELECT lead(a) OVER (ORDER BY a) + row_number() OVER (ORDER BY a) AS w
+            FROM foo
+            WHERE a <= outer_a AND a < 3
+        ) as fsq2
+    )
+FROM (
+    SELECT a AS outer_a, b AS outer_b
+    FROM foo
+) as fsq
+ORDER BY outer_a;
 
 -- sqlfmt-corpus-separator --
 
@@ -59075,6 +61748,19 @@ SELECT *, pg_typeof(f1) FROM
 
 -- sqlfmt-corpus-separator --
 
+SELECT *, row_number() OVER (PARTITION BY len ORDER BY sum DESC, lag NULLS FIRST) as row_num FROM (
+    (SELECT length(b) AS len, sum(a) AS sum, lag(sum(a)) OVER (ORDER BY sum(a)) AS lag
+     FROM foo
+     GROUP BY length(b))
+    UNION
+    (SELECT length(b), -1 + sum(a) + row_number() OVER (ORDER BY length(b)), lag(sum(a)) OVER (ORDER BY length(b))
+     FROM foo
+     GROUP BY length(b))
+) AS sq
+ORDER BY len, row_num;
+
+-- sqlfmt-corpus-separator --
+
 SELECT *, sum(x-9) OVER (ORDER BY x, u)
 FROM
 (
@@ -59090,6 +61776,12 @@ FROM
 )
 QUALIFY sum(x-9) OVER (ORDER BY x, u) > -6
 ORDER BY x,u;
+
+-- sqlfmt-corpus-separator --
+
+SELECT *, x%3, row_number() OVER (PARTITION BY x%3 ORDER BY y)
+FROM t6
+QUALIFY row_number() OVER (PARTITION BY x%3 ORDER BY y) = 1;
 
 -- sqlfmt-corpus-separator --
 
@@ -59615,6 +62307,10 @@ SELECT 0::bigint::bool
 -- sqlfmt-corpus-separator --
 
 SELECT 0::int::bool
+
+-- sqlfmt-corpus-separator --
+
+SELECT 0::mz_timestamp <= mz_now()
 
 -- sqlfmt-corpus-separator --
 
@@ -63782,6 +66478,12 @@ SELECT DISTINCT ON (min(x)) max(y) FROM xyz
 
 -- sqlfmt-corpus-separator --
 
+SELECT DISTINCT ON (row_number() OVER ()) *
+FROM t
+ORDER BY row_number() OVER ()
+
+-- sqlfmt-corpus-separator --
+
 SELECT DISTINCT ON (x) min(x) FROM xyz GROUP BY y
 
 -- sqlfmt-corpus-separator --
@@ -63905,6 +66607,10 @@ SELECT DISTINCT ON(pk1, pk2, x, y) x, y, z FROM xyz ORDER BY x, y
 -- sqlfmt-corpus-separator --
 
 SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz
+
+-- sqlfmt-corpus-separator --
+
+SELECT DISTINCT ON(row_number() OVER(ORDER BY (pk1, pk2))) y FROM xyz ORDER BY row_number() OVER(ORDER BY (pk1, pk2)) DESC
 
 -- sqlfmt-corpus-separator --
 
@@ -64073,6 +66779,192 @@ SELECT EXISTS(SELECT 1 FROM kv AS x WHERE x.k = 1)
 -- sqlfmt-corpus-separator --
 
 SELECT EXISTS(SELECT 1 FROM kv WHERE k = 2)
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(CENTURY FROM DATE '2001-01-01'),
+    EXTRACT(CENTURY FROM DATE '2000-01-01'),
+    EXTRACT(CENTURY FROM DATE '1999-01-01'),
+    EXTRACT(CENTURY FROM DATE '1001-01-01'),
+    EXTRACT(CENTURY FROM DATE '1000-01-01'),
+    EXTRACT(CENTURY FROM DATE '0001-01-01'),
+    EXTRACT(CENTURY FROM DATE '0001-01-01' - INTERVAL '1'SECOND),
+    EXTRACT(CENTURY FROM DATE '0001-01-01' - INTERVAL '100 YEAR 1 SECOND')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(CENTURY from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DAY from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DECADE FROM DATE '2001-01-01'),
+    EXTRACT(DECADE FROM DATE '2000-01-01'),
+    EXTRACT(DECADE FROM DATE '1999-01-01'),
+    EXTRACT(DECADE FROM DATE '0001-01-01'),
+    EXTRACT(DECADE FROM DATE '0001-01-01' - INTERVAL '1'SECOND),
+    EXTRACT(DECADE FROM DATE '0001-01-01' - INTERVAL '1 YEAR 1 SECOND'),
+    EXTRACT(DECADE FROM DATE '0001-01-01' - INTERVAL '10 YEAR 1 SECOND'),
+    EXTRACT(DECADE FROM DATE '0001-01-01' - INTERVAL '11 YEAR 1 SECOND')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DECADE from INTERVAL '39'YEAR),
+    EXTRACT(CENTURY from INTERVAL '399'YEAR),
+    EXTRACT(MILLENNIUM from INTERVAL '3999'YEAR)
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DECADE from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DOW FROM TIMESTAMP '1999-12-26 00:00:00'), EXTRACT(DOW FROM TIMESTAMP '2000-01-01 00:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DOW from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DOY FROM DATE '2000-01-01'), EXTRACT(DOY FROM DATE '2000-12-31')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(DOY from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(EPOCH FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(MILLENNIUM FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(CENTURY FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(DECADE FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(YEAR FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(QUARTER FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(WEEK FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(MONTH FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(HOUR FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(DAY FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(DOW FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(DOY FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(ISODOW FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(MINUTE FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(SECOND FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(MS FROM TIMESTAMP '2019-11-26 15:56:46.241150'),
+    EXTRACT(US FROM TIMESTAMP '2019-11-26 15:56:46.241150')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(EPOCH from INTERVAL '-1' MINUTE), EXTRACT(MINUTE from INTERVAL '-1' MINUTE)
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(EPOCH from INTERVAL '1' YEAR), EXTRACT(EPOCH from INTERVAL '1' MONTH) * 12
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(HOUR FROM DATE '2000-12-31')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(HOUR from TIME '11:12:42.666'),
+    EXTRACT(MINUTE from TIME '11:12:42.666'),
+    EXTRACT(SECOND from TIME '11:12:42.666'),
+    EXTRACT(MILLISECONDS from TIME '11:12:42.666'),
+    EXTRACT(MICROSECONDS from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(ISODOW FROM TIMESTAMP '1999-12-26 00:00:00'), EXTRACT(ISODOW FROM TIMESTAMP '2000-01-01 00:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(ISODOW from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(ISODOY from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(MICROSECOND FROM DATE '2000-12-31')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(MILLENNIUM FROM DATE '2001-01-01'),
+    EXTRACT(MILLENNIUM FROM DATE '2000-01-01'),
+    EXTRACT(MILLENNIUM FROM DATE '1999-01-01'),
+    EXTRACT(MILLENNIUM FROM DATE '1001-01-01'),
+    EXTRACT(MILLENNIUM FROM DATE '1000-01-01'),
+    EXTRACT(MILLENNIUM FROM DATE '0001-01-01'),
+    EXTRACT(MILLENNIUM FROM DATE '0001-01-01' - INTERVAL '1'SECOND),
+    EXTRACT(MILLENNIUM FROM DATE '0001-01-01' - INTERVAL '1000 YEAR 1 SECOND')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(MILLENNIUM from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(MILLISECOND FROM DATE '2000-12-31')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(MILLISECOND from INTERVAL '72.345678'SECOND), EXTRACT(MICROSECOND from INTERVAL '72.345678'SECOND)
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(MONTH from INTERVAL '-13'MONTH), EXTRACT(MONTH from INTERVAL '15'MONTH)
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(MONTH from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(QUARTER FROM DATE '2000-01-01'),
+    EXTRACT(QUARTER FROM DATE '2000-02-03'),
+    EXTRACT(QUARTER FROM DATE '2000-03-05'),
+    EXTRACT(QUARTER FROM DATE '2000-04-07'),
+    EXTRACT(QUARTER FROM DATE '2000-05-09'),
+    EXTRACT(QUARTER FROM DATE '2000-06-11'),
+    EXTRACT(QUARTER FROM DATE '2000-07-13'),
+    EXTRACT(QUARTER FROM DATE '2000-08-15'),
+    EXTRACT(QUARTER FROM DATE '2000-09-17'),
+    EXTRACT(QUARTER FROM DATE '2000-10-19'),
+    EXTRACT(QUARTER FROM DATE '2000-11-21'),
+    EXTRACT(QUARTER FROM DATE '2000-12-24')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(QUARTER from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(SECOND FROM DATE '2000-12-31')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(WEEK FROM DATE '2000-01-01'), EXTRACT(WEEK FROM DATE '2000-01-08')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(WEEK from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(YEAR from TIME '11:12:42.666')
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(epoch FROM INTERVAL '-2147483648 months -2147483648 days -2147483648 hours -59 minutes -59.999999 seconds');
+
+-- sqlfmt-corpus-separator --
+
+SELECT EXTRACT(epoch FROM INTERVAL '2147483647 months 2147483647 days 2147483647 hours 59 minutes 59.999999 seconds');
 
 -- sqlfmt-corpus-separator --
 
@@ -67549,6 +70441,12 @@ SELECT a, b, pg_column_size(col_size.*), pg_column_size(col_size.a), pg_column_s
 
 -- sqlfmt-corpus-separator --
 
+SELECT a, b, row_number() OVER (PARTITION BY lag(length(b)) OVER (ORDER BY a) ORDER BY a), lag(length(b)) OVER (ORDER BY a)
+FROM foo
+ORDER BY a;
+
+-- sqlfmt-corpus-separator --
+
 SELECT a, count(*) FROM bar GROUP BY a
 
 -- sqlfmt-corpus-separator --
@@ -67558,6 +70456,10 @@ SELECT a, count(b), min(b), sum(b), max(b) FROM t GROUP BY a
 -- sqlfmt-corpus-separator --
 
 SELECT a, d FROM noncover WHERE b=2
+
+-- sqlfmt-corpus-separator --
+
+SELECT a, dense_rank() OVER (ORDER BY a), array_agg(b) FROM t GROUP BY a;
 
 -- sqlfmt-corpus-separator --
 
@@ -67634,6 +70536,26 @@ SELECT a,b FROM json_family ORDER BY a
 -- sqlfmt-corpus-separator --
 
 SELECT a,c FROM abc
+
+-- sqlfmt-corpus-separator --
+
+SELECT a.*, ROW_NUMBER() OVER() FROM (SELECT * FROM (SELECT 'a' as x UNION ALL SELECT 'b' as x) ORDER BY x limit 1) a
+
+-- sqlfmt-corpus-separator --
+
+SELECT a.*, ROW_NUMBER() OVER() FROM (SELECT * FROM (SELECT 'a' as x UNION ALL SELECT 'b' as x) ORDER BY x) a
+
+-- sqlfmt-corpus-separator --
+
+SELECT a.*, ROW_NUMBER() OVER() from (SELECT TRUE::text as x FROM(SELECT AVG(0) FROM qs)) a
+
+-- sqlfmt-corpus-separator --
+
+SELECT a.*, ROW_NUMBER() over () FROM (SELECT * FROM a ORDER BY x limit 1) a
+
+-- sqlfmt-corpus-separator --
+
+SELECT a.*, ROW_NUMBER() over () FROM (SELECT * FROM a ORDER BY x) a
 
 -- sqlfmt-corpus-separator --
 
@@ -67773,6 +70695,10 @@ SELECT abs(generate_series) FROM generate_series(-1, 2), repeat_row_non_negative
 
 -- sqlfmt-corpus-separator --
 
+SELECT abs(sin(pi())) < 1e-12
+
+-- sqlfmt-corpus-separator --
+
 SELECT aclexplode(ARRAY[makeaclitem(1, 2, 'SELECT, INSERT, DELETE', false), makeaclitem(3, 4, 'USAGE', false)])
 
 -- sqlfmt-corpus-separator --
@@ -67834,6 +70760,10 @@ SELECT acosh(NULL)
 -- sqlfmt-corpus-separator --
 
 SELECT age('0001-06-01 08:10:56.555'::timestamp, '9999-12-10 04:05:01.550'::timestamp);
+
+-- sqlfmt-corpus-separator --
+
+SELECT age('1957-06-13') - age(now(), '1957-06-13') = interval '0s'
 
 -- sqlfmt-corpus-separator --
 
@@ -69610,6 +72540,10 @@ SELECT chr(NULL)
 
 -- sqlfmt-corpus-separator --
 
+SELECT clock_timestamp() - statement_timestamp() < interval '10s'
+
+-- sqlfmt-corpus-separator --
+
 SELECT cluster_id, current_deployment_cluster_id, cluster_name
 FROM mz_internal.mz_cluster_deployment_lineage
 WHERE cluster_id IN ('u2', 'u3', 'u4')
@@ -69963,6 +72897,10 @@ SELECT concat('你好')
 
 -- sqlfmt-corpus-separator --
 
+SELECT concat() || 'empty'
+
+-- sqlfmt-corpus-separator --
+
 SELECT concat(3.32)
 
 -- sqlfmt-corpus-separator --
@@ -70048,6 +72986,14 @@ SELECT concat_ws('a');
 -- sqlfmt-corpus-separator --
 
 SELECT concat_ws('x', null);
+
+-- sqlfmt-corpus-separator --
+
+SELECT concat_ws()
+
+-- sqlfmt-corpus-separator --
+
+SELECT concat_ws();
 
 -- sqlfmt-corpus-separator --
 
@@ -70168,6 +73114,10 @@ SELECT cot(1.01::double)
 -- sqlfmt-corpus-separator --
 
 SELECT cot(NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT count()
 
 -- sqlfmt-corpus-separator --
 
@@ -70500,6 +73450,50 @@ SELECT crdb_internal.check_consistency(true, '\x03', '\x02')
 
 -- sqlfmt-corpus-separator --
 
+SELECT current_catalog = current_catalog()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_catalog() = current_database()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_database()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_database() AS OF 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_database() AS OF AT LEAST 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_date - current_date() = 0
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_role = current_role()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_role() = current_user()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_schema = current_schema()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_schema()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_schemas()
+
+-- sqlfmt-corpus-separator --
+
 SELECT current_schemas(NULL::bool)
 
 -- sqlfmt-corpus-separator --
@@ -70553,6 +73547,18 @@ SELECT current_setting(true)
 -- sqlfmt-corpus-separator --
 
 SELECT current_timestamp > TIMESTAMP '2016-06-13 00:00:00'
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_timestamp() > TIMESTAMP '2016-06-13 00:00:00'
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_user = current_user()
+
+-- sqlfmt-corpus-separator --
+
+SELECT current_user()
 
 -- sqlfmt-corpus-separator --
 
@@ -71089,7 +74095,59 @@ SELECT decode(encode('se', 'base64'), 'base64')
 
 -- sqlfmt-corpus-separator --
 
+SELECT defaults()
+
+-- sqlfmt-corpus-separator --
+
 SELECT degrees(-0.5), degrees(0.5)
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (ORDER BY x DESC), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (ORDER BY x), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (PARTITION BY NULL ORDER BY 10000) AS q, a1.x
+FROM t AS a1, t AS a2
+ORDER BY q DESC, a1.x DESC;
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (PARTITION BY NULL) AS q, x, 'b'
+FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (PARTITION BY x ORDER BY x), x FROM t
+ORDER BY dense_rank, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY x DESC), x FROM t
+ORDER BY dense_rank, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY x DESC, z), x, y, z
+FROM t
+ORDER BY y, x DESC, z;
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY x), x FROM t
+ORDER BY dense_rank, x;
+
+-- sqlfmt-corpus-separator --
+
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY z DESC), x, y, z
+FROM t
+ORDER BY y, z DESC, x;
 
 -- sqlfmt-corpus-separator --
 
@@ -71469,6 +74527,182 @@ SELECT exp(ln(2::decimal(15, 5)))
 
 -- sqlfmt-corpus-separator --
 
+SELECT extract(day FROM DATE '2010-09-28')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(day FROM TIMESTAMP '2010-09-28 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(day from time '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(dayofweek FROM DATE '2010-09-28')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(dayofweek FROM TIMESTAMP '2010-09-28 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(dayofyear FROM DATE '2010-09-28')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(dayofyear FROM TIMESTAMP '2010-09-28 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(epoch FROM INTERVAL '10:20.30' MINUTE TO SECOND)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(epoch FROM TIMESTAMP '2010-01-10 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(epoch from time '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour FROM '123m')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour FROM INTERVAL '123' MINUTE)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour FROM TIME '12:00:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour FROM TIMESTAMP '2010-01-10 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour from '2016-02-10 19:46:33.306157519-04'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hour from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(hours from '2016-02-10 19:46:33.306157519-04'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(microsecond FROM TIME '12:00:00.123456')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(microsecond FROM TIMESTAMP '2010-01-10 12:13:14.123456')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(microsecond from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(millisecond FROM INTERVAL '20.3040' SECOND)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(millisecond FROM TIME '12:00:00.123456')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(millisecond FROM TIMESTAMP '2010-01-10 12:13:14.123456')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(millisecond from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(minute FROM INTERVAL '23:10' MINUTE TO SECOND)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(minute FROM TIME '12:30:00')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(minute FROM TIMESTAMP '2010-01-10 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(minute from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(month FROM DATE '2010-09-28')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(month FROM TIMESTAMP '2010-09-28 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(nansecond from '2001-04-10 12:04:59.34565423'::timestamp)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(nansecond from '2001-04-10 12:04:59.34565423'::timestamptz)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(quarter FROM DATE '2010-09-28')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(quarter FROM TIMESTAMP '2010-09-28 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(second FROM INTERVAL '10:20.30' MINUTE TO SECOND)
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(second FROM TIME '12:00:30')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(second FROM TIMESTAMP '2010-01-10 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(second from time '12:01:02.345678')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(week FROM DATE '2010-01-14')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(week FROM TIMESTAMP '2010-01-14 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(year FROM '2010-09-28 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(year FROM '2010-09-28')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(year FROM DATE '2010-09-28')
+
+-- sqlfmt-corpus-separator --
+
+SELECT extract(year FROM TIMESTAMP '2010-09-28 12:13:14.1')
+
+-- sqlfmt-corpus-separator --
+
 SELECT f, f::string FROM vals
 
 -- sqlfmt-corpus-separator --
@@ -71653,6 +74887,11 @@ SELECT f1 FROM float8_tbl EXCEPT SELECT f1 FROM int4_tbl ORDER BY 1
 -- sqlfmt-corpus-separator --
 
 SELECT f1 FROM float8_tbl INTERSECT SELECT f1 FROM int4_tbl ORDER BY 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT f1 FROM t1
+WHERE f1 IN (SELECT ROW_NUMBER() OVER () FROM t2);
 
 -- sqlfmt-corpus-separator --
 
@@ -73373,6 +76612,10 @@ SELECT foo.a FROM abc AS foo (foo1)
 -- sqlfmt-corpus-separator --
 
 SELECT foo.a, a, column2, foo.column2 FROM (VALUES (1, 'one'), (2, 'two'), (3, 'three')) AS foo (a)
+
+-- sqlfmt-corpus-separator --
+
+SELECT foo.bar()
 
 -- sqlfmt-corpus-separator --
 
@@ -75447,6 +78690,10 @@ WHERE mz_catalog.mz_relations.name = 'a'
 
 -- sqlfmt-corpus-separator --
 
+SELECT information_schema._pg_expandarray()
+
+-- sqlfmt-corpus-separator --
+
 SELECT information_schema._pg_expandarray(ARRAY['a'])
 
 -- sqlfmt-corpus-separator --
@@ -75691,6 +78938,10 @@ SELECT json_build_array('\x0001'::BYTEA)
 
 -- sqlfmt-corpus-separator --
 
+SELECT json_build_array()
+
+-- sqlfmt-corpus-separator --
+
 SELECT json_build_array(1,'1'::JSON,1.2,NULL,ARRAY['x','y'])
 
 -- sqlfmt-corpus-separator --
@@ -75731,6 +78982,10 @@ SELECT json_build_object('{1,2,3}'::int[],3)
 -- sqlfmt-corpus-separator --
 
 SELECT json_build_object((1,2),3)
+
+-- sqlfmt-corpus-separator --
+
+SELECT json_build_object()
 
 -- sqlfmt-corpus-separator --
 
@@ -76050,6 +79305,10 @@ SELECT jsonb_build_array('\x0001'::BYTEA)
 
 -- sqlfmt-corpus-separator --
 
+SELECT jsonb_build_array()
+
+-- sqlfmt-corpus-separator --
+
 SELECT jsonb_build_array(1, 2, 3)
 
 -- sqlfmt-corpus-separator --
@@ -76090,6 +79349,10 @@ SELECT jsonb_build_object('a',2,'b',4)
 -- sqlfmt-corpus-separator --
 
 SELECT jsonb_build_object('a',null,'b',4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT jsonb_build_object()
 
 -- sqlfmt-corpus-separator --
 
@@ -76510,6 +79773,10 @@ SELECT k FROM kv ORDER BY v
 -- sqlfmt-corpus-separator --
 
 SELECT k FROM kv WHERE avg(k) > 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT k FROM kv where v = transaction_timestamp()
 
 -- sqlfmt-corpus-separator --
 
@@ -77098,6 +80365,10 @@ SELECT length(concat(''))
 -- sqlfmt-corpus-separator --
 
 SELECT length(concat(NULL))
+
+-- sqlfmt-corpus-separator --
+
+SELECT length(gen_random_uuid()::BYTES), gen_random_uuid() = gen_random_uuid()
 
 -- sqlfmt-corpus-separator --
 
@@ -78600,6 +81871,14 @@ SELECT mz_indexes.name, mz_roles.name
 
 -- sqlfmt-corpus-separator --
 
+SELECT mz_internal.is_rbac_enabled()
+
+-- sqlfmt-corpus-separator --
+
+SELECT mz_internal.is_rbac_enabled();
+
+-- sqlfmt-corpus-separator --
+
 SELECT mz_internal.make_mz_aclitem('p', 'u2', 'CREATE')
 
 -- sqlfmt-corpus-separator --
@@ -78757,6 +82036,10 @@ SELECT mz_internal.mz_aclitem_grantor(mz_internal.make_mz_aclitem('u1', 'u2', 'D
 -- sqlfmt-corpus-separator --
 
 SELECT mz_internal.mz_aclitem_privileges(mz_internal.make_mz_aclitem('u1', 'u2', 'DELETE'))
+
+-- sqlfmt-corpus-separator --
+
+SELECT mz_internal.mz_minimal_name_qualification(COALESCE(pg_catalog.string_to_array(pg_catalog."current_role"(), pg_catalog."user"()), COALESCE(mz_internal.mz_normalize_object_name(NULL), pg_catalog.regexp_match(CAST(0 AS text), CAST(0 AS text)))), mz_catalog.mz_version()) AS c1;
 
 -- sqlfmt-corpus-separator --
 
@@ -78933,6 +82216,18 @@ SELECT mz_internal.mz_schema_oid(NULL) IS NULL
 -- sqlfmt-corpus-separator --
 
 SELECT mz_internal.mz_type_name(18::oid)
+
+-- sqlfmt-corpus-separator --
+
+SELECT mz_now() = mz_now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT mz_now() AS OF 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT mz_now() LIMIT 0
 
 -- sqlfmt-corpus-separator --
 
@@ -80182,6 +83477,10 @@ SELECT name, unnest(privileges)::text FROM mz_views WHERE name = 'v'
 
 -- sqlfmt-corpus-separator --
 
+SELECT noexist()
+
+-- sqlfmt-corpus-separator --
+
 SELECT noexist.pg_catalog.abs(1)
 
 -- sqlfmt-corpus-separator --
@@ -80191,6 +83490,82 @@ SELECT noexist.pg_catalog.mod(7, 4)
 -- sqlfmt-corpus-separator --
 
 SELECT nonexistent.* IS NOT TRUE
+
+-- sqlfmt-corpus-separator --
+
+SELECT now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() + '1m'::interval > now(), now() + '1m'::interval >= now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() + INTERVAL '100' HOUR > now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() + null;
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - (SELECT * from start_time) >= INTERVAL '3 sec';
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - (SELECT * from start_time) >= INTERVAL '5 sec';
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - current_date()::timestamptz < interval '24h10s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - current_timestamp = interval '0s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - current_timestamp() = interval '0s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - statement_timestamp() < interval '10s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - timestamp '2015-06-13' > interval '100h'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() - transaction_timestamp() = interval '0s'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() < now() + '1m'::interval, now() <= now() + '1m'::interval
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() = now()::timestamp, now()::timestamp = now()
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() > timestamp '2015-06-13 00:00:00'
+
+-- sqlfmt-corpus-separator --
+
+SELECT now() AS OF 1;
+
+-- sqlfmt-corpus-separator --
+
+SELECT now()::timestamp - now(), now() - now()::timestamp
+
+-- sqlfmt-corpus-separator --
+
+SELECT now()::timestamp < now(), now() < now()::timestamp
+
+-- sqlfmt-corpus-separator --
+
+SELECT now()::timestamp <= now(), now() <= now()::timestamp
 
 -- sqlfmt-corpus-separator --
 
@@ -80809,7 +84184,17 @@ WHERE peeps.peep = age.peep
 
 -- sqlfmt-corpus-separator --
 
+SELECT pg_backend_pid() > 0
+
+-- sqlfmt-corpus-separator --
+
 SELECT pg_catalog.abs(1)
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_catalog.inet_client_addr(), pg_catalog.inet_client_port(), pg_catalog.inet_server_addr(), pg_catalog.inet_server_port()
+FROM pg_class
+WHERE relname = 'pg_constraint'
 
 -- sqlfmt-corpus-separator --
 
@@ -80822,6 +84207,10 @@ SELECT pg_catalog.length('hello')
 -- sqlfmt-corpus-separator --
 
 SELECT pg_catalog.mod(7, 4)
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_catalog.pg_client_encoding()
 
 -- sqlfmt-corpus-separator --
 
@@ -80916,6 +84305,20 @@ SELECT pg_catalog.pg_get_viewdef(0, false)
 -- sqlfmt-corpus-separator --
 
 SELECT pg_catalog.pg_get_viewdef(0, true)
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_catalog.pg_get_viewdef(NULL) AS c2
+FROM (SELECT DISTINCT mz_internal.mz_normalize_schema_name(NULL) AS c0,
+                      mz_internal.aclitem_grantee(pg_catalog.makeaclitem(0,
+                                                                         1,
+                                                                         CAST(0 AS text),
+                                                                         FALSE)) AS c1,
+                      CAST(0 AS uint2) AS c2,
+                      30 AS c3,
+                      53 AS c4,
+                      47 AS c5
+      WHERE CAST(0 AS bpchar) ~ pg_catalog."user"()) AS subq_2;
 
 -- sqlfmt-corpus-separator --
 
@@ -81140,6 +84543,14 @@ SELECT pg_has_role((SELECT oid FROM mz_roles WHERE name = 'joe'), (SELECT oid FR
 -- sqlfmt-corpus-separator --
 
 SELECT pg_has_role(NULL, 'materialize', 'USAGE')
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_is_in_recovery()
+
+-- sqlfmt-corpus-separator --
+
+SELECT pg_is_xlog_replay_paused()
 
 -- sqlfmt-corpus-separator --
 
@@ -81567,11 +84978,19 @@ SELECT pg_typeof(max(column1)) FROM (VALUES (1::int2), (-1::int2));
 
 -- sqlfmt-corpus-separator --
 
+SELECT pg_typeof(mz_now()), pg_typeof(1::mz_timestamp)
+
+-- sqlfmt-corpus-separator --
+
 SELECT pg_typeof(sum(b)) FROM t_bigint
 
 -- sqlfmt-corpus-separator --
 
 SELECT pg_typeof(text '1')
+
+-- sqlfmt-corpus-separator --
+
+SELECT pi()
 
 -- sqlfmt-corpus-separator --
 
@@ -81623,6 +85042,42 @@ SELECT pk FROM tab0 WHERE col0 <= 88 AND (((col4 <= 97.11 AND col0 IN (11,85,87,
 -- sqlfmt-corpus-separator --
 
 SELECT pk, col0 FROM tab1 WHERE (col3 BETWEEN 66 AND 87) ORDER BY 1 DESC
+
+-- sqlfmt-corpus-separator --
+
+SELECT position('a' in 'high')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position('ig' in 'high')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position('str' IN 42)
+
+-- sqlfmt-corpus-separator --
+
+SELECT position('str' IN NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT position('ः॑' IN 'रः॑')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position(42 IN 'str')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position(NULL IN 'str')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position(e'\u0903\u0951' IN e'\u0930\u0903\u0951')
+
+-- sqlfmt-corpus-separator --
+
+SELECT position(vccol1 IN vccol2) FROM positiontest
 
 -- sqlfmt-corpus-separator --
 
@@ -81727,6 +85182,10 @@ SELECT pow(9::decimal(15, 5), 0.5::decimal(15, 5));
 -- sqlfmt-corpus-separator --
 
 SELECT pow(9::float, 0.5);
+
+-- sqlfmt-corpus-separator --
+
+SELECT pow(CAST (pi() AS DECIMAL), DECIMAL '2.0')
 
 -- sqlfmt-corpus-separator --
 
@@ -82213,7 +85672,52 @@ SELECT radians(-45.0), radians(45.0)
 
 -- sqlfmt-corpus-separator --
 
+SELECT random() * 0.0
+
+-- sqlfmt-corpus-separator --
+
 SELECT range_id, status, regexp_replace(detail, '[0-9]+', '', 'g') FROM crdb_internal.check_consistency(true, '\x02', '\xffff') WHERE range_id = 1
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (ORDER BY x DESC), dense_rank() OVER (ORDER BY x DESC), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (ORDER BY x), dense_rank() OVER (ORDER BY x), x FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (PARTITION BY NULL ORDER BY 10000), dense_rank() OVER (PARTITION BY NULL ORDER BY 10000) AS q, a1.x
+FROM t AS a1, t AS a2;
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (PARTITION BY NULL), dense_rank() OVER (PARTITION BY NULL) AS q, x, 'b'
+FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (PARTITION BY x ORDER BY x), dense_rank() OVER (PARTITION BY x ORDER BY x), x FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (PARTITION BY y ORDER BY x DESC), dense_rank() OVER (PARTITION BY y ORDER BY x DESC), x FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (PARTITION BY y ORDER BY x DESC, z), dense_rank() OVER (PARTITION BY y ORDER BY x DESC, z), x, y, z
+FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank() OVER (PARTITION BY y ORDER BY x), dense_rank() OVER (PARTITION BY y ORDER BY x), x FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT rank(x) OVER (ORDER BY x), dense_rank() OVER (ORDER BY x), x FROM t
+ORDER BY dense_rank;
 
 -- sqlfmt-corpus-separator --
 
@@ -83122,6 +86626,203 @@ FROM iffy_colnames;
 
 -- sqlfmt-corpus-separator --
 
+SELECT row_number()
+FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER ()
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (), row_number() OVER ()
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (), row_number() OVER () from t
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN CURRENT ROW AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN CURRENT ROW AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ORDER BY x DESC), x FROM t
+ORDER BY row_number
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ORDER BY x NULLS FIRST), x FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ORDER BY x NULLS LAST), x FROM t;
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ORDER BY x), x FROM t
+ORDER BY row_number
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (PARTITION BY NULL ORDER BY 10000) AS q, a1.x
+FROM t AS a1, t AS a2
+ORDER BY q DESC
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (PARTITION BY NULL) AS q, x, 'b'
+FROM t
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (PARTITION BY x ORDER BY x), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (PARTITION BY y ORDER BY x DESC), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (PARTITION BY y ORDER BY x), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 FOLLOWING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN 1 PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN CURRENT ROW AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN CURRENT ROW AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (RANGE UNBOUNDED PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN 1 FOLLOWING AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN 1 FOLLOWING AND CURRENT ROW)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN 1 PRECEDING AND 2 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN 2 FOLLOWING AND 1 FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN CURRENT ROW AND 1 PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED PRECEDING)
+
+-- sqlfmt-corpus-separator --
+
+SELECT row_number() OVER (ROWS UNBOUNDED FOLLOWING)
+
+-- sqlfmt-corpus-separator --
+
 SELECT rowid FROM t WHERE a = 10
 
 -- sqlfmt-corpus-separator --
@@ -83298,6 +86999,10 @@ SELECT seahash('\x666f6f626172'::bytea);
 -- sqlfmt-corpus-separator --
 
 SELECT seahash('foobar');
+
+-- sqlfmt-corpus-separator --
+
+SELECT session_user = session_user()
 
 -- sqlfmt-corpus-separator --
 
@@ -83526,6 +87231,10 @@ SELECT split_part('one', 'two')
 
 -- sqlfmt-corpus-separator --
 
+SELECT split_part()
+
+-- sqlfmt-corpus-separator --
+
 SELECT split_part(1, 2, 3)
 
 -- sqlfmt-corpus-separator --
@@ -83678,6 +87387,10 @@ SELECT strpos('', 'lo')
 
 -- sqlfmt-corpus-separator --
 
+SELECT strpos('hello world', 'world') = position('world' IN 'hello world')
+
+-- sqlfmt-corpus-separator --
+
 SELECT strpos('hello', '')
 
 -- sqlfmt-corpus-separator --
@@ -83714,7 +87427,20 @@ SELECT strpos(NULL, 'lo')
 
 -- sqlfmt-corpus-separator --
 
+SELECT strpos(version(), 'CockroachDB')
+
+-- sqlfmt-corpus-separator --
+
 SELECT subq_0.c3 AS c0, subq_0.c6 AS c1, subq_0.c4 AS c2, CASE WHEN (SELECT start_key FROM crdb_internal.ranges LIMIT 1 OFFSET 6) < CAST(NULLIF(pg_catalog.string_agg(CAST((SELECT start_key FROM crdb_internal.ranges LIMIT 1 OFFSET 7) AS BYTEA), CAST((SELECT pg_catalog.xor_agg(tgargs) FROM pg_catalog.pg_trigger) AS BYTEA)) OVER (PARTITION BY subq_0.c0 ORDER BY subq_0.c0, subq_0.c5, subq_0.c2), CAST(NULL AS BYTEA)) AS BYTEA) THEN subq_0.c6 ELSE subq_0.c6 END AS c3, subq_0.c2 AS c4, subq_0.c7 AS c5, CAST(COALESCE(subq_0.c7, subq_0.c7) AS INT8) AS c6 FROM (SELECT ref_0.table_name AS c0, ref_0.table_catalog AS c1, ref_0.table_type AS c2, (SELECT rolcreatedb FROM pg_catalog.pg_roles LIMIT 1 OFFSET 79) AS c3, ref_0.table_name AS c4, ref_0.version AS c5, ref_0.version AS c6, ref_0.version AS c7 FROM information_schema.tables AS ref_0 WHERE (ref_0.version IS NOT NULL) OR (pg_catalog.set_masklen(CAST(CAST(NULL AS INET) AS INET), CAST(ref_0.version AS INT8)) != (SELECT pg_catalog.max(client_addr) FROM pg_catalog.pg_stat_activity)) LIMIT 101) AS subq_0 WHERE subq_0.c7 IS NOT NULL
+
+-- sqlfmt-corpus-separator --
+
+SELECT subq_2.c2 AS c5,
+       mz_catalog.mz_now() AS c7
+FROM (SELECT CAST('62143-12-31' AS date) + '200000 YEARS' AS c2
+      FROM (SELECT
+            FROM (SELECT FROM t) AS subq_0) AS subq_1
+      WHERE pg_catalog."current_timestamp"() = pg_catalog.pg_postmaster_start_time()) AS subq_2;
 
 -- sqlfmt-corpus-separator --
 
@@ -84483,6 +88209,10 @@ SELECT textrecv('abc')
 
 -- sqlfmt-corpus-separator --
 
+SELECT textrecv()
+
+-- sqlfmt-corpus-separator --
+
 SELECT time '01:02:03.04'::interval;
 
 -- sqlfmt-corpus-separator --
@@ -84575,6 +88305,10 @@ SELECT timezone_offset('', '2023-11-05T06:00:00+00')
 
 -- sqlfmt-corpus-separator --
 
+SELECT timezone_offset('-05', now())
+
+-- sqlfmt-corpus-separator --
+
 SELECT timezone_offset('America/Denver', '2000-06-01 00:00:00 UTC'), timezone_offset('America/Denver', '2000-12-01 00:00:00 UTC')
 
 -- sqlfmt-corpus-separator --
@@ -84619,6 +88353,10 @@ SELECT timezone_offset('America/New_York', '2023-11-05T06:00:00+00')
 
 -- sqlfmt-corpus-separator --
 
+SELECT timezone_offset('America/New_Yorks', now())
+
+-- sqlfmt-corpus-separator --
+
 SELECT timezone_offset('Europe/Vienna', '2023-06-05T06:00:00 CEST')
 
 -- sqlfmt-corpus-separator --
@@ -84652,6 +88390,10 @@ SELECT timezone_offset('Europe/Vienna', '2023-11-05T06:00:00.123+00')
 -- sqlfmt-corpus-separator --
 
 SELECT timezone_offset('Europe/Vienna', NULL)
+
+-- sqlfmt-corpus-separator --
+
+SELECT timezone_offset('PST', now())
 
 -- sqlfmt-corpus-separator --
 
@@ -84800,6 +88542,10 @@ SELECT to_hex(2147483647)
 -- sqlfmt-corpus-separator --
 
 SELECT to_ip('')
+
+-- sqlfmt-corpus-separator --
+
+SELECT to_ip()
 
 -- sqlfmt-corpus-separator --
 
@@ -85609,6 +89355,10 @@ SELECT u.a FROM t JOIN u ON t.d = u.d AND t.a = u.a WHERE t.e = 5
 
 -- sqlfmt-corpus-separator --
 
+SELECT unique_rowid() < unique_rowid()
+
+-- sqlfmt-corpus-separator --
+
 SELECT unnest FROM unnest(ARRAY[1,2,3])
 
 -- sqlfmt-corpus-separator --
@@ -85710,6 +89460,14 @@ SELECT usename, useconfig::text FROM pg_user;
 -- sqlfmt-corpus-separator --
 
 SELECT usename, usesysid, usecreatedb, usesuper, userepl, usebypassrls, passwd, valuntil, useconfig FROM pg_user;
+
+-- sqlfmt-corpus-separator --
+
+SELECT user() = current_user()
+
+-- sqlfmt-corpus-separator --
+
+SELECT uuid_v4() != uuid_v4(), length(uuid_v4())
 
 -- sqlfmt-corpus-separator --
 
@@ -86639,6 +90397,18 @@ UPDATE d SET x = x + 1 WHERE x + sqrt(x) >= 2 + .1
 
 -- sqlfmt-corpus-separator --
 
+UPDATE dec SET d = mz_now()
+
+-- sqlfmt-corpus-separator --
+
+UPDATE dt SET t = mz_now()
+
+-- sqlfmt-corpus-separator --
+
+UPDATE dt SET t = now()
+
+-- sqlfmt-corpus-separator --
+
 UPDATE float4_tbl SET f1 = float4_tbl.f1 * '-1' WHERE float4_tbl.f1 > '0.0'
 
 -- sqlfmt-corpus-separator --
@@ -87031,6 +90801,38 @@ WITH options AS
 )
 SELECT exp(sum(ln(hi - low + 1)))::int
 FROM options;
+
+-- sqlfmt-corpus-separator --
+
+WITH parsed AS (
+  SELECT regexp_split_to_table(input, '\n') AS line FROM aoc_1204
+),
+numbers AS (
+  SELECT split_part(line,':',1) AS card_id,
+         replace(split_part(line,':',2),'|','') AS nrs
+  FROM parsed
+),
+arr AS (
+  SELECT card_id,
+         nrs,
+         regexp_split_to_array(ltrim(rtrim(nrs)),'\s') AS nrs_arr
+  FROM numbers
+),
+winning AS (
+  SELECT card_id,
+         unnest(array_remove(nrs_arr,'')) nr,
+         ROW_NUMBER() OVER (PARTITION BY card_id) AS row_num
+  FROM arr
+  GROUP BY card_id, nr HAVING COUNT(*)>1
+  ORDER BY card_id
+),
+winning_points AS (
+  SELECT ROUND(EXP(SUM(LN(CASE WHEN row_num = 1 THEN row_num ELSE 2 END)))) AS points
+  FROM winning
+  GROUP BY card_id
+)
+SELECT SUM(points)
+FROM winning_points;
 
 -- sqlfmt-corpus-separator --
 
@@ -88768,6 +92570,35 @@ FROM t
 
 -- sqlfmt-corpus-separator --
 
+WITH t (x) AS (VALUES ('a'))
+SELECT dense_rank() OVER (PARTITION BY NULL) AS q, x, 'b'
+FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'))
+SELECT row_number() OVER (PARTITION BY NULL) AS q, x, 'b'
+FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'))
+SELECT row_number() OVER (), row_number() OVER () from t
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('b'), ('c'))
+SELECT dense_rank() OVER (ORDER BY x DESC), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('b'), ('c'))
+SELECT dense_rank() OVER (ORDER BY x), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
 WITH t (x) AS (VALUES ('a'), ('b'), ('b'), ('c'))
 SELECT lag(x) OVER (ORDER BY x DESC), x FROM t
 ORDER BY x, lag
@@ -88793,6 +92624,18 @@ ORDER BY x, lead
 -- sqlfmt-corpus-separator --
 
 WITH t (x) AS (VALUES ('a'), ('b'), ('b'), ('c'), ('c'))
+SELECT dense_rank() OVER (ORDER BY x DESC), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('b'), ('c'), ('c'))
+SELECT dense_rank() OVER (ORDER BY x), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('b'), ('c'), ('c'))
 SELECT lag(x) OVER (ORDER BY x DESC), x FROM t
 ORDER BY x, lag
 
@@ -88817,6 +92660,36 @@ ORDER BY x, lead
 -- sqlfmt-corpus-separator --
 
 WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT * FROM t
+WHERE row_number() over () > 1;
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT * FROM t AS v JOIN t ON row_number() over () > 1;
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT DISTINCT ON (row_number() OVER ()) *
+FROM t
+ORDER BY row_number() OVER ()
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT dense_rank() OVER (ORDER BY x DESC), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT dense_rank() OVER (ORDER BY x), x FROM t
+ORDER BY dense_rank
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
 SELECT lag(x) OVER (ORDER BY x DESC), x FROM t
 ORDER BY x, lag
 
@@ -88837,6 +92710,52 @@ ORDER BY x, lead
 WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
 SELECT lead(x) OVER (ORDER BY x), x FROM t
 ORDER BY x, lead
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT row_number() FROM t
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT row_number() OVER (ORDER BY x DESC), x FROM t
+ORDER BY row_number
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), ('b'), ('c'))
+SELECT row_number() OVER (ORDER BY x), x FROM t
+ORDER BY row_number
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), (NULL), ('b'), ('c'))
+SELECT row_number() OVER (ORDER BY x NULLS FIRST), x FROM t;
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x) AS (VALUES ('a'), (NULL), ('b'), ('c'))
+SELECT row_number() OVER (ORDER BY x NULLS LAST), x FROM t;
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (VALUES ('a', 1), ('b', 2), ('c', 1))
+SELECT dense_rank() OVER (PARTITION BY NULL ORDER BY 10000) AS q, a1.x
+FROM t AS a1, t AS a2
+ORDER BY q DESC, a1.x DESC
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (VALUES ('a', 1), ('b', 2), ('c', 1))
+SELECT dense_rank() OVER (PARTITION BY x ORDER BY x), x FROM t
+ORDER BY dense_rank, x
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (VALUES ('a', 1), ('b', 2), ('c', 1))
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY x DESC), x FROM t
+ORDER BY dense_rank, x
 
 -- sqlfmt-corpus-separator --
 
@@ -88878,6 +92797,31 @@ ORDER BY x, lead
 
 -- sqlfmt-corpus-separator --
 
+WITH t (x, y) AS (VALUES ('a', 1), ('b', 2), ('c', 1))
+SELECT row_number() OVER (PARTITION BY NULL ORDER BY 10000) AS q, a1.x
+FROM t AS a1, t AS a2
+ORDER BY q DESC
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (VALUES ('a', 1), ('b', 2), ('c', 1))
+SELECT row_number() OVER (PARTITION BY x ORDER BY x), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (VALUES ('a', 1), ('b', 2), ('c', 1))
+SELECT row_number() OVER (PARTITION BY y ORDER BY x DESC), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (VALUES ('a', 98), ('b', 99), ('c', 98))
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY x), x FROM t
+ORDER BY dense_rank, x
+
+-- sqlfmt-corpus-separator --
+
 WITH t (x, y) AS (VALUES ('a', 98), ('b', 99), ('c', 98))
 SELECT lag(x) OVER (PARTITION BY y ORDER BY x), x FROM t
 ORDER BY x, lag
@@ -88890,6 +92834,18 @@ ORDER BY x, lead
 
 -- sqlfmt-corpus-separator --
 
+WITH t (x, y) AS (VALUES ('a', 98), ('b', 99), ('c', 98))
+SELECT row_number() OVER (PARTITION BY y ORDER BY x), x FROM t
+ORDER BY row_number, x
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y) AS (VALUES ('a', 98), ('b', 99), ('c', 98), ('a', 98), ('a', 99))
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY x), x FROM t
+ORDER BY dense_rank, x
+
+-- sqlfmt-corpus-separator --
+
 WITH t (x, y) AS (VALUES ('a', 98), ('b', 99), ('c', 98), ('a', 98), ('a', 99))
 SELECT lag(x) OVER (PARTITION BY y ORDER BY x), x FROM t
 ORDER BY x, lag
@@ -88899,6 +92855,26 @@ ORDER BY x, lag
 WITH t (x, y) AS (VALUES ('a', 98), ('b', 99), ('c', 98), ('a', 98), ('a', 99))
 SELECT lead(x) OVER (PARTITION BY y ORDER BY x), x FROM t
 ORDER BY x, lead
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y, z) AS (VALUES (1, 'a', 1.0), (2, 'a', 1.0), (2, 'a', 1.0), (3, 'a', 1.0), (4, 'b', 0), (4, 'b', 1), (1, 'c', 'NaN'), (2, 'c', 'NaN'), (3, 'c', 1.0))
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY x DESC, z), x, y, z
+FROM t
+ORDER BY y, x DESC, z
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y, z) AS (VALUES (1, 'a', 1.0), (2, 'a', 1.0), (2, 'a', 1.0), (3, 'a', 1.0), (4, 'b', 0), (4, 'b', 1), (1, 'c', 'NaN'), (2, 'c', 'NaN'), (3, 'c', 1.0))
+SELECT dense_rank() OVER (PARTITION BY y ORDER BY z DESC), x, y, z
+FROM t
+ORDER BY y, z DESC, x
+
+-- sqlfmt-corpus-separator --
+
+WITH t (x, y, z) AS (VALUES (1, 'a', 1.0), (2, 'a', 1.0), (2, 'a', 1.0), (3, 'a', 1.0), (4, 'b', 0), (4, 'b', 1), (1, 'c', 'NaN'), (2, 'c', 'NaN'), (3, 'c', 1.0))
+SELECT rank() OVER (PARTITION BY y ORDER BY z DESC), dense_rank() OVER (PARTITION BY y ORDER BY z DESC), x, y, z
+FROM t;
 
 -- sqlfmt-corpus-separator --
 
@@ -89041,6 +93017,22 @@ select * from
 -- sqlfmt-corpus-separator --
 
 create materialized view quux as select distinct on (c) c, x from quux_raw where c is not null
+
+-- sqlfmt-corpus-separator --
+
+create materialized view temp as select 1 where current_timestamp() > current_timestamp()
+
+-- sqlfmt-corpus-separator --
+
+create materialized view temp as select 1 where current_timestamp() > mz_now()
+
+-- sqlfmt-corpus-separator --
+
+create materialized view temp as select 1 where mz_version() = ''
+
+-- sqlfmt-corpus-separator --
+
+create materialized view temp as select mz_version()
 
 -- sqlfmt-corpus-separator --
 
@@ -89242,6 +93234,10 @@ create view bar as select * from y, rows from (generate_series(1, 2), jsonb_arra
 
 -- sqlfmt-corpus-separator --
 
+create view events as select * from events_over_time where mz_now() >= column2;
+
+-- sqlfmt-corpus-separator --
+
 create view events_over_time as values ('joe', 100), ('mike', 101), ('sam', 200), ('end', 18446744073709551615);
 
 -- sqlfmt-corpus-separator --
@@ -89281,6 +93277,10 @@ create view s4 AS SELECT a, count(*) FROM t GROUP BY a HAVING a > (SELECT count(
 -- sqlfmt-corpus-separator --
 
 create view test3 as select a, b, count(*) as c from test2 group by a, b;
+
+-- sqlfmt-corpus-separator --
+
+create view v as select mz_now() as x;
 
 -- sqlfmt-corpus-separator --
 
@@ -89499,6 +93499,45 @@ from
    from int8_tbl) sq0
   join
   int4_tbl i4 on dummy = i4.f1
+
+-- sqlfmt-corpus-separator --
+
+select
+  96 as c0,
+  subq_0."c1" as c1
+from
+  (select
+        ref_0."name" as c0,
+        21 as c1
+      from
+        mz_introspection.mz_dataflow_operator_dataflows as ref_0
+      where (select pg_catalog.count("batches") from mz_introspection.mz_arrangement_sizes_per_worker)
+           = cast(coalesce((select "a" from public.t limit 1 offset 6)
+            ,
+          pg_catalog.pg_backend_pid()) as int4)) as subq_0
+where (subq_0."c1" <= subq_0."c1")
+  or (pg_catalog.mod(
+      CAST(cast(null as uint2) as uint2),
+      CAST(pg_catalog.mod(
+        CAST(pg_catalog.mod(
+          CAST(cast(nullif(cast(null as uint2),
+            cast(null as uint2)) as uint2) as uint2),
+          CAST(cast(nullif(cast(null as uint2),
+            cast(null as uint2)) as uint2) as uint2)) as uint2),
+        CAST(pg_catalog.mod(
+          CAST(case when (cast(null as uuid) <= (select "id" from mz_introspection.mz_active_peeks limit 1 offset 1)
+                  )
+              or ((false)
+                and (subq_0."c1" is not NULL)) then cast(null as uint2) else cast(null as uint2) end
+             as uint2),
+          CAST(cast(null as uint2) as uint2)) as uint2)) as uint2)) <> cast(nullif(cast(nullif(cast(null as uint2),
+        pg_catalog.mod(
+          CAST(case when (select "count" from mz_introspection.mz_compute_operator_durations_histogram limit 1 offset 6)
+                 > cast(null as numeric) then cast(null as uint2) else cast(null as uint2) end
+             as uint2),
+          CAST(cast(null as uint2) as uint2))) as uint2),
+      cast(null as uint2)) as uint2))
+limit 99;
 
 -- sqlfmt-corpus-separator --
 
@@ -90905,6 +94944,10 @@ select count(distinct utc_offset) >= 24 as ok from pg_timezone_names
 
 -- sqlfmt-corpus-separator --
 
+select distinct 'postgres', current_user() from mz_internal.mz_cluster_replica_metrics;
+
+-- sqlfmt-corpus-separator --
+
 select distinct q1 from
   (select distinct * from int8_tbl i81
    union all
@@ -91035,6 +95078,72 @@ select log(1::numeric, 2::numeric);
 
 -- sqlfmt-corpus-separator --
 
+select max(1) over (partition by 1 order by 1, 1)
+from
+  (select
+        subq_2."c9" as c0
+      from
+        (select
+              subq_1."c0" as c0,
+              subq_1."c2" as c1,
+              subq_1."c4" as c2,
+              subq_1."c2" as c3,
+              subq_1."c1" as c4,
+              subq_1."c0" as c5,
+              subq_1."c5" as c6,
+              subq_1."c0" as c7,
+              subq_1."c5" as c8,
+              subq_1."c1" as c9,
+              subq_1."c2" as c10,
+              87 as c11,
+              subq_1."c1" as c12
+            from
+              (select
+                    subq_0."c1" as c0,
+                    subq_0."c0" as c1,
+                    subq_0."c1" as c2,
+                    subq_0."c0" as c3,
+                    subq_0."c1" as c4,
+                    subq_0."c0" as c5
+                  from
+                    (select
+                          ref_0."form_of_use" as c0,
+                          ref_0."default_collate_schema" as c1
+                        from
+                          information_schema.character_sets as ref_0
+                        ) as subq_0
+                    ) as subq_1
+            ) as subq_2
+      ) as subq_3
+where (case when (((select "collection_timestamp" from mz_internal.mz_storage_usage_by_shard limit 1 offset 4)
+          ) < ((select pg_catalog.min("occurred_at") from mz_internal.mz_source_status_history)
+          ))
+      and ((case when subq_3."c0" is NULL then TIMESTAMPTZ '2023-01-01 01:23:45+06' else TIMESTAMPTZ '2023-01-01 01:23:45+06' end
+          ) <> (pg_catalog.now())) then case when (((select pg_catalog.sum("connection_id") from mz_internal.mz_sessions)
+            ) - (0::uint8)) >= ((select "worker_id" from mz_introspection.mz_arrangement_sharing_per_worker limit 1 offset 3)
+          ) then numrange(0,0) else numrange(0,0) end
+       else case when (((select pg_catalog.sum("connection_id") from mz_internal.mz_sessions)
+            ) - (0::uint8)) >= ((select "worker_id" from mz_introspection.mz_arrangement_sharing_per_worker limit 1 offset 3)
+          ) then numrange(0,0) else numrange(0,0) end
+       end
+    ) >= (case when (0::uint4) > (pg_catalog.mod(
+        CAST((select 1 from mz_internal.mz_subscriptions limit 1 offset 2)
+           as uint4),
+        CAST((4294967295::uint4) * (2::uint4) as uint4))) then case when (mz_catalog.map_length(
+          mz_internal.mz_role_oid_memberships())) = ((select pg_catalog.min("rolconnlimit") from pg_catalog.pg_roles)
+          ) then case when (null::uint4) = (null::uint4) then numrange(0,0) else numrange(0,0) end
+         else case when (null::uint4) = (null::uint4) then numrange(0,0) else numrange(0,0) end
+         end
+       else case when (mz_catalog.map_length(
+          mz_internal.mz_role_oid_memberships())) = ((select pg_catalog.min("rolconnlimit") from pg_catalog.pg_roles)
+          ) then case when (null::uint4) = (null::uint4) then numrange(0,0) else numrange(0,0) end
+         else case when (null::uint4) = (null::uint4) then numrange(0,0) else numrange(0,0) end
+         end
+       end
+    );
+
+-- sqlfmt-corpus-separator --
+
 select max(a) from (select a from unnest(ARRAY['NaN'::numeric(39,5), 1.4::numeric(39,5), 1.8::numeric(39,4)]) a);
 
 -- sqlfmt-corpus-separator --
@@ -91060,6 +95169,10 @@ select min(a) from (select a from unnest(ARRAY[]::numeric[]) a);
 -- sqlfmt-corpus-separator --
 
 select min(a) from t_pk where a between 38 and 195 and a = (select a from t where a = 1308);
+
+-- sqlfmt-corpus-separator --
+
+select mz_now() < '3000-01-01';
 
 -- sqlfmt-corpus-separator --
 
@@ -91168,6 +95281,10 @@ select pg_typeof(coalesce(1::uint4, 1::int, 1::numeric));
 -- sqlfmt-corpus-separator --
 
 select pg_typeof(coalesce(1::uint8, 1::int));
+
+-- sqlfmt-corpus-separator --
+
+select position(strcol1 IN strcol2) from positiontest;
 
 -- sqlfmt-corpus-separator --
 
@@ -91297,6 +95414,14 @@ select row(4,2)::testtype8 > (row(row(4,1))::testtype6).inner;
 -- sqlfmt-corpus-separator --
 
 select row(4,2)::testtype8 > (row(row(4,2))::testtype6).inner;
+
+-- sqlfmt-corpus-separator --
+
+select row_number() ignore nulls over();
+
+-- sqlfmt-corpus-separator --
+
+select row_number() ignore nulls respect nulls over();
 
 -- sqlfmt-corpus-separator --
 
@@ -91744,3 +95869,7 @@ with table_privileges as (
 )
 select t.*
 from table_privileges t
+
+-- sqlfmt-corpus-separator --
+
+with v as (select mz_now() < '3000-01-01') select * from v;
