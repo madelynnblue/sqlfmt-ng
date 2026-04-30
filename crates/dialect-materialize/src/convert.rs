@@ -1,7 +1,7 @@
 use mz_sql_parser::ast::{
-    display::AstDisplay, AsOf, Cte, CteBlock, Distinct, Expr, Ident, OrderByExpr, Query, Raw,
-    Select, SelectItem, SelectStatement, SetExpr, Statement, TableAlias, TableFactor,
-    TableWithJoins, Value,
+    display::AstDisplay, AsOf, Cte, CteBlock, Distinct, Expr, Function, FunctionArgs, Ident, Join,
+    JoinConstraint, JoinOperator, OrderByExpr, Query, Raw, Select, SelectItem, SelectStatement,
+    SetExpr, SetOperator, Statement, TableAlias, TableFactor, TableWithJoins, Value, Values,
 };
 use sqlfmt_ir::{Clause, Node};
 
@@ -44,14 +44,8 @@ fn query_to_node(query: &Query<Raw>) -> Node {
         };
     }
 
-    let body_node = match &query.body {
-        SetExpr::Select(select) => select_to_node(select, query),
-        _ => {
-            return Node::Text {
-                value: format!("{query}"),
-            }
-        }
-    };
+    let body_node = set_expr_to_node(&query.body);
+    let body_node = apply_order_by_limit(body_node, query);
 
     // Prepend simple CTEs if present.
     match &query.ctes {
@@ -98,7 +92,154 @@ fn cte_to_node(cte: &Cte<Raw>) -> Node {
     Node::Concat { items }
 }
 
-fn select_to_node(select: &Select<Raw>, query: &Query<Raw>) -> Node {
+fn set_expr_to_node(set_expr: &SetExpr<Raw>) -> Node {
+    match set_expr {
+        SetExpr::Select(select) => select_to_node(select),
+        SetExpr::Query(q) => Node::Wrap {
+            keyword: None,
+            open: "(".into(),
+            content: Box::new(query_to_node(q)),
+            close: ")".into(),
+        },
+        SetExpr::SetOperation {
+            op,
+            all,
+            left,
+            right,
+        } => {
+            let op_str = match (op, all) {
+                (SetOperator::Union, true) => "UNION ALL",
+                (SetOperator::Union, false) => "UNION",
+                (SetOperator::Except, true) => "EXCEPT ALL",
+                (SetOperator::Except, false) => "EXCEPT",
+                (SetOperator::Intersect, true) => "INTERSECT ALL",
+                (SetOperator::Intersect, false) => "INTERSECT",
+            };
+            Node::Infix {
+                op: op_str.into(),
+                items: vec![
+                    set_expr_to_node(left),
+                    set_expr_to_node(right),
+                ],
+            }
+        }
+        SetExpr::Values(v) => values_to_node(v),
+        // SHOW, TABLE: fall back to Display text.
+        _ => Node::Text {
+            value: format!("{set_expr}"),
+        },
+    }
+}
+
+fn values_to_node(v: &Values<Raw>) -> Node {
+    let row_nodes: Vec<Node> = v
+        .0
+        .iter()
+        .map(|row| {
+            let exprs: Vec<Node> = row.iter().map(expr_to_node).collect();
+            Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items: exprs,
+                    separator: None,
+                }),
+                close: ")".into(),
+            }
+        })
+        .collect();
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "VALUES".into(),
+            },
+            Node::Text { value: " ".into() },
+            Node::List {
+                items: row_nodes,
+                separator: None,
+            },
+        ],
+    }
+}
+
+/// Appends ORDER BY, LIMIT, and OFFSET clauses from `query` to `body_node`.
+/// If `body_node` is `Node::Clauses`, the clauses are appended directly.
+/// Otherwise, falls back to `Node::Text` for the full query display.
+fn apply_order_by_limit(body_node: Node, query: &Query<Raw>) -> Node {
+    if query.order_by.is_empty() && query.limit.is_none() && query.offset.is_none() {
+        return body_node;
+    }
+
+    let mut clauses: Vec<Clause> = Vec::new();
+
+    if !query.order_by.is_empty() {
+        let order_items: Vec<Node> = query.order_by.iter().map(order_by_expr_to_node).collect();
+        clauses.push(Clause {
+            keyword: "ORDER BY".into(),
+            body: Some(Box::new(Node::List {
+                items: order_items,
+                separator: None,
+            })),
+        });
+    }
+
+    match (&query.limit, &query.offset) {
+        (None, None) => {}
+        (None, Some(offset)) => {
+            clauses.push(Clause {
+                keyword: "OFFSET".into(),
+                body: Some(Box::new(expr_to_node(offset))),
+            });
+        }
+        (Some(limit), offset) if limit.with_ties => {
+            if let Some(off) = offset {
+                clauses.push(Clause {
+                    keyword: "OFFSET".into(),
+                    body: Some(Box::new(expr_to_node(off))),
+                });
+            }
+            clauses.push(Clause {
+                keyword: "FETCH FIRST".into(),
+                body: Some(Box::new(Node::Concat {
+                    items: vec![
+                        expr_to_node(&limit.quantity),
+                        Node::Text { value: " ".into() },
+                        Node::Keyword {
+                            value: "ROWS WITH TIES".into(),
+                        },
+                    ],
+                })),
+            });
+        }
+        (Some(limit), offset) => {
+            clauses.push(Clause {
+                keyword: "LIMIT".into(),
+                body: Some(Box::new(expr_to_node(&limit.quantity))),
+            });
+            if let Some(off) = offset {
+                clauses.push(Clause {
+                    keyword: "OFFSET".into(),
+                    body: Some(Box::new(expr_to_node(off))),
+                });
+            }
+        }
+    }
+
+    match body_node {
+        Node::Clauses { mut items } => {
+            items.extend(clauses);
+            Node::Clauses { items }
+        }
+        _ => {
+            // For non-Clauses bodies (SetOperation, etc.), fall back to text.
+            Node::Text {
+                value: format!("{query}"),
+            }
+        }
+    }
+}
+
+fn select_to_node(select: &Select<Raw>) -> Node {
     let mut clauses = Vec::new();
 
     // SELECT [DISTINCT | DISTINCT ON (...)] cols
@@ -183,64 +324,6 @@ fn select_to_node(select: &Select<Raw>, query: &Query<Raw>) -> Node {
         });
     }
 
-    // ORDER BY (lives on Query, not Select)
-    if !query.order_by.is_empty() {
-        let order_items: Vec<Node> = query.order_by.iter().map(order_by_expr_to_node).collect();
-        clauses.push(Clause {
-            keyword: "ORDER BY".into(),
-            body: Some(Box::new(Node::List {
-                items: order_items,
-                separator: None,
-            })),
-        });
-    }
-
-    // LIMIT / FETCH FIRST / OFFSET
-    // The ordering follows the Materialize AST Display:
-    //   - non-WITH TIES: LIMIT n [OFFSET m]
-    //   - WITH TIES:     [OFFSET m] FETCH FIRST n ROWS WITH TIES
-    match (&query.limit, &query.offset) {
-        (None, None) => {}
-        (None, Some(offset)) => {
-            clauses.push(Clause {
-                keyword: "OFFSET".into(),
-                body: Some(Box::new(expr_to_node(offset))),
-            });
-        }
-        (Some(limit), offset) if limit.with_ties => {
-            if let Some(off) = offset {
-                clauses.push(Clause {
-                    keyword: "OFFSET".into(),
-                    body: Some(Box::new(expr_to_node(off))),
-                });
-            }
-            clauses.push(Clause {
-                keyword: "FETCH FIRST".into(),
-                body: Some(Box::new(Node::Concat {
-                    items: vec![
-                        expr_to_node(&limit.quantity),
-                        Node::Text { value: " ".into() },
-                        Node::Keyword {
-                            value: "ROWS WITH TIES".into(),
-                        },
-                    ],
-                })),
-            });
-        }
-        (Some(limit), offset) => {
-            clauses.push(Clause {
-                keyword: "LIMIT".into(),
-                body: Some(Box::new(expr_to_node(&limit.quantity))),
-            });
-            if let Some(off) = offset {
-                clauses.push(Clause {
-                    keyword: "OFFSET".into(),
-                    body: Some(Box::new(expr_to_node(off))),
-                });
-            }
-        }
-    }
-
     Node::Clauses { items: clauses }
 }
 
@@ -266,14 +349,90 @@ fn select_item_to_node(item: &SelectItem<Raw>) -> Node {
 }
 
 fn table_with_joins_to_node(twj: &TableWithJoins<Raw>) -> Node {
-    if twj.joins.is_empty() {
-        table_factor_to_node(&twj.relation)
+    let mut items = vec![table_factor_to_node(&twj.relation)];
+    for join in &twj.joins {
+        items.push(join_to_node(join));
+    }
+    if items.len() == 1 {
+        items.pop().unwrap()
     } else {
-        // Joins: fall back to text formatting for now.
-        Node::Text {
-            value: format!("{twj}"),
+        Node::Concat { items }
+    }
+}
+
+fn join_to_node(join: &Join<Raw>) -> Node {
+    let Join {
+        relation,
+        join_operator,
+    } = join;
+
+    let (constraint, keyword) = match join_operator {
+        JoinOperator::Inner(c) => (c, "JOIN"),
+        JoinOperator::LeftOuter(c) => (c, "LEFT JOIN"),
+        JoinOperator::RightOuter(c) => (c, "RIGHT JOIN"),
+        JoinOperator::FullOuter(c) => (c, "FULL JOIN"),
+        JoinOperator::CrossJoin => {
+            return Node::Concat {
+                items: vec![
+                    Node::Text { value: " ".into() },
+                    Node::Keyword {
+                        value: "CROSS JOIN".into(),
+                    },
+                    Node::Text { value: " ".into() },
+                    table_factor_to_node(relation),
+                ],
+            };
+        }
+    };
+
+    // Check for NATURAL prefix.
+    let keyword = if matches!(constraint, JoinConstraint::Natural) {
+        format!("NATURAL {keyword}")
+    } else {
+        keyword.to_string()
+    };
+
+    let mut items = vec![
+        Node::Text { value: " ".into() },
+        Node::Keyword {
+            value: keyword,
+        },
+        Node::Text { value: " ".into() },
+        table_factor_to_node(relation),
+    ];
+
+    // Append constraint suffix (ON, USING). Non-natural constraints follow after the join.
+    match constraint {
+        JoinConstraint::On(expr) => {
+            items.push(Node::Text { value: " ON ".into() });
+            items.push(expr_to_node(expr));
+        }
+        JoinConstraint::Using {
+            columns,
+            alias: using_alias,
+        } => {
+            let col_nodes: Vec<Node> = columns.iter().map(ident_to_node).collect();
+            items.push(Node::Text { value: " USING ".into() });
+            items.push(Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items: col_nodes,
+                    separator: None,
+                }),
+                close: ")".into(),
+            });
+            if let Some(a) = using_alias {
+                items.push(Node::Text { value: " AS ".into() });
+                items.push(ident_to_node(a));
+            }
+        }
+        JoinConstraint::Natural => {
+            // NATURAL prefix already prepended to keyword; no suffix needed.
         }
     }
+
+    Node::Concat { items }
 }
 
 fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
@@ -289,9 +448,7 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
             }
         }
         TableFactor::NestedJoin { join, alias } => {
-            let inner = Node::Text {
-                value: format!("{join}"),
-            };
+            let inner = table_with_joins_to_node(join);
             let wrapped = Node::Wrap {
                 keyword: None,
                 open: "(".into(),
@@ -303,9 +460,100 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
                 Some(a) => with_alias(wrapped, a),
             }
         }
-        _ => Node::Text {
-            value: format!("{factor}"),
-        },
+        TableFactor::Derived {
+            lateral,
+            subquery,
+            alias,
+        } => {
+            let prefix = if *lateral { "LATERAL (" } else { "(" };
+            let mut node = Node::Wrap {
+                keyword: None,
+                open: prefix.into(),
+                content: Box::new(query_to_node(subquery)),
+                close: ")".into(),
+            };
+            if let Some(a) = alias {
+                node = with_alias(node, a);
+            }
+            node
+        }
+        TableFactor::Function {
+            function,
+            alias,
+            with_ordinality,
+        } => {
+            let mut items = vec![function_to_node(function)];
+            if *with_ordinality {
+                items.push(Node::Text {
+                    value: " WITH ORDINALITY".into(),
+                });
+            }
+            if let Some(a) = alias {
+                items.push(Node::Text { value: " AS ".into() });
+                items.push(Node::Concat {
+                    items: vec![
+                        ident_to_node(&a.name),
+                        column_list_node(&a.columns),
+                    ],
+                });
+                Node::Concat { items }
+            } else if items.len() == 1 {
+                items.pop().unwrap()
+            } else {
+                Node::Concat { items }
+            }
+        }
+        TableFactor::RowsFrom {
+            functions,
+            alias,
+            with_ordinality,
+        } => {
+            let func_nodes: Vec<Node> = functions.iter().map(function_to_node).collect();
+            let mut items = vec![Node::Concat {
+                items: vec![
+                    Node::Keyword {
+                        value: "ROWS FROM".into(),
+                    },
+                    Node::Wrap {
+                        keyword: None,
+                        open: " (".into(),
+                        content: Box::new(Node::List {
+                            items: func_nodes,
+                            separator: None,
+                        }),
+                        close: ")".into(),
+                    },
+                ],
+            }];
+            if *with_ordinality {
+                items.push(Node::Text {
+                    value: " WITH ORDINALITY".into(),
+                });
+            }
+            if let Some(a) = alias {
+                items.push(Node::Text { value: " ".into() });
+                items.push(Node::Keyword { value: "AS".into() });
+                items.push(Node::Text { value: " ".into() });
+                items.push(ident_to_node(&a.name));
+                items.push(column_list_node(&a.columns));
+            }
+            Node::Concat { items }
+        }
+    }
+}
+
+fn column_list_node(columns: &[Ident]) -> Node {
+    if columns.is_empty() {
+        return Node::Text { value: "".into() };
+    }
+    Node::Wrap {
+        keyword: None,
+        open: " (".into(),
+        content: Box::new(Node::List {
+            items: columns.iter().map(ident_to_node).collect(),
+            separator: None,
+        }),
+        close: ")".into(),
     }
 }
 
@@ -396,12 +644,7 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
             content: Box::new(expr_to_node(e)),
             close: ")".into(),
         },
-        // Use Text for functions: Node::Wrap applies case transformation to
-        // the keyword slot, which corrupts function names that are SQL reserved words
-        // (e.g. `left` → `LEFT` then re-parses as a different quoted identifier).
-        Expr::Function(f) => Node::Text {
-            value: format!("{f}"),
-        },
+        Expr::Function(f) => function_to_node(f),
         Expr::Subquery(q) => Node::Wrap {
             keyword: None,
             open: "(".into(),
@@ -421,9 +664,226 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
                 },
             ],
         },
+        Expr::Cast { expr, data_type } => Node::Concat {
+            items: vec![
+                expr_to_node(expr),
+                Node::Text {
+                    value: format!("::{data_type}"),
+                },
+            ],
+        },
+        Expr::Case {
+            operand,
+            conditions,
+            results,
+            else_result,
+        } => {
+            let mut items = vec![Node::Keyword { value: "CASE".into() }];
+            if let Some(op) = operand {
+                items.push(Node::Text { value: " ".into() });
+                items.push(expr_to_node(op));
+            }
+            for (c, r) in conditions.iter().zip(results.iter()) {
+                items.push(Node::Text { value: " WHEN ".into() });
+                items.push(expr_to_node(c));
+                items.push(Node::Text { value: " THEN ".into() });
+                items.push(expr_to_node(r));
+            }
+            if let Some(else_r) = else_result {
+                items.push(Node::Text { value: " ELSE ".into() });
+                items.push(expr_to_node(else_r));
+            }
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Keyword { value: "END".into() });
+            Node::Concat { items }
+        }
+        Expr::Between {
+            expr,
+            negated,
+            low,
+            high,
+        } => {
+            let mut items = vec![expr_to_node(expr), Node::Text { value: " ".into() }];
+            if *negated {
+                items.push(Node::Keyword { value: "NOT".into() });
+                items.push(Node::Text { value: " ".into() });
+            }
+            items.push(Node::Keyword {
+                value: "BETWEEN".into(),
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(expr_to_node(low));
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Keyword { value: "AND".into() });
+            items.push(Node::Text { value: " ".into() });
+            items.push(expr_to_node(high));
+            Node::Concat { items }
+        }
+        Expr::IsExpr {
+            expr,
+            negated,
+            construct,
+        } => {
+            let mut items = vec![
+                expr_to_node(expr),
+                Node::Text { value: " ".into() },
+                Node::Keyword { value: "IS".into() },
+            ];
+            if *negated {
+                items.push(Node::Text { value: " ".into() });
+                items.push(Node::Keyword { value: "NOT".into() });
+            }
+            items.push(Node::Text { value: " ".into() });
+            items.push(Node::Text {
+                value: format!("{construct}"),
+            });
+            Node::Concat { items }
+        }
+        Expr::InList {
+            expr,
+            list,
+            negated,
+        } => {
+            let list_items: Vec<Node> = list.iter().map(expr_to_node).collect();
+            let in_keyword = if *negated { "NOT IN" } else { "IN" };
+            Node::Concat {
+                items: vec![
+                    expr_to_node(expr),
+                    Node::Text { value: " ".into() },
+                    Node::Keyword {
+                        value: in_keyword.into(),
+                    },
+                    Node::Wrap {
+                        keyword: None,
+                        open: " (".into(),
+                        content: Box::new(Node::List {
+                            items: list_items,
+                            separator: None,
+                        }),
+                        close: ")".into(),
+                    },
+                ],
+            }
+        }
+        Expr::InSubquery {
+            expr,
+            subquery,
+            negated,
+        } => {
+            let in_keyword = if *negated { "NOT IN" } else { "IN" };
+            Node::Concat {
+                items: vec![
+                    expr_to_node(expr),
+                    Node::Text { value: " ".into() },
+                    Node::Keyword {
+                        value: in_keyword.into(),
+                    },
+                    Node::Wrap {
+                        keyword: None,
+                        open: " (".into(),
+                        content: Box::new(query_to_node(subquery)),
+                        close: ")".into(),
+                    },
+                ],
+            }
+        }
+        Expr::Like {
+            expr,
+            pattern,
+            escape,
+            case_insensitive,
+            negated,
+        } => {
+            let mut items = vec![
+                expr_to_node(expr),
+                Node::Text { value: " ".into() },
+            ];
+            if *negated {
+                items.push(Node::Keyword { value: "NOT".into() });
+                items.push(Node::Text { value: " ".into() });
+            }
+            items.push(Node::Keyword {
+                value: if *case_insensitive {
+                    "ILIKE".into()
+                } else {
+                    "LIKE".into()
+                },
+            });
+            items.push(Node::Text { value: " ".into() });
+            items.push(expr_to_node(pattern));
+            if let Some(esc) = escape {
+                items.push(Node::Text { value: " ".into() });
+                items.push(Node::Keyword { value: "ESCAPE".into() });
+                items.push(Node::Text { value: " ".into() });
+                items.push(expr_to_node(esc));
+            }
+            Node::Concat { items }
+        }
+        Expr::Collate { expr, collation } => Node::Concat {
+            items: vec![
+                expr_to_node(expr),
+                Node::Text { value: " ".into() },
+                Node::Keyword {
+                    value: "COLLATE".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{collation}"),
+                },
+            ],
+        },
         _ => Node::Text {
             value: format!("{expr}"),
         },
+    }
+}
+
+fn function_to_node(f: &Function<Raw>) -> Node {
+    // Special functions (extract, position) use keyword argument syntax;
+    // their Display output differs from standard function call formatting.
+    if matches!(
+        f.name.to_ast_string_stable().as_str(),
+        "\"extract\"" | "\"position\""
+    ) && f.args.len() == Some(2)
+    {
+        return Node::Text { value: format!("{f}") };
+    }
+
+    let args_list = match &f.args {
+        FunctionArgs::Star => return Node::Text { value: format!("{f}") },
+        FunctionArgs::Args { args, order_by } => {
+            if args.is_empty()
+                || f.filter.is_some()
+                || f.over.is_some()
+                || !order_by.is_empty()
+                || f.distinct
+            {
+                return Node::Text { value: format!("{f}") };
+            }
+            args
+        }
+    };
+
+    let arg_nodes: Vec<Node> = args_list.iter().map(expr_to_node).collect();
+    // Use the Display form of the name. For simple names this matches what
+    // the parser's AstDisplay produces (including quoting reserved words).
+    // The renderer's Node::Text preserves this without case transformation,
+    // avoiding the issue where `Wrap::keyword` would up-case `left` to `LEFT`.
+    Node::Concat {
+        items: vec![
+            Node::Text {
+                value: format!("{}", f.name),
+            },
+            Node::Wrap {
+                keyword: None,
+                open: "(".into(),
+                content: Box::new(Node::List {
+                    items: arg_nodes,
+                    separator: None,
+                }),
+                close: ")".into(),
+            },
+        ],
     }
 }
 
