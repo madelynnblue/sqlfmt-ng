@@ -1,0 +1,13 @@
+[package]
+name = "dialect-json"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sqlfmt-ir = { path = "../sqlfmt-ir" }
+sqlfmt-core = { path = "../sqlfmt-core" }
+serde_json = "1"
+
+[dev-dependencies]
+sqlfmt-render = { path = "../sqlfmt-render" }

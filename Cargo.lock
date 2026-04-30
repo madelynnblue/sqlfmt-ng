@@ -450,6 +450,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "dialect-json"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "sqlfmt-core",
+ "sqlfmt-ir",
+ "sqlfmt-render",
+]
+
+[[package]]
 name = "dialect-materialize"
 version = "0.1.0"
 dependencies = [
@@ -2599,6 +2609,7 @@ name = "sqlfmt"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "dialect-json",
  "dialect-materialize",
  "dialect-postgres",
  "sqlfmt-core",
