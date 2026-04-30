@@ -12695,6 +12695,10 @@ DROP table idxpart, idxpart_two
 
 -- sqlfmt-corpus-separator --
 
+EXPLAIN SELECT * FROM ft1
+
+-- sqlfmt-corpus-separator --
+
 GRANT ALL ON ALL TABLES IN SCHEMA testns TO regress_priv_user1
 
 -- sqlfmt-corpus-separator --

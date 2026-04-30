@@ -2499,10 +2499,6 @@ EXECUTE vprep
 
 -- sqlfmt-corpus-separator --
 
-EXPLAIN SELECT * FROM ft1
-
--- sqlfmt-corpus-separator --
-
 FETCH 1 FROM c1
 
 -- sqlfmt-corpus-separator --

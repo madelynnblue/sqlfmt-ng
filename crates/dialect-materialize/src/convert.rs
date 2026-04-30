@@ -1,11 +1,16 @@
 use mz_sql_parser::ast::{
     display::AstDisplay, Assignment, AsOf, CommentStatement, CreateMaterializedViewStatement,
     CreateIndexStatement, CreateTableStatement, CreateViewStatement, Cte, CteBlock,
-    DeleteStatement, Distinct, DropObjectsStatement, ResetVariableStatement,
+    DeleteStatement, Distinct, DropObjectsStatement,
+    ExplainAnalyzeClusterStatement, ExplainAnalyzeComputationProperties,
+    ExplainAnalyzeComputationProperty, ExplainAnalyzeObjectStatement, ExplainAnalyzeProperty,
+    ExplainPlanStatement, ExplainPushdownStatement, ExplainSinkSchemaFor,
+    ExplainSinkSchemaStatement, ExplainTimestampStatement, Explainee,
     Expr, Function,
     FunctionArgs, GrantPrivilegesStatement, GrantRoleStatement, Ident, IfExistsBehavior,
     InsertSource, InsertStatement, Join,
-    JoinConstraint, JoinOperator, MapEntry, ObjectType, OrderByExpr, Query, Raw, Select, SelectItem,
+    JoinConstraint, JoinOperator, MapEntry, ObjectType, OrderByExpr, Query, Raw,
+    ResetVariableStatement, Select, SelectItem,
     SelectStatement, SetExpr, SetOperator, SetVariableStatement, Statement,
     RevokePrivilegesStatement, RevokeRoleStatement,
     SubscriptPosition, TableAlias,
@@ -32,6 +37,12 @@ pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
         Statement::GrantPrivileges(gp) => grant_privileges_to_node(gp),
         Statement::RevokePrivileges(rp) => revoke_privileges_to_node(rp),
         Statement::Comment(c) => comment_to_node(c),
+        Statement::ExplainPlan(ep) => explain_plan_to_node(ep),
+        Statement::ExplainPushdown(ep) => explain_pushdown_to_node(ep),
+        Statement::ExplainTimestamp(et) => explain_timestamp_to_node(et),
+        Statement::ExplainSinkSchema(ess) => explain_sink_schema_to_node(ess),
+        Statement::ExplainAnalyzeObject(eao) => explain_analyze_object_to_node(eao),
+        Statement::ExplainAnalyzeCluster(eac) => explain_analyze_cluster_to_node(eac),
         _ => Node::Unformatted {
             value: format!("{stmt}"),
         },
@@ -2058,5 +2069,347 @@ fn comment_to_node(c: &CommentStatement<Raw>) -> Node {
             Node::Text { value: " ".into() },
             Node::Text { value: comment_text },
         ],
+    }
+}
+
+fn explain_plan_to_node(ep: &ExplainPlanStatement<Raw>) -> Node {
+    let ExplainPlanStatement {
+        stage,
+        with_options,
+        format,
+        explainee,
+    } = ep;
+
+    let mut items = vec![Node::Keyword {
+        value: "EXPLAIN".into(),
+    }];
+
+    if let Some(s) = stage {
+        items.push(Node::Text {
+            value: format!(" {s}"),
+        });
+    }
+
+    if !with_options.is_empty() {
+        let opts_str = with_options
+            .iter()
+            .map(|o| o.to_ast_string_simple())
+            .collect::<Vec<_>>()
+            .join(", ");
+        items.push(Node::Text {
+            value: format!(" WITH ({opts_str})"),
+        });
+    }
+
+    if let Some(f) = format {
+        items.push(Node::Text {
+            value: format!(" AS {f}"),
+        });
+    }
+
+    if stage.is_some() {
+        items.push(Node::Text {
+            value: " FOR ".into(),
+        });
+    } else {
+        items.push(Node::Text { value: " ".into() });
+    }
+
+    items.push(explainee_to_node(explainee));
+
+    Node::Concat { items }
+}
+
+fn explain_pushdown_to_node(ep: &ExplainPushdownStatement<Raw>) -> Node {
+    let ExplainPushdownStatement { explainee } = ep;
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "EXPLAIN FILTER PUSHDOWN FOR".into(),
+            },
+            Node::Text { value: " ".into() },
+            explainee_to_node(explainee),
+        ],
+    }
+}
+
+fn explain_timestamp_to_node(et: &ExplainTimestampStatement<Raw>) -> Node {
+    let ExplainTimestampStatement { format, select } = et;
+    let mut items = vec![Node::Keyword {
+        value: "EXPLAIN TIMESTAMP".into(),
+    }];
+    if let Some(f) = format {
+        items.push(Node::Text {
+            value: format!(" AS {f}"),
+        });
+    }
+    items.push(Node::Text {
+        value: " FOR ".into(),
+    });
+    items.push(select_stmt_to_node(select));
+    Node::Concat { items }
+}
+
+fn explain_sink_schema_to_node(ess: &ExplainSinkSchemaStatement<Raw>) -> Node {
+    let ExplainSinkSchemaStatement {
+        schema_for,
+        format,
+        statement: _,
+    } = ess;
+    let schema_label = match schema_for {
+        ExplainSinkSchemaFor::Key => "KEY",
+        ExplainSinkSchemaFor::Value => "VALUE",
+    };
+    let mut items = vec![
+        Node::Keyword {
+            value: "EXPLAIN".into(),
+        },
+        Node::Text { value: " ".into() },
+        Node::Keyword {
+            value: schema_label.into(),
+        },
+        Node::Text {
+            value: " SCHEMA".into(),
+        },
+    ];
+    if let Some(f) = format {
+        items.push(Node::Text {
+            value: format!(" AS {f}"),
+        });
+    }
+    items.push(Node::Text {
+        value: " FOR ".into(),
+    });
+    // The CreateSinkStatement is complex; use Display passthrough.
+    items.push(Node::Text {
+        value: format!("{}", ess.statement),
+    });
+    Node::Concat { items }
+}
+
+fn explain_analyze_object_to_node(eao: &ExplainAnalyzeObjectStatement<Raw>) -> Node {
+    let ExplainAnalyzeObjectStatement {
+        properties,
+        explainee,
+        as_sql,
+    } = eao;
+    let props_str = format_explain_analyze_property(properties);
+    let mut items = vec![
+        Node::Keyword {
+            value: "EXPLAIN ANALYZE".into(),
+        },
+        Node::Text { value: props_str },
+        Node::Text {
+            value: " FOR ".into(),
+        },
+        explainee_to_node(explainee),
+    ];
+    if *as_sql {
+        items.push(Node::Text {
+            value: " AS SQL".into(),
+        });
+    }
+    Node::Concat { items }
+}
+
+fn format_explain_analyze_property(prop: &ExplainAnalyzeProperty) -> String {
+    match prop {
+        ExplainAnalyzeProperty::Computation(props) => {
+            format_explain_analyze_computation(props)
+        }
+        ExplainAnalyzeProperty::Hints => " HINTS".to_string(),
+    }
+}
+
+fn format_explain_analyze_computation(props: &ExplainAnalyzeComputationProperties) -> String {
+    let ExplainAnalyzeComputationProperties {
+        properties,
+        skew,
+    } = props;
+    let mut s = String::new();
+    let mut first = true;
+    for p in properties {
+        if first {
+            first = false;
+        } else {
+            s.push(',');
+        }
+        match p {
+            ExplainAnalyzeComputationProperty::Cpu => s.push_str(" CPU"),
+            ExplainAnalyzeComputationProperty::Memory => s.push_str(" MEMORY"),
+        }
+    }
+    if *skew {
+        s.push_str(" WITH SKEW");
+    }
+    s
+}
+
+fn explain_analyze_cluster_to_node(eac: &ExplainAnalyzeClusterStatement) -> Node {
+    let ExplainAnalyzeClusterStatement {
+        properties,
+        as_sql,
+    } = eac;
+    let props_str = format_explain_analyze_computation(properties);
+    let mut items = vec![
+        Node::Keyword {
+            value: "EXPLAIN ANALYZE CLUSTER".into(),
+        },
+        Node::Text { value: props_str },
+    ];
+    if *as_sql {
+        items.push(Node::Text {
+            value: " AS SQL".into(),
+        });
+    }
+    Node::Concat { items }
+}
+
+fn explainee_to_node(explainee: &Explainee<Raw>) -> Node {
+    match explainee {
+        Explainee::View(name) => Node::Concat {
+            items: vec![
+                Node::Keyword { value: "VIEW".into() },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{name}"),
+                },
+            ],
+        },
+        Explainee::MaterializedView(name) => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "MATERIALIZED VIEW".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{name}"),
+                },
+            ],
+        },
+        Explainee::Index(name) => Node::Concat {
+            items: vec![
+                Node::Keyword { value: "INDEX".into() },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{name}"),
+                },
+            ],
+        },
+        Explainee::ReplanView(name) => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "REPLAN VIEW".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{name}"),
+                },
+            ],
+        },
+        Explainee::ReplanMaterializedView(name) => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "REPLAN MATERIALIZED VIEW".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{name}"),
+                },
+            ],
+        },
+        Explainee::ReplanIndex(name) => Node::Concat {
+            items: vec![
+                Node::Keyword {
+                    value: "REPLAN INDEX".into(),
+                },
+                Node::Text { value: " ".into() },
+                Node::Text {
+                    value: format!("{name}"),
+                },
+            ],
+        },
+        Explainee::Select(stmt, broken) => {
+            let body = select_stmt_to_node(stmt);
+            if *broken {
+                Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "BROKEN".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        body,
+                    ],
+                }
+            } else {
+                body
+            }
+        }
+        Explainee::CreateView(stmt, broken) => {
+            let body = create_view_to_node(stmt);
+            if *broken {
+                Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "BROKEN".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        body,
+                    ],
+                }
+            } else {
+                body
+            }
+        }
+        Explainee::CreateMaterializedView(stmt, broken) => {
+            let body = create_materialized_view_to_node(stmt);
+            if *broken {
+                Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "BROKEN".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        body,
+                    ],
+                }
+            } else {
+                body
+            }
+        }
+        Explainee::CreateIndex(stmt, broken) => {
+            let body = create_index_to_node(stmt);
+            if *broken {
+                Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "BROKEN".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        body,
+                    ],
+                }
+            } else {
+                body
+            }
+        }
+        Explainee::Subscribe(stmt, broken) => {
+            let body = Node::Text {
+                value: format!("{stmt}"),
+            };
+            if *broken {
+                Node::Concat {
+                    items: vec![
+                        Node::Keyword {
+                            value: "BROKEN".into(),
+                        },
+                        Node::Text { value: " ".into() },
+                        body,
+                    ],
+                }
+            } else {
+                body
+            }
+        }
     }
 }
