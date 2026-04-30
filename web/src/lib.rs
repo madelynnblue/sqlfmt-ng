@@ -1,3 +1,4 @@
+use dialect_json::JsonDialect;
 use dialect_materialize::MaterializeDialect;
 use dialect_postgres_convert::{convert_pg_query_json, json_ast_equal};
 use sqlfmt_core::format_sql;
@@ -31,6 +32,8 @@ pub fn fmt(
 ) -> Result<String, JsValue> {
     let opts = parse_opts(width, tab_width, use_tabs, case);
     match dialect {
+        "json" => format_sql(&JsonDialect, sql, &opts)
+            .map_err(|e| JsValue::from_str(&e.to_string())),
         "materialize" | "" => format_sql(&MaterializeDialect, sql, &opts)
             .map_err(|e| JsValue::from_str(&e.to_string())),
         other => Err(JsValue::from_str(&format!(
