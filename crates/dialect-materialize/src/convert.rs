@@ -37,9 +37,9 @@ fn select_stmt_to_node(s: &SelectStatement<Raw>) -> Node {
 }
 
 fn query_to_node(query: &Query<Raw>) -> Node {
-    // WITH MUTUALLY RECURSIVE is complex; fall back to unformatted.
+    // WITH MUTUALLY RECURSIVE is complex; fall back to text.
     if matches!(query.ctes, CteBlock::MutuallyRecursive(_)) {
-        return Node::Unformatted {
+        return Node::Text {
             value: format!("{query}"),
         };
     }
@@ -47,7 +47,7 @@ fn query_to_node(query: &Query<Raw>) -> Node {
     let body_node = match &query.body {
         SetExpr::Select(select) => select_to_node(select, query),
         _ => {
-            return Node::Unformatted {
+            return Node::Text {
                 value: format!("{query}"),
             }
         }
@@ -69,7 +69,7 @@ fn query_to_node(query: &Query<Raw>) -> Node {
                     items.insert(0, cte_clause);
                     Node::Clauses { items }
                 }
-                _ => Node::Unformatted {
+                _ => Node::Text {
                     value: format!("{query}"),
                 }
             }
@@ -270,7 +270,7 @@ fn table_with_joins_to_node(twj: &TableWithJoins<Raw>) -> Node {
         table_factor_to_node(&twj.relation)
     } else {
         // Joins: fall back to text formatting for now.
-        Node::Unformatted {
+        Node::Text {
             value: format!("{twj}"),
         }
     }
@@ -289,7 +289,7 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
             }
         }
         TableFactor::NestedJoin { join, alias } => {
-            let inner = Node::Unformatted {
+            let inner = Node::Text {
                 value: format!("{join}"),
             };
             let wrapped = Node::Wrap {
@@ -303,7 +303,7 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
                 Some(a) => with_alias(wrapped, a),
             }
         }
-        _ => Node::Unformatted {
+        _ => Node::Text {
             value: format!("{factor}"),
         },
     }
@@ -396,10 +396,10 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
             content: Box::new(expr_to_node(e)),
             close: ")".into(),
         },
-        // Use Unformatted for functions: Node::Wrap applies case transformation to
+        // Use Text for functions: Node::Wrap applies case transformation to
         // the keyword slot, which corrupts function names that are SQL reserved words
         // (e.g. `left` → `LEFT` then re-parses as a different quoted identifier).
-        Expr::Function(f) => Node::Unformatted {
+        Expr::Function(f) => Node::Text {
             value: format!("{f}"),
         },
         Expr::Subquery(q) => Node::Wrap {
@@ -421,7 +421,7 @@ fn expr_to_node(expr: &Expr<Raw>) -> Node {
                 },
             ],
         },
-        _ => Node::Unformatted {
+        _ => Node::Text {
             value: format!("{expr}"),
         },
     }
