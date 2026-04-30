@@ -490,18 +490,10 @@ fn table_factor_to_node(factor: &TableFactor<Raw>) -> Node {
             }
             if let Some(a) = alias {
                 items.push(Node::Text { value: " AS ".into() });
-                items.push(Node::Concat {
-                    items: vec![
-                        ident_to_node(&a.name),
-                        column_list_node(&a.columns),
-                    ],
-                });
-                Node::Concat { items }
-            } else if items.len() == 1 {
-                items.pop().unwrap()
-            } else {
-                Node::Concat { items }
+                items.push(ident_to_node(&a.name));
+                items.push(column_list_node(&a.columns));
             }
+            Node::Concat { items }
         }
         TableFactor::RowsFrom {
             functions,
@@ -566,18 +558,7 @@ fn with_alias(node: Node, alias: &TableAlias) -> Node {
         Node::Text { value: " ".into() },
         ident_to_node(name),
     ];
-    if !columns.is_empty() {
-        let col_nodes: Vec<Node> = columns.iter().map(ident_to_node).collect();
-        items.push(Node::Wrap {
-            keyword: None,
-            open: " (".into(),
-            content: Box::new(Node::List {
-                items: col_nodes,
-                separator: None,
-            }),
-            close: ")".into(),
-        });
-    }
+    items.push(column_list_node(columns));
     Node::Concat { items }
 }
 
