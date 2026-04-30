@@ -1,5 +1,5 @@
 use mz_sql_parser::ast::{
-    display::AstDisplay, Assignment, AsOf, CreateMaterializedViewStatement,
+    display::AstDisplay, Assignment, AsOf, CommentStatement, CreateMaterializedViewStatement,
     CreateIndexStatement, CreateTableStatement, CreateViewStatement, Cte, CteBlock,
     DeleteStatement, Distinct, DropObjectsStatement, ResetVariableStatement,
     Expr, Function,
@@ -31,6 +31,7 @@ pub fn statement_to_node(stmt: &Statement<Raw>) -> Node {
         Statement::RevokeRole(rr) => revoke_role_to_node(rr),
         Statement::GrantPrivileges(gp) => grant_privileges_to_node(gp),
         Statement::RevokePrivileges(rp) => revoke_privileges_to_node(rp),
+        Statement::Comment(c) => comment_to_node(c),
         _ => Node::Text {
             value: format!("{stmt}"),
         },
@@ -2030,6 +2031,29 @@ fn revoke_privileges_to_node(rp: &RevokePrivilegesStatement<Raw>) -> Node {
                 items: role_nodes,
                 separator: None,
             },
+        ],
+    }
+}
+
+fn comment_to_node(c: &CommentStatement<Raw>) -> Node {
+    let CommentStatement { object, comment } = c;
+    let comment_text = match comment {
+        Some(s) => format!("'{s}'"),
+        None => "NULL".into(),
+    };
+    Node::Concat {
+        items: vec![
+            Node::Keyword {
+                value: "COMMENT ON".into(),
+            },
+            Node::Text { value: " ".into() },
+            Node::Text {
+                value: format!("{object}"),
+            },
+            Node::Text { value: " ".into() },
+            Node::Keyword { value: "IS".into() },
+            Node::Text { value: " ".into() },
+            Node::Text { value: comment_text },
         ],
     }
 }

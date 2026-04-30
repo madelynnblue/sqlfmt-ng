@@ -733,4 +733,16 @@ mod tests {
         let result = fmt("REVOKE SELECT ON TABLE t FROM r5");
         assert!(result.contains("REVOKE") && result.contains("ON") && result.contains("FROM"), "got: {result}");
     }
+
+    #[test]
+    fn test_comment_on_table() {
+        let result = fmt("COMMENT ON TABLE t IS 'description'");
+        assert!(result.contains("COMMENT ON") && result.contains("IS"), "got: {result}");
+    }
+
+    #[test]
+    fn test_comment_null() {
+        let result = fmt("COMMENT ON TABLE t IS NULL");
+        assert!(result.contains("NULL") && !result.contains("''"), "got: {result}");
+    }
 }
