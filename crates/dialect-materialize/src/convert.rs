@@ -1,5 +1,5 @@
 use mz_sql_parser::ast::{
-    display::AstDisplay, AlterClusterStatement, Assignment, AsOf,
+    display::AstDisplay, AlterClusterAction, AlterClusterStatement, Assignment, AsOf,
     CommentStatement, CommitStatement, CreateClusterReplicaStatement, CreateClusterStatement,
     CreateIndexStatement, CreateMaterializedViewStatement, CreateTableStatement,
     CreateViewStatement, Cte, CteBlock,
@@ -2454,6 +2454,9 @@ fn explainee_to_node(explainee: &Explainee<Raw>) -> Node {
             }
         }
         Explainee::Subscribe(stmt, broken) => {
+            // SubscribeStatement is not yet converted to structured IR;
+            // using Node::Text as an explicit passthrough until the
+            // Subscribe converter is implemented.
             let body = Node::Text {
                 value: format!("{stmt}"),
             };
@@ -2558,7 +2561,7 @@ fn alter_cluster_to_node(ac: &AlterClusterStatement<Raw>) -> Node {
     items.push(Node::Text { value: " ".into() });
 
     match action {
-        mz_sql_parser::ast::AlterClusterAction::SetOptions {
+        AlterClusterAction::SetOptions {
             options,
             with_options,
         } => {
@@ -2581,7 +2584,7 @@ fn alter_cluster_to_node(ac: &AlterClusterStatement<Raw>) -> Node {
                 });
             }
         }
-        mz_sql_parser::ast::AlterClusterAction::ResetOptions(options) => {
+        AlterClusterAction::ResetOptions(options) => {
             let opts_str = options
                 .iter()
                 .map(|o| o.to_ast_string_simple())
