@@ -24,7 +24,7 @@ impl Preprocessor for Base64Preprocessor {
         use base64::Engine as _;
 
         // Strip ASCII whitespace before decoding — base64 can have line breaks.
-        let stripped: Vec<u8> = data
+        let mut stripped: Vec<u8> = data
             .iter()
             .copied()
             .filter(|b| !b.is_ascii_whitespace())
@@ -34,9 +34,19 @@ impl Preprocessor for Base64Preprocessor {
             return None;
         }
 
-        // Only try standard alphabet. URL-safe and other variants aren't
-        // expected here; if standard decode fails, pass.
-        base64::engine::general_purpose::STANDARD
+        // Try the strict STANDARD engine first (requires correct padding).
+        if let Ok(decoded) = base64::engine::general_purpose::STANDARD.decode(&stripped) {
+            return Some(decoded);
+        }
+
+        // Some encoders produce base64 with excess padding (e.g. a spurious
+        // trailing '=' after a full group). Strip all padding chars and
+        // re-decode with the no-pad engine, which accepts unpadded input.
+        while stripped.last() == Some(&b'=') {
+            stripped.pop();
+        }
+
+        base64::engine::general_purpose::STANDARD_NO_PAD
             .decode(&stripped)
             .ok()
     }
@@ -297,6 +307,26 @@ mod tests {
         let (out, steps) = preprocess(b"SELECT 1;", &preprocessors);
         assert_eq!(out, "SELECT 1;");
         assert!(steps.is_empty());
+    }
+
+    #[test]
+    fn base64_with_excess_padding() {
+        // Some encoders produce base64 with excess trailing '='.
+        // The preprocessor should handle this gracefully.
+        let preprocessors: Vec<&dyn Preprocessor> =
+            vec![&Base64Preprocessor, &GzipPreprocessor];
+
+        // Gzip-compress, base64-encode, then add an extra '='
+        let mut gz = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+        gz.write_all(b"SELECT 1;").unwrap();
+        let compressed = gz.finish().unwrap();
+        let mut encoded = base64::engine::general_purpose::STANDARD.encode(&compressed);
+        // Add excess padding
+        encoded.push('=');
+
+        let (out, steps) = preprocess(encoded.as_bytes(), &preprocessors);
+        assert_eq!(out, "SELECT 1;");
+        assert_eq!(steps, vec!["base64", "gzip"]);
     }
 
     #[test]

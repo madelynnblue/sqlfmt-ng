@@ -2,8 +2,8 @@ pub use sqlfmt_error::SqlfmtError;
 use sqlfmt_ir::Node;
 use sqlfmt_render::RenderOpts;
 
-mod preprocess;
-use preprocess::{preprocess, DEFAULT_PREPROCESSORS};
+pub mod preprocess;
+pub use preprocess::{preprocess, DEFAULT_PREPROCESSORS};
 
 pub trait Dialect {
     fn parse(&self, sql: &str) -> Result<Node, SqlfmtError>;
