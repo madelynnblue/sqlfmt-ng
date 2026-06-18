@@ -7,5 +7,4 @@ rust-version.workspace = true
 [dependencies]
 dot-parser = { version = "0.6", features = ["display"] }
 sqlfmt-core = { path = "../sqlfmt-core" }
-sqlfmt-error = { path = "../sqlfmt-error" }
 sqlfmt-ir = { path = "../sqlfmt-ir" }
