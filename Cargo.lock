@@ -2822,6 +2822,7 @@ dependencies = [
 name = "sqlfmt-web"
 version = "0.1.0"
 dependencies = [
+ "dialect-graphviz",
  "dialect-json",
  "dialect-materialize",
  "dialect-postgres-convert",

@@ -11,6 +11,7 @@ crate-type = ["cdylib"]
 sqlfmt-core = { path = "../crates/sqlfmt-core" }
 sqlfmt-render = { path = "../crates/sqlfmt-render" }
 sqlfmt-ir = { path = "../crates/sqlfmt-ir" }
+dialect-graphviz = { path = "../crates/dialect-graphviz" }
 dialect-json = { path = "../crates/dialect-json" }
 dialect-materialize = { path = "../crates/dialect-materialize" }
 dialect-postgres-convert = { path = "../crates/dialect-postgres-convert" }

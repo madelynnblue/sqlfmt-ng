@@ -1,3 +1,4 @@
+use dialect_graphviz::GraphvizDialect;
 use dialect_json::JsonDialect;
 use dialect_materialize::MaterializeDialect;
 use dialect_postgres_convert::{convert_pg_query_json, json_ast_equal};
@@ -32,6 +33,8 @@ pub fn fmt(
 ) -> Result<String, JsValue> {
     let opts = parse_opts(width, tab_width, use_tabs, case);
     match dialect {
+        "graphviz" => format_sql(&GraphvizDialect, sql, &opts)
+            .map_err(|e| JsValue::from_str(&e.to_string())),
         "json" => format_sql(&JsonDialect, sql, &opts)
             .map_err(|e| JsValue::from_str(&e.to_string())),
         "materialize" | "" => format_sql(&MaterializeDialect, sql, &opts)
@@ -90,6 +93,7 @@ pub fn fmt_from_ir(
 #[wasm_bindgen]
 pub fn parse_to_ir(sql: &str, dialect: &str) -> Result<String, JsValue> {
     let node = match dialect {
+        "graphviz" => GraphvizDialect.parse(sql),
         "json" => JsonDialect.parse(sql),
         "materialize" => MaterializeDialect.parse(sql),
         _ => return Err(JsValue::from_str(&format!("unknown dialect: {dialect}"))),
@@ -103,6 +107,7 @@ pub fn parse_to_ir(sql: &str, dialect: &str) -> Result<String, JsValue> {
 #[wasm_bindgen]
 pub fn check_roundtrip(original: &str, rendered: &str, dialect: &str) -> Result<(), JsValue> {
     match dialect {
+        "graphviz" => GraphvizDialect.ast_equal(original, rendered),
         "json" => JsonDialect.ast_equal(original, rendered),
         "materialize" => MaterializeDialect.ast_equal(original, rendered),
         _ => return Err(JsValue::from_str(&format!("unknown dialect: {dialect}"))),

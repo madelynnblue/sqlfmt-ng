@@ -425,6 +425,10 @@
                 <span>JSON</span>
               </label>
               <label>
+                <input type="radio" name="dialect" value="graphviz" />
+                <span>Graphviz</span>
+              </label>
+              <label>
                 <input
                   type="radio"
                   name="dialect"
@@ -607,7 +611,7 @@
         const results = {};
 
         // Native dialects — synchronous WASM calls, cheap.
-        for (const dialect of ["json", "materialize"]) {
+        for (const dialect of ["json", "materialize", "graphviz"]) {
           try {
             results[dialect] = { sql, irJson: parse_to_ir(sql, dialect) };
           } catch (e) {
@@ -757,9 +761,9 @@
 
         // If no dialect can parse, show a combined error and stop.
         if (
-          !["json", "materialize", "postgres"].some((d) => dialectIsValid(d))
+          !["json", "materialize", "graphviz", "postgres"].some((d) => dialectIsValid(d))
         ) {
-          const errors = ["json", "materialize", "postgres"]
+          const errors = ["json", "materialize", "graphviz", "postgres"]
             .map((d) => `${d}: ${dialectCache[d]?.error || "unknown error"}`)
             .join("\n");
           displayError("No dialect could parse the input:\n" + errors);
