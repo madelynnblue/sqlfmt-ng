@@ -484,6 +484,7 @@ dependencies = [
  "dot-parser",
  "sqlfmt-core",
  "sqlfmt-ir",
+ "sqlfmt-render",
 ]
 
 [[package]]

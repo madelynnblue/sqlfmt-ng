@@ -1,0 +1,4 @@
+digraph G {
+a -> b -> c -> d;
+a -> b -> c -> d [style=bold, color=blue, label="path"];
+}
