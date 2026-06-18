@@ -2,8 +2,15 @@ pub use sqlfmt_error::SqlfmtError;
 use sqlfmt_ir::Node;
 use sqlfmt_render::RenderOpts;
 
-pub mod preprocess;
-pub use preprocess::{preprocess, DEFAULT_PREPROCESSORS};
+mod preprocess;
+use preprocess::{preprocess, DEFAULT_PREPROCESSORS};
+
+/// Apply preprocessing (base64, gzip) to raw input before parsing.
+/// Returns the decoded text. If no preprocessor matches, the input
+/// passes through unchanged.
+pub fn preprocess_sql(input: &str) -> String {
+    preprocess(input.as_bytes(), DEFAULT_PREPROCESSORS).0
+}
 
 pub trait Dialect {
     fn parse(&self, sql: &str) -> Result<Node, SqlfmtError>;

@@ -2,7 +2,7 @@ use dialect_graphviz::GraphvizDialect;
 use dialect_json::JsonDialect;
 use dialect_materialize::MaterializeDialect;
 use dialect_postgres_convert::{convert_pg_query_json, json_ast_equal};
-use sqlfmt_core::{format_sql, preprocess, Dialect, DEFAULT_PREPROCESSORS};
+use sqlfmt_core::{format_sql, preprocess_sql, Dialect};
 use sqlfmt_render::{CaseMode, RenderOpts};
 use wasm_bindgen::prelude::*;
 
@@ -98,7 +98,7 @@ pub fn fmt_from_ir(
 #[wasm_bindgen]
 pub fn parse_to_ir(sql: &str, dialect: &str) -> Result<String, JsValue> {
     // Apply preprocessing (base64, gzip) transparently before parsing.
-    let (sql, _steps) = preprocess(sql.as_bytes(), DEFAULT_PREPROCESSORS);
+    let sql = preprocess_sql(sql);
     let d = resolve_dialect(dialect)
         .ok_or_else(|| JsValue::from_str(&format!("unknown dialect: {dialect}")))?;
     let node = d.parse(&sql).map_err(|e| JsValue::from_str(&e.to_string()))?;
@@ -112,7 +112,7 @@ pub fn check_roundtrip(original: &str, rendered: &str, dialect: &str) -> Result<
     // Preprocess the original before comparing ASTs — the parsed IR was
     // created from the preprocessed text, so the roundtrip check must
     // use the same decoded input.
-    let (original, _steps) = preprocess(original.as_bytes(), DEFAULT_PREPROCESSORS);
+    let original = preprocess_sql(original);
     let d = resolve_dialect(dialect)
         .ok_or_else(|| JsValue::from_str(&format!("unknown dialect: {dialect}")))?;
     d.ast_equal(&original, rendered)
