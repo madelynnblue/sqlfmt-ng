@@ -78,13 +78,60 @@ fn attr_pair_to_node(key: &str, value: &str) -> Node {
 /// Heuristic for whether a DOT attribute value needs double-quote wrapping.
 /// The dot-parser strips quotes during parsing, so we must re-add them for
 /// values that would be invalid as bare identifiers.
+///
+/// DOT bare identifiers are: alphabetic/underscore, optionally followed by
+/// alphanumeric/underscore; a numeral; or a quoted/HTML string.
+/// Anything else must be quoted.
 fn needs_quoting(s: &str) -> bool {
-    s.is_empty()
-        || s.starts_with('<')
-        || s.contains(' ')
-        || s.contains('"')
-        || s.contains('\t')
-        || s.contains('\n')
+    if s.is_empty() || s.starts_with('<') {
+        return true;
+    }
+    // Check if it's a valid numeric literal (negative, decimal, or integer).
+    if is_valid_dot_number(s) {
+        return false;
+    }
+    // Check if it's a valid bare identifier: starts with alpha/underscore,
+    // followed by alphanumeric/underscore.
+    let mut chars = s.chars();
+    match chars.next() {
+        Some(c) if is_dot_id_start(c) => {}
+        _ => return true,
+    }
+    chars.all(is_dot_id_continue)
+}
+
+fn is_valid_dot_number(s: &str) -> bool {
+    let s = s.strip_prefix('-').unwrap_or(s);
+    if s.is_empty() {
+        return false;
+    }
+    let (int_part, frac_part) = match s.split_once('.') {
+        Some((int, frac)) => (int, Some(frac)),
+        None => (s, None),
+    };
+    if int_part.is_empty() && frac_part.is_none() {
+        return false;
+    }
+    if !int_part.chars().all(|c| c.is_ascii_digit()) {
+        return false;
+    }
+    if let Some(frac) = frac_part {
+        if frac.is_empty() {
+            return false; // trailing dot: "123." is not a valid DOT number
+        }
+        if !frac.chars().all(|c| c.is_ascii_digit()) {
+            return false;
+        }
+    }
+    true
+}
+
+fn is_dot_id_start(c: char) -> bool {
+    c.is_ascii_alphabetic() || c == '_' || (c as u32) >= 0x80
+}
+
+fn is_dot_id_continue(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '_' || (c as u32) >= 0x80
 }
 
 /// Convert a NodeID (with optional port/compass) to IR.
