@@ -60,32 +60,35 @@ export function fmt(sql, dialect, width, tab_width, use_tabs, _case) {
  * Render pre-parsed SQL from a sqlfmt IR JSON string.
  * For dialects whose JS parsers produce sqlfmt IR directly rather than pg_query protobuf.
  * @param {string} ir_json
+ * @param {string} dialect
  * @param {number} width
  * @param {number} tab_width
  * @param {boolean} use_tabs
  * @param {string} _case
  * @returns {string}
  */
-export function fmt_from_ir(ir_json, width, tab_width, use_tabs, _case) {
-    let deferred4_0;
-    let deferred4_1;
+export function fmt_from_ir(ir_json, dialect, width, tab_width, use_tabs, _case) {
+    let deferred5_0;
+    let deferred5_1;
     try {
         const ptr0 = passStringToWasm0(ir_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
-        const ptr1 = passStringToWasm0(_case, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const ptr1 = passStringToWasm0(dialect, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len1 = WASM_VECTOR_LEN;
-        const ret = wasm.fmt_from_ir(ptr0, len0, width, tab_width, use_tabs, ptr1, len1);
-        var ptr3 = ret[0];
-        var len3 = ret[1];
+        const ptr2 = passStringToWasm0(_case, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.fmt_from_ir(ptr0, len0, ptr1, len1, width, tab_width, use_tabs, ptr2, len2);
+        var ptr4 = ret[0];
+        var len4 = ret[1];
         if (ret[3]) {
-            ptr3 = 0; len3 = 0;
+            ptr4 = 0; len4 = 0;
             throw takeFromExternrefTable0(ret[2]);
         }
-        deferred4_0 = ptr3;
-        deferred4_1 = len3;
-        return getStringFromWasm0(ptr3, len3);
+        deferred5_0 = ptr4;
+        deferred5_1 = len4;
+        return getStringFromWasm0(ptr4, len4);
     } finally {
-        wasm.__wbindgen_free(deferred4_0, deferred4_1, 1);
+        wasm.__wbindgen_free(deferred5_0, deferred5_1, 1);
     }
 }
 

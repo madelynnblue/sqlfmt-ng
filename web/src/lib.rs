@@ -20,6 +20,15 @@ fn parse_opts(width: usize, tab_width: usize, use_tabs: bool, case: &str) -> Ren
     }
 }
 
+fn resolve_dialect(dialect: &str) -> Option<&'static dyn Dialect> {
+    match dialect {
+        "graphviz" => Some(&GraphvizDialect),
+        "json" => Some(&JsonDialect),
+        "materialize" | "" => Some(&MaterializeDialect),
+        _ => None,
+    }
+}
+
 /// Format SQL using a native dialect parser.
 /// dialect: "materialize".
 #[wasm_bindgen]
@@ -32,17 +41,9 @@ pub fn fmt(
     case: &str,
 ) -> Result<String, JsValue> {
     let opts = parse_opts(width, tab_width, use_tabs, case);
-    match dialect {
-        "graphviz" => format_sql(&GraphvizDialect, sql, &opts)
-            .map_err(|e| JsValue::from_str(&e.to_string())),
-        "json" => format_sql(&JsonDialect, sql, &opts)
-            .map_err(|e| JsValue::from_str(&e.to_string())),
-        "materialize" | "" => format_sql(&MaterializeDialect, sql, &opts)
-            .map_err(|e| JsValue::from_str(&e.to_string())),
-        other => Err(JsValue::from_str(&format!(
-            "dialect '{other}' requires a JS-side parser"
-        ))),
-    }
+    let d = resolve_dialect(dialect)
+        .ok_or_else(|| JsValue::from_str(&format!("unknown dialect: {dialect}")))?;
+    format_sql(d, sql, &opts).map_err(|e| JsValue::from_str(&e.to_string()))
 }
 
 /// Format a Postgres query from a pg-query-emscripten JSON parse tree.
@@ -75,6 +76,7 @@ pub fn pg_json_ast_equal(json1: &str, json2: &str) -> bool {
 #[wasm_bindgen]
 pub fn fmt_from_ir(
     ir_json: &str,
+    dialect: &str,
     width: usize,
     tab_width: usize,
     use_tabs: bool,
@@ -82,7 +84,10 @@ pub fn fmt_from_ir(
 ) -> Result<String, JsValue> {
     let node: sqlfmt_ir::Node = serde_json::from_str(ir_json)
         .map_err(|e| JsValue::from_str(&format!("invalid IR JSON: {e}")))?;
-    let opts = parse_opts(width, tab_width, use_tabs, case);
+    let user_opts = parse_opts(width, tab_width, use_tabs, case);
+    let opts = resolve_dialect(dialect)
+        .map(|d| d.apply_render_opts(&user_opts))
+        .unwrap_or(user_opts);
     opts.render(&node)
         .map_err(|err| JsValue::from_str(&err.to_string()))
 }
@@ -94,13 +99,9 @@ pub fn fmt_from_ir(
 pub fn parse_to_ir(sql: &str, dialect: &str) -> Result<String, JsValue> {
     // Apply preprocessing (base64, gzip) transparently before parsing.
     let (sql, _steps) = preprocess(sql.as_bytes(), DEFAULT_PREPROCESSORS);
-    let node = match dialect {
-        "graphviz" => GraphvizDialect.parse(&sql),
-        "json" => JsonDialect.parse(&sql),
-        "materialize" => MaterializeDialect.parse(&sql),
-        _ => return Err(JsValue::from_str(&format!("unknown dialect: {dialect}"))),
-    }
-    .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let d = resolve_dialect(dialect)
+        .ok_or_else(|| JsValue::from_str(&format!("unknown dialect: {dialect}")))?;
+    let node = d.parse(&sql).map_err(|e| JsValue::from_str(&e.to_string()))?;
     serde_json::to_string(&node).map_err(|e| JsValue::from_str(&e.to_string()))
 }
 
@@ -112,11 +113,8 @@ pub fn check_roundtrip(original: &str, rendered: &str, dialect: &str) -> Result<
     // created from the preprocessed text, so the roundtrip check must
     // use the same decoded input.
     let (original, _steps) = preprocess(original.as_bytes(), DEFAULT_PREPROCESSORS);
-    match dialect {
-        "graphviz" => GraphvizDialect.ast_equal(&original, rendered),
-        "json" => JsonDialect.ast_equal(&original, rendered),
-        "materialize" => MaterializeDialect.ast_equal(&original, rendered),
-        _ => return Err(JsValue::from_str(&format!("unknown dialect: {dialect}"))),
-    }
-    .map_err(|e| JsValue::from_str(&e.to_string()))
+    let d = resolve_dialect(dialect)
+        .ok_or_else(|| JsValue::from_str(&format!("unknown dialect: {dialect}")))?;
+    d.ast_equal(&original, rendered)
+        .map_err(|e| JsValue::from_str(&e.to_string()))
 }

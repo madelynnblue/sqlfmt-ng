@@ -17,7 +17,7 @@ export function fmt(sql: string, dialect: string, width: number, tab_width: numb
  * Render pre-parsed SQL from a sqlfmt IR JSON string.
  * For dialects whose JS parsers produce sqlfmt IR directly rather than pg_query protobuf.
  */
-export function fmt_from_ir(ir_json: string, width: number, tab_width: number, use_tabs: boolean, _case: string): string;
+export function fmt_from_ir(ir_json: string, dialect: string, width: number, tab_width: number, use_tabs: boolean, _case: string): string;
 
 /**
  * Format a Postgres query from a pg-query-emscripten JSON parse tree.
@@ -45,7 +45,7 @@ export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly check_roundtrip: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number];
     readonly fmt: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number, number, number];
-    readonly fmt_from_ir: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number, number];
+    readonly fmt_from_ir: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number, number, number];
     readonly fmt_postgres_json: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number, number];
     readonly parse_to_ir: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly pg_json_ast_equal: (a: number, b: number, c: number, d: number) => number;

@@ -801,7 +801,7 @@
             const irJson = dialectCache[dialect]?.irJson;
             if (!irJson)
               throw new Error(`${dialect} could not parse this input`);
-            result = fmt_from_ir(irJson, v, viw, useTabs, caseMode);
+            result = fmt_from_ir(irJson, dialect, v, viw, useTabs, caseMode);
             if (textChanged) {
               await check_roundtrip(sql, result, dialect);
             }

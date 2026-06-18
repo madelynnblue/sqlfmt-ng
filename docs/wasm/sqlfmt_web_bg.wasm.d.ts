@@ -3,7 +3,7 @@
 export const memory: WebAssembly.Memory;
 export const check_roundtrip: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number];
 export const fmt: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number, number, number];
-export const fmt_from_ir: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number, number];
+export const fmt_from_ir: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => [number, number, number, number];
 export const fmt_postgres_json: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number, number, number];
 export const parse_to_ir: (a: number, b: number, c: number, d: number) => [number, number, number, number];
 export const pg_json_ast_equal: (a: number, b: number, c: number, d: number) => number;
