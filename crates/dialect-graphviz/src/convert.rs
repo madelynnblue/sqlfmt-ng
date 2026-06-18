@@ -8,35 +8,58 @@ use sqlfmt_ir::Node;
 /// Convert a dot_parser attribute list to an IR node.
 /// An attribute list is `[...]` containing comma-separated key=value pairs.
 /// Uses Wrap with List — the List's Group controls flat vs. multiline.
+/// Multiple AList groups (e.g. `[a=1][b=2]`) are preserved as separate
+/// `[...]` blocks to maintain round-trip AST fidelity.
 pub fn attr_list_to_node(attrs: &AttrList<(String, String)>) -> Option<Node> {
     if attrs.elems.is_empty() {
         return None;
     }
-    // Each AList contains a Vec of (String, String) pairs
-    let items: Vec<Node> = attrs
+    // Preserve each AList as a separate [...] block for round-trip correctness.
+    let groups: Vec<Node> = attrs
         .elems
         .iter()
-        .flat_map(|alist| alist.elems.iter().map(|(k, v)| attr_pair_to_node(k, v)))
+        .filter_map(|alist| {
+            if alist.elems.is_empty() {
+                return None;
+            }
+            let items: Vec<Node> = alist
+                .elems
+                .iter()
+                .map(|(k, v)| attr_pair_to_node(k, v))
+                .collect();
+            Some(Node::Wrap {
+                keyword: None,
+                open: "[".into(),
+                content: Box::new(Node::Group {
+                    content: Box::new(Node::List {
+                        items,
+                        separator: Some(",".into()),
+                    }),
+                }),
+                close: "]".into(),
+            })
+        })
         .collect();
-    if items.is_empty() {
+    if groups.is_empty() {
         return None;
     }
-    Some(Node::Wrap {
-        keyword: None,
-        open: "[".into(),
-        content: Box::new(Node::Group {
-            content: Box::new(Node::List {
-                items,
-                separator: Some(",".into()),
-            }),
-        }),
-        close: "]".into(),
-    })
+    if groups.len() == 1 {
+        Some(groups.into_iter().next().unwrap())
+    } else {
+        Some(Node::Group {
+            content: Box::new(Node::Concat { items: groups }),
+        })
+    }
 }
 
 /// Convert a single key=value attribute pair to IR.
 /// No spaces around `=` (Graphviz convention).
 fn attr_pair_to_node(key: &str, value: &str) -> Node {
+    let quote = if needs_quoting(value) {
+        Some("\"".into())
+    } else {
+        None
+    };
     Node::Concat {
         items: vec![
             Node::Identifier {
@@ -46,10 +69,22 @@ fn attr_pair_to_node(key: &str, value: &str) -> Node {
             Node::Text { value: "=".into() },
             Node::Identifier {
                 value: value.into(),
-                quote: None,
+                quote,
             },
         ],
     }
+}
+
+/// Heuristic for whether a DOT attribute value needs double-quote wrapping.
+/// The dot-parser strips quotes during parsing, so we must re-add them for
+/// values that would be invalid as bare identifiers.
+fn needs_quoting(s: &str) -> bool {
+    s.is_empty()
+        || s.starts_with('<')
+        || s.contains(' ')
+        || s.contains('"')
+        || s.contains('\t')
+        || s.contains('\n')
 }
 
 /// Convert a NodeID (with optional port/compass) to IR.

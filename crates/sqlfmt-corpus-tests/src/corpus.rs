@@ -91,7 +91,7 @@ pub fn run_external_corpus(dialect: &dyn Dialect, testdata_dir: &Path, cache_dir
     const FAILING: &str = "failing";
     const SUCCESS: &str = "success";
 
-    let opts = default_opts();
+    let opts = dialect.default_render_opts();
     let sources = all_sources();
 
     let mut failures: Vec<(String, String)> = Vec::new();
@@ -255,7 +255,7 @@ pub fn run_rewrite_corpus(dialect: &dyn Dialect, testdata_dir: &Path) {
     const FAILING: &str = "failing";
     const SUCCESS: &str = "success";
 
-    let opts = default_opts();
+    let opts = dialect.default_render_opts();
     let failing_entries = read_corpus_dir(testdata_dir, FAILING);
     if failing_entries.is_empty() {
         return;
@@ -328,7 +328,7 @@ pub fn run_permanent_corpus(dialect: &dyn Dialect, testdata_dir: &Path) {
         return;
     }
 
-    let opts = default_opts();
+    let opts = dialect.default_render_opts();
     let mut test_failures: Vec<String> = Vec::new();
 
     let success_entries = read_corpus_dir(testdata_dir, SUCCESS);

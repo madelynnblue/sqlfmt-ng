@@ -1,11 +1,22 @@
 use sqlfmt_core::{Dialect, SqlfmtError};
 use sqlfmt_ir::Node;
+use sqlfmt_render::RenderOpts;
 
 mod convert;
 
 pub struct GraphvizDialect;
 
 impl Dialect for GraphvizDialect {
+    fn default_render_opts(&self) -> RenderOpts {
+        RenderOpts {
+            line_width: 60,
+            use_tabs: false,
+            tab_width: 4,
+            case: sqlfmt_render::CaseMode::Lower,
+            error_on_unformatted: true,
+        }
+    }
+
     fn parse(&self, sql: &str) -> Result<Node, SqlfmtError> {
         use dot_parser::ast::Graph;
 
