@@ -5,6 +5,8 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+base64 = "0.22"
+flate2 = "1"
 sqlfmt-error = { path = "../sqlfmt-error" }
 sqlfmt-ir = { path = "../sqlfmt-ir" }
 sqlfmt-render = { path = "../sqlfmt-render" }
