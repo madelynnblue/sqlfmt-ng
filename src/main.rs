@@ -13,7 +13,7 @@ enum CaseArg {
 #[derive(Parser, Debug)]
 #[command(name = "sqlfmt", about = "SQL formatter")]
 struct Args {
-    /// SQL dialect: json, materialize, postgres, or sqlparser:<name>
+    /// SQL dialect: graphviz, json, materialize, postgres, or sqlparser:<name>
     /// (sqlparser dialects: generic, postgresql, mysql, sqlite, bigquery,
     ///  clickhouse, databricks, duckdb, hive, mssql, oracle, redshift,
     ///  snowflake, ansi)
