@@ -1,6 +1,5 @@
 use crate::sources::all_sources;
 use sqlfmt_core::{Dialect, SqlfmtError, format_sql};
-use sqlfmt_render::{CaseMode, RenderOpts};
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -10,16 +9,6 @@ pub(crate) const SEPARATOR: &str = "\n\n-- sqlfmt-corpus-separator --\n\n";
 /// Returns the path to the shared corpus cache directory inside this crate's testdata.
 pub fn corpus_cache_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("testdata/corpus-cache")
-}
-
-pub fn default_opts() -> RenderOpts {
-    RenderOpts {
-        line_width: 1000,
-        use_tabs: false,
-        tab_width: 4,
-        case: CaseMode::Upper,
-        error_on_unformatted: true,
-    }
 }
 
 /// Read all statements from a subdirectory of testdata. Returns map of source_name → statements.
