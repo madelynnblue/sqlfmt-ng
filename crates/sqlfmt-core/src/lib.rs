@@ -23,6 +23,13 @@ pub trait Dialect {
             error_on_unformatted: true,
         }
     }
+    /// Apply dialect-specific overrides to user-supplied render options.
+    /// Called by `format_sql` before rendering. Override to enforce
+    /// dialect-required settings (e.g., DOT must use lowercase keywords).
+    /// The default implementation passes `user_opts` through unchanged.
+    fn apply_render_opts(&self, user_opts: &RenderOpts) -> RenderOpts {
+        user_opts.clone()
+    }
 }
 
 pub fn format_sql(
@@ -30,6 +37,9 @@ pub fn format_sql(
     sql: &str,
     opts: &RenderOpts,
 ) -> Result<String, SqlfmtError> {
+    // Let the dialect enforce any required render options (e.g., keyword case).
+    let opts = dialect.apply_render_opts(opts);
+
     // Transparently decode base64 / gzip before parsing. If no preprocessor
     // matches, the input passes through unchanged.
     let (sql, _steps) = preprocess(sql.as_bytes(), DEFAULT_PREPROCESSORS);

@@ -17,6 +17,13 @@ impl Dialect for GraphvizDialect {
         }
     }
 
+    fn apply_render_opts(&self, user_opts: &RenderOpts) -> RenderOpts {
+        RenderOpts {
+            case: sqlfmt_render::CaseMode::Lower, // DOT keywords must be lowercase
+            ..user_opts.clone()
+        }
+    }
+
     fn parse(&self, sql: &str) -> Result<Node, SqlfmtError> {
         use dot_parser::ast::Graph;
 

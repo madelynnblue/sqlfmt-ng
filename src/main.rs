@@ -68,13 +68,7 @@ fn main() {
     };
 
     let result = match args.dialect.as_str() {
-        "graphviz" => {
-            let opts = RenderOpts {
-                case: CaseMode::Lower,
-                ..opts
-            };
-            format_sql(&dialect_graphviz::GraphvizDialect, &sql, &opts)
-        },
+        "graphviz" => format_sql(&dialect_graphviz::GraphvizDialect, &sql, &opts),
         "json" => format_sql(&dialect_json::JsonDialect, &sql, &opts),
         "materialize" => format_sql(&dialect_materialize::MaterializeDialect, &sql, &opts),
         "postgres" => format_sql(&dialect_postgres::PostgresDialect, &sql, &opts),
