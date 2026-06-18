@@ -10,4 +10,5 @@ sqlfmt-core = { path = "../sqlfmt-core" }
 sqlfmt-ir = { path = "../sqlfmt-ir" }
 
 [dev-dependencies]
+sqlfmt-corpus-tests = { path = "../sqlfmt-corpus-tests" }
 sqlfmt-render = { path = "../sqlfmt-render" }

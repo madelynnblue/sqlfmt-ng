@@ -483,6 +483,7 @@ version = "0.1.0"
 dependencies = [
  "dot-parser",
  "sqlfmt-core",
+ "sqlfmt-corpus-tests",
  "sqlfmt-ir",
  "sqlfmt-render",
 ]

@@ -7,12 +7,14 @@ pub fn all_sources() -> Vec<Box<dyn CorpusSource>> {
         Box::new(MaterializeCorpus),
         Box::new(PostgresCorpus),
         Box::new(CockroachDbCorpus),
+        Box::new(GraphvizCorpus),
     ]
 }
 
 pub struct MaterializeCorpus;
 pub struct PostgresCorpus;
 pub struct CockroachDbCorpus;
+pub struct GraphvizCorpus;
 
 impl CorpusSource for MaterializeCorpus {
     fn name(&self) -> &str {
@@ -65,5 +67,23 @@ impl CorpusSource for CockroachDbCorpus {
             format: CorpusFormat::Slt,
         }
         .fetch("cockroachdb", cache_dir)
+    }
+}
+
+impl CorpusSource for GraphvizCorpus {
+    fn name(&self) -> &str {
+        "graphviz"
+    }
+
+    fn fetch(&self, cache_dir: &Path) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+        GithubFetcher {
+            owner: "graphviz",
+            repo: "graphviz",
+            git_ref: "main",
+            path_prefix: "",
+            extension: ".dot",
+            format: CorpusFormat::Graphviz,
+        }
+        .fetch("graphviz", cache_dir)
     }
 }

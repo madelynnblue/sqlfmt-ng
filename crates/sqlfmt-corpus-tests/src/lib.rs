@@ -2,6 +2,7 @@ use std::path::Path;
 
 pub mod corpus;
 pub mod github;
+pub mod graphviz;
 pub mod slt;
 pub mod sources;
 pub mod sql;

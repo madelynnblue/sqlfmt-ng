@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 pub enum CorpusFormat {
     Slt,
     Sql,
+    Graphviz,
 }
 
 pub struct GithubFetcher {
@@ -103,6 +104,7 @@ impl GithubFetcher {
             let stmts = match self.format {
                 CorpusFormat::Slt => crate::slt::parse_slt(&content),
                 CorpusFormat::Sql => crate::sql::parse_sql(&content),
+                CorpusFormat::Graphviz => crate::graphviz::parse_dot(&content),
             };
             statements.extend(stmts);
         }
