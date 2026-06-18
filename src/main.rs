@@ -68,6 +68,13 @@ fn main() {
     };
 
     let result = match args.dialect.as_str() {
+        "graphviz" => {
+            let opts = RenderOpts {
+                case: CaseMode::Lower,
+                ..opts
+            };
+            format_sql(&dialect_graphviz::GraphvizDialect, &sql, &opts)
+        },
         "json" => format_sql(&dialect_json::JsonDialect, &sql, &opts),
         "materialize" => format_sql(&dialect_materialize::MaterializeDialect, &sql, &opts),
         "postgres" => format_sql(&dialect_postgres::PostgresDialect, &sql, &opts),
@@ -83,7 +90,7 @@ fn main() {
                 format_sql(&d, &sql, &opts)
             } else {
                 eprintln!("error: unknown dialect: {other}");
-                eprintln!("  supported: json, materialize, postgres, sqlparser:<name>");
+                eprintln!("  supported: graphviz, json, materialize, postgres, sqlparser:<name>");
                 std::process::exit(1);
             }
         }
