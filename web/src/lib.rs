@@ -2,7 +2,7 @@ use dialect_graphviz::GraphvizDialect;
 use dialect_json::JsonDialect;
 use dialect_materialize::MaterializeDialect;
 use dialect_postgres_convert::{convert_pg_query_json, json_ast_equal};
-use sqlfmt_core::{format_sql, preprocess_sql, Dialect};
+use sqlfmt_core::{format_sql, preprocess_sql, render_node, Dialect};
 use sqlfmt_render::{CaseMode, RenderOpts};
 use wasm_bindgen::prelude::*;
 
@@ -85,10 +85,9 @@ pub fn fmt_from_ir(
     let node: sqlfmt_ir::Node = serde_json::from_str(ir_json)
         .map_err(|e| JsValue::from_str(&format!("invalid IR JSON: {e}")))?;
     let user_opts = parse_opts(width, tab_width, use_tabs, case);
-    let opts = resolve_dialect(dialect)
-        .map(|d| d.apply_render_opts(&user_opts))
-        .unwrap_or(user_opts);
-    opts.render(&node)
+    let d = resolve_dialect(dialect)
+        .ok_or_else(|| JsValue::from_str(&format!("unknown dialect: {dialect}")))?;
+    render_node(d, &node, &user_opts)
         .map_err(|err| JsValue::from_str(&err.to_string()))
 }
 

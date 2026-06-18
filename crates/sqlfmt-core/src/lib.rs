@@ -39,19 +39,28 @@ pub trait Dialect {
     }
 }
 
+/// Render an IR node to a formatted string, applying dialect-specific
+/// option overrides (e.g. keyword case). Callers that bypass [`format_sql`]
+/// can use this to stay consistent with the full pipeline.
+pub fn render_node(
+    dialect: &dyn Dialect,
+    node: &Node,
+    user_opts: &RenderOpts,
+) -> Result<String, SqlfmtError> {
+    let opts = dialect.apply_render_opts(user_opts);
+    opts.render(node)
+}
+
 pub fn format_sql(
     dialect: &dyn Dialect,
     sql: &str,
     opts: &RenderOpts,
 ) -> Result<String, SqlfmtError> {
-    // Let the dialect enforce any required render options (e.g., keyword case).
-    let opts = dialect.apply_render_opts(opts);
-
     // Transparently decode base64 / gzip before parsing. If no preprocessor
     // matches, the input passes through unchanged.
-    let (sql, _steps) = preprocess(sql.as_bytes(), DEFAULT_PREPROCESSORS);
+    let sql = preprocess_sql(sql);
     let node = dialect.parse(&sql)?;
-    let rendered = opts.render(&node)?;
+    let rendered = render_node(dialect, &node, opts)?;
 
     // Round-trip test to make sure we didn't drop any AST nodes during convert.
     dialect.ast_equal(&sql, &rendered)?;
